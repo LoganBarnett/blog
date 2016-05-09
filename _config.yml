@@ -9,15 +9,15 @@ twitter_username: logan_barnett
 github_username:  LoganBarnett
 
 # Build settings
-#markdown: kramdown
-#kramdown:
-#  input: GFM
-#  coderay_line_numbers: inline
+markdown: kramdown
+kramdown:
+  input: GFM
+  coderay_line_numbers: inline
   
 
 
 
 
-markdown: redcarpet
-redcarpet:
-  extensions: ["tables", "autolink", "strikethrough", "space_after_headers", "with_toc_data", "fenced_code_blocks", "no_intra_emphasis"]
+#markdown: redcarpet
+#redcarpet:
+#  extensions: ["tables", "autolink", "strikethrough", "space_after_headers", "with_toc_data", "fenced_code_blocks", "no_intra_emphasis"]
