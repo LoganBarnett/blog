@@ -12,8 +12,6 @@ permalink: /resume/
 >
 > Blog: http://loganbarnett.github.io/blog/
 >
-> Mobile: 602.264.3584
->
 > Twitter: [@logan_barnett](https://twitter.com/logan_barnett)
 >
 > Github: https://github.com/loganbarnett
@@ -29,9 +27,11 @@ permalink: /resume/
   * Restructured the AngularJS app to take on a larger scale of UI
   * Implemented caching for values that rarely change
   * Educated team on quirks of Javascript and AngularJS
-  * Added a significant amount of test coverage to the app and migrated onto TDD
+  * Migrated the team to TDD and got the UI up to 100% test coverage
   * Provided advice for other teams at UTi as they considered taking on
     AngularJS as a UI framework
+  * Setup Jenkins for automated CI and test coverage reporting
+  * Setup Cucumber testing to make executable business requirements
 * Identity Management - Lead engineer on company-wide self-user-management app
   * React + Redux in a functional style
   * Highly test driven
