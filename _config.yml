@@ -13,9 +13,9 @@ markdown: kramdown
 kramdown:
   input: GFM
   coderay_line_numbers: inline
-  
 
-
+# static assets
+static_files: /assets
 
 
 #markdown: redcarpet
