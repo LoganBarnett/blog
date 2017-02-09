@@ -6,6 +6,8 @@ categories: programming
 published: true
 ---
 
+# Introduction
+
 For my personal project, I'm working on a simple and relaxing asteroid mining
 game. It spent a long time as a prototype, simplified from many other
 voxel-based games into this one, which feels realistic to achieve. I've been
@@ -26,6 +28,8 @@ there's a couple of takeaways from that talk, but the most relevant here is the
 going on here is one of composability. Use small and simple parts that can
 compose into larger things.
 
+# The Old
+
 I was using Perlin noise to create a level full of asteroids. There was no solid
 concept of when an asteroid begins or ends. The levels would end abruptly. Most
 importantly, they don't look like asteroids with Perlin noise. I also knew that
@@ -36,6 +40,8 @@ noise setup wasn't going to cut it.
 This is what the level looked like using just perlin noise. Not very asteroid-y.
 
 ![perlin noise level](/blog/assets/roid-miner-perlin-level.png)
+
+# The New
 
 So my efforts have been directed towards an editor that would allow me to
 quickly slap together patterns for generating asteroids and other things. So far
@@ -64,6 +70,8 @@ definition.
 
 ![voxel instance](/blog/assets/roid-miner-voxel-instance.png)
 
+# Asteroid Generation
+
 Ok, so we have some voxel instances - now what? On over to the generation
 section of the editor. I don't have the generators as part of the object
 definitions, although that might be a conversion I make eventually. For now,
@@ -86,26 +94,31 @@ relatively painless.
 
 Here's an example workflow of creating an asteroid generator:
 
-1. Create a generator.
+## Step 1. Create a generator
 
 ![create a generator](/blog/assets/roid-miner-generation-step0.png)
 
-2. Add a sequencer.
+## Step 2. Add a sequencer
 
 ![generation with just a sequencer](/blog/assets/roid-miner-generation-step1.png)
 
-3. Apply perlin noise - note that the asteroid preview rotates over time.
+## Step 3. Apply perlin noise
+
+Note that the asteroid preview rotates over time.
 
 ![add noise](/blog/assets/roid-miner-generation-step2.png)
 
-4. Connect points from gaps introduced by perlin noise. This is required for the
-fill to work properly.
+## Step 4. Connect points from gaps introduced by perlin noise
+
+This is required for the fill to work properly.
 
 ![connect points for filling](/blog/assets/roid-miner-generation-step3.png)
 
-5. Apply a fill to the center of the asteroid.
+## Step 5. Apply a fill to the center of the asteroid
 
 ![fill](/blog/assets/roid-miner-generation-step4.png)
+
+# Closing
 
 This is where I am currently. All of this gets stored in a mongodb server - not
 the generated asteroids themselves but the data used to generate them.
