@@ -4,9 +4,9 @@ layout: default
 title: How to Make Unit Testing not so much of a pain
 ---
 #+END_EXPORT
+* How to Make Unit Testing not so much of a pain
 #+TOC: headlines 2
-
-* Unit Testing
+** Unit Testing
 I find myself talking a lot about unit testing in my current workplace. Over
 time I've learned things from others as well as developed some habits that have
 served me well. I've gotten applications up to 100% test coverage without
@@ -14,7 +14,7 @@ Herculean effort. Granted, test coverage is not the same as test quality, it's
 still a useful metric. I've demonstrated that there is at least _one case_ in
 which my code can work.
 
-* Primer
+** Primer
 As a quick intro: Unit tests are tiny little bits of code that aren't part of
 your implementation code, but exercise your implementation code. You have a
 suite of micro applications that run together to ensure certain behaviors in
@@ -23,14 +23,14 @@ a throwaway application that tests the one thing you were working on, think
 about keeping it. That's basically a unit test. A test harness that you save and
 run together with a bunch of others just like it.
 
-* Dress for Success
+** Dress for Success
 Unit testing is hard for a lot of people. I believe a vast majority of the
 difficulty is self inflicted though. I've put together a list of things that are
 very helpful with testing. It's by no means exhaustive, and this isn't a
 religion to adopt. I find reasonable exceptions to these rules - but they do
 remain as exceptions.
 
-** Do not [[https://en.wikipedia.org/wiki/Don't_repeat_yourself][DRY]] your tests
+*** Do not [[https://en.wikipedia.org/wiki/Don't_repeat_yourself][DRY]] your tests
    As I see more and more people doing things like using loops to create tests
    and factoring out swathes of code just to make tests a little more terse, I
    find the tests get complex enough that I'm about to demand going to demand
@@ -41,7 +41,7 @@ remain as exceptions.
    test), you'll find that you pivot on every point in your tests. It's ok for
    unit tests to be [[https://en.wikipedia.org/wiki/Don't_repeat_yourself#DRY_vs_WET_solutions][WET]]!
 
-** Test Driven Development
+*** Test Driven Development
    Test Driven Development, or TDD, is a powerful means of having good unit
    tests in your code. The basic trick to pulling off high test coverage
    (getting 100% isn't as impossible as it sounds) is to make sure you always
@@ -55,12 +55,12 @@ remain as exceptions.
    some tests. If it helps, get another programmer to pair with and have them
    write some tests with you.
 
-** Keep your tests
+*** Keep your tests
    Another trick to making TDD shine: Don't delete tests as you put the code
    together. Each new test refines the old behavior, but the old truths you
    assert are still the same.
 
-** Assert a single truth per test
+*** Assert a single truth per test
    If you can, and you should be able to do this a lot, make a single assertion
    of truth per test. This means ~expect~ or ~assert~ once per test. If you want
    to assert more things, write more tests. They might even be mostly
@@ -77,7 +77,7 @@ remain as exceptions.
    granted. When you make multiple assertions per test, the truths of your work
    are lost.
 
-** Avoid blob tests
+*** Avoid blob tests
    This ties heavily in with asserting a single truth. Another way of asserting
    a single truth is to avoid the "Given this input I get this slight change in
    this giant output" kind of tests. The look like tests where inputs are
@@ -97,7 +97,7 @@ remain as exceptions.
    something that makes sense for a list. "It returns a list of users
    alphabetically sorted by first name ascending" is a perfect example of this.
 
-* Conclusion
+** Conclusion
   There's more we could into here, but perfect is the enemy of good, and I need
   to cut it off at some point. Unit tests can be very handy, make think about
   your code before you just start typing stuff, serve as excellent test
