@@ -8,6 +8,10 @@ url: "http://blog.logustus.com" # the base hostname & protocol for your site
 twitter_username: logan_barnett
 github_username:  LoganBarnett
 
+exclude: [
+  "_posts/*.org"
+  ]
+
 # Build settings
 markdown: kramdown
 kramdown:

@@ -1,0 +1,107 @@
+#+BEGIN_EXPORT html
+---
+layout: default
+title: How to Make Unit Testing not so much of a pain
+---
+#+END_EXPORT
+#+TOC: headlines 2
+
+* Unit Testing
+I find myself talking a lot about unit testing in my current workplace. Over
+time I've learned things from others as well as developed some habits that have
+served me well. I've gotten applications up to 100% test coverage without
+Herculean effort. Granted, test coverage is not the same as test quality, it's
+still a useful metric. I've demonstrated that there is at least _one case_ in
+which my code can work.
+
+* Primer
+As a quick intro: Unit tests are tiny little bits of code that aren't part of
+your implementation code, but exercise your implementation code. You have a
+suite of micro applications that run together to ensure certain behaviors in
+your application are doing things they should still be doing. Instead of having
+a throwaway application that tests the one thing you were working on, think
+about keeping it. That's basically a unit test. A test harness that you save and
+run together with a bunch of others just like it.
+
+* Dress for Success
+Unit testing is hard for a lot of people. I believe a vast majority of the
+difficulty is self inflicted though. I've put together a list of things that are
+very helpful with testing. It's by no means exhaustive, and this isn't a
+religion to adopt. I find reasonable exceptions to these rules - but they do
+remain as exceptions.
+
+** Do not [[https://en.wikipedia.org/wiki/Don't_repeat_yourself][DRY]] your tests
+   As I see more and more people doing things like using loops to create tests
+   and factoring out swathes of code just to make tests a little more terse, I
+   find the tests get complex enough that I'm about to demand going to demand
+   unit tests for the unit tests. Unit tests should be incredibly simple. Sure,
+   helpers are useful. Especially with Angular's ceremony. That said, each test
+   should be a little different. It should assert something else. It should
+   provide a unique piece of data. If you're doing TDD (failing test -> passing
+   test), you'll find that you pivot on every point in your tests. It's ok for
+   unit tests to be [[https://en.wikipedia.org/wiki/Don't_repeat_yourself#DRY_vs_WET_solutions][WET]]!
+
+** Test Driven Development
+   Test Driven Development, or TDD, is a powerful means of having good unit
+   tests in your code. The basic trick to pulling off high test coverage
+   (getting 100% isn't as impossible as it sounds) is to make sure you always
+   start with a failing test. Want to change something? Make a test that asserts
+   something that currently is not true. Now write implementation code to make
+   it pass. The sad part about TDD is it requires this discipline. Sometimes
+   you'll want to explore and writing tests first don't make sense because you
+   don't even know what to assert in the first place. That said, if you're
+   transforming data (where a lot of your efforts should be), or doing general
+   webby stuff that isn't that mysterious, you really should be able to write
+   some tests. If it helps, get another programmer to pair with and have them
+   write some tests with you.
+
+** Keep your tests
+   Another trick to making TDD shine: Don't delete tests as you put the code
+   together. Each new test refines the old behavior, but the old truths you
+   assert are still the same.
+
+** Assert a single truth per test
+   If you can, and you should be able to do this a lot, make a single assertion
+   of truth per test. This means ~expect~ or ~assert~ once per test. If you want
+   to assert more things, write more tests. They might even be mostly
+   duplicates. There's benefit to doing this though. Each test becomes a small
+   bit of living documentation. When the tests fail due to a change, the
+   engineer can go look at the test and see the expectation. There should be a
+   firm, human language description of what the tests is doing. "It returns an
+   empty list when given an empty string". We aren't writing poetry here, so
+   it's ok if it's dull. You'll thank yourself months later when you've
+   forgotten everything you've worked on and the unit test stands as guardian to
+   the old behavior. Even if you decide to sweep away that test, you'll at least
+   be doing so as an informed decision. Someone else might pick up your work,
+   and they don't have the knowledge you have accumulated and now take for
+   granted. When you make multiple assertions per test, the truths of your work
+   are lost.
+
+** Avoid blob tests
+   This ties heavily in with asserting a single truth. Another way of asserting
+   a single truth is to avoid the "Given this input I get this slight change in
+   this giant output" kind of tests. The look like tests where inputs are
+   provided, and you get a big [[https://en.wikipedia.org/wiki/Binary_large_object][blob]] of JSON or something similar. The test then
+   asserts that the _entire_ JSON structure matches the output. This makes the
+   test hard to follow. What bits are important? Why are they important? Most
+   imporantly: What's relevant to this single truth being asserted? Blob tests
+   make this very difficult to determine. After you write a bunch of tiny little
+   tests, you could make an "All together now" test that does a quick sanity
+   check: Do all of these things I just made work in concert together? That's
+   completely reasonable, but don't go making 20 more of them. They are the
+   exception, not the rule. A pattern I'll sometimes use as a micro-blob test is
+   perform some operation on a collection of things. Do a quick `map` to pluck
+   out some data I'm interested in (almost always a single field), and then
+   assert that the list I got back from `map` is some list I provide. The list
+   is small, and usually the test will describe its assertion in terms of
+   something that makes sense for a list. "It returns a list of users
+   alphabetically sorted by first name ascending" is a perfect example of this.
+
+* Conclusion
+  There's more we could into here, but perfect is the enemy of good, and I need
+  to cut it off at some point. Unit tests can be very handy, make think about
+  your code before you just start typing stuff, serve as excellent test
+  harnesses to verify changes, and can serve as living documentation to help
+  prevent mistakes when you start making changes in your application. Hopefully
+  this helps clear some hurdles on how to make the process easier and therefore
+  more attainable.
