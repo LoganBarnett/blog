@@ -2,6 +2,8 @@
 ---
 layout: default
 title: How to Make Unit Testing not so much of a pain
+date: 2017-05-17 12:00:00
+categories: testing
 ---
 #+END_EXPORT
 * How to Make Unit Testing not so much of a pain
@@ -90,9 +92,9 @@ remain as exceptions.
    check: Do all of these things I just made work in concert together? That's
    completely reasonable, but don't go making 20 more of them. They are the
    exception, not the rule. A pattern I'll sometimes use as a micro-blob test is
-   perform some operation on a collection of things. Do a quick `map` to pluck
+   perform some operation on a collection of things. Do a quick ~map~ to pluck
    out some data I'm interested in (almost always a single field), and then
-   assert that the list I got back from `map` is some list I provide. The list
+   assert that the list I got back from ~map~ is some list I provide. The list
    is small, and usually the test will describe its assertion in terms of
    something that makes sense for a list. "It returns a list of users
    alphabetically sorted by first name ascending" is a perfect example of this.
