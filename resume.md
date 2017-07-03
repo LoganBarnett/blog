@@ -20,7 +20,34 @@ permalink: /resume/
 
 ## Job experience ##
 
-### IT-Motives `->` UTi `->` DSV (2014-current) ###
+### NWEA ###
+* OECD - Senior Engineer serving as Angular and Javascript expertise needed by
+  the team.
+  * Migrated the administration portion of the project onto Webpack.
+  * Created unit testing pattern that is easier to maintain and author.
+  * Implemented custom login system in Angular.
+  * Helped significantly improve the Protractor.js test stability, including
+    implementing custom waits for CSS animations, and drawing on screenshots as
+    a means of debugging failing tests caused by obscured objects the tests were
+    trying to click on.
+  * Created script to serve as a first pass at converting all hard-coded strings
+    inside of Angular templates into i18n version, and storing the English
+    translation with a friendly lookup name.
+* Item Experience - Senior Engineer providing expertise in Angular and
+  Javascript.
+  * Migrated several projects onto ESLint.
+  * Migrated the item editor to Webpack.
+  * Implemented Babel transformations for a critical backend Node.js service.
+* Ongoing company assistance and work on shared projects such as the style
+  guide.
+  * Helped with Webpack setup on the style guide.
+  * Setup CSS Modules in the style guide, and educated on their usage.
+  * Presented Angular-React demo + PR to show we don't need to write shared
+    components for both Angular and React (the org uses both in different
+    teams).
+  * Assisted UX team in making more semantic styling.
+
+### IT-Motives `->` UTi `->` DSV (2014-2016) ###
 
 * Client Portal - Senior Engineer leading the UI of Client Portal at UTi and
   providing expertise for AngularJS
