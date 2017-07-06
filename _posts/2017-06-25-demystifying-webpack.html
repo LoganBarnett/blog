@@ -1,0 +1,248 @@
+---
+layout: default
+title: Demystifying Webpack
+date: 2017-07-06 15:35:00
+categories: javascript
+---
+
+<div id="outline-container-org87be16f" class="outline-2">
+<h2 id="org87be16f"><span class="section-number-2">1</span> Demystifying Webpack</h2>
+<div class="outline-text-2" id="text-1">
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#org87be16f">1. Demystifying Webpack</a>
+<ul>
+<li><a href="#orgeb8b818">1.1. Some Background</a></li>
+<li><a href="#org53f66b6">1.2. Enter Webpack</a></li>
+<li><a href="#orgbf03093">1.3. Loaders</a></li>
+<li><a href="#orga3353ce">1.4. Plugins</a></li>
+<li><a href="#orgd7def89">1.5. Conclusion</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div id="outline-container-orgeb8b818" class="outline-3">
+<h3 id="orgeb8b818"><span class="section-number-3">1.1</span> Some Background</h3>
+<div class="outline-text-3" id="text-1-1">
+<p>
+I've played with a lot of the Javascript build tools in the ecosystem. Today,
+<a href="https://webpack.js.org">Webpack</a> is my go to. I like it because it adds static analysis to my file paths
+for virtually everything. It also has fairly clear ways in which it transforms
+files. As with any tool, there's trade-offs to it. I can't get map files working
+for my unit tests, and the initial builds can take a really long time (upwards
+of a minute). Sure I can turn some features off to speed it up, but then I'll
+miss certain errors. For example, Angular's dependency injection system can lean
+on just the function parameter names, which break when any kind of minification
+is done. If I'm not minifying, I'm potentially missing those errors.
+</p>
+
+<p>
+Maybe someone can help me with the test stuff though. That would be just dandy.
+Until then, I consider it something lost in the transition to Webpack.
+</p>
+
+<p>
+Grunt is a tool introduced to me very early on in my budding Javascript career.
+I quickly found it nightmarish to work with for non-trivial projects. In
+fairness, Grunt really isn't a build tool - <a href="https://gruntjs.com">just look at their site</a>. It's a task
+runner. People shape it into a build tool much like when schools shaped my
+grandmother into being a right hander by slapping her wrist with a ruler anytime
+she used her left hand. Grunt tasks don't really chain into each other very
+well, so when you have multiple steps in your file transformations they usually
+look like this:
+</p>
+
+<pre class="example">
+.tmp/foo.css             # Convert from less to css
+.tmp-tmp/foo.css         # Add browser prefixes
+.tmp-tmp-tmp/foo.min.css # Minify css
+dist/foo.min.css         # Actually write the final result
+</pre>
+
+<p>
+And when you make a change the file has to flow through all of that again. If
+for some reason you need to make a change to the build system, like throw
+something in the middle, it's not exactly clear that you updated all of the
+right things in the right places. Each task needs to know where the prior task
+had left its files, so it could pick them up and continue a transformation. It
+wasn't long before I loathed the idea of making tweaks to my Grunt config. This
+introduced resistance to change. "It works now - don't touch it". I made the
+jump to Gulp. It helped with the above setup! But if I needed to do any
+non-one-way transformations, I ran into issues with Gulp's piping mechanism.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org53f66b6" class="outline-3">
+<h3 id="org53f66b6"><span class="section-number-3">1.2</span> Enter Webpack</h3>
+<div class="outline-text-3" id="text-1-2">
+<p>
+At time of writing, Webpack is at version 3.1.0. My examples are written with
+Webpack v2.x in mind, but so far is working against Webpack v3.x.
+This is what Webpack's file transformation looks like:
+</p>
+
+<pre class="example">
+???
+</pre>
+
+<p>
+Uh, wait. Where's my files? I fired up the webpack dev server like a good
+engineer and my reward is no files? Well, that's correct. Webpack keeps
+everything in memory for as long as it can. In the case of a dev server where it
+hosts everything, all of the files are held in memory.
+</p>
+
+<p>
+Webpack might seem like magic on the surface, but nothing could be further from
+the truth. In the realm of programming, "magic" is usually something we describe
+as obeying some convention and because we did, things Just Work(tm). See <a href="http://rubyonrails.org">Rails</a>.
+Like all of it. Webpack demands of you an entry point. The <code>void main()</code> of your
+application. In Javascript land, this just means a Javascript file. This is how
+an entry point file might look:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-javascript">require<span style="color: #4f97d7;">(</span><span style="color: #2d9574;">'./base.css'</span><span style="color: #4f97d7;">)</span>&#57344;&#57345;&#57345;
+<span style="color: #4f97d7; font-weight: bold;">var</span> <span style="color: #7590db;">utils</span> = require<span style="color: #4f97d7;">(</span><span style="color: #2d9574;">'./utils.js'</span><span style="color: #4f97d7;">)</span>&#57344;&#57345;&#57345;
+<span style="color: #4f97d7; font-weight: bold;">var</span> <span style="color: #7590db;">color</span> = require<span style="color: #4f97d7;">(</span><span style="color: #2d9574;">'color'</span><span style="color: #4f97d7;">)</span> <span style="color: #2aa1ae; background-color: #292e34;">// </span><span style="color: #2aa1ae; background-color: #292e34;">I don't know that the color lib does this, so</span>&#57344;&#57345;&#57345;
+                             <span style="color: #2aa1ae; background-color: #292e34;">// </span><span style="color: #2aa1ae; background-color: #292e34;">just pretend.</span>&#57344;&#57345;&#57345;
+&#57344;&#57345;&#57345;
+utils.banner<span style="color: #4f97d7;">(</span>color.rainbow<span style="color: #bc6ec5;">(</span><span style="color: #2d9574;">'ohai world'</span><span style="color: #bc6ec5;">)</span><span style="color: #4f97d7;">)</span>
+</pre>
+</div>
+
+<p>
+You might recognize <code>require</code> Node.js. Browsers don't have a built in <code>require</code>,
+but Webpack provides one when it builds your runtime. <code>require</code> takes a path
+which can be relative or a "module" (from out of your node<sub>modules</sub>). Webpack
+does something extra though. It performs static analysis on these files. You
+might have noticed we're requiring a css file at the start of our entry point.
+We're not doing anything with it directly, but we're telling Webpack we want
+this file, and it should be included in our bundle somehow. Webpack will look
+for a <code>base.css</code> in the same directory our entry point is in, since we provided
+a relative path. Fun fact: IDEs and editors can be configured to auto-complete
+file names when they think you are providing a path. That css file might in turn
+have images it refers to, or even fonts. These paths will also be analyzed.
+Webpack will often munge these paths somehow, but it keeps them consistent
+internally. So we don't have to worry ourselves on how the file paths look in
+the final build. We just have to make sure at develop-time that everything is in
+the right places as defined by our <code>require</code> and equivalent statements.
+</p>
+
+<p>
+How does Webpack do all of this? Magic??
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgbf03093" class="outline-3">
+<h3 id="orgbf03093"><span class="section-number-3">1.3</span> Loaders</h3>
+<div class="outline-text-3" id="text-1-3">
+<p>
+Well, not exactly. Webpack has these sort-of plugins called <span class="underline">loaders</span>. A loader
+is simply a means of transforming handling kinds of files. For css, I typically
+will use <code>css-loader</code>. There's also a <code>babel-loader</code> from going from ES6 to ES5
+conversions, and loaders for html templates or even the <code>index.html</code> itself.
+These loaders give Webpack the context it needs to walk every file you need for
+your build. Javascript files use <code>require</code> and <code>import</code>. Html can use the <code>src</code>
+attribute from image tags (and a lot more). Css files can use fonts and <code>url()</code>.
+These are all provided via the various loaders that you will configure for your
+project. At build time, Webpack finds all of these files and makes sure that the
+urls will remain consistent throughout the bundling process. If it can't find a
+file at a particular path, the bundle will fail. If a file is not included
+directly or indirectly from your entry-point, the file will not be included in
+the bundle. This allows Webpack to make very small builds because it only
+includes what's needed.
+</p>
+
+<p>
+Loaders can also be chained together. You can have a <code>sass-loader</code> which pipes
+into the <code>postcss-loader</code> which in turn goes to the <code>css-loader</code>. It's important
+to remember that these chain in reverse order. I like to think it goes from
+"outer" to "inner". Think of it like this:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-javascript">foo<span style="color: #4f97d7;">(</span>bar<span style="color: #bc6ec5;">(</span>baz<span style="color: #2d9574;">()</span><span style="color: #bc6ec5;">)</span><span style="color: #4f97d7;">)</span>
+</pre>
+</div>
+
+<p>
+In this setup, <code>baz</code> gets called first, then the results are passed to <code>bar</code>,
+and then those results are passed to <code>foo</code>. Compare that to a chain of loaders:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-javascript"><span style="color: #4f97d7;">{</span>&#57344;&#57345;&#57345;
+  test: <span style="color: #2d9574;">/\.css$/</span>,&#57344;&#57345;&#57345;
+  use: <span style="color: #bc6ec5;">[</span>&#57344;&#57345;&#57345;
+    <span style="color: #2d9574;">'css-loader'</span>,&#57344;&#57345;&#57345;
+    <span style="color: #2d9574;">'csso-loader'</span>,&#57344;&#57345;&#57345;
+    <span style="color: #2d9574;">'postcss-loader'</span>,&#57344;&#57345;&#57345;
+  <span style="color: #bc6ec5;">]</span>,&#57344;&#57345;&#57345;
+<span style="color: #4f97d7;">}</span>
+</pre>
+</div>
+
+<p>
+Here, <code>postcss-loader</code> goes first, then <code>csso-loader</code>, and finally <code>css-loader</code>.
+Pick whatever mnemonic works best for you.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orga3353ce" class="outline-3">
+<h3 id="orga3353ce"><span class="section-number-3">1.4</span> Plugins</h3>
+<div class="outline-text-3" id="text-1-4">
+<p>
+Once you have all of these loaders arranged, there's a few plugins I want to
+call out that make it all hum. <code>extract-text-webpack-plugin</code> is great for
+extracting your CSS into its own file. The alternative is to stuff it all in a
+<code>style</code> tag. My preference is an external file. The next is
+<code>html-webpack-plugin</code> coupled with <code>html-loader</code>. These let you take your
+<code>index.html</code> and it dynamically adds the appropriate <code>script</code> and <code>link</code> tags to
+your assets. It also insures that the html file is provided with the rest of
+your bundle.
+</p>
+
+<p>
+I've provided a lightweight project that can help you get setup:
+<a href="https://github.com/LoganBarnett/webpack-skeleton">webpack-skeleton</a>
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgd7def89" class="outline-3">
+<h3 id="orgd7def89"><span class="section-number-3">1.5</span> Conclusion</h3>
+<div class="outline-text-3" id="text-1-5">
+<p>
+Sometimes this Webpack stuff can be confusing. Since Webpack 2 a lot of the
+documentation has improved, but there's still gaps, and it's easy to conflate
+the Webpack 1 docs and other resources with Webpack 2. Don't feel bad if it
+seems like it's taking you a while to get started with Webpack. For you bloggers
+and other people posting resources out there, be sure to include at least a
+major version number and a date on your material. The Internet is getting old,
+and we need to be mindful that there's a lot of dated information floating
+around out there. For those of us reading materials, be sure to check dates and
+version numbers when they are provided, and use skepticism when neither can be
+found. Open source has a lot of benefits, but can be problematic because
+documentation is perhaps the least sexy thing about it. It also is hard to
+produce docs when you're simply sharing an itch you scratched for yourself. Keep
+your expectations healthy! And pull requests for documentation are typically
+very welcome. If you ever want to get your name on a big project to claim some
+internet fame, I'd do it through documentation for sure.
+</p>
+
+<p>
+Hopefully this sheds some light on how Webpack works. Not everything will be
+simple and easy dealing with it, but here you have sane start with something
+very simple and bare bones.
+</p>
+</div>
+</div>
+</div>
