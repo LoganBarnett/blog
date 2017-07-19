@@ -1,36 +1,38 @@
 ---
 layout: default
 title: How to Make Unit Testing not so much of a pain
+date: 2017-05-17 12:00:00
+categories: testing
 ---
-<div id="outline-container-orgdeed0fe" class="outline-2">
-<h2 id="orgdeed0fe"><span class="section-number-2">1</span> How to Make Unit Testing not so much of a pain</h2>
+<div id="outline-container-org7275c16" class="outline-2">
+<h2 id="org7275c16"><span class="section-number-2">1</span> How to Make Unit Testing not so much of a pain</h2>
 <div class="outline-text-2" id="text-1">
 <div id="table-of-contents">
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#orgdeed0fe">1. How to Make Unit Testing not so much of a pain</a>
+<li><a href="#org7275c16">1. How to Make Unit Testing not so much of a pain</a>
 <ul>
-<li><a href="#orgae0eafa">1.1. Unit Testing</a></li>
-<li><a href="#org145b09b">1.2. Primer</a></li>
-<li><a href="#org6e743ae">1.3. Dress for Success</a>
+<li><a href="#orga3324ad">1.1. Unit Testing</a></li>
+<li><a href="#orgd5dc600">1.2. Primer</a></li>
+<li><a href="#orge4a6051">1.3. Dress for Success</a>
 <ul>
-<li><a href="#org633335c">1.3.1. Do not DRY your tests</a></li>
-<li><a href="#orgb1b87aa">1.3.2. Test Driven Development</a></li>
-<li><a href="#orgb94cc6e">1.3.3. Keep your tests</a></li>
-<li><a href="#org0f2c24b">1.3.4. Assert a single truth per test</a></li>
-<li><a href="#org4c8f40d">1.3.5. Avoid blob tests</a></li>
+<li><a href="#org01bfd21">1.3.1. Do not DRY your tests</a></li>
+<li><a href="#orgccd0db6">1.3.2. Test Driven Development</a></li>
+<li><a href="#org98aa9f8">1.3.3. Keep your tests</a></li>
+<li><a href="#orgc7d9973">1.3.4. Assert a single truth per test</a></li>
+<li><a href="#org467748f">1.3.5. Avoid blob tests</a></li>
 </ul>
 </li>
-<li><a href="#org48fa0f9">1.4. Conclusion</a></li>
+<li><a href="#org75eb2eb">1.4. Conclusion</a></li>
 </ul>
 </li>
 </ul>
 </div>
 </div>
 </div>
-<div id="outline-container-orgae0eafa" class="outline-3">
-<h3 id="orgae0eafa"><span class="section-number-3">1.1</span> Unit Testing</h3>
+<div id="outline-container-orga3324ad" class="outline-3">
+<h3 id="orga3324ad"><span class="section-number-3">1.1</span> Unit Testing</h3>
 <div class="outline-text-3" id="text-1-1">
 <p>
 I find myself talking a lot about unit testing in my current workplace. Over
@@ -43,8 +45,8 @@ which my code can work.
 </div>
 </div>
 
-<div id="outline-container-org145b09b" class="outline-3">
-<h3 id="org145b09b"><span class="section-number-3">1.2</span> Primer</h3>
+<div id="outline-container-orgd5dc600" class="outline-3">
+<h3 id="orgd5dc600"><span class="section-number-3">1.2</span> Primer</h3>
 <div class="outline-text-3" id="text-1-2">
 <p>
 As a quick intro: Unit tests are tiny little bits of code that aren't part of
@@ -58,8 +60,8 @@ run together with a bunch of others just like it.
 </div>
 </div>
 
-<div id="outline-container-org6e743ae" class="outline-3">
-<h3 id="org6e743ae"><span class="section-number-3">1.3</span> Dress for Success</h3>
+<div id="outline-container-orge4a6051" class="outline-3">
+<h3 id="orge4a6051"><span class="section-number-3">1.3</span> Dress for Success</h3>
 <div class="outline-text-3" id="text-1-3">
 <p>
 Unit testing is hard for a lot of people. I believe a vast majority of the
@@ -70,8 +72,8 @@ remain as exceptions.
 </p>
 </div>
 
-<div id="outline-container-org633335c" class="outline-4">
-<h4 id="org633335c"><span class="section-number-4">1.3.1</span> Do not <a href="https://en.wikipedia.org/wiki/Don't_repeat_yourself">DRY</a> your tests</h4>
+<div id="outline-container-org01bfd21" class="outline-4">
+<h4 id="org01bfd21"><span class="section-number-4">1.3.1</span> Do not <a href="https://en.wikipedia.org/wiki/Don't_repeat_yourself">DRY</a> your tests</h4>
 <div class="outline-text-4" id="text-1-3-1">
 <p>
 As I see more and more people doing things like using loops to create tests
@@ -87,8 +89,8 @@ unit tests to be <a href="https://en.wikipedia.org/wiki/Don't_repeat_yourself#DR
 </div>
 </div>
 
-<div id="outline-container-orgb1b87aa" class="outline-4">
-<h4 id="orgb1b87aa"><span class="section-number-4">1.3.2</span> Test Driven Development</h4>
+<div id="outline-container-orgccd0db6" class="outline-4">
+<h4 id="orgccd0db6"><span class="section-number-4">1.3.2</span> Test Driven Development</h4>
 <div class="outline-text-4" id="text-1-3-2">
 <p>
 Test Driven Development, or TDD, is a powerful means of having good unit
@@ -107,8 +109,8 @@ write some tests with you.
 </div>
 </div>
 
-<div id="outline-container-orgb94cc6e" class="outline-4">
-<h4 id="orgb94cc6e"><span class="section-number-4">1.3.3</span> Keep your tests</h4>
+<div id="outline-container-org98aa9f8" class="outline-4">
+<h4 id="org98aa9f8"><span class="section-number-4">1.3.3</span> Keep your tests</h4>
 <div class="outline-text-4" id="text-1-3-3">
 <p>
 Another trick to making TDD shine: Don't delete tests as you put the code
@@ -118,8 +120,8 @@ assert are still the same.
 </div>
 </div>
 
-<div id="outline-container-org0f2c24b" class="outline-4">
-<h4 id="org0f2c24b"><span class="section-number-4">1.3.4</span> Assert a single truth per test</h4>
+<div id="outline-container-orgc7d9973" class="outline-4">
+<h4 id="orgc7d9973"><span class="section-number-4">1.3.4</span> Assert a single truth per test</h4>
 <div class="outline-text-4" id="text-1-3-4">
 <p>
 If you can, and you should be able to do this a lot, make a single assertion
@@ -141,8 +143,8 @@ are lost.
 </div>
 </div>
 
-<div id="outline-container-org4c8f40d" class="outline-4">
-<h4 id="org4c8f40d"><span class="section-number-4">1.3.5</span> Avoid blob tests</h4>
+<div id="outline-container-org467748f" class="outline-4">
+<h4 id="org467748f"><span class="section-number-4">1.3.5</span> Avoid blob tests</h4>
 <div class="outline-text-4" id="text-1-3-5">
 <p>
 This ties heavily in with asserting a single truth. Another way of asserting
@@ -157,9 +159,9 @@ tests, you could make an "All together now" test that does a quick sanity
 check: Do all of these things I just made work in concert together? That's
 completely reasonable, but don't go making 20 more of them. They are the
 exception, not the rule. A pattern I'll sometimes use as a micro-blob test is
-perform some operation on a collection of things. Do a quick `map` to pluck
+perform some operation on a collection of things. Do a quick <code>map</code> to pluck
 out some data I'm interested in (almost always a single field), and then
-assert that the list I got back from `map` is some list I provide. The list
+assert that the list I got back from <code>map</code> is some list I provide. The list
 is small, and usually the test will describe its assertion in terms of
 something that makes sense for a list. "It returns a list of users
 alphabetically sorted by first name ascending" is a perfect example of this.
@@ -168,8 +170,8 @@ alphabetically sorted by first name ascending" is a perfect example of this.
 </div>
 </div>
 
-<div id="outline-container-org48fa0f9" class="outline-3">
-<h3 id="org48fa0f9"><span class="section-number-3">1.4</span> Conclusion</h3>
+<div id="outline-container-org75eb2eb" class="outline-3">
+<h3 id="org75eb2eb"><span class="section-number-3">1.4</span> Conclusion</h3>
 <div class="outline-text-3" id="text-1-4">
 <p>
 There's more we could into here, but perfect is the enemy of good, and I need
