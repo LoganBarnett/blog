@@ -5,18 +5,46 @@ date: 2017-11-05
 categories: killer-queen
 ---
 
-<p>
-As part of trying to reduce the Portland scene's bus number in regards to our
-streaming setup, I've taken to learning our current setup. This setup isn't
-something I've begun, but as part of learning it I am codifying it all here so
-others might benefit or even contribute back suggestions. The dream is to have a
-pretty foolproof setup that anyone mildly technically competent could apply to
-their scene's cab.
-</p>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#orgf4c9a5d">1. introduction</a></li>
+<li><a href="#org7ea0310">2. challonge integration</a>
+<ul>
+<li><a href="#orgbdecc4c">2.1. workarounds</a></li>
+</ul>
+</li>
+<li><a href="#orgf407c30">3. video flow</a></li>
+<li><a href="#org393674c">4. audio flow</a></li>
+<li><a href="#orgaeca993">5. troubleshooting</a>
+<ul>
+<li><a href="#org011fa4c">5.1. If the input is not recognized on the computer's end</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
 
-<div id="outline-container-org646a1a9" class="outline-2">
-<h2 id="org646a1a9"><span class="section-number-2">1</span> challonge integration</h2>
+<div id="outline-container-orgf4c9a5d" class="outline-2">
+<h2 id="orgf4c9a5d"><span class="section-number-2">1</span> introduction</h2>
 <div class="outline-text-2" id="text-1">
+<p>
+As part of trying to reduce the Portland scene's <a href="https://en.wikipedia.org/wiki/Bus_factor">bus number</a> in regards to our
+streaming setup I've recorded notes here as best I can. The dream is to have a
+pretty foolproof setup that anyone mildly technically competent could apply to
+their scene's cab. People can and should provide suggestions and corrections so
+our community can better thrive. As a general policy I won't use a comment
+system on this site because static hosting is awesome and also because
+<a href="https://github.com/tessalt/echo-chamber-js">echo-chamber.js</a> makes an excellent point. Feel free to contact me via email,
+Twitter, or carrier pigeon for any improvements we can make here.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org7ea0310" class="outline-2">
+<h2 id="org7ea0310"><span class="section-number-2">2</span> challonge integration</h2>
+<div class="outline-text-2" id="text-2">
 <p>
 Need access to Matt Wire's github repo that has a Rails server.
 </p>
@@ -30,9 +58,9 @@ Currently this repo isn't public.
 </p>
 </div>
 
-<div id="outline-container-orgaed79e9" class="outline-3">
-<h3 id="orgaed79e9"><span class="section-number-3">1.1</span> workarounds</h3>
-<div class="outline-text-3" id="text-1-1">
+<div id="outline-container-orgbdecc4c" class="outline-3">
+<h3 id="orgbdecc4c"><span class="section-number-3">2.1</span> workarounds</h3>
+<div class="outline-text-3" id="text-2-1">
 <p>
 Changes to the Challonge setup screws up the integration with the Rails server.
 The Rails server at that point can't be used (or maybe the data would need to be
@@ -45,9 +73,9 @@ gold name. These appear to be sources in OBS. I haven't verified this yet.
 </div>
 </div>
 
-<div id="outline-container-org5151714" class="outline-2">
-<h2 id="org5151714"><span class="section-number-2">2</span> video flow</h2>
-<div class="outline-text-2" id="text-2">
+<div id="outline-container-orgf407c30" class="outline-2">
+<h2 id="orgf407c30"><span class="section-number-2">3</span> video flow</h2>
+<div class="outline-text-2" id="text-3">
 <p>
 There is a 4 port splitter in cab. Two go to the two monitors. The overhead
 monitor takes another slot, and the projector takes the final.
@@ -55,29 +83,33 @@ monitor takes another slot, and the projector takes the final.
 
 <p>
 This is how our specific setup looks at PDX. Our stream box is the computer
-running OBS (link).
+running <a href="http://openbroadcaster.com">OBS</a>.
 </p>
 
 
 <div class="figure">
-<p><img src="video-flow.png" alt="video-flow.png" />
+<p><object type="image/svg+xml" data="video-flow.svg" class="org-svg">
+Sorry, your browser does not support SVG.</object>
 </p>
 </div>
 </div>
 </div>
 
-<div id="outline-container-org21f5d83" class="outline-2">
-<h2 id="org21f5d83"><span class="section-number-2">3</span> audio flow</h2>
-<div class="outline-text-2" id="text-3">
+<div id="outline-container-org393674c" class="outline-2">
+<h2 id="org393674c"><span class="section-number-2">4</span> audio flow</h2>
+<div class="outline-text-2" id="text-4">
 <p>
 Audio runs a weird loop. The mics wire into a mixer that runs to <span class="underline">another</span>
 mixer. It's necessary for the headphones to get both the output of the computer
-and the talk-back (link needed) of the mics themselves.
+and the <a href="https://en.wikipedia.org/wiki/Sidetone">sidetone</a> of the mics themselves. Sidetone is useful so speakers get a
+sense that the system is picking up their voice, and also gives them a sense of
+how loud they are being picked up.
 </p>
 
 
 <div class="figure">
-<p><img src="audio-loop.png" alt="audio-loop.png" />
+<p><object type="image/svg+xml" data="audio-loop.svg" class="org-svg">
+Sorry, your browser does not support SVG.</object>
 </p>
 </div>
 
@@ -91,13 +123,13 @@ audio up to 100% and announcers can turn down as needed.</span>
 </div>
 </div>
 
-<div id="outline-container-orgeb420b3" class="outline-2">
-<h2 id="orgeb420b3"><span class="section-number-2">4</span> troubleshooting</h2>
-<div class="outline-text-2" id="text-4">
+<div id="outline-container-orgaeca993" class="outline-2">
+<h2 id="orgaeca993"><span class="section-number-2">5</span> troubleshooting</h2>
+<div class="outline-text-2" id="text-5">
 </div>
-<div id="outline-container-org7131786" class="outline-3">
-<h3 id="org7131786"><span class="section-number-3">4.1</span> If the input is not recognized on the computer's end</h3>
-<div class="outline-text-3" id="text-4-1">
+<div id="outline-container-org011fa4c" class="outline-3">
+<h3 id="org011fa4c"><span class="section-number-3">5.1</span> If the input is not recognized on the computer's end</h3>
+<div class="outline-text-3" id="text-5-1">
 <p>
 The known recipe (not fool proof, but most of the work):
 </p>

@@ -7,23 +7,36 @@ categories: killer-queen
 ---
 #+END_EXPORT
 
-#+TITLE:  Killer Queen Streaming Guide
-#+AUTHOR: Logan Barnett
-#+EMAIL:  logustus@gmail.com
-#+DATE:   <2017-11-05 Sun> 
-#+TAGS:   killer-queen
+#+TITLE:   Killer Queen Streaming Guide
+#+AUTHOR:  Logan Barnett
+#+EMAIL:   logustus@gmail.com
+#+DATE:    <2017-11-05 Sun> 
+#+TAGS:    killer-queen
 
-As part of trying to reduce the Portland scene's bus number in regards to our
-streaming setup, I've taken to learning our current setup. This setup isn't
-something I've begun, but as part of learning it I am codifying it all here so
-others might benefit or even contribute back suggestions. The dream is to have a
+#+TOC: headlines 3
+
+* introduction
+As part of trying to reduce the Portland scene's [[https://en.wikipedia.org/wiki/Bus_factor][bus number]] in regards to our
+streaming setup I've recorded notes here as best I can. The dream is to have a
 pretty foolproof setup that anyone mildly technically competent could apply to
-their scene's cab.
+their scene's cab. People can and should provide suggestions and corrections so
+our community can better thrive. As a general policy I won't use a comment
+system on this site because static hosting is awesome and also because
+[[https://github.com/tessalt/echo-chamber-js][echo-chamber.js]] makes an excellent point. Feel free to contact me via email,
+Twitter, or carrier pigeon for any improvements we can make here.
 
 * improvements :noexport:
 - [ ] Vectorize some of the graphics on the challonge imported view.
 - [ ] Need network access somehow - wifi is currently not known but could be
   acquired via Javan Ivey or Dylan Higgins.
+- [ ] Improve styling of the org exports (thus this page as well). Make them
+  look more like as they are when edited in Emacs.
+- [ ] Find out what changes Javan might have made to his clone of Matt's repo.
+- [ ] Configure PlantUML diagrams to emit colors that are closer to the current
+  Emacs theme.
+- [ ] Include images for reference. I took many pictures.
+- [ ] Specify when we're being generic vs specific in terms of hardware used vs.
+  what's possible for use.
 
 * challonge integration
 Need access to Matt Wire's github repo that has a Rails server.
@@ -45,9 +58,11 @@ There is a 4 port splitter in cab. Two go to the two monitors. The overhead
 monitor takes another slot, and the projector takes the final.
 
 This is how our specific setup looks at PDX. Our stream box is the computer
-running OBS (link).
+running [[http://openbroadcaster.com][OBS]].
 
-#+BEGIN_SRC plantuml :file video-flow.png
+#+BEGIN_SRC plantuml :file video-flow.svg :java -Djava.awt.headless=true
+skinparam monochrome reverse
+
 [cab]
 () splitter
 [stream-box]
@@ -68,15 +83,19 @@ gcam --> [stream-box]
 #+END_SRC
 
 #+RESULTS:
-[[file:video-flow.png]]
+[[file:video-flow.svg]]
 
 * audio flow
 
 Audio runs a weird loop. The mics wire into a mixer that runs to _another_
 mixer. It's necessary for the headphones to get both the output of the computer
-and the talk-back (link needed) of the mics themselves.
+and the [[https://en.wikipedia.org/wiki/Sidetone][sidetone]] of the mics themselves. Sidetone is useful so speakers get a
+sense that the system is picking up their voice, and also gives them a sense of
+how loud they are being picked up.
 
-#+BEGIN_SRC plantuml :file audio-loop.png
+#+BEGIN_SRC plantuml :file audio-loop.svg :java -Djava.awt.headless=true
+skinparam monochrome reverse
+
 interface "left mic" as lmic
 interface "right mic" as rmic
 interface "left headset" as lhead
@@ -100,7 +119,7 @@ cpu --> [4-to-1-mixer] : headphone to input
 #+END_SRC
 
 #+RESULTS:
-[[file:audio-loop.png]]
+[[file:audio-loop.svg]]
 
 This setup also provides lots of knobs to turn in terms of making sure the
 announcers can turn up their own voices and also turn up the input of what they
@@ -118,8 +137,5 @@ The known recipe (not fool proof, but most of the work):
 I export this with the following:
 
 #+BEGIN_SRC emacs-lisp
-(org-html-export-to-html)
+(org-to-jekyll)
 #+END_SRC
-
-#+RESULTS:
-: killer-queen-streaming-guide.html
