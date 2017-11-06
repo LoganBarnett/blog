@@ -1,0 +1,116 @@
+#+TITLE:  Killer Queen Streaming Guide
+#+AUTHOR: Logan Barnett
+#+EMAIL:  logustus@gmail.com
+#+DATE:   <2017-11-05 Sun> 
+#+TAGS:   killer-queen
+
+As part of trying to reduce the Portland scene's bus number in regards to our
+streaming setup, I've taken to learning our current setup. This setup isn't
+something I've begun, but as part of learning it I am codifying it all here so
+others might benefit or even contribute back suggestions. The dream is to have a
+pretty foolproof setup that anyone mildly technically competent could apply to
+their scene's cab.
+
+* improvements :noexport:
+- [ ] Vectorize some of the graphics on the challonge imported view.
+- [ ] Need network access somehow - wifi is currently not known but could be
+  acquired via Javan Ivey or Dylan Higgins.
+
+* challonge integration
+Need access to Matt Wire's github repo that has a Rails server.
+- [[https://github.com/boxofmattwire/kq-tournament][Matt Wire's repo]]
+- [[https://github.com/LoganBarnett/kq-tournament][Logan's fork]]
+
+Currently this repo isn't public.
+
+** workarounds
+Changes to the Challonge setup screws up the integration with the Rails server.
+The Rails server at that point can't be used (or maybe the data would need to be
+wiped). At that point, the server is basically useless to us (and we shouldn't
+try troubleshooting the server during a streaming run if possible). Instead
+there are text files which override the blue score, blue name, gold score, and
+gold name. These appear to be sources in OBS. I haven't verified this yet.
+
+* video flow
+There is a 4 port splitter in cab. Two go to the two monitors. The overhead
+monitor takes another slot, and the projector takes the final.
+
+This is how our specific setup looks at PDX. Our stream box is the computer
+running OBS (link).
+
+#+BEGIN_SRC plantuml :file video-flow.png
+[cab]
+() splitter
+[stream-box]
+() "blue webcam" as bcam
+() "gold webcam" as gcam
+() "extra monitor" as auxout
+() "blue monitor" as bmonitor
+() "gold monitor" as gmonitor
+
+[cab] --> splitter
+bcam --> [stream-box]
+splitter --> [stream-box]
+splitter --> auxout
+splitter --> gmonitor
+splitter --> bmonitor
+gcam --> [stream-box]
+
+#+END_SRC
+
+#+RESULTS:
+[[file:video-flow.png]]
+
+* audio flow
+
+Audio runs a weird loop. The mics wire into a mixer that runs to _another_
+mixer. It's necessary for the headphones to get both the output of the computer
+and the talk-back (link needed) of the mics themselves.
+
+#+BEGIN_SRC plantuml :file audio-loop.png
+interface "left mic" as lmic
+interface "right mic" as rmic
+interface "left headset" as lhead
+interface "right headset" as rhead
+interface "computer" as cpu
+
+[thunderbolt-mixer]
+[4-to-1-mixer]
+[amp]
+
+lmic --> [thunderbolt-mixer]
+rmic --> [thunderbolt-mixer]
+
+[thunderbolt-mixer] -> [4-to-1-mixer] : audio
+[thunderbolt-mixer] --> cpu : thunderbolt
+cpu --> [4-to-1-mixer] : headphone to input
+[4-to-1-mixer] -> [amp] : output to input
+[amp] --> lhead
+[amp] --> rhead
+
+#+END_SRC
+
+#+RESULTS:
+[[file:audio-loop.png]]
+
+This setup also provides lots of knobs to turn in terms of making sure the
+announcers can turn up their own voices and also turn up the input of what they
+are hearing from the game. This is done individually per the mixer and amp knobs
+available per input/output (mixer and amp, respectively). _Turn the computer's
+audio up to 100% and announcers can turn down as needed._
+
+* troubleshooting
+** If the input is not recognized on the computer's end
+The known recipe (not fool proof, but most of the work):
+1. Reboot the cabs with the computer's input (HDMI capture box).
+2. Reintroduce other slots (monitors x2 and the projector).
+* exporting notes :noexport:
+
+I export this with the following:
+
+#+BEGIN_SRC emacs-lisp
+(org-html-export-to-html)
+#+END_SRC
+
+#+RESULTS:
+: killer-queen-streaming-guide.html
