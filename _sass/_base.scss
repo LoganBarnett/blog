@@ -210,3 +210,20 @@ pre {
         }
     }
 }
+
+h1 {
+  color: $head1;
+  text-transform: capitalize;
+}
+h2 {
+  color: $head2;
+  text-transform: capitalize;
+}
+h3 {
+  color: $head3;
+  text-transform: capitalize;
+}
+h4 {
+  color: $head4;
+  text-transform: capitalize;
+}
