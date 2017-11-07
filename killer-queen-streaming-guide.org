@@ -127,6 +127,80 @@ are hearing from the game. This is done individually per the mixer and amp knobs
 available per input/output (mixer and amp, respectively). _Turn the computer's
 audio up to 100% and announcers can turn down as needed._
 
+* pdx setup
+
+This portion is specifically for the Portland setup at Ground Kontrol.
+
+** video
+HDMI is provided as an input source via a computer's Thunderbolt port (I need to
+check, but I'm pretty sure it's not mini display port). This runs from the video
+splitter to the laptop.
+
+#+ATTR_ORG: :width 400
+[[./assets/hdmi-to-thunderbolt-input-01.jpg]]
+
+When the device is working, you'll see a white light near the Thunderbolt
+connection. 
+
+#+ATTR_ORG: :width 400
+[[file:assets/hdmi-to-thunderbolt-input-activated-01.jpg]]
+
+** audio
+
+Here's the amp as labeled in the diagram above:
+
+#+ATTR_ORG: :width 400
+[[./assets/audio-4-channel-amp-01.jpg]]
+
+We could use an image that's in focus...
+
+The 4 channel mixer:
+
+#+ATTR_ORG: :width 400
+[[./assets/audio-4-channel-mixer-01.jpg]]
+
+These devices appear to be very similar, but they are very different. Basically
+the mixer combines a series of inputs into a single output, and the amp splits a
+single input into a series of outputs.
+
+The mic mixer:
+
+#+ATTR_ORG: :width 400
+[[./assets/audio-mic-mixer-01.jpg]]
+
+The mics connect directly to this.
+
+** all together now
+
+#+ATTR_ORG: :width 400
+[[./assets/pdx-working-setup-01.jpg]]
+
+#+ATTR_ORG: :width 400
+[[./assets/pdx-working-setup-02.jpg]]
+
+** anti trip trick
+
+Ground Kontrol has seats that have these glowing strips on their corners and
+sides.
+
+#+ATTR_ORG: :width 400
+[[./assets/anti-cable-snag-trick-01.jpg]]
+
+These strips slide up a little bit. There's a small channel between the strip
+and the side of the seats. You can stuff some of the cables you need to run
+(such as the cables for the webcams) into this channel. Here we've stuffed the
+cables in there as best we can with the strip still up.
+
+#+ATTR_ORG: :width 400
+[[./assets/anti-cable-snag-trick-03.jpg]]
+
+Once the cables are in place, we can slide the strip back down, and it will hold
+the cables in place well enough to prevent feet from kicking the cables out or
+other snares from occurring. Here's the closed version with cables inserted:
+
+#+ATTR_ORG: :width 400
+[[./assets/anti-cable-snag-trick-04.jpg]]
+
 * troubleshooting
 ** If the input is not recognized on the computer's end
 The known recipe (not fool proof, but most of the work):

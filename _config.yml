@@ -9,8 +9,7 @@ twitter_username: logan_barnett
 github_username:  LoganBarnett
 
 exclude: [
-  "_posts/*.org",
-  "*.org"
+  "_posts/*.org"
   ]
 
 # Build settings
