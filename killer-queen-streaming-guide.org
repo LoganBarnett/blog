@@ -130,76 +130,224 @@ audio up to 100% and announcers can turn down as needed._
 * pdx setup
 
 This portion is specifically for the Portland setup at Ground Kontrol.
+** facilities
 
-** video
-HDMI is provided as an input source via a computer's Thunderbolt port (I need to
-check, but I'm pretty sure it's not mini display port). This runs from the video
-splitter to the laptop.
+Generally we need:
+- A folding table
+- A rug to cover the cables that run between the cabs and the table
+- A power strip for all of the hardware
+- A laptop with Thunderbolt support (moderately recent Macs have one or two).
 
-#+ATTR_ORG: :width 400
-[[./assets/hdmi-to-thunderbolt-input-01.jpg]]
+Thunderbolt ports are physically compatible with Mini Display. Thunderbolt ports
+can accept a Mini Display port, but it doesn't go the other way around.
 
-When the device is working, you'll see a white light near the Thunderbolt
-connection. 
+A nice to have is the Thunderbolt display. It's a monitor that connections via -
+wait for it - Thunderbolt. The display has a webcam, and is a rather large
+screen that the commentators can easily share. It also leaves the computer free
+for doing score management, enqueuing commercials or transitions, and managing
+other parts of the production. Right now the Thunderbolt Display is on loan from
+Day Logan.
 
-#+ATTR_ORG: :width 400
-[[file:assets/hdmi-to-thunderbolt-input-activated-01.jpg]]
+** hardware
+*** video
+ HDMI is provided as an input source via a computer's Thunderbolt port (I need to
+ check, but I'm pretty sure it's not mini display port). This runs from the video
+ splitter to the laptop.
 
-** audio
+ #+ATTR_ORG: :width 400
+ [[./assets/hdmi-to-thunderbolt-input-01.jpg]]
 
-Here's the amp as labeled in the diagram above:
+ When the device is working, you'll see a white light near the Thunderbolt
+ connection.
 
-#+ATTR_ORG: :width 400
-[[./assets/audio-4-channel-amp-01.jpg]]
+ #+ATTR_ORG: :width 400
+ [[file:assets/hdmi-to-thunderbolt-input-activated-01.jpg]]
 
-We could use an image that's in focus...
+*** audio
 
-The 4 channel mixer:
+ Here's the amp as labeled in the diagram above:
 
-#+ATTR_ORG: :width 400
-[[./assets/audio-4-channel-mixer-01.jpg]]
+ #+ATTR_ORG: :width 400
+ [[./assets/audio-4-channel-amp-01.jpg]]
 
-These devices appear to be very similar, but they are very different. Basically
-the mixer combines a series of inputs into a single output, and the amp splits a
-single input into a series of outputs.
+ We could use an image that's in focus...
 
-The mic mixer:
+ The 4 channel mixer:
 
-#+ATTR_ORG: :width 400
-[[./assets/audio-mic-mixer-01.jpg]]
+ #+ATTR_ORG: :width 400
+ [[./assets/audio-4-channel-mixer-01.jpg]]
 
-The mics connect directly to this.
+ These devices appear to be very similar, but they are very different. Basically
+ the mixer combines a series of inputs into a single output, and the amp splits a
+ single input into a series of outputs.
 
-** all together now
+ The mic mixer:
 
-#+ATTR_ORG: :width 400
-[[./assets/pdx-working-setup-01.jpg]]
+ #+ATTR_ORG: :width 400
+ [[./assets/audio-mic-mixer-01.jpg]]
 
-#+ATTR_ORG: :width 400
-[[./assets/pdx-working-setup-02.jpg]]
+ The mics connect directly to this.
 
-** anti trip trick
+*** all together now
 
-Ground Kontrol has seats that have these glowing strips on their corners and
-sides.
+ #+ATTR_ORG: :width 400
+ [[./assets/pdx-working-setup-01.jpg]]
 
-#+ATTR_ORG: :width 400
-[[./assets/anti-cable-snag-trick-01.jpg]]
+ #+ATTR_ORG: :width 400
+ [[./assets/pdx-working-setup-02.jpg]]
 
-These strips slide up a little bit. There's a small channel between the strip
-and the side of the seats. You can stuff some of the cables you need to run
-(such as the cables for the webcams) into this channel. Here we've stuffed the
-cables in there as best we can with the strip still up.
+*** anti trip trick
 
-#+ATTR_ORG: :width 400
-[[./assets/anti-cable-snag-trick-03.jpg]]
+ Ground Kontrol has seats that have these glowing strips on their corners and
+ sides.
 
-Once the cables are in place, we can slide the strip back down, and it will hold
-the cables in place well enough to prevent feet from kicking the cables out or
-other snares from occurring. Here's the closed version with cables inserted:
+ #+ATTR_ORG: :width 400
+ [[./assets/anti-cable-snag-trick-01.jpg]]
 
-#+ATTR_ORG: :width 400
-[[./assets/anti-cable-snag-trick-04.jpg]]
+ These strips slide up a little bit. There's a small channel between the strip
+ and the side of the seats. You can stuff some of the cables you need to run
+ (such as the cables for the webcams) into this channel. Here we've stuffed the
+ cables in there as best we can with the strip still up.
+
+ #+ATTR_ORG: :width 400
+ [[./assets/anti-cable-snag-trick-03.jpg]]
+
+ Once the cables are in place, we can slide the strip back down, and it will hold
+ the cables in place well enough to prevent feet from kicking the cables out or
+ other snares from occurring. Here's the closed version with cables inserted:
+
+ #+ATTR_ORG: :width 400
+ [[./assets/anti-cable-snag-trick-04.jpg]]
+
+** software
+
+[[]]
+
+*** challonge
+
+The URL we use is in the format =kqpdx<MMDDYY>=, where =MM= is the number of the
+month, =DD= the day of the month, and =YY= is the last two digits of the year.
+If today's date is <2017-11-30 Thu>, the URL will be =kqpdx113017=.
+
+[[assets/challonge-name-01.png]]
+
+Here's a list of things to clicky or type:
+
+- Game: killer queen
+- Single Stage Tournament
+- Double Elimination
+- 1-2 Matches
+- Provide a list of participants
+- Save and Continue
+
+Example:
+
+[[assets/challonge-setup-01.png]]
+
+*** kq-tournament
+
+**** installation
+
+Much of this is covered in the repo's =README.md=. This assumes running on MacOS
+or Linux. Windows is probably doable, but that's beyond the scope of this
+document short of someone else's contribution.
+
+All of the instructions below assume you're running out of a terminal. On MacOS,
+you can run =Terminal.app= for this.
+
+Your environment needs the following:
+- =rbenv= or =rvm= so you can get on Ruby 2.2.3.
+- Postgres 9.4.5.0 (greater will probably work, but the =9= is likely important.
+- The =bundler= gem installed globally.
+- =git=
+- A [[https://github.com][Github]] account for cloning the repository.
+- Your public ssh key uploaded to github so you can clone the repository.
+
+TODO: Open source the repository. Matt Wire has generously agreed to do this,
+but it needs a little cleanup.
+
+Clone the repository with git, and then =cd= into it.
+#+BEGIN_EXAMPLE sh
+git clone git@github.com:boxofmattwire/kq-tournament.git
+cd kq-tournament
+#+END_EXAMPLE
+
+Here's an example =database.yml=. This should go in =config/database.yml=. Note
+that =username= and =password= is left out. You can add these in if you have
+accounts setup on your PostgreSQL server. The stock setup from Homebrew allows
+local connections with no credentials.
+
+#+NAME kq-tournament-example-database-config
+#+BEGIN_EXAMPLE yaml
+development:
+  adapter: postgresql
+  database: kqt_dev
+  pool: 5
+  timeout: 5000
+  encoding: utf8
+
+test:
+  adapter: postgresql
+  database: kqt_test
+  pool: 5
+  timeout: 5000
+  encoding: utf8
+#+END_EXAMPLE
+
+This creates the file for you:
+
+#+BEGIN_SRC sh :tangle t
+echo "
+<<kq-tournament-example-database-config>
+" > config/database.yml
+#+END_SRC
+
+Install all of the gems the repo uses.
+
+#+BEGIN_SRC sh
+bundle install
+#+END_SRC
+
+Assuming a Homebrew installed postgres, the database server is started like so:
+#+BEGIN_SRC sh
+pg_ctl -D /usr/local/var/postgres start
+#+END_SRC
+
+It can be shut down with:
+#+BEGIN_EXAMPLE sh
+pg_ctl -D /usr/local/var/postgres stop
+#+END_EXAMPLE
+
+Create the initial database and its tables.
+#+BEGIN_SRC sh
+bundle exec rake db:create db:migrate
+#+END_SRC
+
+**** running
+Once you have everything setup and the database server is running:
+#+BEGIN_SRC sh
+bundle exec rails server
+#+END_SRC
+
+**** stopping
+Hold =Ctrl= and press =C=. This will return you to your normal shell prompt.
+
+Then shut down the database server:
+#+BEGIN_EXAMPLE sh
+pg_ctl -D /usr/local/var/postgres stop
+#+END_EXAMPLE
+
+**** operating
+
+*** OBS
+
+[[https://obsproject.com][OBS]] (pronounced "awbz", short for Open Broadcaster Software) is what we use to
+do streaming. Setting up streaming to Twitch is pretty simple with OBS. All
+that's required is an API Key from Ground Kontrol. The API key is secret so it
+shouldn't be published anywhere. This means you have to talk to staff or
+ownership at Ground Kontrol in order to get it.
+
+We still need to get a list of contacts that can provide the key.
 
 * troubleshooting
 ** If the input is not recognized on the computer's end
