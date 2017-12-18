@@ -277,8 +277,8 @@ that =username= and =password= is left out. You can add these in if you have
 accounts setup on your PostgreSQL server. The stock setup from Homebrew allows
 local connections with no credentials.
 
-#+NAME kq-tournament-example-database-config
-#+BEGIN_EXAMPLE yaml
+#+name: kq-tournament-example-database-config
+#+begin_src yaml :tangle yes :exports code
 development:
   adapter: postgresql
   database: kqt_dev
@@ -292,13 +292,13 @@ test:
   pool: 5
   timeout: 5000
   encoding: utf8
-#+END_EXAMPLE
+#+end_src
 
 This creates the file for you:
 
-#+BEGIN_SRC sh :tangle t
+#+BEGIN_SRC sh :exports code :tangle yes :noweb yes
 echo "
-<<kq-tournament-example-database-config>
+<<kq-tournament-example-database-config>>
 " > config/database.yml
 #+END_SRC
 
