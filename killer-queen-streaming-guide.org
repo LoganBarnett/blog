@@ -229,7 +229,7 @@ The URL we use is in the format =kqpdx<MMDDYY>=, where =MM= is the number of the
 month, =DD= the day of the month, and =YY= is the last two digits of the year.
 If today's date is <2017-11-30 Thu>, the URL will be =kqpdx113017=.
 
-[[assets/challonge-name-01.png]]
+[[./assets/challonge-name-01.png]]
 
 Here's a list of things to clicky or type:
 
@@ -242,7 +242,7 @@ Here's a list of things to clicky or type:
 
 Example:
 
-[[assets/challonge-setup-01.png]]
+[[./assets/challonge-setup-01.png]]
 
 *** kq-tournament
 

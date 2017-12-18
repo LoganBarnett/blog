@@ -9,33 +9,45 @@ categories: killer-queen
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#orge2e7e86">1. introduction</a></li>
-<li><a href="#orgf5c090d">2. challonge integration</a>
+<li><a href="#org9a5d0ea">1. introduction</a></li>
+<li><a href="#org942ee51">2. challonge integration</a>
 <ul>
-<li><a href="#orgd6a28a5">2.1. workarounds</a></li>
+<li><a href="#org9fde798">2.1. workarounds</a></li>
 </ul>
 </li>
-<li><a href="#org4884f62">3. video flow</a></li>
-<li><a href="#orgba46660">4. audio flow</a></li>
-<li><a href="#org2be7d07">5. pdx setup</a>
+<li><a href="#orgb8d3cbb">3. video flow</a></li>
+<li><a href="#org59f9dea">4. audio flow</a></li>
+<li><a href="#orgbca8744">5. pdx setup</a>
 <ul>
-<li><a href="#orgdde7a97">5.1. video</a></li>
-<li><a href="#org36fd692">5.2. audio</a></li>
-<li><a href="#orge2b74e4">5.3. all together now</a></li>
-<li><a href="#org70a1865">5.4. anti trip trick</a></li>
+<li><a href="#orge31e13f">5.1. facilities</a></li>
+<li><a href="#orgad68d6e">5.2. hardware</a>
+<ul>
+<li><a href="#org01df8ef">5.2.1. video</a></li>
+<li><a href="#orgeb81cfe">5.2.2. audio</a></li>
+<li><a href="#orgdd34501">5.2.3. all together now</a></li>
+<li><a href="#orgda36353">5.2.4. anti trip trick</a></li>
 </ul>
 </li>
-<li><a href="#orge8ec6e9">6. troubleshooting</a>
+<li><a href="#orgc846503">5.3. software</a>
 <ul>
-<li><a href="#orga63db40">6.1. If the input is not recognized on the computer's end</a></li>
+<li><a href="#org94cc759">5.3.1. challonge</a></li>
+<li><a href="#org2081807">5.3.2. kq-tournament</a></li>
+<li><a href="#org7c277f1">5.3.3. OBS</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#orgd366112">6. troubleshooting</a>
+<ul>
+<li><a href="#org4879c21">6.1. If the input is not recognized on the computer's end</a></li>
 </ul>
 </li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-orge2e7e86" class="outline-2">
-<h2 id="orge2e7e86"><span class="section-number-2">1</span> introduction</h2>
+<div id="outline-container-org9a5d0ea" class="outline-2">
+<h2 id="org9a5d0ea"><span class="section-number-2">1</span> introduction</h2>
 <div class="outline-text-2" id="text-1">
 <p>
 As part of trying to reduce the Portland scene's <a href="https://en.wikipedia.org/wiki/Bus_factor">bus number</a> in regards to our
@@ -50,8 +62,8 @@ Twitter, or carrier pigeon for any improvements we can make here.
 </div>
 </div>
 
-<div id="outline-container-orgf5c090d" class="outline-2">
-<h2 id="orgf5c090d"><span class="section-number-2">2</span> challonge integration</h2>
+<div id="outline-container-org942ee51" class="outline-2">
+<h2 id="org942ee51"><span class="section-number-2">2</span> challonge integration</h2>
 <div class="outline-text-2" id="text-2">
 <p>
 Need access to Matt Wire's github repo that has a Rails server.
@@ -66,8 +78,8 @@ Currently this repo isn't public.
 </p>
 </div>
 
-<div id="outline-container-orgd6a28a5" class="outline-3">
-<h3 id="orgd6a28a5"><span class="section-number-3">2.1</span> workarounds</h3>
+<div id="outline-container-org9fde798" class="outline-3">
+<h3 id="org9fde798"><span class="section-number-3">2.1</span> workarounds</h3>
 <div class="outline-text-3" id="text-2-1">
 <p>
 Changes to the Challonge setup screws up the integration with the Rails server.
@@ -81,8 +93,8 @@ gold name. These appear to be sources in OBS. I haven't verified this yet.
 </div>
 </div>
 
-<div id="outline-container-org4884f62" class="outline-2">
-<h2 id="org4884f62"><span class="section-number-2">3</span> video flow</h2>
+<div id="outline-container-orgb8d3cbb" class="outline-2">
+<h2 id="orgb8d3cbb"><span class="section-number-2">3</span> video flow</h2>
 <div class="outline-text-2" id="text-3">
 <p>
 There is a 4 port splitter in cab. Two go to the two monitors. The overhead
@@ -103,8 +115,8 @@ Sorry, your browser does not support SVG.</object>
 </div>
 </div>
 
-<div id="outline-container-orgba46660" class="outline-2">
-<h2 id="orgba46660"><span class="section-number-2">4</span> audio flow</h2>
+<div id="outline-container-org59f9dea" class="outline-2">
+<h2 id="org59f9dea"><span class="section-number-2">4</span> audio flow</h2>
 <div class="outline-text-2" id="text-4">
 <p>
 Audio runs a weird loop. The mics wire into a mixer that runs to <span class="underline">another</span>
@@ -131,17 +143,49 @@ audio up to 100% and announcers can turn down as needed.</span>
 </div>
 </div>
 
-<div id="outline-container-org2be7d07" class="outline-2">
-<h2 id="org2be7d07"><span class="section-number-2">5</span> pdx setup</h2>
+<div id="outline-container-orgbca8744" class="outline-2">
+<h2 id="orgbca8744"><span class="section-number-2">5</span> pdx setup</h2>
 <div class="outline-text-2" id="text-5">
 <p>
 This portion is specifically for the Portland setup at Ground Kontrol.
 </p>
 </div>
-
-<div id="outline-container-orgdde7a97" class="outline-3">
-<h3 id="orgdde7a97"><span class="section-number-3">5.1</span> video</h3>
+<div id="outline-container-orge31e13f" class="outline-3">
+<h3 id="orge31e13f"><span class="section-number-3">5.1</span> facilities</h3>
 <div class="outline-text-3" id="text-5-1">
+<p>
+Generally we need:
+</p>
+<ul class="org-ul">
+<li>A folding table</li>
+<li>A rug to cover the cables that run between the cabs and the table</li>
+<li>A power strip for all of the hardware</li>
+<li>A laptop with Thunderbolt support (moderately recent Macs have one or two).</li>
+</ul>
+
+<p>
+Thunderbolt ports are physically compatible with Mini Display. Thunderbolt ports
+can accept a Mini Display port, but it doesn't go the other way around.
+</p>
+
+<p>
+A nice to have is the Thunderbolt display. It's a monitor that connections via -
+wait for it - Thunderbolt. The display has a webcam, and is a rather large
+screen that the commentators can easily share. It also leaves the computer free
+for doing score management, enqueuing commercials or transitions, and managing
+other parts of the production. Right now the Thunderbolt Display is on loan from
+Day Logan.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgad68d6e" class="outline-3">
+<h3 id="orgad68d6e"><span class="section-number-3">5.2</span> hardware</h3>
+<div class="outline-text-3" id="text-5-2">
+</div>
+<div id="outline-container-org01df8ef" class="outline-4">
+<h4 id="org01df8ef"><span class="section-number-4">5.2.1</span> video</h4>
+<div class="outline-text-4" id="text-5-2-1">
 <p>
 HDMI is provided as an input source via a computer's Thunderbolt port (I need to
 check, but I'm pretty sure it's not mini display port). This runs from the video
@@ -156,7 +200,7 @@ splitter to the laptop.
 
 <p>
 When the device is working, you'll see a white light near the Thunderbolt
-connection. 
+connection.
 </p>
 
 
@@ -167,9 +211,9 @@ connection.
 </div>
 </div>
 
-<div id="outline-container-org36fd692" class="outline-3">
-<h3 id="org36fd692"><span class="section-number-3">5.2</span> audio</h3>
-<div class="outline-text-3" id="text-5-2">
+<div id="outline-container-orgeb81cfe" class="outline-4">
+<h4 id="orgeb81cfe"><span class="section-number-4">5.2.2</span> audio</h4>
+<div class="outline-text-4" id="text-5-2-2">
 <p>
 Here's the amp as labeled in the diagram above:
 </p>
@@ -216,9 +260,9 @@ The mics connect directly to this.
 </div>
 </div>
 
-<div id="outline-container-orge2b74e4" class="outline-3">
-<h3 id="orge2b74e4"><span class="section-number-3">5.3</span> all together now</h3>
-<div class="outline-text-3" id="text-5-3">
+<div id="outline-container-orgdd34501" class="outline-4">
+<h4 id="orgdd34501"><span class="section-number-4">5.2.3</span> all together now</h4>
+<div class="outline-text-4" id="text-5-2-3">
 
 <div class="figure">
 <p><img src="./assets/pdx-working-setup-01.jpg" alt="pdx-working-setup-01.jpg" />
@@ -233,9 +277,9 @@ The mics connect directly to this.
 </div>
 </div>
 
-<div id="outline-container-org70a1865" class="outline-3">
-<h3 id="org70a1865"><span class="section-number-3">5.4</span> anti trip trick</h3>
-<div class="outline-text-3" id="text-5-4">
+<div id="outline-container-orgda36353" class="outline-4">
+<h4 id="orgda36353"><span class="section-number-4">5.2.4</span> anti trip trick</h4>
+<div class="outline-text-4" id="text-5-2-4">
 <p>
 Ground Kontrol has seats that have these glowing strips on their corners and
 sides.
@@ -275,12 +319,224 @@ other snares from occurring. Here's the closed version with cables inserted:
 </div>
 </div>
 
-<div id="outline-container-orge8ec6e9" class="outline-2">
-<h2 id="orge8ec6e9"><span class="section-number-2">6</span> troubleshooting</h2>
+<div id="outline-container-orgc846503" class="outline-3">
+<h3 id="orgc846503"><span class="section-number-3">5.3</span> software</h3>
+<div class="outline-text-3" id="text-5-3">
+<p>
+[[]]
+</p>
+</div>
+
+<div id="outline-container-org94cc759" class="outline-4">
+<h4 id="org94cc759"><span class="section-number-4">5.3.1</span> challonge</h4>
+<div class="outline-text-4" id="text-5-3-1">
+<p>
+The URL we use is in the format <code>kqpdx&lt;MMDDYY&gt;</code>, where <code>MM</code> is the number of the
+month, <code>DD</code> the day of the month, and <code>YY</code> is the last two digits of the year.
+If today's date is <span class="timestamp-wrapper"><span class="timestamp">&lt;2017-11-30 Thu&gt;</span></span>, the URL will be <code>kqpdx113017</code>.
+</p>
+
+
+<div class="figure">
+<p><img src="./assets/challonge-name-01.png" alt="challonge-name-01.png" />
+</p>
+</div>
+
+<p>
+Here's a list of things to clicky or type:
+</p>
+
+<ul class="org-ul">
+<li>Game: killer queen</li>
+<li>Single Stage Tournament</li>
+<li>Double Elimination</li>
+<li>1-2 Matches</li>
+<li>Provide a list of participants</li>
+<li>Save and Continue</li>
+</ul>
+
+<p>
+Example:
+</p>
+
+
+<div class="figure">
+<p><img src="./assets/challonge-setup-01.png" alt="challonge-setup-01.png" />
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org2081807" class="outline-4">
+<h4 id="org2081807"><span class="section-number-4">5.3.2</span> kq-tournament</h4>
+<div class="outline-text-4" id="text-5-3-2">
+</div>
+<ol class="org-ol">
+<li><a id="org784beb8"></a>installation<br />
+<div class="outline-text-5" id="text-5-3-2-1">
+<p>
+Much of this is covered in the repo's <code>README.md</code>. This assumes running on MacOS
+or Linux. Windows is probably doable, but that's beyond the scope of this
+document short of someone else's contribution.
+</p>
+
+<p>
+All of the instructions below assume you're running out of a terminal. On MacOS,
+you can run <code>Terminal.app</code> for this.
+</p>
+
+<p>
+Your environment needs the following:
+</p>
+<ul class="org-ul">
+<li><code>rbenv</code> or <code>rvm</code> so you can get on Ruby 2.2.3.</li>
+<li>Postgres 9.4.5.0 (greater will probably work, but the <code>9</code> is likely important.</li>
+<li>The <code>bundler</code> gem installed globally.</li>
+<li><code>git</code></li>
+<li>A <a href="https://github.com">Github</a> account for cloning the repository.</li>
+<li>Your public ssh key uploaded to github so you can clone the repository.</li>
+</ul>
+
+<p>
+TODO: Open source the repository. Matt Wire has generously agreed to do this,
+but it needs a little cleanup.
+</p>
+
+<p>
+Clone the repository with git, and then <code>cd</code> into it.
+</p>
+<pre class="example">
+git clone git@github.com:boxofmattwire/kq-tournament.git
+cd kq-tournament
+</pre>
+
+<p>
+Here's an example <code>database.yml</code>. This should go in <code>config/database.yml</code>. Note
+that <code>username</code> and <code>password</code> is left out. You can add these in if you have
+accounts setup on your PostgreSQL server. The stock setup from Homebrew allows
+local connections with no credentials.
+</p>
+
+<p>
+#+NAME kq-tournament-example-database-config
+</p>
+<pre class="example">
+development:
+  adapter: postgresql
+  database: kqt_dev
+  pool: 5
+  timeout: 5000
+  encoding: utf8
+
+test:
+  adapter: postgresql
+  database: kqt_test
+  pool: 5
+  timeout: 5000
+  encoding: utf8
+</pre>
+
+<p>
+This creates the file for you:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh"><span style="color: #4f97d7;">echo</span> <span style="color: #2d9574;">"</span>&#57344;&#57345;&#57345;
+<span style="color: #2d9574;">&lt;&lt;kq-tournament-example-database-config&gt;</span>&#57344;&#57345;&#57345;
+<span style="color: #2d9574;">"</span> &gt; config/database.yml
+</pre>
+</div>
+
+<p>
+Install all of the gems the repo uses.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh">bundle install
+</pre>
+</div>
+
+<p>
+Assuming a Homebrew installed postgres, the database server is started like so:
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">pg_ctl -D /usr/local/var/postgres start
+</pre>
+</div>
+
+<p>
+It can be shut down with:
+</p>
+<pre class="example">
+pg_ctl -D /usr/local/var/postgres stop
+</pre>
+
+<p>
+Create the initial database and its tables.
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">bundle exec rake db:create db:migrate
+</pre>
+</div>
+</div>
+</li>
+
+<li><a id="org64e85ea"></a>running<br />
+<div class="outline-text-5" id="text-5-3-2-2">
+<p>
+Once you have everything setup and the database server is running:
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">bundle exec rails server
+</pre>
+</div>
+</div>
+</li>
+
+<li><a id="org27446b0"></a>stopping<br />
+<div class="outline-text-5" id="text-5-3-2-3">
+<p>
+Hold <code>Ctrl</code> and press <code>C</code>. This will return you to your normal shell prompt.
+</p>
+
+<p>
+Then shut down the database server:
+</p>
+<pre class="example">
+pg_ctl -D /usr/local/var/postgres stop
+</pre>
+</div>
+</li>
+
+<li><a id="org3127fa2"></a>operating<br /></li>
+</ol>
+</div>
+
+<div id="outline-container-org7c277f1" class="outline-4">
+<h4 id="org7c277f1"><span class="section-number-4">5.3.3</span> OBS</h4>
+<div class="outline-text-4" id="text-5-3-3">
+<p>
+<a href="https://obsproject.com">OBS</a> (pronounced "awbz", short for Open Broadcaster Software) is what we use to
+do streaming. Setting up streaming to Twitch is pretty simple with OBS. All
+that's required is an API Key from Ground Kontrol. The API key is secret so it
+shouldn't be published anywhere. This means you have to talk to staff or
+ownership at Ground Kontrol in order to get it.
+</p>
+
+<p>
+We still need to get a list of contacts that can provide the key.
+</p>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgd366112" class="outline-2">
+<h2 id="orgd366112"><span class="section-number-2">6</span> troubleshooting</h2>
 <div class="outline-text-2" id="text-6">
 </div>
-<div id="outline-container-orga63db40" class="outline-3">
-<h3 id="orga63db40"><span class="section-number-3">6.1</span> If the input is not recognized on the computer's end</h3>
+<div id="outline-container-org4879c21" class="outline-3">
+<h3 id="org4879c21"><span class="section-number-3">6.1</span> If the input is not recognized on the computer's end</h3>
 <div class="outline-text-3" id="text-6-1">
 <p>
 The known recipe (not fool proof, but most of the work):
