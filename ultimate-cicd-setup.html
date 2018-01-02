@@ -1,6 +1,6 @@
 ---
 layout: default
-title: The Ultimate CD/CD Setup
+title: The Ultimate CI/CD Setup
 date: 2018-01-01
 categories: software-engineering
 ---
@@ -9,29 +9,29 @@ categories: software-engineering
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#org18db660">1. introduction</a></li>
-<li><a href="#org25ccd4b">2. general philosophy</a></li>
-<li><a href="#org7bf540e">3. automation</a>
+<li><a href="#org6ddd9a9">1. introduction</a></li>
+<li><a href="#orgca1d40c">2. general philosophy</a></li>
+<li><a href="#orged1526f">3. automation</a>
 <ul>
-<li><a href="#org034d78f">3.1. tests</a></li>
-<li><a href="#org2da00e5">3.2. deployment</a></li>
-<li><a href="#orgf4c952e">3.3. release notes</a>
+<li><a href="#orga00fe8a">3.1. tests</a></li>
+<li><a href="#orge319714">3.2. deployment</a></li>
+<li><a href="#orgffaa801">3.3. release notes</a>
 <ul>
-<li><a href="#orge49065f">3.3.1. branch naming</a></li>
-<li><a href="#orge6b8ea9">3.3.2. commit messages</a></li>
-<li><a href="#org476c11c">3.3.3. pull requests</a></li>
-<li><a href="#org3a2f5cd">3.3.4. stringing together the whole process</a></li>
+<li><a href="#org07a24e3">3.3.1. branch naming</a></li>
+<li><a href="#orgea735df">3.3.2. commit messages</a></li>
+<li><a href="#org8801aa5">3.3.3. pull requests</a></li>
+<li><a href="#org9f2ff10">3.3.4. stringing together the whole process</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><a href="#org9964dd7">4. more to come</a></li>
+<li><a href="#orgbea2a8e">4. more to come</a></li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-org18db660" class="outline-2">
-<h2 id="org18db660"><span class="section-number-2">1</span> introduction</h2>
+<div id="outline-container-org6ddd9a9" class="outline-2">
+<h2 id="org6ddd9a9"><span class="section-number-2">1</span> introduction</h2>
 <div class="outline-text-2" id="text-1">
 <p>
 CI/CD stands for Continuous Integration / Continous (Delivery|Deployment).
@@ -46,8 +46,8 @@ your machine's development setup for those who need to consume said software.
 </div>
 </div>
 
-<div id="outline-container-org25ccd4b" class="outline-2">
-<h2 id="org25ccd4b"><span class="section-number-2">2</span> general philosophy</h2>
+<div id="outline-container-orgca1d40c" class="outline-2">
+<h2 id="orgca1d40c"><span class="section-number-2">2</span> general philosophy</h2>
 <div class="outline-text-2" id="text-2">
 <p>
 You want to automate as much as possible. I've worked at software shops where
@@ -96,12 +96,12 @@ general approach here is to automate virtually every part of this process.
 </div>
 </div>
 
-<div id="outline-container-org7bf540e" class="outline-2">
-<h2 id="org7bf540e"><span class="section-number-2">3</span> automation</h2>
+<div id="outline-container-orged1526f" class="outline-2">
+<h2 id="orged1526f"><span class="section-number-2">3</span> automation</h2>
 <div class="outline-text-2" id="text-3">
 </div>
-<div id="outline-container-org034d78f" class="outline-3">
-<h3 id="org034d78f"><span class="section-number-3">3.1</span> tests</h3>
+<div id="outline-container-orga00fe8a" class="outline-3">
+<h3 id="orga00fe8a"><span class="section-number-3">3.1</span> tests</h3>
 <div class="outline-text-3" id="text-3-1">
 <p>
 Your app might have a suite of unit test, acceptance tests, type checks, etc
@@ -111,8 +111,8 @@ formatting as well.
 </div>
 </div>
 
-<div id="outline-container-org2da00e5" class="outline-3">
-<h3 id="org2da00e5"><span class="section-number-3">3.2</span> deployment</h3>
+<div id="outline-container-orge319714" class="outline-3">
+<h3 id="orge319714"><span class="section-number-3">3.2</span> deployment</h3>
 <div class="outline-text-3" id="text-3-2">
 <p>
 Software engineer salaries are pretty high, and costs for hardware or hosting is
@@ -191,8 +191,8 @@ deployment to <code>production</code>.</dd>
 </div>
 </div>
 
-<div id="outline-container-orgf4c952e" class="outline-3">
-<h3 id="orgf4c952e"><span class="section-number-3">3.3</span> release notes</h3>
+<div id="outline-container-orgffaa801" class="outline-3">
+<h3 id="orgffaa801"><span class="section-number-3">3.3</span> release notes</h3>
 <div class="outline-text-3" id="text-3-3">
 <p>
 Lots of places require release notes to be present as part of a release. Release
@@ -238,8 +238,8 @@ in there on purpose.
 </p>
 </div>
 
-<div id="outline-container-orge49065f" class="outline-4">
-<h4 id="orge49065f"><span class="section-number-4">3.3.1</span> branch naming</h4>
+<div id="outline-container-org07a24e3" class="outline-4">
+<h4 id="org07a24e3"><span class="section-number-4">3.3.1</span> branch naming</h4>
 <div class="outline-text-4" id="text-3-3-1">
 <p>
 In the good example above, those release notes could be built with some tooling.
@@ -258,8 +258,8 @@ matches the format.
 </div>
 </div>
 
-<div id="outline-container-orge6b8ea9" class="outline-4">
-<h4 id="orge6b8ea9"><span class="section-number-4">3.3.2</span> commit messages</h4>
+<div id="outline-container-orgea735df" class="outline-4">
+<h4 id="orgea735df"><span class="section-number-4">3.3.2</span> commit messages</h4>
 <div class="outline-text-4" id="text-3-3-2">
 <p>
 As an added benefit, adding the ticket number to the commit messages also can
@@ -277,8 +277,8 @@ you!
 </div>
 </div>
 
-<div id="outline-container-org476c11c" class="outline-4">
-<h4 id="org476c11c"><span class="section-number-4">3.3.3</span> pull requests</h4>
+<div id="outline-container-org8801aa5" class="outline-4">
+<h4 id="org8801aa5"><span class="section-number-4">3.3.3</span> pull requests</h4>
 <div class="outline-text-4" id="text-3-3-3">
 <p>
 The new hotness with merging work is forming a pull request. Your CI/CD software
@@ -312,8 +312,8 @@ one student to the test.
 </div>
 </div>
 
-<div id="outline-container-org3a2f5cd" class="outline-4">
-<h4 id="org3a2f5cd"><span class="section-number-4">3.3.4</span> stringing together the whole process</h4>
+<div id="outline-container-org9f2ff10" class="outline-4">
+<h4 id="org9f2ff10"><span class="section-number-4">3.3.4</span> stringing together the whole process</h4>
 <div class="outline-text-4" id="text-3-3-4">
 <p>
 Now here's the kicker, you make some tooling that looks at the commit hash for
@@ -326,13 +326,13 @@ what you stuff into your release notes.
 </div>
 
 <ol class="org-ol">
-<li><a id="org4478100"></a><span class="todo TODO">TODO</span> add code to do the release note gathering<br /></li>
+<li><a id="org5141262"></a><span class="todo TODO">TODO</span> add code to do the release note gathering<br /></li>
 </ol>
 </div>
 </div>
 </div>
-<div id="outline-container-org9964dd7" class="outline-2">
-<h2 id="org9964dd7"><span class="section-number-2">4</span> more to come</h2>
+<div id="outline-container-orgbea2a8e" class="outline-2">
+<h2 id="orgbea2a8e"><span class="section-number-2">4</span> more to come</h2>
 <div class="outline-text-2" id="text-4">
 <p>
 I'll add some more about specific tools (Jenkins, Travis, etc) and some usable

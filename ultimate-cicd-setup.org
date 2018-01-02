@@ -1,7 +1,7 @@
 #+BEGIN_EXPORT html
 ---
 layout: default
-title: The Ultimate CD/CD Setup
+title: The Ultimate CI/CD Setup
 date: 2018-01-01
 categories: software-engineering
 ---
