@@ -349,6 +349,17 @@ ownership at Ground Kontrol in order to get it.
 
 We still need to get a list of contacts that can provide the key.
 
+**** overlays
+***** chat
+https://nightdev.com/kapchat/
+***** video sources
+I noticed my laptop struggling with the video sources when pulling in max
+resolution. I switched them to 320x200 (or close to that), and it seems to work
+much better. I suspect this is a throughput issue with 4 video sources coming in
+to one little laptop. The cameras aren't really that high res and the area of
+the screen they are displayed in is very small. There was no noticeable loss in
+quality when switching to the lower res.
+
 * troubleshooting
 ** If the input is not recognized on the computer's end
 The known recipe (not fool proof, but most of the work):
