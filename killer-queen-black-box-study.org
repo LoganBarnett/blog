@@ -1,0 +1,231 @@
+#+BEGIN_EXPORT html
+---
+layout: default
+title: Killer Queen Black Box Study
+date: 2018-01-14
+categories: killer-queen
+---
+#+END_EXPORT
+
+#+title:  Killer Queen Black Box Study
+#+author: Logan Barnett
+#+email:  logustus@gmail.com
+#+date:   <2018-01-14 Sun>
+#+tags:   killer-queen
+#+toc:    headlines 3
+
+* introduction
+
+At the Portland scene we like to talk a lot about different things we've learned
+about Killer Queen, and being that the game is effectively a hunk of software we
+wind up talking a lot about details of its internal implementation. This post is
+about the software implementation we know about Killer Queen or things we are
+able to infer about said software. The source code for Killer Queen is locked in
+a vault somewhere, guarded by a small army of the best speed warriors. As such
+we can't say for 100% certainty about everything. The game is a black box where
+we cannot see inside it. We can make some good guesses though.
+
+* background
+
+I (Logan Barnett AKA Day Logan) have done game development both professionally
+and as a hobbyist for many years now, and I'm an accomplished software engineer.
+At time of writing my current work is in web development, but I am comfortable
+straddling both worlds. I used to pay my bills making an educational game in
+Unity. Unity is the game engine that was used to build Killer Queen. My hobby
+projects have taken my experience beyond the scope of that game. I have had
+an opportunity to work with Unity's physics system (and work around it), use its
+character controller system, networking, shaders, GUI (editor and in-game), and
+its logic/behavior system. I also have an educational background in computer
+engineering, so I have a good conceptual understanding of operating systems,
+memory models, resource sharing, etc. My resume is here for full transparency.
+
+* reasoning
+
+If you had to build a car, there's a lot of things you could say about building
+a car without actually having to look at the blue prints. Cars need some way of
+touching the ground (wheels). They need a drive train that pushes the car in the
+direction we want to go. There needs to be some kind of steering apparatus (even
+for self driving cars) so you can make sure the car is moving the direction you
+want to go. We can do this with software too. In order to accomplish certain
+things, there's just machinery that needs to be in place. Unity has a lot of
+things built into it, and circumventing those built in things so you can do
+something custom can mean a _lot_ of work. Bumblebee Games doesn't have that
+kind of resources.
+
+* things
+
+** frames
+
+*** history
+The first time I learned about "frames" was in talk about how Street Fighter 2
+works. Keep in mind this game is ancient by today's standards. With the Street
+Fighter 2 cabinet, the hardware there focused on exactly one thing: Running
+Street Fighter 2. This meant the game could make some assumptions about its
+operation, namely its timing. Street Fighter 2 plays at 30 frames per second,
+meaning the screen redraws itself 30 times a second. Each cycle between the
+redraw is a "frame". During this time, the game does all of its computations. It
+copies pixels around, computes distances, does hit box checks, etc all in this
+tight little loop. Since frames in Street Fighter 2 are fixed to this 30 times
+per second, that means you have about 33 milliseconds to do all of your
+computations. Any smarts that are in the game have to fit in this time period.
+If that's the case, you can count on each frame being 33 milliseconds long, and
+you can derive timing in the animation system, what your grace period is to
+throw a fireball, or chain together some combo, or whatever. But the problem is
+this is a lie. It's just an infrequent one for Street Fighter.
+
+Remember Solitaire? That game that came built into Windows 3.x back when you had
+to clean mouse balls? Yeah that one. I think it's still in Windows today. If you
+beat Solitaire, you were given a wonderful little animation of the cards
+cascading out of their slots, kind of undoing everything you just did. You could
+easily go use the bathroom and come back to see it still going. This thing took
+a while. At the time if you were on Windows 3.x and you had a 66 Mhz computer,
+this would go pretty slow. Once you got a Pentium, you'd notice the animation
+completed in about a second or two. In both situations, the game was doing the
+animation as fast as possible, but one computer was significantly faster than
+the other. Computers back then often had a turbo button. You could use this
+button to slow your computer down and run older applications that had this kind
+of timing problem. Street Fighter would be one of those applications.
+
+*** complications
+
+The lie about frame counting is that sometimes the computations can't complete
+in the time period they have. This happens a lot in Chun Li's level: There's so
+many animations and other things going on that if the players add a little bit
+more and maybe step away from each other, the hardware sudden has way too much
+to do to cram into that 33 millisecond time slice, so it just takes longer, and
+as a result the game enters a strange kind of slow motion.
+
+As an example, there's a small program running in this post that loops and
+prints the time since the last tick in milliseconds. Notice the variance.
+
+#+begin_export html
+<div>Time since last tick: <span data-id="millisecond-monitor"></span></div>
+#+end_export
+
+Here's the code that does this, if you want to follow along:
+#+name: time-delta-monitor
+#+begin_src javascript
+var lastTime = Date.now()
+var el = document.querySelector('[data-id="millisecond-monitor"]')
+function printMillis() {
+  var delta = Date.now() - lastTime
+  el.innerHTML = delta
+  lastTime = Date.now()
+  window.requestAnimationFrame(printMillis)
+}
+
+window.requestAnimationFrame(printMillis)
+#+end_src
+
+#+name: inline-js
+#+begin_src emacs-lisp :noweb yes :exports results :results html :var blk=""
+(concat
+ "<script type=\"text/javascript\">\n"
+ (cadr (org-babel-lob--src-info blk))
+ "</script>")
+#+end_src
+
+#+call: inline-js("time-delta-monitor")
+
+#+RESULTS:
+#+BEGIN_EXPORT html
+<script type="text/javascript">
+var lastTime = Date.now()
+var el = document.querySelector('[data-id="millisecond-monitor"]')
+function printMillis() {
+  var delta = Date.now() - lastTime
+  el.innerHTML = delta
+  lastTime = Date.now()
+  window.requestAnimationFrame(printMillis)
+}
+
+window.requestAnimationFrame(printMillis)</script>
+#+END_EXPORT
+
+*** the operating system
+
+Back in the day of Street Fighter 2, and most gaming consoles for that matter,
+the game you were running was the program the hardware ran. Today even the XBox
+and PSX consoles run an operating system (OS). When you boot up your mac and run
+Photoshop or whatever, you're not running Photoshop. You're running MacOS. The
+operating system is a very intricate program that makes it look like you're
+running other programs. In reality the OS grants programs the ability to execute
+a few instructions at a time before the OS interrupts and then gives another
+program a chance to run on the processor. When it does a good job about
+switching around really fast, it makes it look like you're running multiple
+programs at once. Your games are one of these programs. This makes it really
+hard to promise that you have exactly 33 milliseconds to complete your
+operations. In the middle of the frame, the OS could easily have let several
+dozen other programs run a little bit too, each eating into that precious slice
+of time.
+
+*** the solution
+
+So how do games not stutter every time your browser takes a bunch of time to
+inefficiently render a gif you're not even looking at because you're playing a
+game? Games multiply a time delta.
+
+Take this psuedo-code as an example:
+
+#+begin_example
+if player1HoldingRight
+  player1Position.x = player1Position.x + player1Speed
+#+end_example
+
+Here =player1Speed= is a simple fixed number. The speed is tuned to you playing
+the game at 30 FPS. The new =x= is the old =x= plus that speed. Simple! But a
+lie. To get around it, we use the delta since our last frame.
+
+#+begin_example
+if player1HoldingRight
+  player1Position.x = player1Position.x + (player1Speed * timeSinceLastTick)
+#+end_example
+
+Sometimes we call this a tick. Here we do multiplication. If the delta was high,
+then the amount we move the player is high. If it's low, the amount we move the
+player is low. Mathematically it scales perfectly. There's some complications
+with this approach, but rest assured _this is what everyone uses today_. Unity
+games are no exception.
+
+Here's an example of the timing scaling to your machine's speed:
+
+#+html: <iframe src="https://www.winningsolitaire.com"></iframe>
+
+*** conclusion
+
+We cannot assume all frames are created equal. Frames are not fixed slices of
+time but instead highly varied slices of time.
+
+** pixels
+
+*** 2D as 3D
+Display sizes vary all over the place. The result is game engines don't use
+pixels directly anymore. Even 2D games are rendered using 3D libraries. In
+Unity's case 2D things will be rectangles that face the camera. The coordinate
+system Unity uses is arbitrary. You could change the size of your camera and be
+able to see further, for example. All of the coordinates used in Unity are
+floating point numbers. Floating point numbers are the poor man's numbers that
+allow for decimals. Floating point numbers are "lossy", meaning they aren't
+exact and even though it might look like the numbers are correct they actually
+aren't the same thing. This doesn't mean Unity is doing anything poorly. The
+world of 3D gaming is dominated by floating point numbers. The only things that
+become hard with floating point numbers are when you want to do exact
+comparisons and a large scaling distance.
+
+*** what about the pixel graphics?
+
+Generally what happens with pixel graphics is someone will build the images
+using fixed pixels, and then assign that image to a rectangle that'll show up on
+the screen. Most of the time there's a filter applied to the images in real-time
+that blurs and distorts the image. You want this in a vast majority of 3D games,
+as it addresses graininess and a number of other visual artifacts. In the case
+of retro graphics games, the filter is disabled so you see the raw pixels. They
+are still stretched though.
+
+*** TODO conclusion
+
+** TODO the wrap glitch
+
+** TODO game stutter
+
+** TODO the "drip"

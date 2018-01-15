@@ -1,0 +1,327 @@
+---
+layout: default
+title: Killer Queen Black Box Study
+date: 2018-01-14
+categories: killer-queen
+---
+
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#orgaf514b3">1. introduction</a></li>
+<li><a href="#orgce25c32">2. background</a></li>
+<li><a href="#org06df8f6">3. reasoning</a></li>
+<li><a href="#orge7af7c4">4. things</a>
+<ul>
+<li><a href="#orga9baa46">4.1. frames</a>
+<ul>
+<li><a href="#orgc2873a6">4.1.1. history</a></li>
+<li><a href="#orgcc7d0f9">4.1.2. complications</a></li>
+<li><a href="#org62c9a0f">4.1.3. the operating system</a></li>
+<li><a href="#orge79a3e6">4.1.4. the solution</a></li>
+<li><a href="#org56f6a93">4.1.5. conclusion</a></li>
+</ul>
+</li>
+<li><a href="#orgbeda47f">4.2. pixels</a>
+<ul>
+<li><a href="#org38d69dc">4.2.1. 2D as 3D</a></li>
+<li><a href="#org8702d67">4.2.2. what about the pixel graphics?</a></li>
+<li><a href="#org6171027">4.2.3. <span class="todo TODO">TODO</span> conclusion</a></li>
+</ul>
+</li>
+<li><a href="#org3914750">4.3. <span class="todo TODO">TODO</span> the wrap glitch</a></li>
+<li><a href="#org79b789f">4.4. <span class="todo TODO">TODO</span> game stutter</a></li>
+<li><a href="#orgf7f8696">4.5. <span class="todo TODO">TODO</span> the "drip"</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orgaf514b3" class="outline-2">
+<h2 id="orgaf514b3"><span class="section-number-2">1</span> introduction</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+At the Portland scene we like to talk a lot about different things we've learned
+about Killer Queen, and being that the game is effectively a hunk of software we
+wind up talking a lot about details of its internal implementation. This post is
+about the software implementation we know about Killer Queen or things we are
+able to infer about said software. The source code for Killer Queen is locked in
+a vault somewhere, guarded by a small army of the best speed warriors. As such
+we can't say for 100% certainty about everything. The game is a black box where
+we cannot see inside it. We can make some good guesses though.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgce25c32" class="outline-2">
+<h2 id="orgce25c32"><span class="section-number-2">2</span> background</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+I (Logan Barnett AKA Day Logan) have done game development both professionally
+and as a hobbyist for many years now, and I'm an accomplished software engineer.
+At time of writing my current work is in web development, but I am comfortable
+straddling both worlds. I used to pay my bills making an educational game in
+Unity. Unity is the game engine that was used to build Killer Queen. My hobby
+projects have taken my experience beyond the scope of that game. I have had
+an opportunity to work with Unity's physics system (and work around it), use its
+character controller system, networking, shaders, GUI (editor and in-game), and
+its logic/behavior system. I also have an educational background in computer
+engineering, so I have a good conceptual understanding of operating systems,
+memory models, resource sharing, etc. My resume is here for full transparency.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org06df8f6" class="outline-2">
+<h2 id="org06df8f6"><span class="section-number-2">3</span> reasoning</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+If you had to build a car, there's a lot of things you could say about building
+a car without actually having to look at the blue prints. Cars need some way of
+touching the ground (wheels). They need a drive train that pushes the car in the
+direction we want to go. There needs to be some kind of steering apparatus (even
+for self driving cars) so you can make sure the car is moving the direction you
+want to go. We can do this with software too. In order to accomplish certain
+things, there's just machinery that needs to be in place. Unity has a lot of
+things built into it, and circumventing those built in things so you can do
+something custom can mean a <span class="underline">lot</span> of work. Bumblebee Games doesn't have that
+kind of resources.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orge7af7c4" class="outline-2">
+<h2 id="orge7af7c4"><span class="section-number-2">4</span> things</h2>
+<div class="outline-text-2" id="text-4">
+</div>
+<div id="outline-container-orga9baa46" class="outline-3">
+<h3 id="orga9baa46"><span class="section-number-3">4.1</span> frames</h3>
+<div class="outline-text-3" id="text-4-1">
+</div>
+<div id="outline-container-orgc2873a6" class="outline-4">
+<h4 id="orgc2873a6"><span class="section-number-4">4.1.1</span> history</h4>
+<div class="outline-text-4" id="text-4-1-1">
+<p>
+The first time I learned about "frames" was in talk about how Street Fighter 2
+works. Keep in mind this game is ancient by today's standards. With the Street
+Fighter 2 cabinet, the hardware there focused on exactly one thing: Running
+Street Fighter 2. This meant the game could make some assumptions about its
+operation, namely its timing. Street Fighter 2 plays at 30 frames per second,
+meaning the screen redraws itself 30 times a second. Each cycle between the
+redraw is a "frame". During this time, the game does all of its computations. It
+copies pixels around, computes distances, does hit box checks, etc all in this
+tight little loop. Since frames in Street Fighter 2 are fixed to this 30 times
+per second, that means you have about 33 milliseconds to do all of your
+computations. Any smarts that are in the game have to fit in this time period.
+If that's the case, you can count on each frame being 33 milliseconds long, and
+you can derive timing in the animation system, what your grace period is to
+throw a fireball, or chain together some combo, or whatever. But the problem is
+this is a lie. It's just an infrequent one for Street Fighter.
+</p>
+
+<p>
+Remember Solitaire? That game that came built into Windows 3.x back when you had
+to clean mouse balls? Yeah that one. I think it's still in Windows today. If you
+beat Solitaire, you were given a wonderful little animation of the cards
+cascading out of their slots, kind of undoing everything you just did. You could
+easily go use the bathroom and come back to see it still going. This thing took
+a while. At the time if you were on Windows 3.x and you had a 66 Mhz computer,
+this would go pretty slow. Once you got a Pentium, you'd notice the animation
+completed in about a second or two. In both situations, the game was doing the
+animation as fast as possible, but one computer was significantly faster than
+the other. Computers back then often had a turbo button. You could use this
+button to slow your computer down and run older applications that had this kind
+of timing problem. Street Fighter would be one of those applications.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgcc7d0f9" class="outline-4">
+<h4 id="orgcc7d0f9"><span class="section-number-4">4.1.2</span> complications</h4>
+<div class="outline-text-4" id="text-4-1-2">
+<p>
+The lie about frame counting is that sometimes the computations can't complete
+in the time period they have. This happens a lot in Chun Li's level: There's so
+many animations and other things going on that if the players add a little bit
+more and maybe step away from each other, the hardware sudden has way too much
+to do to cram into that 33 millisecond time slice, so it just takes longer, and
+as a result the game enters a strange kind of slow motion.
+</p>
+
+<p>
+As an example, there's a small program running in this post that loops and
+prints the time since the last tick in milliseconds. Notice the variance.
+</p>
+
+<div>Time since last tick: <span data-id="millisecond-monitor"></span></div>
+
+<p>
+Here's the code that does this, if you want to follow along:
+</p>
+<div class="org-src-container">
+<pre class="src src-javascript" id="orgcb2d3ff"><span style="color: #4f97d7; font-weight: bold;">var</span> <span style="color: #7590db;">lastTime</span> = Date.now<span style="color: #4f97d7;">()</span>
+<span style="color: #4f97d7; font-weight: bold;">var</span> <span style="color: #7590db;">el</span> = document.querySelector<span style="color: #4f97d7;">(</span><span style="color: #2d9574;">'[data-id="millisecond-monitor"]'</span><span style="color: #4f97d7;">)</span>
+<span style="color: #4f97d7; font-weight: bold;">function</span> <span style="color: #bc6ec5; font-weight: bold;">printMillis</span><span style="color: #4f97d7;">()</span> <span style="color: #4f97d7;">{</span>
+  <span style="color: #4f97d7; font-weight: bold;">var</span> <span style="color: #7590db;">delta</span> = Date.now<span style="color: #bc6ec5;">()</span> - lastTime
+  el.innerHTML = delta
+  lastTime = Date.now<span style="color: #bc6ec5;">()</span>
+  window.requestAnimationFrame<span style="color: #bc6ec5;">(</span>printMillis<span style="color: #bc6ec5;">)</span>
+<span style="color: #4f97d7;">}</span>
+
+window.requestAnimationFrame<span style="color: #4f97d7;">(</span>printMillis<span style="color: #4f97d7;">)</span>
+</pre>
+</div>
+
+<script type="text/javascript">
+</script>
+
+<script type="text/javascript">
+var lastTime = Date.now()
+var el = document.querySelector('[data-id="millisecond-monitor"]')
+function printMillis() {
+  var delta = Date.now() - lastTime
+  el.innerHTML = delta
+  lastTime = Date.now()
+  window.requestAnimationFrame(printMillis)
+}
+
+window.requestAnimationFrame(printMillis)</script>
+</div>
+</div>
+
+<div id="outline-container-org62c9a0f" class="outline-4">
+<h4 id="org62c9a0f"><span class="section-number-4">4.1.3</span> the operating system</h4>
+<div class="outline-text-4" id="text-4-1-3">
+<p>
+Back in the day of Street Fighter 2, and most gaming consoles for that matter,
+the game you were running was the program the hardware ran. Today even the XBox
+and PSX consoles run an operating system (OS). When you boot up your mac and run
+Photoshop or whatever, you're not running Photoshop. You're running MacOS. The
+operating system is a very intricate program that makes it look like you're
+running other programs. In reality the OS grants programs the ability to execute
+a few instructions at a time before the OS interrupts and then gives another
+program a chance to run on the processor. When it does a good job about
+switching around really fast, it makes it look like you're running multiple
+programs at once. Your games are one of these programs. This makes it really
+hard to promise that you have exactly 33 milliseconds to complete your
+operations. In the middle of the frame, the OS could easily have let several
+dozen other programs run a little bit too, each eating into that precious slice
+of time.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orge79a3e6" class="outline-4">
+<h4 id="orge79a3e6"><span class="section-number-4">4.1.4</span> the solution</h4>
+<div class="outline-text-4" id="text-4-1-4">
+<p>
+So how do games not stutter every time your browser takes a bunch of time to
+inefficiently render a gif you're not even looking at because you're playing a
+game? Games multiply a time delta.
+</p>
+
+<p>
+Take this psuedo-code as an example:
+</p>
+
+<pre class="example">
+if player1HoldingRight
+  player1Position.x = player1Position.x + player1Speed
+</pre>
+
+<p>
+Here <code>player1Speed</code> is a simple fixed number. The speed is tuned to you playing
+the game at 30 FPS. The new <code>x</code> is the old <code>x</code> plus that speed. Simple! But a
+lie. To get around it, we use the delta since our last frame.
+</p>
+
+<pre class="example">
+if player1HoldingRight
+  player1Position.x = player1Position.x + (player1Speed * timeSinceLastTick)
+</pre>
+
+<p>
+Sometimes we call this a tick. Here we do multiplication. If the delta was high,
+then the amount we move the player is high. If it's low, the amount we move the
+player is low. Mathematically it scales perfectly. There's some complications
+with this approach, but rest assured <span class="underline">this is what everyone uses today</span>. Unity
+games are no exception.
+</p>
+
+<p>
+Here's an example of the timing scaling to your machine's speed:
+</p>
+
+<iframe src="https://www.winningsolitaire.com"></iframe>
+</div>
+</div>
+
+<div id="outline-container-org56f6a93" class="outline-4">
+<h4 id="org56f6a93"><span class="section-number-4">4.1.5</span> conclusion</h4>
+<div class="outline-text-4" id="text-4-1-5">
+<p>
+We cannot assume all frames are created equal. Frames are not fixed slices of
+time but instead highly varied slices of time.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgbeda47f" class="outline-3">
+<h3 id="orgbeda47f"><span class="section-number-3">4.2</span> pixels</h3>
+<div class="outline-text-3" id="text-4-2">
+</div>
+<div id="outline-container-org38d69dc" class="outline-4">
+<h4 id="org38d69dc"><span class="section-number-4">4.2.1</span> 2D as 3D</h4>
+<div class="outline-text-4" id="text-4-2-1">
+<p>
+Display sizes vary all over the place. The result is game engines don't use
+pixels directly anymore. Even 2D games are rendered using 3D libraries. In
+Unity's case 2D things will be rectangles that face the camera. The coordinate
+system Unity uses is arbitrary. You could change the size of your camera and be
+able to see further, for example. All of the coordinates used in Unity are
+floating point numbers. Floating point numbers are the poor man's numbers that
+allow for decimals. Floating point numbers are "lossy", meaning they aren't
+exact and even though it might look like the numbers are correct they actually
+aren't the same thing. This doesn't mean Unity is doing anything poorly. The
+world of 3D gaming is dominated by floating point numbers. The only things that
+become hard with floating point numbers are when you want to do exact
+comparisons and a large scaling distance.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org8702d67" class="outline-4">
+<h4 id="org8702d67"><span class="section-number-4">4.2.2</span> what about the pixel graphics?</h4>
+<div class="outline-text-4" id="text-4-2-2">
+<p>
+Generally what happens with pixel graphics is someone will build the images
+using fixed pixels, and then assign that image to a rectangle that'll show up on
+the screen. Most of the time there's a filter applied to the images in real-time
+that blurs and distorts the image. You want this in a vast majority of 3D games,
+as it addresses graininess and a number of other visual artifacts. In the case
+of retro graphics games, the filter is disabled so you see the raw pixels. They
+are still stretched though.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org6171027" class="outline-4">
+<h4 id="org6171027"><span class="section-number-4">4.2.3</span> <span class="todo TODO">TODO</span> conclusion</h4>
+</div>
+</div>
+
+<div id="outline-container-org3914750" class="outline-3">
+<h3 id="org3914750"><span class="section-number-3">4.3</span> <span class="todo TODO">TODO</span> the wrap glitch</h3>
+</div>
+
+<div id="outline-container-org79b789f" class="outline-3">
+<h3 id="org79b789f"><span class="section-number-3">4.4</span> <span class="todo TODO">TODO</span> game stutter</h3>
+</div>
+
+<div id="outline-container-orgf7f8696" class="outline-3">
+<h3 id="orgf7f8696"><span class="section-number-3">4.5</span> <span class="todo TODO">TODO</span> the "drip"</h3>
+</div>
+</div>
