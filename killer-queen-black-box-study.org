@@ -37,7 +37,7 @@ an opportunity to work with Unity's physics system (and work around it), use its
 character controller system, networking, shaders, GUI (editor and in-game), and
 its logic/behavior system. I also have an educational background in computer
 engineering, so I have a good conceptual understanding of operating systems,
-memory models, resource sharing, etc. My resume is here for full transparency.
+memory models, resource sharing, etc. My [[./resume.html][resume]] is here for full transparency.
 
 * reasoning
 
@@ -95,6 +95,23 @@ more and maybe step away from each other, the hardware sudden has way too much
 to do to cram into that 33 millisecond time slice, so it just takes longer, and
 as a result the game enters a strange kind of slow motion.
 
+*** the operating system
+
+Back in the day of Street Fighter 2, and most gaming consoles for that matter,
+the game you were running was the program the hardware ran. Today even the XBox
+and PSX consoles run an operating system (OS). When you boot up your mac and run
+Photoshop or whatever, you're not running Photoshop. You're running MacOS. The
+operating system is a very intricate program that makes it look like you're
+running other programs. In reality the OS grants programs the ability to execute
+a few instructions at a time before the OS interrupts and then gives another
+program a chance to run on the processor. When it does a good job about
+switching around really fast, it makes it look like you're running multiple
+programs at once. Your games are one of these programs. This makes it really
+hard to promise that you have exactly 33 milliseconds to complete your
+operations. In the middle of the frame, the OS could easily have let several
+dozen other programs run a little bit too, each eating into that precious slice
+of time.
+
 As an example, there's a small program running in this post that loops and
 prints the time since the last tick in milliseconds. Notice the variance.
 
@@ -142,23 +159,6 @@ function printMillis() {
 window.requestAnimationFrame(printMillis)</script>
 #+END_EXPORT
 
-*** the operating system
-
-Back in the day of Street Fighter 2, and most gaming consoles for that matter,
-the game you were running was the program the hardware ran. Today even the XBox
-and PSX consoles run an operating system (OS). When you boot up your mac and run
-Photoshop or whatever, you're not running Photoshop. You're running MacOS. The
-operating system is a very intricate program that makes it look like you're
-running other programs. In reality the OS grants programs the ability to execute
-a few instructions at a time before the OS interrupts and then gives another
-program a chance to run on the processor. When it does a good job about
-switching around really fast, it makes it look like you're running multiple
-programs at once. Your games are one of these programs. This makes it really
-hard to promise that you have exactly 33 milliseconds to complete your
-operations. In the middle of the frame, the OS could easily have let several
-dozen other programs run a little bit too, each eating into that precious slice
-of time.
-
 *** the solution
 
 So how do games not stutter every time your browser takes a bunch of time to
@@ -190,6 +190,249 @@ games are no exception.
 Here's an example of the timing scaling to your machine's speed:
 
 #+html: <iframe src="https://www.winningsolitaire.com"></iframe>
+
+*** side by side
+
+    I managed to get my hands on the up-until-now rumored purple queen sprites.
+    Many berry runners died to bring us this sprite from KQ 4 Turbo X
+    Championship Legendary Edition. You can see the queens moving horizontally
+    in separate "swim lanes". We have exaggerated artificial delays we're adding
+    to demonstrate how the varied methods work.
+
+#+begin_export html
+<div data-id="swim-lanes" style="width: 100%; height: 28em;">
+  <div style="position: absolute;">Rough delay per frame graph</div>
+  <canvas data-id="speed-graph" style="display: block;" width="0px" height="0px">
+    Speed canvas
+  </canvas>
+  <div style="position: absolute;">Fixed frame (tick)</div>
+  <canvas data-id="fixed-tick" style="display: block;" width="0px" height="0px">
+    Fixed tick canvas
+  </canvas>
+  <div style="position: absolute;">Variable frame (tick)</div>
+  <canvas data-id="variable-tick" style="display: block;" width="0px" height="0px">
+    Variable tick canvas
+  </canvas>
+  <div style="position: absolute;">Ideal variable frame (tick)</div>
+  <canvas data-id="ideal-variable-tick" style="display: block;" width="0px" height="0px">
+    Ideal variable tick canvas
+  </canvas>
+</div>
+#+end_export
+
+#+name: timing-swim-lanes
+#+begin_src javascript :exports none
+  'use strict'
+
+  function initSwimLane(container, canvas) {
+    canvas.height = container.clientHeight / 4
+    canvas.width = container.clientWidth
+    return canvas
+  }
+  var container = document.querySelector('[data-id="swim-lanes"]')
+  var speedGraphCanvas = initSwimLane(
+    container,
+    document.querySelector('[data-id="speed-graph"]')
+  )
+  var fixedTickCanvas = initSwimLane(
+    container,
+    document.querySelector('[data-id="fixed-tick"]')
+  )
+  var variableTickCanvas = initSwimLane(
+    container,
+    document.querySelector('[data-id="variable-tick"]')
+  )
+
+  var idealVariableTickCanvas = initSwimLane(
+    container,
+    document.querySelector('[data-id="ideal-variable-tick"]')
+  )
+
+  // Shamelessly lifted from https://gist.github.com/gre/1650294
+  function easeQuad (t) { return t<.5 ? 2*t*t : -1+(4-2*t)*t }
+  var lastTick = new Date()
+
+  function withinSpeedDip(width, x) {
+    return x > width - (width * 0.66) && x < width - (width * 0.33)
+  }
+
+  function calcDelay(width, x) {
+    if(withinSpeedDip(width, x)) {
+      var percent = (x - (width * 0.33)) / (width * 0.33)
+      var delay = easeQuad(percent * 1.8) * 100
+      return delay + 33
+    }
+    else {
+      return 33 // standard fixed delay
+    }
+  }
+
+  function plotSpeedGraph(canvas) {
+    var height = canvas.height
+    var width = canvas.width
+    var context = canvas.getContext('2d')
+    context.beginPath()
+    context.strokeStyle = 'lightgreen'
+    context.lineWidth = 3
+    const lineHeight = height * 0.75
+    context.moveTo(0, lineHeight)
+    context.lineTo(width * 0.33, lineHeight)
+    context.quadraticCurveTo(width * 0.5, -height * 0.5, width * 0.66, lineHeight)
+    context.lineTo(width, lineHeight)
+    context.stroke()
+  }
+
+  var reset = [ false, false, false ]
+
+  setInterval(function() {
+    reset = [ true, true, true ]
+  }, 5 * 1000)
+
+  function startFixed(img) {
+    var speed = fixedTickCanvas.width * 0.01
+    tickWithDelay(
+      0,
+      drawQueen,
+      function() { return speed },
+      img,
+      fixedTickCanvas,
+      0,
+      0
+    )
+  }
+
+  function startVariable(img) {
+    var speed = variableTickCanvas.width * 0.0003
+    tickWithDelay(
+      1,
+      drawQueen,
+      function(delay) {
+        var offset = speed * delay
+        if(offset < 0) {
+          console.log('unexpected offset', offset)
+        }
+        // Use this as a debounce because we get negative numbers sometimes.
+        return offset > 0 ? offset : -offset
+      },
+      img,
+      variableTickCanvas,
+      0,
+      0
+    )
+  }
+
+  function startIdealVariable(img) {
+    var speed = idealVariableTickCanvas.width * 0.0003
+    tickWithoutDelay(
+      2,
+      drawQueen,
+      function(delay) {
+        return speed * delay
+      },
+      img,
+      idealVariableTickCanvas,
+      0,
+      0
+    )
+  }
+
+  function loadQueen() {
+    var img = new Image()
+    img.addEventListener('load', function() {
+      startFixed(img)
+      startVariable(img)
+      startIdealVariable(img)
+    }, false)
+    img.src = 'assets/kq-purple-queen-float-forward-01.png'
+  }
+
+  function tickSpeedGraph() {
+  }
+
+  function drawQueen(idx, speedFn, img, canvas, delay, x) {
+    var height = canvas.height
+    var width = canvas.width
+    var heightOffset = img.height / 2
+    var context = canvas.getContext('2d')
+    context.clearRect(0, 0, width, height)
+    x += speedFn(delay)
+    // TODO: Use .all or similar.
+    if (reset[0] || reset[1] || reset[2]) {
+      reset[idx] = false
+      x = 0
+    }
+    context.drawImage(img, x, heightOffset)
+    context.stroke()
+
+    return x
+  }
+
+  function tickWithoutDelay(idx, tickFn, speedFn, img, canvas, x) {
+    setTimeout(function() {
+      var newX = tickFn(idx, speedFn, img, canvas, 33, x)
+      tickWithoutDelay(idx, tickFn, speedFn, img, canvas, newX)
+    }, 33)
+  }
+
+  function tickWithDelay(idx, tickFn, speedFn, img, canvas, delay, x) {
+    var newDelay = calcDelay(canvas.width, x + img.width / 2)
+    setTimeout(function() {
+      var newX = tickFn(idx, speedFn, img, canvas, delay, x)
+      tickWithDelay(idx, tickFn, speedFn, img, canvas, newDelay, newX)
+    }, delay)
+  }
+
+  plotSpeedGraph(speedGraphCanvas)
+
+  loadQueen()
+#+end_src
+
+#+call: inline-js("timing-swim-lanes")
+
+#+RESULTS:
+#+BEGIN_EXPORT html
+<script type="text/javascript">
+
+var canvas = document.querySelector('[data-id="speed-graph"]')
+var width = canvas.width
+var height = canvas.height
+var context = canvas.getContext('2d')
+context.beginPath()
+context.moveTo(0, height / 2)
+context.lineTo(width * 0.4, height / 2)
+// context.arc
+
+var totalTimeInSeconds = 10
+// A stream might be good here. Stream until n seconds and then add a delay,
+// then continue for the remaining seconds.
+function computeTimeSinceLastTick(totalTime, currentTime) {
+  var standardDelay = 3
+  var peakDelay = 10
+  if(currentTime > totalTime * 0.4 && currentTime < totalTime * 0.6) {
+    var percentToPeak =
+      (totalTime * 0.4 / totalTime * 0.6) *
+      (currentTime - (totalTime * 0.4 / totalTime * 0.6))
+    return Math.sin((Math.PI / 2) * percentToPeak)
+  } else {
+    return standardDelay
+  }
+}
+
+function plotSpeedGraph() {
+
+}
+
+function tickSpeedGraph() {
+
+}
+
+function tickSwimLanes() {
+
+  window.requestAnimationFrame(tickSwimLanes)
+}
+
+window.requestAnimationFrame(tickSwimLanes)</script>
+#+END_EXPORT
 
 *** conclusion
 

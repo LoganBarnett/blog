@@ -9,38 +9,39 @@ categories: killer-queen
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#orgaf514b3">1. introduction</a></li>
-<li><a href="#orgce25c32">2. background</a></li>
-<li><a href="#org06df8f6">3. reasoning</a></li>
-<li><a href="#orge7af7c4">4. things</a>
+<li><a href="#org63c1bcd">1. introduction</a></li>
+<li><a href="#orgcd395a3">2. background</a></li>
+<li><a href="#org52dc8ec">3. reasoning</a></li>
+<li><a href="#org7afd1f7">4. things</a>
 <ul>
-<li><a href="#orga9baa46">4.1. frames</a>
+<li><a href="#orgbaa376d">4.1. frames</a>
 <ul>
-<li><a href="#orgc2873a6">4.1.1. history</a></li>
-<li><a href="#orgcc7d0f9">4.1.2. complications</a></li>
-<li><a href="#org62c9a0f">4.1.3. the operating system</a></li>
-<li><a href="#orge79a3e6">4.1.4. the solution</a></li>
-<li><a href="#org56f6a93">4.1.5. conclusion</a></li>
+<li><a href="#org5d83af9">4.1.1. history</a></li>
+<li><a href="#orga45780e">4.1.2. complications</a></li>
+<li><a href="#org5c8557d">4.1.3. the operating system</a></li>
+<li><a href="#org1042b3e">4.1.4. the solution</a></li>
+<li><a href="#org9a34184">4.1.5. side by side</a></li>
+<li><a href="#orga7f2857">4.1.6. conclusion</a></li>
 </ul>
 </li>
-<li><a href="#orgbeda47f">4.2. pixels</a>
+<li><a href="#orga89e505">4.2. pixels</a>
 <ul>
-<li><a href="#org38d69dc">4.2.1. 2D as 3D</a></li>
-<li><a href="#org8702d67">4.2.2. what about the pixel graphics?</a></li>
-<li><a href="#org6171027">4.2.3. <span class="todo TODO">TODO</span> conclusion</a></li>
+<li><a href="#org34ae578">4.2.1. 2D as 3D</a></li>
+<li><a href="#orgdf1bc1f">4.2.2. what about the pixel graphics?</a></li>
+<li><a href="#org13f2af8">4.2.3. <span class="todo TODO">TODO</span> conclusion</a></li>
 </ul>
 </li>
-<li><a href="#org3914750">4.3. <span class="todo TODO">TODO</span> the wrap glitch</a></li>
-<li><a href="#org79b789f">4.4. <span class="todo TODO">TODO</span> game stutter</a></li>
-<li><a href="#orgf7f8696">4.5. <span class="todo TODO">TODO</span> the "drip"</a></li>
+<li><a href="#orgb633347">4.3. <span class="todo TODO">TODO</span> the wrap glitch</a></li>
+<li><a href="#orgae40a0b">4.4. <span class="todo TODO">TODO</span> game stutter</a></li>
+<li><a href="#org4e2ab6d">4.5. <span class="todo TODO">TODO</span> the "drip"</a></li>
 </ul>
 </li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-orgaf514b3" class="outline-2">
-<h2 id="orgaf514b3"><span class="section-number-2">1</span> introduction</h2>
+<div id="outline-container-org63c1bcd" class="outline-2">
+<h2 id="org63c1bcd"><span class="section-number-2">1</span> introduction</h2>
 <div class="outline-text-2" id="text-1">
 <p>
 At the Portland scene we like to talk a lot about different things we've learned
@@ -55,8 +56,8 @@ we cannot see inside it. We can make some good guesses though.
 </div>
 </div>
 
-<div id="outline-container-orgce25c32" class="outline-2">
-<h2 id="orgce25c32"><span class="section-number-2">2</span> background</h2>
+<div id="outline-container-orgcd395a3" class="outline-2">
+<h2 id="orgcd395a3"><span class="section-number-2">2</span> background</h2>
 <div class="outline-text-2" id="text-2">
 <p>
 I (Logan Barnett AKA Day Logan) have done game development both professionally
@@ -69,13 +70,13 @@ an opportunity to work with Unity's physics system (and work around it), use its
 character controller system, networking, shaders, GUI (editor and in-game), and
 its logic/behavior system. I also have an educational background in computer
 engineering, so I have a good conceptual understanding of operating systems,
-memory models, resource sharing, etc. My resume is here for full transparency.
+memory models, resource sharing, etc. My <a href="./resume.html">resume</a> is here for full transparency.
 </p>
 </div>
 </div>
 
-<div id="outline-container-org06df8f6" class="outline-2">
-<h2 id="org06df8f6"><span class="section-number-2">3</span> reasoning</h2>
+<div id="outline-container-org52dc8ec" class="outline-2">
+<h2 id="org52dc8ec"><span class="section-number-2">3</span> reasoning</h2>
 <div class="outline-text-2" id="text-3">
 <p>
 If you had to build a car, there's a lot of things you could say about building
@@ -92,16 +93,16 @@ kind of resources.
 </div>
 </div>
 
-<div id="outline-container-orge7af7c4" class="outline-2">
-<h2 id="orge7af7c4"><span class="section-number-2">4</span> things</h2>
+<div id="outline-container-org7afd1f7" class="outline-2">
+<h2 id="org7afd1f7"><span class="section-number-2">4</span> things</h2>
 <div class="outline-text-2" id="text-4">
 </div>
-<div id="outline-container-orga9baa46" class="outline-3">
-<h3 id="orga9baa46"><span class="section-number-3">4.1</span> frames</h3>
+<div id="outline-container-orgbaa376d" class="outline-3">
+<h3 id="orgbaa376d"><span class="section-number-3">4.1</span> frames</h3>
 <div class="outline-text-3" id="text-4-1">
 </div>
-<div id="outline-container-orgc2873a6" class="outline-4">
-<h4 id="orgc2873a6"><span class="section-number-4">4.1.1</span> history</h4>
+<div id="outline-container-org5d83af9" class="outline-4">
+<h4 id="org5d83af9"><span class="section-number-4">4.1.1</span> history</h4>
 <div class="outline-text-4" id="text-4-1-1">
 <p>
 The first time I learned about "frames" was in talk about how Street Fighter 2
@@ -138,8 +139,8 @@ of timing problem. Street Fighter would be one of those applications.
 </div>
 </div>
 
-<div id="outline-container-orgcc7d0f9" class="outline-4">
-<h4 id="orgcc7d0f9"><span class="section-number-4">4.1.2</span> complications</h4>
+<div id="outline-container-orga45780e" class="outline-4">
+<h4 id="orga45780e"><span class="section-number-4">4.1.2</span> complications</h4>
 <div class="outline-text-4" id="text-4-1-2">
 <p>
 The lie about frame counting is that sometimes the computations can't complete
@@ -148,6 +149,28 @@ many animations and other things going on that if the players add a little bit
 more and maybe step away from each other, the hardware sudden has way too much
 to do to cram into that 33 millisecond time slice, so it just takes longer, and
 as a result the game enters a strange kind of slow motion.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org5c8557d" class="outline-4">
+<h4 id="org5c8557d"><span class="section-number-4">4.1.3</span> the operating system</h4>
+<div class="outline-text-4" id="text-4-1-3">
+<p>
+Back in the day of Street Fighter 2, and most gaming consoles for that matter,
+the game you were running was the program the hardware ran. Today even the XBox
+and PSX consoles run an operating system (OS). When you boot up your mac and run
+Photoshop or whatever, you're not running Photoshop. You're running MacOS. The
+operating system is a very intricate program that makes it look like you're
+running other programs. In reality the OS grants programs the ability to execute
+a few instructions at a time before the OS interrupts and then gives another
+program a chance to run on the processor. When it does a good job about
+switching around really fast, it makes it look like you're running multiple
+programs at once. Your games are one of these programs. This makes it really
+hard to promise that you have exactly 33 milliseconds to complete your
+operations. In the middle of the frame, the OS could easily have let several
+dozen other programs run a little bit too, each eating into that precious slice
+of time.
 </p>
 
 <p>
@@ -161,7 +184,7 @@ prints the time since the last tick in milliseconds. Notice the variance.
 Here's the code that does this, if you want to follow along:
 </p>
 <div class="org-src-container">
-<pre class="src src-javascript" id="orgcb2d3ff"><span style="color: #4f97d7; font-weight: bold;">var</span> <span style="color: #7590db;">lastTime</span> = Date.now<span style="color: #4f97d7;">()</span>
+<pre class="src src-javascript" id="org7f5acc0"><span style="color: #4f97d7; font-weight: bold;">var</span> <span style="color: #7590db;">lastTime</span> = Date.now<span style="color: #4f97d7;">()</span>
 <span style="color: #4f97d7; font-weight: bold;">var</span> <span style="color: #7590db;">el</span> = document.querySelector<span style="color: #4f97d7;">(</span><span style="color: #2d9574;">'[data-id="millisecond-monitor"]'</span><span style="color: #4f97d7;">)</span>
 <span style="color: #4f97d7; font-weight: bold;">function</span> <span style="color: #bc6ec5; font-weight: bold;">printMillis</span><span style="color: #4f97d7;">()</span> <span style="color: #4f97d7;">{</span>
   <span style="color: #4f97d7; font-weight: bold;">var</span> <span style="color: #7590db;">delta</span> = Date.now<span style="color: #bc6ec5;">()</span> - lastTime
@@ -191,30 +214,8 @@ window.requestAnimationFrame(printMillis)</script>
 </div>
 </div>
 
-<div id="outline-container-org62c9a0f" class="outline-4">
-<h4 id="org62c9a0f"><span class="section-number-4">4.1.3</span> the operating system</h4>
-<div class="outline-text-4" id="text-4-1-3">
-<p>
-Back in the day of Street Fighter 2, and most gaming consoles for that matter,
-the game you were running was the program the hardware ran. Today even the XBox
-and PSX consoles run an operating system (OS). When you boot up your mac and run
-Photoshop or whatever, you're not running Photoshop. You're running MacOS. The
-operating system is a very intricate program that makes it look like you're
-running other programs. In reality the OS grants programs the ability to execute
-a few instructions at a time before the OS interrupts and then gives another
-program a chance to run on the processor. When it does a good job about
-switching around really fast, it makes it look like you're running multiple
-programs at once. Your games are one of these programs. This makes it really
-hard to promise that you have exactly 33 milliseconds to complete your
-operations. In the middle of the frame, the OS could easily have let several
-dozen other programs run a little bit too, each eating into that precious slice
-of time.
-</p>
-</div>
-</div>
-
-<div id="outline-container-orge79a3e6" class="outline-4">
-<h4 id="orge79a3e6"><span class="section-number-4">4.1.4</span> the solution</h4>
+<div id="outline-container-org1042b3e" class="outline-4">
+<h4 id="org1042b3e"><span class="section-number-4">4.1.4</span> the solution</h4>
 <div class="outline-text-4" id="text-4-1-4">
 <p>
 So how do games not stutter every time your browser takes a bunch of time to
@@ -258,9 +259,206 @@ Here's an example of the timing scaling to your machine's speed:
 </div>
 </div>
 
-<div id="outline-container-org56f6a93" class="outline-4">
-<h4 id="org56f6a93"><span class="section-number-4">4.1.5</span> conclusion</h4>
+<div id="outline-container-org9a34184" class="outline-4">
+<h4 id="org9a34184"><span class="section-number-4">4.1.5</span> side by side</h4>
 <div class="outline-text-4" id="text-4-1-5">
+<p>
+I managed to get my hands on the up-until-now rumored purple queen sprites.
+Many berry runners died to bring us this sprite from KQ 4 Turbo X
+Championship Legendary Edition. You can see the queens moving horizontally
+in separate "swim lanes". We have exaggerated artificial delays we're adding
+to demonstrate how the varied methods work.
+</p>
+
+<div data-id="swim-lanes" style="width: 100%; height: 28em;">
+  <div style="position: absolute;">Rough delay per frame graph</div>
+  <canvas data-id="speed-graph" style="display: block;" width="0px" height="0px">
+    Speed canvas
+  </canvas>
+  <div style="position: absolute;">Fixed frame (tick)</div>
+  <canvas data-id="fixed-tick" style="display: block;" width="0px" height="0px">
+    Fixed tick canvas
+  </canvas>
+  <div style="position: absolute;">Variable frame (tick)</div>
+  <canvas data-id="variable-tick" style="display: block;" width="0px" height="0px">
+    Variable tick canvas
+  </canvas>
+  <div style="position: absolute;">Ideal variable frame (tick)</div>
+  <canvas data-id="ideal-variable-tick" style="display: block;" width="0px" height="0px">
+    Ideal variable tick canvas
+  </canvas>
+</div>
+
+<script type="text/javascript">
+'use strict'
+
+function initSwimLane(container, canvas) {
+  canvas.height = container.clientHeight / 4
+  canvas.width = container.clientWidth
+  return canvas
+}
+var container = document.querySelector('[data-id="swim-lanes"]')
+var speedGraphCanvas = initSwimLane(
+  container,
+  document.querySelector('[data-id="speed-graph"]')
+)
+var fixedTickCanvas = initSwimLane(
+  container,
+  document.querySelector('[data-id="fixed-tick"]')
+)
+var variableTickCanvas = initSwimLane(
+  container,
+  document.querySelector('[data-id="variable-tick"]')
+)
+
+var idealVariableTickCanvas = initSwimLane(
+  container,
+  document.querySelector('[data-id="ideal-variable-tick"]')
+)
+
+// Shamelessly lifted from https://gist.github.com/gre/1650294
+function easeQuad (t) { return t<.5 ? 2*t*t : -1+(4-2*t)*t }
+var lastTick = new Date()
+
+function withinSpeedDip(width, x) {
+  return x > width - (width * 0.66) && x < width - (width * 0.33)
+}
+
+function calcDelay(width, x) {
+  if(withinSpeedDip(width, x)) {
+    var percent = (x - (width * 0.33)) / (width * 0.33)
+    var delay = easeQuad(percent * 1.8) * 100
+    return delay + 33
+  }
+  else {
+    return 33 // standard fixed delay
+  }
+}
+
+function plotSpeedGraph(canvas) {
+  var height = canvas.height
+  var width = canvas.width
+  var context = canvas.getContext('2d')
+  context.beginPath()
+  context.strokeStyle = 'lightgreen'
+  context.lineWidth = 3
+  const lineHeight = height * 0.75
+  context.moveTo(0, lineHeight)
+  context.lineTo(width * 0.33, lineHeight)
+  context.quadraticCurveTo(width * 0.5, -height * 0.5, width * 0.66, lineHeight)
+  context.lineTo(width, lineHeight)
+  context.stroke()
+}
+
+var reset = [ false, false, false ]
+
+setInterval(function() {
+  reset = [ true, true, true ]
+}, 5 * 1000)
+
+function startFixed(img) {
+  var speed = fixedTickCanvas.width * 0.01
+  tickWithDelay(
+    0,
+    drawQueen,
+    function() { return speed },
+    img,
+    fixedTickCanvas,
+    0,
+    0
+  )
+}
+
+function startVariable(img) {
+  var speed = variableTickCanvas.width * 0.0003
+  tickWithDelay(
+    1,
+    drawQueen,
+    function(delay) {
+      var offset = speed * delay
+      if(offset < 0) {
+        console.log('unexpected offset', offset)
+      }
+      // Use this as a debounce because we get negative numbers sometimes.
+      return offset > 0 ? offset : -offset
+    },
+    img,
+    variableTickCanvas,
+    0,
+    0
+  )
+}
+
+function startIdealVariable(img) {
+  var speed = idealVariableTickCanvas.width * 0.0003
+  tickWithoutDelay(
+    2,
+    drawQueen,
+    function(delay) {
+      return speed * delay
+    },
+    img,
+    idealVariableTickCanvas,
+    0,
+    0
+  )
+}
+
+function loadQueen() {
+  var img = new Image()
+  img.addEventListener('load', function() {
+    startFixed(img)
+    startVariable(img)
+    startIdealVariable(img)
+  }, false)
+  img.src = 'assets/kq-purple-queen-float-forward-01.png'
+}
+
+function tickSpeedGraph() {
+}
+
+function drawQueen(idx, speedFn, img, canvas, delay, x) {
+  var height = canvas.height
+  var width = canvas.width
+  var heightOffset = img.height / 2
+  var context = canvas.getContext('2d')
+  context.clearRect(0, 0, width, height)
+  x += speedFn(delay)
+  // TODO: Use .all or similar.
+  if (reset[0] || reset[1] || reset[2]) {
+    reset[idx] = false
+    x = 0
+  }
+  context.drawImage(img, x, heightOffset)
+  context.stroke()
+
+  return x
+}
+
+function tickWithoutDelay(idx, tickFn, speedFn, img, canvas, x) {
+  setTimeout(function() {
+    var newX = tickFn(idx, speedFn, img, canvas, 33, x)
+    tickWithoutDelay(idx, tickFn, speedFn, img, canvas, newX)
+  }, 33)
+}
+
+function tickWithDelay(idx, tickFn, speedFn, img, canvas, delay, x) {
+  var newDelay = calcDelay(canvas.width, x + img.width / 2)
+  setTimeout(function() {
+    var newX = tickFn(idx, speedFn, img, canvas, delay, x)
+    tickWithDelay(idx, tickFn, speedFn, img, canvas, newDelay, newX)
+  }, delay)
+}
+
+plotSpeedGraph(speedGraphCanvas)
+
+loadQueen()</script>
+</div>
+</div>
+
+<div id="outline-container-orga7f2857" class="outline-4">
+<h4 id="orga7f2857"><span class="section-number-4">4.1.6</span> conclusion</h4>
+<div class="outline-text-4" id="text-4-1-6">
 <p>
 We cannot assume all frames are created equal. Frames are not fixed slices of
 time but instead highly varied slices of time.
@@ -269,12 +467,12 @@ time but instead highly varied slices of time.
 </div>
 </div>
 
-<div id="outline-container-orgbeda47f" class="outline-3">
-<h3 id="orgbeda47f"><span class="section-number-3">4.2</span> pixels</h3>
+<div id="outline-container-orga89e505" class="outline-3">
+<h3 id="orga89e505"><span class="section-number-3">4.2</span> pixels</h3>
 <div class="outline-text-3" id="text-4-2">
 </div>
-<div id="outline-container-org38d69dc" class="outline-4">
-<h4 id="org38d69dc"><span class="section-number-4">4.2.1</span> 2D as 3D</h4>
+<div id="outline-container-org34ae578" class="outline-4">
+<h4 id="org34ae578"><span class="section-number-4">4.2.1</span> 2D as 3D</h4>
 <div class="outline-text-4" id="text-4-2-1">
 <p>
 Display sizes vary all over the place. The result is game engines don't use
@@ -293,8 +491,8 @@ comparisons and a large scaling distance.
 </div>
 </div>
 
-<div id="outline-container-org8702d67" class="outline-4">
-<h4 id="org8702d67"><span class="section-number-4">4.2.2</span> what about the pixel graphics?</h4>
+<div id="outline-container-orgdf1bc1f" class="outline-4">
+<h4 id="orgdf1bc1f"><span class="section-number-4">4.2.2</span> what about the pixel graphics?</h4>
 <div class="outline-text-4" id="text-4-2-2">
 <p>
 Generally what happens with pixel graphics is someone will build the images
@@ -308,20 +506,20 @@ are still stretched though.
 </div>
 </div>
 
-<div id="outline-container-org6171027" class="outline-4">
-<h4 id="org6171027"><span class="section-number-4">4.2.3</span> <span class="todo TODO">TODO</span> conclusion</h4>
+<div id="outline-container-org13f2af8" class="outline-4">
+<h4 id="org13f2af8"><span class="section-number-4">4.2.3</span> <span class="todo TODO">TODO</span> conclusion</h4>
 </div>
 </div>
 
-<div id="outline-container-org3914750" class="outline-3">
-<h3 id="org3914750"><span class="section-number-3">4.3</span> <span class="todo TODO">TODO</span> the wrap glitch</h3>
+<div id="outline-container-orgb633347" class="outline-3">
+<h3 id="orgb633347"><span class="section-number-3">4.3</span> <span class="todo TODO">TODO</span> the wrap glitch</h3>
 </div>
 
-<div id="outline-container-org79b789f" class="outline-3">
-<h3 id="org79b789f"><span class="section-number-3">4.4</span> <span class="todo TODO">TODO</span> game stutter</h3>
+<div id="outline-container-orgae40a0b" class="outline-3">
+<h3 id="orgae40a0b"><span class="section-number-3">4.4</span> <span class="todo TODO">TODO</span> game stutter</h3>
 </div>
 
-<div id="outline-container-orgf7f8696" class="outline-3">
-<h3 id="orgf7f8696"><span class="section-number-3">4.5</span> <span class="todo TODO">TODO</span> the "drip"</h3>
+<div id="outline-container-org4e2ab6d" class="outline-3">
+<h3 id="org4e2ab6d"><span class="section-number-3">4.5</span> <span class="todo TODO">TODO</span> the "drip"</h3>
 </div>
 </div>
