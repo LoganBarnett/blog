@@ -9,40 +9,57 @@ categories: killer-queen
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#org63c1bcd">1. introduction</a></li>
-<li><a href="#orgcd395a3">2. background</a></li>
-<li><a href="#org52dc8ec">3. reasoning</a></li>
-<li><a href="#org7afd1f7">4. things</a>
+<li><a href="#orgc640afc">1. changelog</a></li>
+<li><a href="#org422db35">2. introduction</a></li>
+<li><a href="#org15f91ea">3. background</a></li>
+<li><a href="#org968605a">4. reasoning</a></li>
+<li><a href="#org759cd4a">5. things</a>
 <ul>
-<li><a href="#orgbaa376d">4.1. frames</a>
+<li><a href="#orgba59149">5.1. frames</a>
 <ul>
-<li><a href="#org5d83af9">4.1.1. history</a></li>
-<li><a href="#orga45780e">4.1.2. complications</a></li>
-<li><a href="#org5c8557d">4.1.3. the operating system</a></li>
-<li><a href="#org1042b3e">4.1.4. the solution</a></li>
-<li><a href="#org9a34184">4.1.5. side by side</a></li>
-<li><a href="#orga7f2857">4.1.6. conclusion</a></li>
+<li><a href="#org42c1f69">5.1.1. history</a></li>
+<li><a href="#org8e00a85">5.1.2. complications</a></li>
+<li><a href="#org0fcc0ab">5.1.3. the operating system</a></li>
+<li><a href="#org0f4f40a">5.1.4. the solution</a></li>
+<li><a href="#org07d0783">5.1.5. side by side</a></li>
+<li><a href="#org0e4e357">5.1.6. conclusion</a></li>
 </ul>
 </li>
-<li><a href="#orga89e505">4.2. pixels</a>
+<li><a href="#org49078bf">5.2. frame rate</a>
 <ul>
-<li><a href="#org34ae578">4.2.1. 2D as 3D</a></li>
-<li><a href="#orgdf1bc1f">4.2.2. what about the pixel graphics?</a></li>
-<li><a href="#org13f2af8">4.2.3. <span class="todo TODO">TODO</span> conclusion</a></li>
+<li><a href="#orgc471538">5.2.1. the problem</a></li>
+<li><a href="#orgd5f57c8">5.2.2. enter vsync</a></li>
+<li><a href="#org69d0f17">5.2.3. does KQ use vsync?</a></li>
+<li><a href="#orgc6c9ce9">5.2.4. <span class="todo TODO">TODO</span> show example of vsync</a></li>
 </ul>
 </li>
-<li><a href="#orgb633347">4.3. <span class="todo TODO">TODO</span> the wrap glitch</a></li>
-<li><a href="#orgae40a0b">4.4. <span class="todo TODO">TODO</span> game stutter</a></li>
-<li><a href="#org4e2ab6d">4.5. <span class="todo TODO">TODO</span> the "drip"</a></li>
+<li><a href="#org2a1a863">5.3. pixels</a>
+<ul>
+<li><a href="#orgdded4f2">5.3.1. 2D as 3D</a></li>
+<li><a href="#orgda3500b">5.3.2. what about the pixel graphics?</a></li>
+<li><a href="#orgf90e8fa">5.3.3. <span class="todo TODO">TODO</span> conclusion</a></li>
+</ul>
+</li>
+<li><a href="#org27f57d2">5.4. <span class="todo TODO">TODO</span> the wrap glitch</a></li>
+<li><a href="#org66b4db7">5.5. <span class="todo TODO">TODO</span> game stutter</a></li>
+<li><a href="#org890c91a">5.6. <span class="todo TODO">TODO</span> the "drip"</a></li>
 </ul>
 </li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-org63c1bcd" class="outline-2">
-<h2 id="org63c1bcd"><span class="section-number-2">1</span> introduction</h2>
+<div id="outline-container-orgc640afc" class="outline-2">
+<h2 id="orgc640afc"><span class="section-number-2">1</span> changelog</h2>
 <div class="outline-text-2" id="text-1">
+<dl class="org-dl">
+<dt><span class="timestamp-wrapper"><span class="timestamp">&lt;2018-01-21 Sun&gt;</span></span></dt><dd>add section about frame rate and vsync.</dd>
+</dl>
+</div>
+</div>
+<div id="outline-container-org422db35" class="outline-2">
+<h2 id="org422db35"><span class="section-number-2">2</span> introduction</h2>
+<div class="outline-text-2" id="text-2">
 <p>
 At the Portland scene we like to talk a lot about different things we've learned
 about Killer Queen, and being that the game is effectively a hunk of software we
@@ -56,9 +73,9 @@ we cannot see inside it. We can make some good guesses though.
 </div>
 </div>
 
-<div id="outline-container-orgcd395a3" class="outline-2">
-<h2 id="orgcd395a3"><span class="section-number-2">2</span> background</h2>
-<div class="outline-text-2" id="text-2">
+<div id="outline-container-org15f91ea" class="outline-2">
+<h2 id="org15f91ea"><span class="section-number-2">3</span> background</h2>
+<div class="outline-text-2" id="text-3">
 <p>
 I (Logan Barnett AKA Day Logan) have done game development both professionally
 and as a hobbyist for many years now, and I'm an accomplished software engineer.
@@ -75,9 +92,9 @@ memory models, resource sharing, etc. My <a href="./resume.html">resume</a> is h
 </div>
 </div>
 
-<div id="outline-container-org52dc8ec" class="outline-2">
-<h2 id="org52dc8ec"><span class="section-number-2">3</span> reasoning</h2>
-<div class="outline-text-2" id="text-3">
+<div id="outline-container-org968605a" class="outline-2">
+<h2 id="org968605a"><span class="section-number-2">4</span> reasoning</h2>
+<div class="outline-text-2" id="text-4">
 <p>
 If you had to build a car, there's a lot of things you could say about building
 a car without actually having to look at the blue prints. Cars need some way of
@@ -93,17 +110,17 @@ kind of resources.
 </div>
 </div>
 
-<div id="outline-container-org7afd1f7" class="outline-2">
-<h2 id="org7afd1f7"><span class="section-number-2">4</span> things</h2>
-<div class="outline-text-2" id="text-4">
+<div id="outline-container-org759cd4a" class="outline-2">
+<h2 id="org759cd4a"><span class="section-number-2">5</span> things</h2>
+<div class="outline-text-2" id="text-5">
 </div>
-<div id="outline-container-orgbaa376d" class="outline-3">
-<h3 id="orgbaa376d"><span class="section-number-3">4.1</span> frames</h3>
-<div class="outline-text-3" id="text-4-1">
+<div id="outline-container-orgba59149" class="outline-3">
+<h3 id="orgba59149"><span class="section-number-3">5.1</span> frames</h3>
+<div class="outline-text-3" id="text-5-1">
 </div>
-<div id="outline-container-org5d83af9" class="outline-4">
-<h4 id="org5d83af9"><span class="section-number-4">4.1.1</span> history</h4>
-<div class="outline-text-4" id="text-4-1-1">
+<div id="outline-container-org42c1f69" class="outline-4">
+<h4 id="org42c1f69"><span class="section-number-4">5.1.1</span> history</h4>
+<div class="outline-text-4" id="text-5-1-1">
 <p>
 The first time I learned about "frames" was in talk about how Street Fighter 2
 works. Keep in mind this game is ancient by today's standards. With the Street
@@ -139,9 +156,9 @@ of timing problem. Street Fighter would be one of those applications.
 </div>
 </div>
 
-<div id="outline-container-orga45780e" class="outline-4">
-<h4 id="orga45780e"><span class="section-number-4">4.1.2</span> complications</h4>
-<div class="outline-text-4" id="text-4-1-2">
+<div id="outline-container-org8e00a85" class="outline-4">
+<h4 id="org8e00a85"><span class="section-number-4">5.1.2</span> complications</h4>
+<div class="outline-text-4" id="text-5-1-2">
 <p>
 The lie about frame counting is that sometimes the computations can't complete
 in the time period they have. This happens a lot in Chun Li's level: There's so
@@ -153,9 +170,9 @@ as a result the game enters a strange kind of slow motion.
 </div>
 </div>
 
-<div id="outline-container-org5c8557d" class="outline-4">
-<h4 id="org5c8557d"><span class="section-number-4">4.1.3</span> the operating system</h4>
-<div class="outline-text-4" id="text-4-1-3">
+<div id="outline-container-org0fcc0ab" class="outline-4">
+<h4 id="org0fcc0ab"><span class="section-number-4">5.1.3</span> the operating system</h4>
+<div class="outline-text-4" id="text-5-1-3">
 <p>
 Back in the day of Street Fighter 2, and most gaming consoles for that matter,
 the game you were running was the program the hardware ran. Today even the XBox
@@ -184,7 +201,7 @@ prints the time since the last tick in milliseconds. Notice the variance.
 Here's the code that does this, if you want to follow along:
 </p>
 <div class="org-src-container">
-<pre class="src src-javascript" id="org7f5acc0"><span style="color: #4f97d7; font-weight: bold;">var</span> <span style="color: #7590db;">lastTime</span> = Date.now<span style="color: #4f97d7;">()</span>
+<pre class="src src-javascript" id="org2ec4874"><span style="color: #4f97d7; font-weight: bold;">var</span> <span style="color: #7590db;">lastTime</span> = Date.now<span style="color: #4f97d7;">()</span>
 <span style="color: #4f97d7; font-weight: bold;">var</span> <span style="color: #7590db;">el</span> = document.querySelector<span style="color: #4f97d7;">(</span><span style="color: #2d9574;">'[data-id="millisecond-monitor"]'</span><span style="color: #4f97d7;">)</span>
 <span style="color: #4f97d7; font-weight: bold;">function</span> <span style="color: #bc6ec5; font-weight: bold;">printMillis</span><span style="color: #4f97d7;">()</span> <span style="color: #4f97d7;">{</span>
   <span style="color: #4f97d7; font-weight: bold;">var</span> <span style="color: #7590db;">delta</span> = Date.now<span style="color: #bc6ec5;">()</span> - lastTime
@@ -214,9 +231,9 @@ window.requestAnimationFrame(printMillis)</script>
 </div>
 </div>
 
-<div id="outline-container-org1042b3e" class="outline-4">
-<h4 id="org1042b3e"><span class="section-number-4">4.1.4</span> the solution</h4>
-<div class="outline-text-4" id="text-4-1-4">
+<div id="outline-container-org0f4f40a" class="outline-4">
+<h4 id="org0f4f40a"><span class="section-number-4">5.1.4</span> the solution</h4>
+<div class="outline-text-4" id="text-5-1-4">
 <p>
 So how do games not stutter every time your browser takes a bunch of time to
 inefficiently render a gif you're not even looking at because you're playing a
@@ -259,9 +276,9 @@ Here's an example of the timing scaling to your machine's speed:
 </div>
 </div>
 
-<div id="outline-container-org9a34184" class="outline-4">
-<h4 id="org9a34184"><span class="section-number-4">4.1.5</span> side by side</h4>
-<div class="outline-text-4" id="text-4-1-5">
+<div id="outline-container-org07d0783" class="outline-4">
+<h4 id="org07d0783"><span class="section-number-4">5.1.5</span> side by side</h4>
+<div class="outline-text-4" id="text-5-1-5">
 <p>
 I managed to get my hands on the up-until-now rumored purple queen sprites.
 Many berry runners died to bring us this sprite from KQ 4 Turbo X
@@ -411,7 +428,7 @@ function loadQueen() {
     startVariable(img)
     startIdealVariable(img)
   }, false)
-  img.src = 'assets/kq-purple-queen-float-forward-01.png'
+  img.src = '/blog/assets/kq-purple-queen-float-forward-01.png'
 }
 
 function tickSpeedGraph() {
@@ -456,9 +473,9 @@ loadQueen()</script>
 </div>
 </div>
 
-<div id="outline-container-orga7f2857" class="outline-4">
-<h4 id="orga7f2857"><span class="section-number-4">4.1.6</span> conclusion</h4>
-<div class="outline-text-4" id="text-4-1-6">
+<div id="outline-container-org0e4e357" class="outline-4">
+<h4 id="org0e4e357"><span class="section-number-4">5.1.6</span> conclusion</h4>
+<div class="outline-text-4" id="text-5-1-6">
 <p>
 We cannot assume all frames are created equal. Frames are not fixed slices of
 time but instead highly varied slices of time.
@@ -467,13 +484,92 @@ time but instead highly varied slices of time.
 </div>
 </div>
 
-<div id="outline-container-orga89e505" class="outline-3">
-<h3 id="orga89e505"><span class="section-number-3">4.2</span> pixels</h3>
-<div class="outline-text-3" id="text-4-2">
+<div id="outline-container-org49078bf" class="outline-3">
+<h3 id="org49078bf"><span class="section-number-3">5.2</span> frame rate</h3>
+<div class="outline-text-3" id="text-5-2">
+<p>
+Building upon the idea of a variable frame rate - frame rates can sometimes
+have upper limits. We do that sometimes as a way of preventing a visual
+artifact called "tearing". Before we explain the fix, let's explain the
+problem.
+</p>
 </div>
-<div id="outline-container-org34ae578" class="outline-4">
-<h4 id="org34ae578"><span class="section-number-4">4.2.1</span> 2D as 3D</h4>
-<div class="outline-text-4" id="text-4-2-1">
+
+<div id="outline-container-orgc471538" class="outline-4">
+<h4 id="orgc471538"><span class="section-number-4">5.2.1</span> the problem</h4>
+<div class="outline-text-4" id="text-5-2-1">
+<p>
+Imagine the kind of work it takes to make a stop motion movie. You
+meticulously position all of the objects in the scene, setup your lights,
+focus the camera (pray that you didn't nudge it), and take that picture.
+Okay great. Computers do this too, but they can't spend minutes doing it.
+Try 33 milliseconds at worst case.
+</p>
+
+<p>
+There's a two dimensional section of memory called a buffer, and the game's
+job is to translate the game's state into a bunch of colors. These colors
+are destined to populate pixels on the screen, and this is how you see all
+the pretty things in the game. The monitor that displays this information is
+a simplistic device though. It redraws itself at some fixed rate (60 Hz to
+75 Hz, depending on the hardware). CRTs are closer to 30 Hz if I recall. The
+monitor shows stuff at its own rate, not the video card's. So what winds up
+happening is the screen can start redrawing the screen using the buffer <span class="underline">as
+the game is also writing to that buffer</span>. What this means is you wind up
+seeing part of the last frame <span class="underline">and</span> part of the current frame at the same
+time, but there will be a seam (horizontal due to how the hardware works).
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgd5f57c8" class="outline-4">
+<h4 id="orgd5f57c8"><span class="section-number-4">5.2.2</span> enter vsync</h4>
+<div class="outline-text-4" id="text-5-2-2">
+<p>
+<code>vsync</code> is a feature that's really easy to use on a game engine. It's a
+simple toggle that tells the game it has to wait until that buffer is ready
+and then it can draw to that buffer. The monitor won't see the buffer until
+after the game has finished writing to it. The tradeoff is the game has to
+sit on its hands when it could be calculating smoke trajectories of bong
+stacks in weed-em-up games. It slows the game down, sometimes in a
+noticeably adverse way.
+</p>
+
+<p>
+It's worth noting there's other ways to combat tearing such as double or
+triple buffering, but these are mitigation strategies. At the moment there's
+not an actual fix. There's been development on gaming monitors that can
+communicate with the video card and sync up in a less primitive way.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org69d0f17" class="outline-4">
+<h4 id="org69d0f17"><span class="section-number-4">5.2.3</span> does KQ use vsync?</h4>
+<div class="outline-text-4" id="text-5-2-3">
+<p>
+From staring too long at the background on the game, it would seem like
+Killer Queen does indeed not use vsync currently. When the background
+scrolls upwards, you can see the tear. That said, I've noticed that cabinets
+can perform a little differently when they get hooked up to streaming
+equipment. The streaming equipment influences the frame rate of displays. So
+it's hard to say one way or another with much certainty.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgc6c9ce9" class="outline-4">
+<h4 id="orgc6c9ce9"><span class="section-number-4">5.2.4</span> <span class="todo TODO">TODO</span> show example of vsync</h4>
+</div>
+</div>
+
+<div id="outline-container-org2a1a863" class="outline-3">
+<h3 id="org2a1a863"><span class="section-number-3">5.3</span> pixels</h3>
+<div class="outline-text-3" id="text-5-3">
+</div>
+<div id="outline-container-orgdded4f2" class="outline-4">
+<h4 id="orgdded4f2"><span class="section-number-4">5.3.1</span> 2D as 3D</h4>
+<div class="outline-text-4" id="text-5-3-1">
 <p>
 Display sizes vary all over the place. The result is game engines don't use
 pixels directly anymore. Even 2D games are rendered using 3D libraries. In
@@ -491,9 +587,9 @@ comparisons and a large scaling distance.
 </div>
 </div>
 
-<div id="outline-container-orgdf1bc1f" class="outline-4">
-<h4 id="orgdf1bc1f"><span class="section-number-4">4.2.2</span> what about the pixel graphics?</h4>
-<div class="outline-text-4" id="text-4-2-2">
+<div id="outline-container-orgda3500b" class="outline-4">
+<h4 id="orgda3500b"><span class="section-number-4">5.3.2</span> what about the pixel graphics?</h4>
+<div class="outline-text-4" id="text-5-3-2">
 <p>
 Generally what happens with pixel graphics is someone will build the images
 using fixed pixels, and then assign that image to a rectangle that'll show up on
@@ -506,20 +602,20 @@ are still stretched though.
 </div>
 </div>
 
-<div id="outline-container-org13f2af8" class="outline-4">
-<h4 id="org13f2af8"><span class="section-number-4">4.2.3</span> <span class="todo TODO">TODO</span> conclusion</h4>
+<div id="outline-container-orgf90e8fa" class="outline-4">
+<h4 id="orgf90e8fa"><span class="section-number-4">5.3.3</span> <span class="todo TODO">TODO</span> conclusion</h4>
 </div>
 </div>
 
-<div id="outline-container-orgb633347" class="outline-3">
-<h3 id="orgb633347"><span class="section-number-3">4.3</span> <span class="todo TODO">TODO</span> the wrap glitch</h3>
+<div id="outline-container-org27f57d2" class="outline-3">
+<h3 id="org27f57d2"><span class="section-number-3">5.4</span> <span class="todo TODO">TODO</span> the wrap glitch</h3>
 </div>
 
-<div id="outline-container-orgae40a0b" class="outline-3">
-<h3 id="orgae40a0b"><span class="section-number-3">4.4</span> <span class="todo TODO">TODO</span> game stutter</h3>
+<div id="outline-container-org66b4db7" class="outline-3">
+<h3 id="org66b4db7"><span class="section-number-3">5.5</span> <span class="todo TODO">TODO</span> game stutter</h3>
 </div>
 
-<div id="outline-container-org4e2ab6d" class="outline-3">
-<h3 id="org4e2ab6d"><span class="section-number-3">4.5</span> <span class="todo TODO">TODO</span> the "drip"</h3>
+<div id="outline-container-org890c91a" class="outline-3">
+<h3 id="org890c91a"><span class="section-number-3">5.6</span> <span class="todo TODO">TODO</span> the "drip"</h3>
 </div>
 </div>

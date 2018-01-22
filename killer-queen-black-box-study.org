@@ -14,6 +14,8 @@ categories: killer-queen
 #+tags:   killer-queen
 #+toc:    headlines 3
 
+* changelog
+- <2018-01-21 Sun> :: add section about frame rate and vsync.
 * introduction
 
 At the Portland scene we like to talk a lot about different things we've learned
@@ -343,7 +345,7 @@ Here's an example of the timing scaling to your machine's speed:
       startVariable(img)
       startIdealVariable(img)
     }, false)
-    img.src = 'assets/kq-purple-queen-float-forward-01.png'
+    img.src = '/blog/assets/kq-purple-queen-float-forward-01.png'
   }
 
   function tickSpeedGraph() {
@@ -438,6 +440,56 @@ window.requestAnimationFrame(tickSwimLanes)</script>
 
 We cannot assume all frames are created equal. Frames are not fixed slices of
 time but instead highly varied slices of time.
+
+** frame rate
+   Building upon the idea of a variable frame rate - frame rates can sometimes
+   have upper limits. We do that sometimes as a way of preventing a visual
+   artifact called "tearing". Before we explain the fix, let's explain the
+   problem.
+
+*** the problem
+    Imagine the kind of work it takes to make a stop motion movie. You
+    meticulously position all of the objects in the scene, setup your lights,
+    focus the camera (pray that you didn't nudge it), and take that picture.
+    Okay great. Computers do this too, but they can't spend minutes doing it.
+    Try 33 milliseconds at worst case.
+
+    There's a two dimensional section of memory called a buffer, and the game's
+    job is to translate the game's state into a bunch of colors. These colors
+    are destined to populate pixels on the screen, and this is how you see all
+    the pretty things in the game. The monitor that displays this information is
+    a simplistic device though. It redraws itself at some fixed rate (60 Hz to
+    75 Hz, depending on the hardware). CRTs are closer to 30 Hz if I recall. The
+    monitor shows stuff at its own rate, not the video card's. So what winds up
+    happening is the screen can start redrawing the screen using the buffer _as
+    the game is also writing to that buffer_. What this means is you wind up
+    seeing part of the last frame _and_ part of the current frame at the same
+    time, but there will be a seam (horizontal due to how the hardware works).
+
+*** enter vsync
+    =vsync= is a feature that's really easy to use on a game engine. It's a
+    simple toggle that tells the game it has to wait until that buffer is ready
+    and then it can draw to that buffer. The monitor won't see the buffer until
+    after the game has finished writing to it. The tradeoff is the game has to
+    sit on its hands when it could be calculating smoke trajectories of bong
+    stacks in weed-em-up games. It slows the game down, sometimes in a
+    noticeably adverse way.
+
+    It's worth noting there's other ways to combat tearing such as double or
+    triple buffering, but these are mitigation strategies. At the moment there's
+    not an actual fix. There's been development on gaming monitors that can
+    communicate with the video card and sync up in a less primitive way.
+
+*** does KQ use vsync?
+
+    From staring too long at the background on the game, it would seem like
+    Killer Queen does indeed not use vsync currently. When the background
+    scrolls upwards, you can see the tear. That said, I've noticed that cabinets
+    can perform a little differently when they get hooked up to streaming
+    equipment. The streaming equipment influences the frame rate of displays. So
+    it's hard to say one way or another with much certainty.
+
+*** TODO show example of vsync
 
 ** pixels
 
