@@ -15,8 +15,14 @@ categories: killer-queen
 #+toc:    headlines 3
 
 * changelog
+  :PROPERTIES:
+  :CUSTOM_ID: changelog
+  :END:
 - <2018-01-21 Sun> :: add section about frame rate and vsync.
 * introduction
+  :PROPERTIES:
+  :CUSTOM_ID: introduction
+  :END:
 
 At the Portland scene we like to talk a lot about different things we've learned
 about Killer Queen, and being that the game is effectively a hunk of software we
@@ -28,6 +34,9 @@ we can't say for 100% certainty about everything. The game is a black box where
 we cannot see inside it. We can make some good guesses though.
 
 * background
+  :PROPERTIES:
+  :CUSTOM_ID: background
+  :END:
 
 I (Logan Barnett AKA Day Logan) have done game development both professionally
 and as a hobbyist for many years now, and I'm an accomplished software engineer.
@@ -42,6 +51,9 @@ engineering, so I have a good conceptual understanding of operating systems,
 memory models, resource sharing, etc. My [[./resume.html][resume]] is here for full transparency.
 
 * reasoning
+  :PROPERTIES:
+  :CUSTOM_ID: reasoning
+  :END:
 
 If you had to build a car, there's a lot of things you could say about building
 a car without actually having to look at the blue prints. Cars need some way of
@@ -55,10 +67,18 @@ something custom can mean a _lot_ of work. Bumblebee Games doesn't have that
 kind of resources.
 
 * things
-
+  :PROPERTIES:
+  :CUSTOM_ID: things
+  :END:
 ** frames
+   :PROPERTIES:
+   :CUSTOM_ID: things--frames
+   :END:
 
 *** history
+    :PROPERTIES:
+    :CUSTOM_ID: things--frames--history
+    :END:
 The first time I learned about "frames" was in talk about how Street Fighter 2
 works. Keep in mind this game is ancient by today's standards. With the Street
 Fighter 2 cabinet, the hardware there focused on exactly one thing: Running
@@ -89,6 +109,9 @@ button to slow your computer down and run older applications that had this kind
 of timing problem. Street Fighter would be one of those applications.
 
 *** complications
+    :PROPERTIES:
+    :CUSTOM_ID: things--frames--complications
+    :END:
 
 The lie about frame counting is that sometimes the computations can't complete
 in the time period they have. This happens a lot in Chun Li's level: There's so
@@ -98,6 +121,9 @@ to do to cram into that 33 millisecond time slice, so it just takes longer, and
 as a result the game enters a strange kind of slow motion.
 
 *** the operating system
+    :PROPERTIES:
+    :CUSTOM_ID: things--frames--the-operating-system
+    :END:
 
 Back in the day of Street Fighter 2, and most gaming consoles for that matter,
 the game you were running was the program the hardware ran. Today even the XBox
@@ -162,6 +188,9 @@ window.requestAnimationFrame(printMillis)</script>
 #+END_EXPORT
 
 *** the solution
+    :PROPERTIES:
+    :CUSTOM_ID: things--frames--the-solution
+    :END:
 
 So how do games not stutter every time your browser takes a bunch of time to
 inefficiently render a gif you're not even looking at because you're playing a
@@ -194,6 +223,9 @@ Here's an example of the timing scaling to your machine's speed:
 #+html: <iframe src="https://www.winningsolitaire.com"></iframe>
 
 *** side by side
+    :PROPERTIES:
+    :CUSTOM_ID: things--frames--side-by-side
+    :END:
 
     I managed to get my hands on the up-until-now rumored purple queen sprites.
     Many berry runners died to bring us this sprite from KQ 4 Turbo X
@@ -437,17 +469,26 @@ window.requestAnimationFrame(tickSwimLanes)</script>
 #+END_EXPORT
 
 *** conclusion
+    :PROPERTIES:
+    :CUSTOM_ID: things--frames--conclusion
+    :END:
 
 We cannot assume all frames are created equal. Frames are not fixed slices of
 time but instead highly varied slices of time.
 
 ** frame rate
+   :PROPERTIES:
+   :CUSTOM_ID: things--frame-rate
+   :END:
    Building upon the idea of a variable frame rate - frame rates can sometimes
    have upper limits. We do that sometimes as a way of preventing a visual
    artifact called "tearing". Before we explain the fix, let's explain the
    problem.
 
 *** the problem
+    :PROPERTIES:
+    :CUSTOM_ID: things--frame-rate--the-problem
+    :END:
     Imagine the kind of work it takes to make a stop motion movie. You
     meticulously position all of the objects in the scene, setup your lights,
     focus the camera (pray that you didn't nudge it), and take that picture.
@@ -467,6 +508,9 @@ time but instead highly varied slices of time.
     time, but there will be a seam (horizontal due to how the hardware works).
 
 *** enter vsync
+    :PROPERTIES:
+    :CUSTOM_ID: things--frame-rate--enter-vsync
+    :END:
     =vsync= is a feature that's really easy to use on a game engine. It's a
     simple toggle that tells the game it has to wait until that buffer is ready
     and then it can draw to that buffer. The monitor won't see the buffer until
@@ -481,6 +525,9 @@ time but instead highly varied slices of time.
     communicate with the video card and sync up in a less primitive way.
 
 *** does KQ use vsync?
+    :PROPERTIES:
+    :CUSTOM_ID: things--frame-rate--does-kq-use-vsync
+    :END:
 
     From staring too long at the background on the game, it would seem like
     Killer Queen does indeed not use vsync currently. When the background
@@ -490,10 +537,19 @@ time but instead highly varied slices of time.
     it's hard to say one way or another with much certainty.
 
 *** TODO show example of vsync
+    :PROPERTIES:
+    :CUSTOM_ID: things--frame-rate--show-example-of-vsync
+    :END:
 
 ** pixels
+   :PROPERTIES:
+   :CUSTOM_ID: things--pixels
+   :END:
 
 *** 2D as 3D
+    :PROPERTIES:
+    :CUSTOM_ID: things--pixels--2d-as-3d
+    :END:
 Display sizes vary all over the place. The result is game engines don't use
 pixels directly anymore. Even 2D games are rendered using 3D libraries. In
 Unity's case 2D things will be rectangles that face the camera. The coordinate
@@ -508,6 +564,9 @@ become hard with floating point numbers are when you want to do exact
 comparisons and a large scaling distance.
 
 *** what about the pixel graphics?
+    :PROPERTIES:
+    :CUSTOM_ID: things--pixels--what-about-the-pixel-graphics
+    :END:
 
 Generally what happens with pixel graphics is someone will build the images
 using fixed pixels, and then assign that image to a rectangle that'll show up on
@@ -518,9 +577,21 @@ of retro graphics games, the filter is disabled so you see the raw pixels. They
 are still stretched though.
 
 *** TODO conclusion
+    :PROPERTIES:
+    :CUSTOM_ID: things--pixels--conclusion
+    :END:
 
 ** TODO the wrap glitch
+   :PROPERTIES:
+   :CUSTOM_ID: things--the-wrap-glitch
+   :END:
 
 ** TODO game stutter
-
+   :PROPERTIES:
+   :CUSTOM_ID: things--game-stutter
+   :END:
 ** TODO the "drip"
+   :PROPERTIES:
+   :CUSTOM_ID: things--the-drip
+   :END:
+
