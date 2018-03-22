@@ -784,7 +784,7 @@ package character1 {
     pause occasionally. If you're playing some single player indie game, you
     probably don't care either. Unity is all about these kinds of games.
 
-    Remember the [[side by side]] I put together showing how different timing models
+    Remember the [[side by side][side by side]] I put together showing how different timing models
     work with delays? You'd better fucking remember. That was a lot of work!
 
     The garbage collector will cause these long hiccups, which sometimes are
