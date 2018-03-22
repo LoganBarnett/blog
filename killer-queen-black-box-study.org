@@ -13,11 +13,13 @@ categories: killer-queen
 #+date:   <2018-01-14 Sun>
 #+tags:   killer-queen
 #+toc:    headlines 3
+#+auto_id: t
 
 * changelog
   :PROPERTIES:
   :CUSTOM_ID: changelog
   :END:
+- <2018-03-22 Thu> :: add section about game stutter.
 - <2018-01-21 Sun> :: add section about frame rate and vsync.
 * introduction
   :PROPERTIES:
@@ -56,7 +58,7 @@ memory models, resource sharing, etc. My [[./resume.html][resume]] is here for f
   :END:
 
 If you had to build a car, there's a lot of things you could say about building
-a car without actually having to look at the blue prints. Cars need some way of
+a car without actually having to look at the blueprints. Cars need some way of
 touching the ground (wheels). They need a drive train that pushes the car in the
 direction we want to go. There needs to be some kind of steering apparatus (even
 for self driving cars) so you can make sure the car is moving the direction you
@@ -64,7 +66,8 @@ want to go. We can do this with software too. In order to accomplish certain
 things, there's just machinery that needs to be in place. Unity has a lot of
 things built into it, and circumventing those built in things so you can do
 something custom can mean a _lot_ of work. Bumblebee Games doesn't have that
-kind of resources.
+kind of resources. So there's a lot of things we can infer about the guts of the
+game without even looking at its source code.
 
 * things
   :PROPERTIES:
@@ -586,10 +589,232 @@ are still stretched though.
    :CUSTOM_ID: things--the-wrap-glitch
    :END:
 
-** TODO game stutter
+** game stutter
    :PROPERTIES:
    :CUSTOM_ID: things--game-stutter
    :END:
+
+   Sometimes the game stutters. There's a variety of reasons as to why this can
+   happen that are completely independent of the game itself. The operating
+   system might have some expensive processes that wake up and do lots of work
+   suddenly and leave the game starved for resources, for example. More often
+   than not it will be garbage collection that's the cause of stutters.
+
+**** the dark ages of memory management
+     :PROPERTIES:
+     :CUSTOM_ID: things--game-stutter--the-dark-ages-of-memory-management
+     :END:
+
+     Let's rewind to 2018 where games are still written in C++. Yup. It still
+     happens. The common belief is that games need to run at maximum speed and
+     C++ is the closest intersection between abstractable and close to the raw
+     processor as possible. In reality it's like running a civilization without
+     running water just because you want to be closer to nature. Barbarism
+     ensues. Programmers generally don't (and can't) know exactly how much
+     memory their applications will need when they are writing software for it.
+     Even if we had an idea, it would be insanely hard to get it right. Games
+     can easily take billions of bytes of memory. So instead of declaring
+     upfront how much memory we need, we instead gradually ask the operating
+     system for more memory to use. Memory is used for things like tracking each
+     berry on the map, or the position, momentum, facing direction, etc of a
+     character. Basically anything you can see or conceptualize in the game is
+     tracked somehow in the system's memory. In the days of C/C++, we would ask
+     for memory and then we'd have to tell the operating system when we were
+     done with it. If we forgot (and we do this _all the fucking time_), we'd
+     wind up with something called a memory leak. A memory leak means our
+     program asked for memory it will never give back. If the program does this
+     too many times, we'll use up all of the memory on the computer, and then we
+     run into trouble.
+
+**** garbage collection
+     :PROPERTIES:
+     :CUSTOM_ID: things--game-stutter--garbage-collection
+     :END:
+
+     Unity is backed by a C/C++ engine, but as game authors everything is
+     written some .net language - usually C#. C# doesn't use direct memory
+     management like C++ does. Instead it uses a garbage collection system like
+     many other modern programming languages do. Garbage collection is like a
+     little sibling program that runs alongside your primary program. It watches
+     all the little asks for memory that your system does, and tracks what data
+     references other data. Specifically it's looking for data that nothing
+     references.
+
+     Let's see how it works with some arbitrary character setup:
+
+#+begin_src plantuml :file kq-bb-easy-memory-character-full.svg
+
+[shirt]
+[pants]
+[rat bastard sword]
+
+[program] --> [character1]
+package character1 {
+  [legs] --> [pants]
+  [torso] --> [shirt]
+  [hand] --> [rat bastard sword]
+}
+
+#+end_src
+
+#+RESULTS:
+[[file:kq-bb-easy-memory-character-full.svg]]
+
+      Here we have a character with leg, torso, and hand attributes. Each of
+      these attributes holds a "reference" to some piece of data in the system.
+      In this case it's pants, a shirt, and a rat bastard sword. The character
+      itself hangs off of the main program. These references are like little
+      links that point to the data we need. If we have this character, we can
+      get its torso item if we like. For funsies, let's remove the hand item:
+
+#+begin_src plantuml :file kq-bb-easy-memory-character-handless.svg
+[shirt]
+[pants]
+[rat bastard sword]
+
+[program] --> [character1]
+package character1 {
+  [legs] --> [pants]
+  [torso] --> [shirt]
+  [hand]
+}
+
+#+end_src
+
+#+RESULTS:
+[[file:kq-bb-easy-memory-character-handless.svg]]
+
+      When the garbage collector sees that there's no reference to the rat
+      bastard sword, it knows that it's safe to remove the rat bastard sword
+      from memory and give it back to the operating system. Things like this are
+      very simple for the garbage collector to do. Let's make it slightly more
+      complicated.
+
+
+#+begin_src plantuml :file kq-bb-easy-memory-character-double-ref-01.svg
+[shirt]
+[pants]
+
+[program] --> [treasure chest]
+[treasure chest] --> [rat bastard sword]
+package "rat bastard sword" {
+  [container] --> [treasure chest]
+}
+
+[program] -> [character1]
+package character1 {
+  [legs] --> [pants]
+  [torso] --> [shirt]
+  [hand]
+}
+
+#+end_src
+
+#+RESULTS:
+[[file:kq-bb-easy-memory-character-double-ref-01.svg]]
+
+     No surprises yet. Here we've added a treasure chest that contains our rat
+     bastard sword. We just moved the sword around. For the sake of argument,
+     let's say the rat bastard sword holds a reference to its container - the
+     treasure chest. Now here comes the curve ball: We're going to destroy the
+     treasure chest. We simply do that by unlinking it, or removing its
+     reference to keep the vernacular.
+
+#+begin_src plantuml :file kq-bb-easy-memory-character-double-ref-02.svg
+[shirt]
+[pants]
+
+[treasure chest] --> [rat bastard sword]
+package "rat bastard sword" {
+  [container] --> [treasure chest]
+}
+
+[program] -> [character1]
+package character1 {
+  [legs] --> [pants]
+  [torso] --> [shirt]
+  [hand]
+}
+
+#+end_src
+
+#+RESULTS:
+[[file:kq-bb-easy-memory-character-double-ref-02.svg]]
+
+    Wait a second - our simple rule of removing things that are no longer
+    referenced won't work here! These objects both reference each other, so they
+    elude our simple rule. _Fuck_. Whelp, welcome to software engineering. This
+    is why software conferences are also wonderful gateways to alcoholism.
+
+    Let's remove our example for a moment and show something actually
+    complicated:
+
+#+begin_src plantuml :file kq-bb-easy-memory-character-double-ref-03.svg
+[program]
+[A] -> [B]
+[B] -> [C]
+[C] -> [D]
+[D] -> [E]
+[E] -> [...]
+[...] -> [Z]
+[Z] -> [A]
+#+end_src
+
+#+RESULTS:
+[[file:kq-bb-easy-memory-character-double-ref-03.svg]]
+
+    The garbage collector has to solve this puzzle among billions of bytes of
+    memory. It's a nightmare, and it takes time to do. In the mean time, the
+    program that's using all of this memory is moving things around, creating,
+    removing, and changing references _constantly_.
+
+**** why you should care
+     :PROPERTIES:
+     :CUSTOM_ID: things--game-stutter--why-you-should-care
+     :END:
+
+    The garbage collector _must_ pause the _entire program_ to perform a full
+    garbage collect (or GC). If there's a lot of memory to go through, this can
+    be a long pause. In games, this is death.
+
+    Unity gets away with this as a game engine not through any kind of technical
+    feat. Unity is simply used in a lot of contexts where it doesn't matter. If
+    you're playing Civ5, you won't care as a player if there's an occasional
+    hiccup. I don't care that some zombie shooter game on my sons' iPads has to
+    pause occasionally. If you're playing some single player indie game, you
+    probably don't care either. Unity is all about these kinds of games.
+
+    Remember the [[side by side]] I put together showing how different timing models
+    work with delays? You'd better fucking remember. That was a lot of work!
+
+    The garbage collector will cause these long hiccups, which sometimes are
+    less than a second, and it will ruin your day. Imagine how precise the
+    timing has to be when you perform a j-hook. Only now add that half second
+    hiccup in the middle of it. Oops.
+
+    Predicting how memory models will behave while the program is actually
+    running can be akin to predicting stock market fluctuations, except there's
+    not actually any money in it. Killer Queen doesn't have that much it needs
+    to track, but it still needs to track things. When a berry is scooped up, it
+    might be destroyed along with all the things it had hanging off of it. When
+    your drone dies, the drone may be destroyed and the berry created anew. This
+    all creates churn. Long running games might make this problem more apparent
+    due to the memory model getting fragmented over time, or memory leaks occur
+    because the code didn't release the reference when it needed to.
+
+    As game engineers we can mitigate that with something called "object
+    pooling". With object pooling, we simply have a pool of objects and we
+    return them to the pool when we're done or have no use for them. This is
+    extra work though, and most indie developers don't prioritize doing this,
+    let alone even knowing it's something they can do at times.
+
+    This is why certain very critical executions in the game can be absolutely
+    perilous to do. Even if _you_ are capable of executing them properly 100% of
+    the time, the game may simply decide it needs to take a break and garbage
+    collect right before you turn around, hit that button, etc. Then it
+    processes a long tick, and registers that you bumped into someone facing the
+    wrong way, and now you're down another egg.
+
 ** TODO the "drip"
    :PROPERTIES:
    :CUSTOM_ID: things--the-drip
