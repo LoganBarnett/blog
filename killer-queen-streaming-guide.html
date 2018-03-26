@@ -9,46 +9,56 @@ categories: killer-queen
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#org05c77f9">1. introduction</a></li>
-<li><a href="#orgbc308d8">2. challonge integration</a>
+<li><a href="#introduction">1. introduction</a></li>
+<li><a href="#changelog">2. changelog</a>
 <ul>
-<li><a href="#org2b2a057">2.1. workarounds</a></li>
-</ul>
-</li>
-<li><a href="#org9eee1a3">3. video flow</a></li>
-<li><a href="#org6ed48de">4. audio flow</a></li>
-<li><a href="#orgc5c71cd">5. pdx setup</a>
+<li>
 <ul>
-<li><a href="#org22bca87">5.1. facilities</a></li>
-<li><a href="#orga993aa1">5.2. hardware</a>
-<ul>
-<li><a href="#orgdf3f5d6">5.2.1. video</a></li>
-<li><a href="#org7ac2229">5.2.2. audio</a></li>
-<li><a href="#orgf7842b5">5.2.3. all together now</a></li>
-<li><a href="#orga644610">5.2.4. anti trip trick</a></li>
-</ul>
-</li>
-<li><a href="#org512ab74">5.3. software</a>
-<ul>
-<li><a href="#org78e3a1c">5.3.1. challonge</a></li>
-<li><a href="#org0d24e58">5.3.2. kq-tournament</a></li>
-<li><a href="#org27a2abe">5.3.3. OBS</a></li>
+<li><a href="#changelog--<2018-03-26-mon>">2.0.1. <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-03-26 Mon&gt;</span></span></a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><a href="#org0ffd586">6. troubleshooting</a>
+<li><a href="#challonge-integration">3. challonge integration</a>
 <ul>
-<li><a href="#orgc1aef34">6.1. If the input is not recognized on the computer's end</a></li>
+<li><a href="#challonge-integration--workarounds">3.1. workarounds</a></li>
+</ul>
+</li>
+<li><a href="#video-flow">4. video flow</a></li>
+<li><a href="#audio-flow">5. audio flow</a></li>
+<li><a href="#pdx-setup">6. pdx setup</a>
+<ul>
+<li><a href="#pdx-setup--facilities">6.1. facilities</a></li>
+<li><a href="#pdx-setup--hardware">6.2. hardware</a>
+<ul>
+<li><a href="#pdx-setup--hardware--video">6.2.1. video</a></li>
+<li><a href="#pdx-setup--hardware--audio">6.2.2. audio</a></li>
+<li><a href="#pdx-setup--hardware--all-together-now">6.2.3. all together now</a></li>
+<li><a href="#pdx-setup--hardware--anti-trip-trick">6.2.4. anti trip trick</a></li>
+</ul>
+</li>
+<li><a href="#pdx-setup--software">6.3. software</a>
+<ul>
+<li><a href="#pdx-setup--software--challonge">6.3.1. challonge</a></li>
+<li><a href="#pdx-setup--software--kq-tournament">6.3.2. kq-tournament</a></li>
+<li><a href="#pdx-setup--software--obs">6.3.3. OBS</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#troubleshooting">7. troubleshooting</a>
+<ul>
+<li><a href="#troubleshooting--the-usb-webcam-freezes-after-transmitting-for-a-little-bit">7.1. The USB webcam freezes after transmitting for a little bit</a></li>
+<li><a href="#troubleshooting--if-the-input-is-not-recognized-on-the-computer's-end">7.2. If the input is not recognized on the computer's end</a></li>
 </ul>
 </li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-org05c77f9" class="outline-2">
-<h2 id="org05c77f9"><span class="section-number-2">1</span> introduction</h2>
-<div class="outline-text-2" id="text-1">
+<div id="outline-container-orgab6303a" class="outline-2">
+<h2 id="introduction"><a id="orgab6303a"></a><span class="section-number-2">1</span> introduction</h2>
+<div class="outline-text-2" id="text-introduction">
 <p>
 As part of trying to reduce the Portland scene's <a href="https://en.wikipedia.org/wiki/Bus_factor">bus number</a> in regards to our
 streaming setup I've recorded notes here as best I can. The dream is to have a
@@ -62,9 +72,24 @@ Twitter, or carrier pigeon for any improvements we can make here.
 </div>
 </div>
 
-<div id="outline-container-orgbc308d8" class="outline-2">
-<h2 id="orgbc308d8"><span class="section-number-2">2</span> challonge integration</h2>
-<div class="outline-text-2" id="text-2">
+<div id="outline-container-orgd82a134" class="outline-2">
+<h2 id="changelog"><a id="orgd82a134"></a><span class="section-number-2">2</span> changelog</h2>
+<div class="outline-text-2" id="text-changelog">
+</div>
+<div id="outline-container-orgb6ada25" class="outline-4">
+<h4 id="changelog--<2018-03-26-mon>"><a id="orgb6ada25"></a><span class="section-number-4">2.0.1</span> <span class="timestamp-wrapper"><span class="timestamp">&lt;2018-03-26 Mon&gt;</span></span></h4>
+<div class="outline-text-4" id="text-changelog--<2018-03-26-mon>">
+<p>
+Add changelog.
+Add webcam freeze troubleshooting fix.
+Add custom<sub>ids</sub> so the export has fixed links.
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-orgb2f4202" class="outline-2">
+<h2 id="challonge-integration"><a id="orgb2f4202"></a><span class="section-number-2">3</span> challonge integration</h2>
+<div class="outline-text-2" id="text-challonge-integration">
 <p>
 Need access to Matt Wire's github repo that has a Rails server.
 </p>
@@ -78,9 +103,9 @@ Currently this repo isn't public.
 </p>
 </div>
 
-<div id="outline-container-org2b2a057" class="outline-3">
-<h3 id="org2b2a057"><span class="section-number-3">2.1</span> workarounds</h3>
-<div class="outline-text-3" id="text-2-1">
+<div id="outline-container-org8159941" class="outline-3">
+<h3 id="challonge-integration--workarounds"><a id="org8159941"></a><span class="section-number-3">3.1</span> workarounds</h3>
+<div class="outline-text-3" id="text-challonge-integration--workarounds">
 <p>
 Changes to the Challonge setup screws up the integration with the Rails server.
 The Rails server at that point can't be used (or maybe the data would need to be
@@ -93,9 +118,9 @@ gold name. These appear to be sources in OBS. I haven't verified this yet.
 </div>
 </div>
 
-<div id="outline-container-org9eee1a3" class="outline-2">
-<h2 id="org9eee1a3"><span class="section-number-2">3</span> video flow</h2>
-<div class="outline-text-2" id="text-3">
+<div id="outline-container-orgd09e642" class="outline-2">
+<h2 id="video-flow"><a id="orgd09e642"></a><span class="section-number-2">4</span> video flow</h2>
+<div class="outline-text-2" id="text-video-flow">
 <p>
 There is a 4 port splitter in cab. Two go to the two monitors. The overhead
 monitor takes another slot, and the projector takes the final.
@@ -115,9 +140,9 @@ Sorry, your browser does not support SVG.</object>
 </div>
 </div>
 
-<div id="outline-container-org6ed48de" class="outline-2">
-<h2 id="org6ed48de"><span class="section-number-2">4</span> audio flow</h2>
-<div class="outline-text-2" id="text-4">
+<div id="outline-container-orgc5434c3" class="outline-2">
+<h2 id="audio-flow"><a id="orgc5434c3"></a><span class="section-number-2">5</span> audio flow</h2>
+<div class="outline-text-2" id="text-audio-flow">
 <p>
 Audio runs a weird loop. The mics wire into a mixer that runs to <span class="underline">another</span>
 mixer. It's necessary for the headphones to get both the output of the computer
@@ -143,16 +168,16 @@ audio up to 100% and announcers can turn down as needed.</span>
 </div>
 </div>
 
-<div id="outline-container-orgc5c71cd" class="outline-2">
-<h2 id="orgc5c71cd"><span class="section-number-2">5</span> pdx setup</h2>
-<div class="outline-text-2" id="text-5">
+<div id="outline-container-org3d45252" class="outline-2">
+<h2 id="pdx-setup"><a id="org3d45252"></a><span class="section-number-2">6</span> pdx setup</h2>
+<div class="outline-text-2" id="text-pdx-setup">
 <p>
 This portion is specifically for the Portland setup at Ground Kontrol.
 </p>
 </div>
-<div id="outline-container-org22bca87" class="outline-3">
-<h3 id="org22bca87"><span class="section-number-3">5.1</span> facilities</h3>
-<div class="outline-text-3" id="text-5-1">
+<div id="outline-container-org71a08d8" class="outline-3">
+<h3 id="pdx-setup--facilities"><a id="org71a08d8"></a><span class="section-number-3">6.1</span> facilities</h3>
+<div class="outline-text-3" id="text-pdx-setup--facilities">
 <p>
 Generally we need:
 </p>
@@ -179,13 +204,13 @@ Day Logan.
 </div>
 </div>
 
-<div id="outline-container-orga993aa1" class="outline-3">
-<h3 id="orga993aa1"><span class="section-number-3">5.2</span> hardware</h3>
-<div class="outline-text-3" id="text-5-2">
+<div id="outline-container-org04836e0" class="outline-3">
+<h3 id="pdx-setup--hardware"><a id="org04836e0"></a><span class="section-number-3">6.2</span> hardware</h3>
+<div class="outline-text-3" id="text-pdx-setup--hardware">
 </div>
-<div id="outline-container-orgdf3f5d6" class="outline-4">
-<h4 id="orgdf3f5d6"><span class="section-number-4">5.2.1</span> video</h4>
-<div class="outline-text-4" id="text-5-2-1">
+<div id="outline-container-org45d9b3d" class="outline-4">
+<h4 id="pdx-setup--hardware--video"><a id="org45d9b3d"></a><span class="section-number-4">6.2.1</span> video</h4>
+<div class="outline-text-4" id="text-pdx-setup--hardware--video">
 <p>
 HDMI is provided as an input source via a computer's Thunderbolt port (I need to
 check, but I'm pretty sure it's not mini display port). This runs from the video
@@ -211,9 +236,9 @@ connection.
 </div>
 </div>
 
-<div id="outline-container-org7ac2229" class="outline-4">
-<h4 id="org7ac2229"><span class="section-number-4">5.2.2</span> audio</h4>
-<div class="outline-text-4" id="text-5-2-2">
+<div id="outline-container-org0115ee4" class="outline-4">
+<h4 id="pdx-setup--hardware--audio"><a id="org0115ee4"></a><span class="section-number-4">6.2.2</span> audio</h4>
+<div class="outline-text-4" id="text-pdx-setup--hardware--audio">
 <p>
 Here's the amp as labeled in the diagram above:
 </p>
@@ -260,9 +285,9 @@ The mics connect directly to this.
 </div>
 </div>
 
-<div id="outline-container-orgf7842b5" class="outline-4">
-<h4 id="orgf7842b5"><span class="section-number-4">5.2.3</span> all together now</h4>
-<div class="outline-text-4" id="text-5-2-3">
+<div id="outline-container-org9b78d04" class="outline-4">
+<h4 id="pdx-setup--hardware--all-together-now"><a id="org9b78d04"></a><span class="section-number-4">6.2.3</span> all together now</h4>
+<div class="outline-text-4" id="text-pdx-setup--hardware--all-together-now">
 
 <div class="figure">
 <p><img src="./assets/pdx-working-setup-01.jpg" alt="pdx-working-setup-01.jpg" />
@@ -277,9 +302,9 @@ The mics connect directly to this.
 </div>
 </div>
 
-<div id="outline-container-orga644610" class="outline-4">
-<h4 id="orga644610"><span class="section-number-4">5.2.4</span> anti trip trick</h4>
-<div class="outline-text-4" id="text-5-2-4">
+<div id="outline-container-org57d1aa9" class="outline-4">
+<h4 id="pdx-setup--hardware--anti-trip-trick"><a id="org57d1aa9"></a><span class="section-number-4">6.2.4</span> anti trip trick</h4>
+<div class="outline-text-4" id="text-pdx-setup--hardware--anti-trip-trick">
 <p>
 Ground Kontrol has seats that have these glowing strips on their corners and
 sides.
@@ -319,17 +344,17 @@ other snares from occurring. Here's the closed version with cables inserted:
 </div>
 </div>
 
-<div id="outline-container-org512ab74" class="outline-3">
-<h3 id="org512ab74"><span class="section-number-3">5.3</span> software</h3>
-<div class="outline-text-3" id="text-5-3">
+<div id="outline-container-org0329e6e" class="outline-3">
+<h3 id="pdx-setup--software"><a id="org0329e6e"></a><span class="section-number-3">6.3</span> software</h3>
+<div class="outline-text-3" id="text-pdx-setup--software">
 <p>
 [[]]
 </p>
 </div>
 
-<div id="outline-container-org78e3a1c" class="outline-4">
-<h4 id="org78e3a1c"><span class="section-number-4">5.3.1</span> challonge</h4>
-<div class="outline-text-4" id="text-5-3-1">
+<div id="outline-container-orgd0e7cbc" class="outline-4">
+<h4 id="pdx-setup--software--challonge"><a id="orgd0e7cbc"></a><span class="section-number-4">6.3.1</span> challonge</h4>
+<div class="outline-text-4" id="text-pdx-setup--software--challonge">
 <p>
 The URL we use is in the format <code>kqpdx&lt;MMDDYY&gt;</code>, where <code>MM</code> is the number of the
 month, <code>DD</code> the day of the month, and <code>YY</code> is the last two digits of the year.
@@ -367,13 +392,14 @@ Example:
 </div>
 </div>
 
-<div id="outline-container-org0d24e58" class="outline-4">
-<h4 id="org0d24e58"><span class="section-number-4">5.3.2</span> kq-tournament</h4>
-<div class="outline-text-4" id="text-5-3-2">
+<div id="outline-container-org4219d5d" class="outline-4">
+<h4 id="pdx-setup--software--kq-tournament"><a id="org4219d5d"></a><span class="section-number-4">6.3.2</span> kq-tournament</h4>
+<div class="outline-text-4" id="text-pdx-setup--software--kq-tournament">
 </div>
+
 <ol class="org-ol">
-<li><a id="org1c0a013"></a>installation<br />
-<div class="outline-text-5" id="text-5-3-2-1">
+<li><a id="pdx-setup--software--kq-tournament--installation"></a><a id="orgb1b67eb"></a>installation<br />
+<div class="outline-text-5" id="text-pdx-setup--software--kq-tournament--installation">
 <p>
 Much of this is covered in the repo's <code>README.md</code>. This assumes running on MacOS
 or Linux. Windows is probably doable, but that's beyond the scope of this
@@ -418,7 +444,7 @@ local connections with no credentials.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-yaml" id="orgec0abef"><span style="color: #7590db;">development</span>:
+<pre class="src src-yaml" id="org95f2cc9"><span style="color: #7590db;">development</span>:
   <span style="color: #7590db;">adapter</span>: postgresql
   <span style="color: #7590db;">database</span>: kqt_dev
   <span style="color: #7590db;">pool</span>: 5
@@ -491,8 +517,8 @@ Create the initial database and its tables.
 </div>
 </li>
 
-<li><a id="org6d44c50"></a>running<br />
-<div class="outline-text-5" id="text-5-3-2-2">
+<li><a id="pdx-setup--software--kq-tournament--running"></a><a id="orge503c83"></a>running<br />
+<div class="outline-text-5" id="text-pdx-setup--software--kq-tournament--running">
 <p>
 Once you have everything setup and the database server is running:
 </p>
@@ -503,8 +529,8 @@ Once you have everything setup and the database server is running:
 </div>
 </li>
 
-<li><a id="orge367cf8"></a>stopping<br />
-<div class="outline-text-5" id="text-5-3-2-3">
+<li><a id="pdx-setup--software--kq-tournament--stopping"></a><a id="org9825fd4"></a>stopping<br />
+<div class="outline-text-5" id="text-pdx-setup--software--kq-tournament--stopping">
 <p>
 Hold <code>Ctrl</code> and press <code>C</code>. This will return you to your normal shell prompt.
 </p>
@@ -518,13 +544,16 @@ pg_ctl -D /usr/local/var/postgres stop
 </div>
 </li>
 
-<li><a id="orgab18708"></a>operating<br /></li>
+<li><a id="pdx-setup--software--kq-tournament--operating"></a><a id="orga2bc487"></a>operating<br />
+<div class="outline-text-5" id="text-pdx-setup--software--kq-tournament--operating">
+</div>
+</li>
 </ol>
 </div>
 
-<div id="outline-container-org27a2abe" class="outline-4">
-<h4 id="org27a2abe"><span class="section-number-4">5.3.3</span> OBS</h4>
-<div class="outline-text-4" id="text-5-3-3">
+<div id="outline-container-org78b41dc" class="outline-4">
+<h4 id="pdx-setup--software--obs"><a id="org78b41dc"></a><span class="section-number-4">6.3.3</span> OBS</h4>
+<div class="outline-text-4" id="text-pdx-setup--software--obs">
 <p>
 <a href="https://obsproject.com">OBS</a> (pronounced "awbz", short for Open Broadcaster Software) is what we use to
 do streaming. Setting up streaming to Twitch is pretty simple with OBS. All
@@ -539,17 +568,19 @@ We still need to get a list of contacts that can provide the key.
 </div>
 
 <ol class="org-ol">
-<li><a id="org3cef0f1"></a>overlays<br />
+<li><a id="pdx-setup--software--obs--overlays"></a><a id="org4dd0467"></a>overlays<br />
+<div class="outline-text-5" id="text-pdx-setup--software--obs--overlays">
+</div>
 <ol class="org-ol">
-<li><a id="org9dc5727"></a>chat<br />
-<div class="outline-text-6" id="text-5-3-3-1-1">
+<li><a id="pdx-setup--software--obs--overlays--chat"></a><a id="org129ea20"></a>chat<br />
+<div class="outline-text-6" id="text-pdx-setup--software--obs--overlays--chat">
 <p>
 <a href="https://nightdev.com/kapchat/">https://nightdev.com/kapchat/</a>
 </p>
 </div>
 </li>
-<li><a id="org217caf2"></a>video sources<br />
-<div class="outline-text-6" id="text-5-3-3-1-2">
+<li><a id="pdx-setup--software--obs--overlays--video-sources"></a><a id="orgf4c57e6"></a>video sources<br />
+<div class="outline-text-6" id="text-pdx-setup--software--obs--overlays--video-sources">
 <p>
 I noticed my laptop struggling with the video sources when pulling in max
 resolution. I switched them to 320x200 (or close to that), and it seems to work
@@ -567,13 +598,22 @@ quality when switching to the lower res.
 </div>
 </div>
 
-<div id="outline-container-org0ffd586" class="outline-2">
-<h2 id="org0ffd586"><span class="section-number-2">6</span> troubleshooting</h2>
-<div class="outline-text-2" id="text-6">
+<div id="outline-container-orga3d2846" class="outline-2">
+<h2 id="troubleshooting"><a id="orga3d2846"></a><span class="section-number-2">7</span> troubleshooting</h2>
+<div class="outline-text-2" id="text-troubleshooting">
 </div>
-<div id="outline-container-orgc1aef34" class="outline-3">
-<h3 id="orgc1aef34"><span class="section-number-3">6.1</span> If the input is not recognized on the computer's end</h3>
-<div class="outline-text-3" id="text-6-1">
+<div id="outline-container-orgc4e92c2" class="outline-3">
+<h3 id="troubleshooting--the-usb-webcam-freezes-after-transmitting-for-a-little-bit"><a id="orgc4e92c2"></a><span class="section-number-3">7.1</span> The USB webcam freezes after transmitting for a little bit</h3>
+<div class="outline-text-3" id="text-troubleshooting--the-usb-webcam-freezes-after-transmitting-for-a-little-bit">
+<p>
+We've found unplugging from the computer's end doesn't tend to fix it, but
+unplugging the USB cable from the webcam's side seems to fix it.
+</p>
+</div>
+</div>
+<div id="outline-container-orga63ace4" class="outline-3">
+<h3 id="troubleshooting--if-the-input-is-not-recognized-on-the-computer's-end"><a id="orga63ace4"></a><span class="section-number-3">7.2</span> If the input is not recognized on the computer's end</h3>
+<div class="outline-text-3" id="text-troubleshooting--if-the-input-is-not-recognized-on-the-computer's-end">
 <p>
 The known recipe (not fool proof, but most of the work):
 </p>

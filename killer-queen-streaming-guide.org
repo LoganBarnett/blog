@@ -12,10 +12,14 @@ categories: killer-queen
 #+EMAIL:   logustus@gmail.com
 #+DATE:    <2017-11-05 Sun> 
 #+TAGS:    killer-queen
+#+auto_id: t
 
 #+TOC: headlines 3
 
 * introduction
+  :PROPERTIES:
+  :CUSTOM_ID: introduction
+  :END:
 As part of trying to reduce the Portland scene's [[https://en.wikipedia.org/wiki/Bus_factor][bus number]] in regards to our
 streaming setup I've recorded notes here as best I can. The dream is to have a
 pretty foolproof setup that anyone mildly technically competent could apply to
@@ -26,6 +30,9 @@ system on this site because static hosting is awesome and also because
 Twitter, or carrier pigeon for any improvements we can make here.
 
 * improvements :noexport:
+  :PROPERTIES:
+  :CUSTOM_ID: improvements
+  :END:
 - [ ] Vectorize some of the graphics on the challonge imported view.
 - [ ] Need network access somehow - wifi is currently not known but could be
   acquired via Javan Ivey or Dylan Higgins.
@@ -38,7 +45,21 @@ Twitter, or carrier pigeon for any improvements we can make here.
 - [ ] Specify when we're being generic vs specific in terms of hardware used vs.
   what's possible for use.
 
+* changelog
+  :PROPERTIES:
+  :CUSTOM_ID: changelog
+  :END:
+*** <2018-03-26 Mon>
+    :PROPERTIES:
+    :CUSTOM_ID: changelog--<2018-03-26-mon>
+    :END:
+    Add changelog.
+    Add webcam freeze troubleshooting fix.
+    Add custom_ids so the export has fixed links.
 * challonge integration
+  :PROPERTIES:
+  :CUSTOM_ID: challonge-integration
+  :END:
 Need access to Matt Wire's github repo that has a Rails server.
 - [[https://github.com/boxofmattwire/kq-tournament][Matt Wire's repo]]
 - [[https://github.com/LoganBarnett/kq-tournament][Logan's fork]]
@@ -46,6 +67,9 @@ Need access to Matt Wire's github repo that has a Rails server.
 Currently this repo isn't public.
 
 ** workarounds
+   :PROPERTIES:
+   :CUSTOM_ID: challonge-integration--workarounds
+   :END:
 Changes to the Challonge setup screws up the integration with the Rails server.
 The Rails server at that point can't be used (or maybe the data would need to be
 wiped). At that point, the server is basically useless to us (and we shouldn't
@@ -54,6 +78,9 @@ there are text files which override the blue score, blue name, gold score, and
 gold name. These appear to be sources in OBS. I haven't verified this yet.
 
 * video flow
+  :PROPERTIES:
+  :CUSTOM_ID: video-flow
+  :END:
 There is a 4 port splitter in cab. Two go to the two monitors. The overhead
 monitor takes another slot, and the projector takes the final.
 
@@ -86,6 +113,9 @@ gcam --> [stream-box]
 [[file:video-flow.svg]]
 
 * audio flow
+  :PROPERTIES:
+  :CUSTOM_ID: audio-flow
+  :END:
 
 Audio runs a weird loop. The mics wire into a mixer that runs to _another_
 mixer. It's necessary for the headphones to get both the output of the computer
@@ -128,9 +158,15 @@ available per input/output (mixer and amp, respectively). _Turn the computer's
 audio up to 100% and announcers can turn down as needed._
 
 * pdx setup
+  :PROPERTIES:
+  :CUSTOM_ID: pdx-setup
+  :END:
 
 This portion is specifically for the Portland setup at Ground Kontrol.
 ** facilities
+   :PROPERTIES:
+   :CUSTOM_ID: pdx-setup--facilities
+   :END:
 
 Generally we need:
 - A folding table
@@ -149,7 +185,13 @@ other parts of the production. Right now the Thunderbolt Display is on loan from
 Day Logan.
 
 ** hardware
+   :PROPERTIES:
+   :CUSTOM_ID: pdx-setup--hardware
+   :END:
 *** video
+    :PROPERTIES:
+    :CUSTOM_ID: pdx-setup--hardware--video
+    :END:
  HDMI is provided as an input source via a computer's Thunderbolt port (I need to
  check, but I'm pretty sure it's not mini display port). This runs from the video
  splitter to the laptop.
@@ -164,6 +206,9 @@ Day Logan.
  [[file:assets/hdmi-to-thunderbolt-input-activated-01.jpg]]
 
 *** audio
+    :PROPERTIES:
+    :CUSTOM_ID: pdx-setup--hardware--audio
+    :END:
 
  Here's the amp as labeled in the diagram above:
 
@@ -189,6 +234,9 @@ Day Logan.
  The mics connect directly to this.
 
 *** all together now
+    :PROPERTIES:
+    :CUSTOM_ID: pdx-setup--hardware--all-together-now
+    :END:
 
  #+ATTR_ORG: :width 400
  [[./assets/pdx-working-setup-01.jpg]]
@@ -197,6 +245,9 @@ Day Logan.
  [[./assets/pdx-working-setup-02.jpg]]
 
 *** anti trip trick
+    :PROPERTIES:
+    :CUSTOM_ID: pdx-setup--hardware--anti-trip-trick
+    :END:
 
  Ground Kontrol has seats that have these glowing strips on their corners and
  sides.
@@ -220,10 +271,16 @@ Day Logan.
  [[./assets/anti-cable-snag-trick-04.jpg]]
 
 ** software
+   :PROPERTIES:
+   :CUSTOM_ID: pdx-setup--software
+   :END:
 
 [[]]
 
 *** challonge
+    :PROPERTIES:
+    :CUSTOM_ID: pdx-setup--software--challonge
+    :END:
 
 The URL we use is in the format =kqpdx<MMDDYY>=, where =MM= is the number of the
 month, =DD= the day of the month, and =YY= is the last two digits of the year.
@@ -245,8 +302,14 @@ Example:
 [[./assets/challonge-setup-01.png]]
 
 *** kq-tournament
+    :PROPERTIES:
+    :CUSTOM_ID: pdx-setup--software--kq-tournament
+    :END:
 
 **** installation
+     :PROPERTIES:
+     :CUSTOM_ID: pdx-setup--software--kq-tournament--installation
+     :END:
 
 Much of this is covered in the repo's =README.md=. This assumes running on MacOS
 or Linux. Windows is probably doable, but that's beyond the scope of this
@@ -324,12 +387,18 @@ bundle exec rake db:create db:migrate
 #+END_SRC
 
 **** running
+     :PROPERTIES:
+     :CUSTOM_ID: pdx-setup--software--kq-tournament--running
+     :END:
 Once you have everything setup and the database server is running:
 #+BEGIN_SRC sh
 bundle exec rails server
 #+END_SRC
 
 **** stopping
+     :PROPERTIES:
+     :CUSTOM_ID: pdx-setup--software--kq-tournament--stopping
+     :END:
 Hold =Ctrl= and press =C=. This will return you to your normal shell prompt.
 
 Then shut down the database server:
@@ -338,8 +407,14 @@ pg_ctl -D /usr/local/var/postgres stop
 #+END_EXAMPLE
 
 **** operating
+     :PROPERTIES:
+     :CUSTOM_ID: pdx-setup--software--kq-tournament--operating
+     :END:
 
 *** OBS
+    :PROPERTIES:
+    :CUSTOM_ID: pdx-setup--software--obs
+    :END:
 
 [[https://obsproject.com][OBS]] (pronounced "awbz", short for Open Broadcaster Software) is what we use to
 do streaming. Setting up streaming to Twitch is pretty simple with OBS. All
@@ -350,9 +425,18 @@ ownership at Ground Kontrol in order to get it.
 We still need to get a list of contacts that can provide the key.
 
 **** overlays
+     :PROPERTIES:
+     :CUSTOM_ID: pdx-setup--software--obs--overlays
+     :END:
 ***** chat
+      :PROPERTIES:
+      :CUSTOM_ID: pdx-setup--software--obs--overlays--chat
+      :END:
 https://nightdev.com/kapchat/
 ***** video sources
+      :PROPERTIES:
+      :CUSTOM_ID: pdx-setup--software--obs--overlays--video-sources
+      :END:
 I noticed my laptop struggling with the video sources when pulling in max
 resolution. I switched them to 320x200 (or close to that), and it seems to work
 much better. I suspect this is a throughput issue with 4 video sources coming in
@@ -361,11 +445,26 @@ the screen they are displayed in is very small. There was no noticeable loss in
 quality when switching to the lower res.
 
 * troubleshooting
+  :PROPERTIES:
+  :CUSTOM_ID: troubleshooting
+  :END:
+** The USB webcam freezes after transmitting for a little bit
+   :PROPERTIES:
+   :CUSTOM_ID: troubleshooting--the-usb-webcam-freezes-after-transmitting-for-a-little-bit
+   :END:
+   We've found unplugging from the computer's end doesn't tend to fix it, but
+   unplugging the USB cable from the webcam's side seems to fix it.
 ** If the input is not recognized on the computer's end
+   :PROPERTIES:
+   :CUSTOM_ID: troubleshooting--if-the-input-is-not-recognized-on-the-computer's-end
+   :END:
 The known recipe (not fool proof, but most of the work):
 1. Reboot the cabs with the computer's input (HDMI capture box).
 2. Reintroduce other slots (monitors x2 and the projector).
 * exporting notes :noexport:
+  :PROPERTIES:
+  :CUSTOM_ID: exporting-notes
+  :END:
 
 I export this with the following:
 
