@@ -43,23 +43,29 @@ categories: killer-queen
 <li><a href="#things--the-wrap-glitch">5.4. <span class="todo TODO">TODO</span> the wrap glitch</a></li>
 <li><a href="#things--game-stutter">5.5. game stutter</a></li>
 <li><a href="#things--the-drip">5.6. <span class="todo TODO">TODO</span> the "drip"</a></li>
+<li><a href="#things--collision">5.7. collision</a>
+<ul>
+<li><a href="#things--collision--characters">5.7.1. characters</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-org38a8ed4" class="outline-2">
-<h2 id="changelog"><a id="org38a8ed4"></a><span class="section-number-2">1</span> changelog</h2>
+<div id="outline-container-org04a5ec7" class="outline-2">
+<h2 id="changelog"><a id="org04a5ec7"></a><span class="section-number-2">1</span> changelog</h2>
 <div class="outline-text-2" id="text-changelog">
 <dl class="org-dl">
-<dt><span class="timestamp-wrapper"><span class="timestamp">&lt;2018-03-22 Thu&gt;</span></span></dt><dd>add section about game stutter.</dd>
-<dt><span class="timestamp-wrapper"><span class="timestamp">&lt;2018-01-21 Sun&gt;</span></span></dt><dd>add section about frame rate and vsync.</dd>
+<dt><span class="timestamp-wrapper"><span class="timestamp">&lt;2018-06-05 Tue&gt;</span></span></dt><dd>add section about <a href="#things--collision--characters">character controllers</a>.</dd>
+<dt><span class="timestamp-wrapper"><span class="timestamp">&lt;2018-03-22 Thu&gt;</span></span></dt><dd>add section about <a href="#things--game-stutter">5.5</a>.</dd>
+<dt><span class="timestamp-wrapper"><span class="timestamp">&lt;2018-01-21 Sun&gt;</span></span></dt><dd>add section about <a href="#things--frame-rate">frame rate and vsync</a>.</dd>
 </dl>
 </div>
 </div>
-<div id="outline-container-org7158aa6" class="outline-2">
-<h2 id="introduction"><a id="org7158aa6"></a><span class="section-number-2">2</span> introduction</h2>
+<div id="outline-container-org56c7ce9" class="outline-2">
+<h2 id="introduction"><a id="org56c7ce9"></a><span class="section-number-2">2</span> introduction</h2>
 <div class="outline-text-2" id="text-introduction">
 <p>
 At the Portland scene we like to talk a lot about different things we've learned
@@ -74,8 +80,8 @@ we cannot see inside it. We can make some good guesses though.
 </div>
 </div>
 
-<div id="outline-container-orge6174c2" class="outline-2">
-<h2 id="background"><a id="orge6174c2"></a><span class="section-number-2">3</span> background</h2>
+<div id="outline-container-orgc95604f" class="outline-2">
+<h2 id="background"><a id="orgc95604f"></a><span class="section-number-2">3</span> background</h2>
 <div class="outline-text-2" id="text-background">
 <p>
 I (Logan Barnett AKA Day Logan) have done game development both professionally
@@ -93,8 +99,8 @@ memory models, resource sharing, etc. My <a href="./resume.html">resume</a> is h
 </div>
 </div>
 
-<div id="outline-container-orga3d7128" class="outline-2">
-<h2 id="reasoning"><a id="orga3d7128"></a><span class="section-number-2">4</span> reasoning</h2>
+<div id="outline-container-org69577ee" class="outline-2">
+<h2 id="reasoning"><a id="org69577ee"></a><span class="section-number-2">4</span> reasoning</h2>
 <div class="outline-text-2" id="text-reasoning">
 <p>
 If you had to build a car, there's a lot of things you could say about building
@@ -112,17 +118,17 @@ game without even looking at its source code.
 </div>
 </div>
 
-<div id="outline-container-org9d5fe29" class="outline-2">
-<h2 id="things"><a id="org9d5fe29"></a><span class="section-number-2">5</span> things</h2>
+<div id="outline-container-org9cfe42a" class="outline-2">
+<h2 id="things"><a id="org9cfe42a"></a><span class="section-number-2">5</span> things</h2>
 <div class="outline-text-2" id="text-things">
 </div>
-<div id="outline-container-org0fe369e" class="outline-3">
-<h3 id="things--frames"><a id="org0fe369e"></a><span class="section-number-3">5.1</span> frames</h3>
+<div id="outline-container-org0e260bb" class="outline-3">
+<h3 id="things--frames"><a id="org0e260bb"></a><span class="section-number-3">5.1</span> frames</h3>
 <div class="outline-text-3" id="text-things--frames">
 </div>
 
-<div id="outline-container-org937c403" class="outline-4">
-<h4 id="things--frames--history"><a id="org937c403"></a><span class="section-number-4">5.1.1</span> history</h4>
+<div id="outline-container-orgabe0004" class="outline-4">
+<h4 id="things--frames--history"><a id="orgabe0004"></a><span class="section-number-4">5.1.1</span> history</h4>
 <div class="outline-text-4" id="text-things--frames--history">
 <p>
 The first time I learned about "frames" was in talk about how Street Fighter 2
@@ -159,8 +165,8 @@ of timing problem. Street Fighter would be one of those applications.
 </div>
 </div>
 
-<div id="outline-container-org4d447fe" class="outline-4">
-<h4 id="things--frames--complications"><a id="org4d447fe"></a><span class="section-number-4">5.1.2</span> complications</h4>
+<div id="outline-container-orgb374e9c" class="outline-4">
+<h4 id="things--frames--complications"><a id="orgb374e9c"></a><span class="section-number-4">5.1.2</span> complications</h4>
 <div class="outline-text-4" id="text-things--frames--complications">
 <p>
 The lie about frame counting is that sometimes the computations can't complete
@@ -173,8 +179,8 @@ as a result the game enters a strange kind of slow motion.
 </div>
 </div>
 
-<div id="outline-container-org188ede9" class="outline-4">
-<h4 id="things--frames--the-operating-system"><a id="org188ede9"></a><span class="section-number-4">5.1.3</span> the operating system</h4>
+<div id="outline-container-org987f980" class="outline-4">
+<h4 id="things--frames--the-operating-system"><a id="org987f980"></a><span class="section-number-4">5.1.3</span> the operating system</h4>
 <div class="outline-text-4" id="text-things--frames--the-operating-system">
 <p>
 Back in the day of Street Fighter 2, and most gaming consoles for that matter,
@@ -204,7 +210,7 @@ prints the time since the last tick in milliseconds. Notice the variance.
 Here's the code that does this, if you want to follow along:
 </p>
 <div class="org-src-container">
-<pre class="src src-javascript" id="org9c2dcca"><span style="color: #4f97d7; font-weight: bold;">var</span> <span style="color: #7590db;">lastTime</span> = Date.now<span style="color: #4f97d7;">()</span>
+<pre class="src src-javascript" id="orgf443221"><span style="color: #4f97d7; font-weight: bold;">var</span> <span style="color: #7590db;">lastTime</span> = Date.now<span style="color: #4f97d7;">()</span>
 <span style="color: #4f97d7; font-weight: bold;">var</span> <span style="color: #7590db;">el</span> = document.querySelector<span style="color: #4f97d7;">(</span><span style="color: #2d9574;">'[data-id="millisecond-monitor"]'</span><span style="color: #4f97d7;">)</span>
 <span style="color: #4f97d7; font-weight: bold;">function</span> <span style="color: #bc6ec5; font-weight: bold;">printMillis</span><span style="color: #4f97d7;">()</span> <span style="color: #4f97d7;">{</span>
   <span style="color: #4f97d7; font-weight: bold;">var</span> <span style="color: #7590db;">delta</span> = Date.now<span style="color: #bc6ec5;">()</span> - lastTime
@@ -234,8 +240,8 @@ window.requestAnimationFrame(printMillis)</script>
 </div>
 </div>
 
-<div id="outline-container-orgaeceb7c" class="outline-4">
-<h4 id="things--frames--the-solution"><a id="orgaeceb7c"></a><span class="section-number-4">5.1.4</span> the solution</h4>
+<div id="outline-container-orgc7a3869" class="outline-4">
+<h4 id="things--frames--the-solution"><a id="orgc7a3869"></a><span class="section-number-4">5.1.4</span> the solution</h4>
 <div class="outline-text-4" id="text-things--frames--the-solution">
 <p>
 So how do games not stutter every time your browser takes a bunch of time to
@@ -279,8 +285,8 @@ Here's an example of the timing scaling to your machine's speed:
 </div>
 </div>
 
-<div id="outline-container-org6976d86" class="outline-4">
-<h4 id="things--frames--side-by-side"><a id="org6976d86"></a><span class="section-number-4">5.1.5</span> side by side</h4>
+<div id="outline-container-orgad484e3" class="outline-4">
+<h4 id="things--frames--side-by-side"><a id="orgad484e3"></a><span class="section-number-4">5.1.5</span> side by side</h4>
 <div class="outline-text-4" id="text-things--frames--side-by-side">
 <p>
 I managed to get my hands on the up-until-now rumored purple queen sprites.
@@ -476,8 +482,8 @@ loadQueen()</script>
 </div>
 </div>
 
-<div id="outline-container-org216ce1e" class="outline-4">
-<h4 id="things--frames--conclusion"><a id="org216ce1e"></a><span class="section-number-4">5.1.6</span> conclusion</h4>
+<div id="outline-container-org582a29e" class="outline-4">
+<h4 id="things--frames--conclusion"><a id="org582a29e"></a><span class="section-number-4">5.1.6</span> conclusion</h4>
 <div class="outline-text-4" id="text-things--frames--conclusion">
 <p>
 We cannot assume all frames are created equal. Frames are not fixed slices of
@@ -487,8 +493,8 @@ time but instead highly varied slices of time.
 </div>
 </div>
 
-<div id="outline-container-orga63b844" class="outline-3">
-<h3 id="things--frame-rate"><a id="orga63b844"></a><span class="section-number-3">5.2</span> frame rate</h3>
+<div id="outline-container-orgeff3494" class="outline-3">
+<h3 id="things--frame-rate"><a id="orgeff3494"></a><span class="section-number-3">5.2</span> frame rate</h3>
 <div class="outline-text-3" id="text-things--frame-rate">
 <p>
 Building upon the idea of a variable frame rate - frame rates can sometimes
@@ -498,8 +504,8 @@ problem.
 </p>
 </div>
 
-<div id="outline-container-orgd40d2e0" class="outline-4">
-<h4 id="things--frame-rate--the-problem"><a id="orgd40d2e0"></a><span class="section-number-4">5.2.1</span> the problem</h4>
+<div id="outline-container-org9140694" class="outline-4">
+<h4 id="things--frame-rate--the-problem"><a id="org9140694"></a><span class="section-number-4">5.2.1</span> the problem</h4>
 <div class="outline-text-4" id="text-things--frame-rate--the-problem">
 <p>
 Imagine the kind of work it takes to make a stop motion movie. You
@@ -525,8 +531,8 @@ time, but there will be a seam (horizontal due to how the hardware works).
 </div>
 </div>
 
-<div id="outline-container-orgb06f05b" class="outline-4">
-<h4 id="things--frame-rate--enter-vsync"><a id="orgb06f05b"></a><span class="section-number-4">5.2.2</span> enter vsync</h4>
+<div id="outline-container-orgd594a30" class="outline-4">
+<h4 id="things--frame-rate--enter-vsync"><a id="orgd594a30"></a><span class="section-number-4">5.2.2</span> enter vsync</h4>
 <div class="outline-text-4" id="text-things--frame-rate--enter-vsync">
 <p>
 <code>vsync</code> is a feature that's really easy to use on a game engine. It's a
@@ -547,8 +553,8 @@ communicate with the video card and sync up in a less primitive way.
 </div>
 </div>
 
-<div id="outline-container-org3a06cb7" class="outline-4">
-<h4 id="things--frame-rate--does-kq-use-vsync"><a id="org3a06cb7"></a><span class="section-number-4">5.2.3</span> does KQ use vsync?</h4>
+<div id="outline-container-orgf860d76" class="outline-4">
+<h4 id="things--frame-rate--does-kq-use-vsync"><a id="orgf860d76"></a><span class="section-number-4">5.2.3</span> does KQ use vsync?</h4>
 <div class="outline-text-4" id="text-things--frame-rate--does-kq-use-vsync">
 <p>
 From staring too long at the background on the game, it would seem like
@@ -561,20 +567,20 @@ it's hard to say one way or another with much certainty.
 </div>
 </div>
 
-<div id="outline-container-org963ac55" class="outline-4">
-<h4 id="things--frame-rate--show-example-of-vsync"><a id="org963ac55"></a><span class="section-number-4">5.2.4</span> <span class="todo TODO">TODO</span> show example of vsync</h4>
+<div id="outline-container-org17d65f5" class="outline-4">
+<h4 id="things--frame-rate--show-example-of-vsync"><a id="org17d65f5"></a><span class="section-number-4">5.2.4</span> <span class="todo TODO">TODO</span> show example of vsync</h4>
 <div class="outline-text-4" id="text-things--frame-rate--show-example-of-vsync">
 </div>
 </div>
 </div>
 
-<div id="outline-container-org7b85410" class="outline-3">
-<h3 id="things--pixels"><a id="org7b85410"></a><span class="section-number-3">5.3</span> pixels</h3>
+<div id="outline-container-orgc83990e" class="outline-3">
+<h3 id="things--pixels"><a id="orgc83990e"></a><span class="section-number-3">5.3</span> pixels</h3>
 <div class="outline-text-3" id="text-things--pixels">
 </div>
 
-<div id="outline-container-org1077135" class="outline-4">
-<h4 id="things--pixels--2d-as-3d"><a id="org1077135"></a><span class="section-number-4">5.3.1</span> 2D as 3D</h4>
+<div id="outline-container-org9a90928" class="outline-4">
+<h4 id="things--pixels--2d-as-3d"><a id="org9a90928"></a><span class="section-number-4">5.3.1</span> 2D as 3D</h4>
 <div class="outline-text-4" id="text-things--pixels--2d-as-3d">
 <p>
 Display sizes vary all over the place. The result is game engines don't use
@@ -593,8 +599,8 @@ comparisons and a large scaling distance.
 </div>
 </div>
 
-<div id="outline-container-orgfccc044" class="outline-4">
-<h4 id="things--pixels--what-about-the-pixel-graphics"><a id="orgfccc044"></a><span class="section-number-4">5.3.2</span> what about the pixel graphics?</h4>
+<div id="outline-container-orgdd85996" class="outline-4">
+<h4 id="things--pixels--what-about-the-pixel-graphics"><a id="orgdd85996"></a><span class="section-number-4">5.3.2</span> what about the pixel graphics?</h4>
 <div class="outline-text-4" id="text-things--pixels--what-about-the-pixel-graphics">
 <p>
 Generally what happens with pixel graphics is someone will build the images
@@ -608,21 +614,21 @@ are still stretched though.
 </div>
 </div>
 
-<div id="outline-container-org9cc3d74" class="outline-4">
-<h4 id="things--pixels--conclusion"><a id="org9cc3d74"></a><span class="section-number-4">5.3.3</span> <span class="todo TODO">TODO</span> conclusion</h4>
+<div id="outline-container-org64ef64c" class="outline-4">
+<h4 id="things--pixels--conclusion"><a id="org64ef64c"></a><span class="section-number-4">5.3.3</span> <span class="todo TODO">TODO</span> conclusion</h4>
 <div class="outline-text-4" id="text-things--pixels--conclusion">
 </div>
 </div>
 </div>
 
-<div id="outline-container-org60c6cf0" class="outline-3">
-<h3 id="things--the-wrap-glitch"><a id="org60c6cf0"></a><span class="section-number-3">5.4</span> <span class="todo TODO">TODO</span> the wrap glitch</h3>
+<div id="outline-container-org4ec2b74" class="outline-3">
+<h3 id="things--the-wrap-glitch"><a id="org4ec2b74"></a><span class="section-number-3">5.4</span> <span class="todo TODO">TODO</span> the wrap glitch</h3>
 <div class="outline-text-3" id="text-things--the-wrap-glitch">
 </div>
 </div>
 
-<div id="outline-container-orgbff49ab" class="outline-3">
-<h3 id="things--game-stutter"><a id="orgbff49ab"></a><span class="section-number-3">5.5</span> game stutter</h3>
+<div id="outline-container-orgc32dd49" class="outline-3">
+<h3 id="things--game-stutter"><a id="orgc32dd49"></a><span class="section-number-3">5.5</span> game stutter</h3>
 <div class="outline-text-3" id="text-things--game-stutter">
 <p>
 Sometimes the game stutters. There's a variety of reasons as to why this can
@@ -634,7 +640,7 @@ than not it will be garbage collection that's the cause of stutters.
 </div>
 
 <ol class="org-ol">
-<li><a id="things--game-stutter--the-dark-ages-of-memory-management"></a><a id="org20e6005"></a>the dark ages of memory management<br />
+<li><a id="things--game-stutter--the-dark-ages-of-memory-management"></a><a id="org86e208f"></a>the dark ages of memory management<br />
 <div class="outline-text-5" id="text-things--game-stutter--the-dark-ages-of-memory-management">
 <p>
 Let's rewind to 2018 where games are still written in C++. Yup. It still
@@ -661,7 +667,7 @@ run into trouble.
 </div>
 </li>
 
-<li><a id="things--game-stutter--garbage-collection"></a><a id="org4bc37b9"></a>garbage collection<br />
+<li><a id="things--game-stutter--garbage-collection"></a><a id="org3d1ae17"></a>garbage collection<br />
 <div class="outline-text-5" id="text-things--game-stutter--garbage-collection">
 <p>
 Unity is backed by a C/C++ engine, but as game authors everything is
@@ -761,7 +767,7 @@ removing, and changing references <span class="underline">constantly</span>.
 </div>
 </li>
 
-<li><a id="things--game-stutter--why-you-should-care"></a><a id="orgafcc624"></a>why you should care<br />
+<li><a id="things--game-stutter--why-you-should-care"></a><a id="org3a9c9eb"></a>why you should care<br />
 <div class="outline-text-5" id="text-things--game-stutter--why-you-should-care">
 <p>
 The garbage collector <span class="underline">must</span> pause the <span class="underline">entire program</span> to perform a full
@@ -807,7 +813,7 @@ As game engineers we can mitigate that with something called "object
 pooling". With object pooling, we simply have a pool of objects and we
 return them to the pool when we're done or have no use for them. This is
 extra work though, and most indie developers don't prioritize doing this,
-let alone even knowing it's something they can do at times.
+let alone even knowing it's something they can do.
 </p>
 
 <p>
@@ -823,9 +829,67 @@ wrong way, and now you're down another egg.
 </ol>
 </div>
 
-<div id="outline-container-org59ea4fb" class="outline-3">
-<h3 id="things--the-drip"><a id="org59ea4fb"></a><span class="section-number-3">5.6</span> <span class="todo TODO">TODO</span> the "drip"</h3>
+<div id="outline-container-org9a5f4c7" class="outline-3">
+<h3 id="things--the-drip"><a id="org9a5f4c7"></a><span class="section-number-3">5.6</span> <span class="todo TODO">TODO</span> the "drip"</h3>
 <div class="outline-text-3" id="text-things--the-drip">
+</div>
+</div>
+
+<div id="outline-container-orgfec38d4" class="outline-3">
+<h3 id="things--collision"><a id="orgfec38d4"></a><span class="section-number-3">5.7</span> collision</h3>
+<div class="outline-text-3" id="text-things--collision">
+</div>
+
+<div id="outline-container-org8aa1a5d" class="outline-4">
+<h4 id="things--collision--characters"><a id="org8aa1a5d"></a><span class="section-number-4">5.7.1</span> characters</h4>
+<div class="outline-text-4" id="text-things--collision--characters">
+<p>
+In Unity, the <code>CharacterController</code> is a component you add to a game object
+that makes it really easy to control as a player. It's not "physics",
+similar to how Mario has never jumped around with physics. Yeah, Mario is
+influenced by a kind of gravity, but he's propelled by you holding the jump
+button longer (meaning more "thrust" would be applied after he left the
+ground), and steering in the air is possible in many platformers, but on the
+scale any of us could jump is not possible, even if we could jump 10x higher
+than we can now. So it's not physics. It's a weird kind of game physics and
+the <code>CharacterController</code> scratches this itch rather well. It has all kinds
+of knobs to turn for things like gravity, max falling speed, air speed and
+control, etc. It also is really nice because it knows how to move "around"
+small obstacles - very small like a single stair step.
+</p>
+
+<p>
+The <code>CharacterController</code> uses a 3D capsule (pill shape) as its volume for
+knowing when it's running into things. It works really well for most "human"
+shaped things. If you need to, you can reduce the height to get something
+closer to a sphere. Effectively, it's a tube with two hemispheres at the top
+and bottom. This has interesting interaction with a rectangular volume
+though.
+</p>
+
+<p>
+If you could draw the character controller over a character, this is what it
+would look like:
+</p>
+
+<div style="position: absolute;">
+  <div
+    style="position: relative;left: 1.5em;top: 1em;width: 8em;height: 13em;border: 0.3em solid green;border-radius: 11em;"
+  ></div>
+</div>
+<img
+  style="image-rendering: pixelated; width: 13em"
+  src="/blog/assets/kq-purple-warrior-chex-standing-01.png"
+/>
+
+<p>
+Cosmetic pieces will totally fall out of the bounding area, and that's okay.
+This kind of approximation is totally fine for the kind of game KQ is, and a
+majority of others as well. Keep in mind, this specifically for <span class="underline">movement</span>
+and bumping into inert objects such as terrain. The <code>CharacterController</code>
+itself is <span class="underline">not a collider</span>. We'll cover that more in another section.
+</p>
+</div>
 </div>
 </div>
 </div>

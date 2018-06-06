@@ -19,8 +19,9 @@ categories: killer-queen
   :PROPERTIES:
   :CUSTOM_ID: changelog
   :END:
-- <2018-03-22 Thu> :: add section about game stutter.
-- <2018-01-21 Sun> :: add section about frame rate and vsync.
+- <2018-06-05 Tue> :: add section about [[characters][character controllers]].
+- <2018-03-22 Thu> :: add section about [[game stutter]].
+- <2018-01-21 Sun> :: add section about [[frame rate][frame rate and vsync]].
 * introduction
   :PROPERTIES:
   :CUSTOM_ID: introduction
@@ -806,7 +807,7 @@ package character1 {
     pooling". With object pooling, we simply have a pool of objects and we
     return them to the pool when we're done or have no use for them. This is
     extra work though, and most indie developers don't prioritize doing this,
-    let alone even knowing it's something they can do at times.
+    let alone even knowing it's something they can do.
 
     This is why certain very critical executions in the game can be absolutely
     perilous to do. Even if _you_ are capable of executing them properly 100% of
@@ -820,3 +821,67 @@ package character1 {
    :CUSTOM_ID: things--the-drip
    :END:
 
+** collision
+   :PROPERTIES:
+   :CUSTOM_ID: things--collision
+   :END:
+
+*** characters
+    :PROPERTIES:
+    :CUSTOM_ID: things--collision--characters
+    :END:
+    In Unity, the =CharacterController= is a component you add to a game object
+    that makes it really easy to control as a player. It's not "physics",
+    similar to how Mario has never jumped around with physics. Yeah, Mario is
+    influenced by a kind of gravity, but he's propelled by you holding the jump
+    button longer (meaning more "thrust" would be applied after he left the
+    ground), and steering in the air is possible in many platformers, but on the
+    scale any of us could jump is not possible, even if we could jump 10x higher
+    than we can now. So it's not physics. It's a weird kind of game physics and
+    the =CharacterController= scratches this itch rather well. It has all kinds
+    of knobs to turn for things like gravity, max falling speed, air speed and
+    control, etc. It also is really nice because it knows how to move "around"
+    small obstacles - very small like a single stair step.
+
+    The =CharacterController= uses a 3D capsule (pill shape) as its volume for
+    knowing when it's running into things. It works really well for most "human"
+    shaped things. If you need to, you can reduce the height to get something
+    closer to a sphere. Effectively, it's a tube with two hemispheres at the top
+    and bottom. This has interesting interaction with a rectangular volume
+    though.
+
+    If you could draw the character controller over a character, this is what it
+    would look like:
+
+#+begin_export html
+<div style="position: absolute;">
+  <div
+    style="position: relative;left: 1.5em;top: 1em;width: 8em;height: 13em;border: 0.3em solid green;border-radius: 11em;"
+  ></div>
+</div>
+<img
+  style="image-rendering: pixelated; width: 13em"
+  src="/blog/assets/kq-purple-warrior-chex-standing-01.png"
+/>
+#+end_export
+
+    Cosmetic pieces will totally fall out of the bounding area, and that's okay.
+    This kind of approximation is totally fine for the kind of game KQ is, and a
+    majority of others as well. Keep in mind, this specifically for _movement_
+    and bumping into inert objects such as terrain. The =CharacterController=
+    itself is _not a collider_. We'll cover that more in another section.
+
+*** ledges vs characters                                          :noexport:
+    :PROPERTIES:
+    :CUSTOM_ID: things--collision--ledges-vs-characters
+    :END:
+    Ledges in the game are 100% thin rectangles. There is absolutely no
+    curvature to them at all, regardless of the map you play on. What you are
+    seeing is the curvature of the =CharcterController=.
+
+
+    Observe the ledge.
+
+#+begin_src js
+
+#+end_src
