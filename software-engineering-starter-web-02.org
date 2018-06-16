@@ -13,12 +13,16 @@ categories: software-engineering
 #+date:     <2018-06-15 Fri>
 #+language: en
 #+tags:     tutorials software web
+#+auto_id:  t
 
 As a continuation of [[./software-engineering-starter-web-02.org][Starter Web App]], we'll be making our server respond with
 some well formatted HTML. We want this so we can also test our web server with
 a real web browser.
 
 * why?
+  :PROPERTIES:
+  :CUSTOM_ID: why
+  :END:
   If your server is already running, you can visit it in your browser by
   navigating to [[http://localhost:3000]]. You will see the "ohai" we added earlier
   in a very flat, ugly "page". It's not actually a page, but instead how the
@@ -26,6 +30,9 @@ a real web browser.
   we can make a pretty page with meaningful content.
 
 * responding with html
+  :PROPERTIES:
+  :CUSTOM_ID: responding-with-html
+  :END:
 
   Right now we're sending plain text over the wire with this expression:
 
@@ -34,6 +41,9 @@ a real web browser.
   #+end_src
 
 ** variable names
+   :PROPERTIES:
+   :CUSTOM_ID: responding-with-html--variable-names
+   :END:
   =res= is short for =response=. This a common convention in Express examples.
   In programming we can name our variables whatever we want. It's both a
   blessing and a curse. We want our variable names to be both meaningful and
@@ -50,6 +60,9 @@ a real web browser.
   experienced.
 
 ** announcing the html
+   :PROPERTIES:
+   :CUSTOM_ID: responding-with-html--announcing-the-html
+   :END:
 
    Both requests and responses have additional meta-data attached to them that
    helps facilitate communication. This meta data can indicate what language and
@@ -109,6 +122,9 @@ a real web browser.
    [[file:./cat-hatred-html-01.png]]
 
 ** curl again
+   :PROPERTIES:
+   :CUSTOM_ID: responding-with-html--curl-again
+   :END:
 
    Let's try this again with our prior tool, =curl=.
 
@@ -128,6 +144,9 @@ a real web browser.
    multiple content types.
 
 ** the accept header
+   :PROPERTIES:
+   :CUSTOM_ID: responding-with-html--the-accept-header
+   :END:
 
    When your web browser sends a request to a server, it will generally ask for
    HTML. It does that with an =Accept= _request_ header that looks like this:
@@ -157,6 +176,9 @@ a real web browser.
    #+end_src
 
 ** homework
+   :PROPERTIES:
+   :CUSTOM_ID: responding-with-html--homework
+   :END:
 
    Instead of telling you what the code is here, I'm going to have you _figure
    it out yourself_. You've already done =if= statements in the past, so you
@@ -188,10 +210,16 @@ a real web browser.
    #+end_src
 
 *** tips
+    :PROPERTIES:
+    :CUSTOM_ID: responding-with-html--homework--tips
+    :END:
 
     Don't forget to restart the server every time you save your changes!
 
 * the next thing
+  :PROPERTIES:
+  :CUSTOM_ID: the-next-thing
+  :END:
 
   After we get the homework test passing we can move onto the next thing, which
   will be making our server use dynamic data.

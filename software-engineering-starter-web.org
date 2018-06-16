@@ -13,12 +13,19 @@ categories: software-engineering
 #+date:     <2018-06-13 Wed>
 #+language: en
 #+tags:     tutorials software web
+#+auto_id: t
 
 The purpose here is to go over some basic web stuff and get a server up and
 running, with maybe a web interface.
 
 * legend
+  :PROPERTIES:
+  :CUSTOM_ID: legend
+  :END:
 ** terminal commands
+   :PROPERTIES:
+   :CUSTOM_ID: legend--terminal-commands
+   :END:
   A source block with a =$= in front generally means this is a command you
   should run as your normal user from within a terminal or shell. Commands on
   your system are programs, and you should either only run commands you
@@ -57,6 +64,9 @@ running, with maybe a web interface.
   =foo bar baz= as its output.
 
 ** shell
+   :PROPERTIES:
+   :CUSTOM_ID: legend--shell
+   :END:
 
    A terminal is a window that runs a shell. A shell is a program that lets you
    input commands and you can see the results. A _good_ shell can provide lots
@@ -67,9 +77,18 @@ running, with maybe a web interface.
    parts of the shell only a little bit at a time.
 
 * tools
+  :PROPERTIES:
+  :CUSTOM_ID: tools
+  :END:
   We'll need some tools installed to ease this along.
 ** system software
+   :PROPERTIES:
+   :CUSTOM_ID: tools--system-software
+   :END:
 *** homebrew
+    :PROPERTIES:
+    :CUSTOM_ID: tools--system-software--homebrew
+    :END:
    [[https://brew.sh][Homebrew]] is needed to install some basic stuff. Follow the link and follow
    it's instructions. See the [[shell][shell]] and [[terminal commands][terminal commands]] section for learning
    how to install Homebrew.
@@ -84,6 +103,9 @@ running, with maybe a web interface.
    #+end_src
 
 *** Node.js
+    :PROPERTIES:
+    :CUSTOM_ID: tools--system-software--node.js
+    :END:
     Once Homebrew is installed, we can install a recent version of Node.JS, which
     we'll need for running a server. The version we install isn't terribly
     important right now. Run this command to install Node:
@@ -93,6 +115,9 @@ running, with maybe a web interface.
     #+end_src
 
 *** yarn
+    :PROPERTIES:
+    :CUSTOM_ID: tools--system-software--yarn
+    :END:
     =yarn= is a replacement for =npm=. You don't need to know =npm= but
     understand there is a lot of legacy projects out there with their install
     instructions using =npm=. For the most part, any place you see =npm= you can
@@ -107,6 +132,9 @@ running, with maybe a web interface.
     #+end_src
 
 *** git
+    :PROPERTIES:
+    :CUSTOM_ID: tools--system-software--git
+    :END:
     =git= is a version control system. It's a vital tool for software
     development as it performs incremental backups of your source code. It
     provides a rich history (provided you leave messages for yourself) and
@@ -120,6 +148,9 @@ running, with maybe a web interface.
     #+end_src
 
 ** editor
+   :PROPERTIES:
+   :CUSTOM_ID: tools--editor
+   :END:
    [[https://atom.io][Atom]] is a plenty good starter editor. It's basic. It's a pretty Notepad with
    plugins and indentation. For now, this is fine.
 
@@ -134,6 +165,9 @@ running, with maybe a web interface.
    can also open Spotlight by pressing Command-Space and typing "atom" without
    the quotes.
 * your development directory
+  :PROPERTIES:
+  :CUSTOM_ID: your-development-directory
+  :END:
   Your development directory is a place where you can throw all of your software
   projects. It seems like everyone has their own convention and no two are
   alike. You can't really get this wrong, but generally you might be typing it a
@@ -155,10 +189,16 @@ running, with maybe a web interface.
 
   After running this, you should see =dev= in your shell's prompt.
 * take a break
+  :PROPERTIES:
+  :CUSTOM_ID: take-a-break
+  :END:
   Good job! Let's take a minute to look around and not see a screw for a few
   minutes.
 
 * setting up your project
+  :PROPERTIES:
+  :CUSTOM_ID: setting-up-your-project
+  :END:
   Let's make sure your terminal is in your development directory.
 
   #+begin_src shell
@@ -202,6 +242,9 @@ running, with maybe a web interface.
   #+end_src
 
 * creating your first node app
+  :PROPERTIES:
+  :CUSTOM_ID: creating-your-first-node-app
+  :END:
 
   Now we're going to open our editor. We can open it with a file (or even a
   blank file that doesn't exist yet) by giving the =atom= command an argument.
@@ -283,6 +326,9 @@ running, with maybe a web interface.
   #+end_src
 
 * what the hell just happened?
+  :PROPERTIES:
+  :CUSTOM_ID: what-the-hell-just-happened
+  :END:
 
   In short, thousands of little assumptions we make in the world of technology
   came together and something actually worked.
@@ -290,6 +336,9 @@ running, with maybe a web interface.
   In the long, let's talk about networking.
 
 ** layers
+   :PROPERTIES:
+   :CUSTOM_ID: what-the-hell-just-happened--layers
+   :END:
 
    Networked architecture exists as a series of abstract layers. We've heard so
    much about how computers are all about 1s and 0s but we need to derive
@@ -308,17 +357,26 @@ running, with maybe a web interface.
    them, but knowing they are there is helpful. These are presented in order.
 
 *** physical layer
+    :PROPERTIES:
+    :CUSTOM_ID: what-the-hell-just-happened--layers--physical-layer
+    :END:
     This is the medium in which the communication happens. This could be radio
     waves, a fucking wire, or even study hall notes. Barbed wire was used to
     demo Ethernet, so I'm told.
 
 *** data link layer
+    :PROPERTIES:
+    :CUSTOM_ID: what-the-hell-just-happened--layers--data-link-layer
+    :END:
     This layer groups up data into chunks called frames or packets. Ethernet
     exists as one of these layers or a kind of data-link sublayer. Wireless
     specifications also exist on this as well. The data link layer is where your
     =MAC= address comes from.
 
 *** network layer
+    :PROPERTIES:
+    :CUSTOM_ID: what-the-hell-just-happened--layers--network-layer
+    :END:
 
     Hey wait, aren't we talking about networks already? Confusing! Well this
     specifically refers to routing of network traffic over multiple devices.
@@ -328,6 +386,9 @@ running, with maybe a web interface.
     others.
 
 *** transport layer
+    :PROPERTIES:
+    :CUSTOM_ID: what-the-hell-just-happened--layers--transport-layer
+    :END:
 
     This is primarily a layer about checking for errors and retransmission of
     lost data. =TCP= and =UDP= are transport layers. Sometimes you hear =TCP=
@@ -335,17 +396,26 @@ running, with maybe a web interface.
     together.
 
 *** session layer
+    :PROPERTIES:
+    :CUSTOM_ID: what-the-hell-just-happened--layers--session-layer
+    :END:
 
     This layer is about handshakes and establishing persistent connections. It
     also can handle forms of authentication and reconnection. =TCP= and =UDP=
     both span across this and the transport layer.
 
 *** presentation layer
+    :PROPERTIES:
+    :CUSTOM_ID: what-the-hell-just-happened--layers--presentation-layer
+    :END:
 
     This is primarily about encryption but could be anything that converts data
     from one form to another. Encryption is generally handled at the OS level.
 
 *** application layer
+    :PROPERTIES:
+    :CUSTOM_ID: what-the-hell-just-happened--layers--application-layer
+    :END:
 
     These aren't applications themselves, but means to communicate with
     applications. How do you talk to a specific application on your computer? If
@@ -357,6 +427,9 @@ running, with maybe a web interface.
     there.
 
 ** the request and response model
+   :PROPERTIES:
+   :CUSTOM_ID: what-the-hell-just-happened--the-request-and-response-model
+   :END:
    HTTP (Hyper Text Transfer Proctocol) is an [[application layer][application layer]] protocol that we
    use for almost all of our web technology. The client (which is typically a
    web browser, but could also be virtually anything) sends something called a
@@ -364,6 +437,9 @@ running, with maybe a web interface.
    kind of response.
 
 *** how web pages work in http
+    :PROPERTIES:
+    :CUSTOM_ID: what-the-hell-just-happened--the-request-and-response-model--how-web-pages-work-in-http
+    :END:
     When you go to a site like [[http://google.com]], your browser sends a =GET=
     request to Google. There's some additional meta data your browser will send
     along as well, such as saying automatically that you prefer US English, and
@@ -393,6 +469,9 @@ running, with maybe a web interface.
     something like visiting [[http://google.com]].
 
 *** persistence :noexport:
+    :PROPERTIES:
+    :CUSTOM_ID: what-the-hell-just-happened--the-request-and-response-model--persistence
+    :END:
     Once the response has been transmitted, the server or the client is free to
     sever the connection. This means the request/response model is not
     persistent. Because it's not persistent, there's no built-in way to know if
@@ -400,6 +479,9 @@ running, with maybe a web interface.
     those websites seem to know who you are every time you go to a new page?
 
 *** what about curl?
+    :PROPERTIES:
+    :CUSTOM_ID: what-the-hell-just-happened--the-request-and-response-model--what-about-curl
+    :END:
 
     =curl= is our command line HTTP tool. We can send requests with it like it
     was a browser, and we can get the response back. We can give =curl= "flags"
@@ -413,5 +495,8 @@ running, with maybe a web interface.
     produce the same results across machines.
 
 * next up
+  :PROPERTIES:
+  :CUSTOM_ID: next-up
+  :END:
 
   For our next trick, we'll send some [[./software-engineering-starter-web-02.org][nice HTML]].

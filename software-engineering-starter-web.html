@@ -10,13 +10,13 @@ The purpose here is to go over some basic web stuff and get a server up and
 running, with maybe a web interface.
 </p>
 
-<div id="outline-container-orgcd73e3b" class="outline-2">
-<h2 id="orgcd73e3b"><span class="section-number-2">1</span> legend</h2>
-<div class="outline-text-2" id="text-1">
+<div id="outline-container-orga4a7d83" class="outline-2">
+<h2 id="legend"><a id="orga4a7d83"></a><span class="section-number-2">1</span> legend</h2>
+<div class="outline-text-2" id="text-legend">
 </div>
-<div id="outline-container-orgd214f61" class="outline-3">
-<h3 id="orgd214f61"><span class="section-number-3">1.1</span> terminal commands</h3>
-<div class="outline-text-3" id="text-1-1">
+<div id="outline-container-orgdc81af6" class="outline-3">
+<h3 id="legend--terminal-commands"><a id="orgdc81af6"></a><span class="section-number-3">1.1</span> terminal commands</h3>
+<div class="outline-text-3" id="text-legend--terminal-commands">
 <p>
 A source block with a <code>$</code> in front generally means this is a command you
 should run as your normal user from within a terminal or shell. Commands on
@@ -70,9 +70,9 @@ Here we're running <code>ls</code> and, as a contrived example, we're seeing it 
 </div>
 </div>
 
-<div id="outline-container-org1a5ede8" class="outline-3">
-<h3 id="org1a5ede8"><span class="section-number-3">1.2</span> shell</h3>
-<div class="outline-text-3" id="text-1-2">
+<div id="outline-container-org33dc81b" class="outline-3">
+<h3 id="legend--shell"><a id="org33dc81b"></a><span class="section-number-3">1.2</span> shell</h3>
+<div class="outline-text-3" id="text-legend--shell">
 <p>
 A terminal is a window that runs a shell. A shell is a program that lets you
 input commands and you can see the results. A <span class="underline">good</span> shell can provide lots
@@ -86,23 +86,23 @@ parts of the shell only a little bit at a time.
 </div>
 </div>
 
-<div id="outline-container-orga848a08" class="outline-2">
-<h2 id="orga848a08"><span class="section-number-2">2</span> tools</h2>
-<div class="outline-text-2" id="text-2">
+<div id="outline-container-org18112f3" class="outline-2">
+<h2 id="tools"><a id="org18112f3"></a><span class="section-number-2">2</span> tools</h2>
+<div class="outline-text-2" id="text-tools">
 <p>
 We'll need some tools installed to ease this along.
 </p>
 </div>
-<div id="outline-container-orgb323432" class="outline-3">
-<h3 id="orgb323432"><span class="section-number-3">2.1</span> system software</h3>
-<div class="outline-text-3" id="text-2-1">
+<div id="outline-container-org9340885" class="outline-3">
+<h3 id="tools--system-software"><a id="org9340885"></a><span class="section-number-3">2.1</span> system software</h3>
+<div class="outline-text-3" id="text-tools--system-software">
 </div>
-<div id="outline-container-org37fcb29" class="outline-4">
-<h4 id="org37fcb29"><span class="section-number-4">2.1.1</span> homebrew</h4>
-<div class="outline-text-4" id="text-2-1-1">
+<div id="outline-container-org68cd35b" class="outline-4">
+<h4 id="tools--system-software--homebrew"><a id="org68cd35b"></a><span class="section-number-4">2.1.1</span> homebrew</h4>
+<div class="outline-text-4" id="text-tools--system-software--homebrew">
 <p>
 <a href="https://brew.sh">Homebrew</a> is needed to install some basic stuff. Follow the link and follow
-it's instructions. See the <a href="#org1a5ede8">shell</a> and <a href="#orgd214f61">terminal commands</a> section for learning
+it's instructions. See the <a href="#legend--shell">shell</a> and <a href="#legend--terminal-commands">terminal commands</a> section for learning
 how to install Homebrew.
 </p>
 
@@ -120,9 +120,9 @@ setup, so let's install it now:
 </div>
 </div>
 
-<div id="outline-container-orgd26d128" class="outline-4">
-<h4 id="orgd26d128"><span class="section-number-4">2.1.2</span> Node.js</h4>
-<div class="outline-text-4" id="text-2-1-2">
+<div id="outline-container-orgb2ff646" class="outline-4">
+<h4 id="tools--system-software--node.js"><a id="orgb2ff646"></a><span class="section-number-4">2.1.2</span> Node.js</h4>
+<div class="outline-text-4" id="text-tools--system-software--node.js">
 <p>
 Once Homebrew is installed, we can install a recent version of Node.JS, which
 we'll need for running a server. The version we install isn't terribly
@@ -136,9 +136,9 @@ important right now. Run this command to install Node:
 </div>
 </div>
 
-<div id="outline-container-org90630b4" class="outline-4">
-<h4 id="org90630b4"><span class="section-number-4">2.1.3</span> yarn</h4>
-<div class="outline-text-4" id="text-2-1-3">
+<div id="outline-container-org8e5fa52" class="outline-4">
+<h4 id="tools--system-software--yarn"><a id="org8e5fa52"></a><span class="section-number-4">2.1.3</span> yarn</h4>
+<div class="outline-text-4" id="text-tools--system-software--yarn">
 <p>
 <code>yarn</code> is a replacement for <code>npm</code>. You don't need to know <code>npm</code> but
 understand there is a lot of legacy projects out there with their install
@@ -159,9 +159,9 @@ Install <code>yarn</code> with Homebrew using this command:
 </div>
 </div>
 
-<div id="outline-container-org787353c" class="outline-4">
-<h4 id="org787353c"><span class="section-number-4">2.1.4</span> git</h4>
-<div class="outline-text-4" id="text-2-1-4">
+<div id="outline-container-org2e935c9" class="outline-4">
+<h4 id="tools--system-software--git"><a id="org2e935c9"></a><span class="section-number-4">2.1.4</span> git</h4>
+<div class="outline-text-4" id="text-tools--system-software--git">
 <p>
 <code>git</code> is a version control system. It's a vital tool for software
 development as it performs incremental backups of your source code. It
@@ -182,9 +182,9 @@ Homebrew we can ensure we're using it and also be on the latest version:
 </div>
 </div>
 
-<div id="outline-container-org119d274" class="outline-3">
-<h3 id="org119d274"><span class="section-number-3">2.2</span> editor</h3>
-<div class="outline-text-3" id="text-2-2">
+<div id="outline-container-orgc30a581" class="outline-3">
+<h3 id="tools--editor"><a id="orgc30a581"></a><span class="section-number-3">2.2</span> editor</h3>
+<div class="outline-text-3" id="text-tools--editor">
 <p>
 <a href="https://atom.io">Atom</a> is a plenty good starter editor. It's basic. It's a pretty Notepad with
 plugins and indentation. For now, this is fine.
@@ -208,9 +208,9 @@ the quotes.
 </div>
 </div>
 </div>
-<div id="outline-container-org8365e72" class="outline-2">
-<h2 id="org8365e72"><span class="section-number-2">3</span> your development directory</h2>
-<div class="outline-text-2" id="text-3">
+<div id="outline-container-org77668b7" class="outline-2">
+<h2 id="your-development-directory"><a id="org77668b7"></a><span class="section-number-2">3</span> your development directory</h2>
+<div class="outline-text-2" id="text-your-development-directory">
 <p>
 Your development directory is a place where you can throw all of your software
 projects. It seems like everyone has their own convention and no two are
@@ -241,9 +241,9 @@ After running this, you should see <code>dev</code> in your shell's prompt.
 </p>
 </div>
 </div>
-<div id="outline-container-org22ed7f7" class="outline-2">
-<h2 id="org22ed7f7"><span class="section-number-2">4</span> take a break</h2>
-<div class="outline-text-2" id="text-4">
+<div id="outline-container-orgf0c7327" class="outline-2">
+<h2 id="take-a-break"><a id="orgf0c7327"></a><span class="section-number-2">4</span> take a break</h2>
+<div class="outline-text-2" id="text-take-a-break">
 <p>
 Good job! Let's take a minute to look around and not see a screw for a few
 minutes.
@@ -251,9 +251,9 @@ minutes.
 </div>
 </div>
 
-<div id="outline-container-org266e251" class="outline-2">
-<h2 id="org266e251"><span class="section-number-2">5</span> setting up your project</h2>
-<div class="outline-text-2" id="text-5">
+<div id="outline-container-org5186dd7" class="outline-2">
+<h2 id="setting-up-your-project"><a id="org5186dd7"></a><span class="section-number-2">5</span> setting up your project</h2>
+<div class="outline-text-2" id="text-setting-up-your-project">
 <p>
 Let's make sure your terminal is in your development directory.
 </p>
@@ -318,9 +318,9 @@ We'll be running a Node server using a library called <code>express</code>. We c
 </div>
 </div>
 
-<div id="outline-container-orgab295de" class="outline-2">
-<h2 id="orgab295de"><span class="section-number-2">6</span> creating your first node app</h2>
-<div class="outline-text-2" id="text-6">
+<div id="outline-container-orga46f973" class="outline-2">
+<h2 id="creating-your-first-node-app"><a id="orga46f973"></a><span class="section-number-2">6</span> creating your first node app</h2>
+<div class="outline-text-2" id="text-creating-your-first-node-app">
 <p>
 Now we're going to open our editor. We can open it with a file (or even a
 blank file that doesn't exist yet) by giving the <code>atom</code> command an argument.
@@ -342,7 +342,7 @@ Put this into your editor:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-js" id="org0f148a9"><span style="color: #4f97d7; font-weight: bold;">const</span> <span style="color: #7590db;">express</span> = require<span style="color: #4f97d7;">(</span><span style="color: #2d9574;">'express'</span><span style="color: #4f97d7;">)</span>
+<pre class="src src-js" id="orgb8e6f99"><span style="color: #4f97d7; font-weight: bold;">const</span> <span style="color: #7590db;">express</span> = require<span style="color: #4f97d7;">(</span><span style="color: #2d9574;">'express'</span><span style="color: #4f97d7;">)</span>
 </pre>
 </div>
 
@@ -352,7 +352,7 @@ create that now.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-js" id="org7de188b"><span style="color: #4f97d7; font-weight: bold;">const</span> <span style="color: #7590db;">app</span> = express<span style="color: #4f97d7;">()</span>
+<pre class="src src-js" id="org4146080"><span style="color: #4f97d7; font-weight: bold;">const</span> <span style="color: #7590db;">app</span> = express<span style="color: #4f97d7;">()</span>
 </pre>
 </div>
 
@@ -362,7 +362,7 @@ listen to ones directed at the root of our webapp for now.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-js" id="org1044c21">app.get<span style="color: #4f97d7;">(</span><span style="color: #2d9574;">'/'</span>, <span style="color: #bc6ec5;">(</span>req, res<span style="color: #bc6ec5;">)</span> =&gt; <span style="color: #bc6ec5;">{</span>
+<pre class="src src-js" id="orgd4cbc6e">app.get<span style="color: #4f97d7;">(</span><span style="color: #2d9574;">'/'</span>, <span style="color: #bc6ec5;">(</span>req, res<span style="color: #bc6ec5;">)</span> =&gt; <span style="color: #bc6ec5;">{</span>
   res.send<span style="color: #2d9574;">(</span><span style="color: #2d9574;">'ohai'</span><span style="color: #2d9574;">)</span>
 <span style="color: #bc6ec5;">}</span><span style="color: #4f97d7;">)</span>
 </pre>
@@ -375,7 +375,7 @@ then test that it works.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-js" id="org39e5522">app.listen<span style="color: #4f97d7;">(</span><span style="color: #a45bad;">3000</span>, <span style="color: #bc6ec5;">()</span> =&gt; console.log<span style="color: #bc6ec5;">(</span><span style="color: #2d9574;">'Example app listening on port 3000!'</span><span style="color: #bc6ec5;">)</span><span style="color: #4f97d7;">)</span>
+<pre class="src src-js" id="org0f81dd3">app.listen<span style="color: #4f97d7;">(</span><span style="color: #a45bad;">3000</span>, <span style="color: #bc6ec5;">()</span> =&gt; console.log<span style="color: #bc6ec5;">(</span><span style="color: #2d9574;">'Example app listening on port 3000!'</span><span style="color: #bc6ec5;">)</span><span style="color: #4f97d7;">)</span>
 </pre>
 </div>
 
@@ -429,9 +429,9 @@ ohai
 </div>
 </div>
 
-<div id="outline-container-orgb3c577e" class="outline-2">
-<h2 id="orgb3c577e"><span class="section-number-2">7</span> what the hell just happened?</h2>
-<div class="outline-text-2" id="text-7">
+<div id="outline-container-org5e323a8" class="outline-2">
+<h2 id="what-the-hell-just-happened"><a id="org5e323a8"></a><span class="section-number-2">7</span> what the hell just happened?</h2>
+<div class="outline-text-2" id="text-what-the-hell-just-happened">
 <p>
 In short, thousands of little assumptions we make in the world of technology
 came together and something actually worked.
@@ -442,9 +442,9 @@ In the long, let's talk about networking.
 </p>
 </div>
 
-<div id="outline-container-orgf4873c7" class="outline-3">
-<h3 id="orgf4873c7"><span class="section-number-3">7.1</span> layers</h3>
-<div class="outline-text-3" id="text-7-1">
+<div id="outline-container-orgae53b64" class="outline-3">
+<h3 id="what-the-hell-just-happened--layers"><a id="orgae53b64"></a><span class="section-number-3">7.1</span> layers</h3>
+<div class="outline-text-3" id="text-what-the-hell-just-happened--layers">
 <p>
 Networked architecture exists as a series of abstract layers. We've heard so
 much about how computers are all about 1s and 0s but we need to derive
@@ -466,9 +466,9 @@ them, but knowing they are there is helpful. These are presented in order.
 </p>
 </div>
 
-<div id="outline-container-orgbc522de" class="outline-4">
-<h4 id="orgbc522de"><span class="section-number-4">7.1.1</span> physical layer</h4>
-<div class="outline-text-4" id="text-7-1-1">
+<div id="outline-container-org23ffbe5" class="outline-4">
+<h4 id="what-the-hell-just-happened--layers--physical-layer"><a id="org23ffbe5"></a><span class="section-number-4">7.1.1</span> physical layer</h4>
+<div class="outline-text-4" id="text-what-the-hell-just-happened--layers--physical-layer">
 <p>
 This is the medium in which the communication happens. This could be radio
 waves, a fucking wire, or even study hall notes. Barbed wire was used to
@@ -477,9 +477,9 @@ demo Ethernet, so I'm told.
 </div>
 </div>
 
-<div id="outline-container-org7a3554a" class="outline-4">
-<h4 id="org7a3554a"><span class="section-number-4">7.1.2</span> data link layer</h4>
-<div class="outline-text-4" id="text-7-1-2">
+<div id="outline-container-org7c61503" class="outline-4">
+<h4 id="what-the-hell-just-happened--layers--data-link-layer"><a id="org7c61503"></a><span class="section-number-4">7.1.2</span> data link layer</h4>
+<div class="outline-text-4" id="text-what-the-hell-just-happened--layers--data-link-layer">
 <p>
 This layer groups up data into chunks called frames or packets. Ethernet
 exists as one of these layers or a kind of data-link sublayer. Wireless
@@ -489,9 +489,9 @@ specifications also exist on this as well. The data link layer is where your
 </div>
 </div>
 
-<div id="outline-container-org0102f31" class="outline-4">
-<h4 id="org0102f31"><span class="section-number-4">7.1.3</span> network layer</h4>
-<div class="outline-text-4" id="text-7-1-3">
+<div id="outline-container-org243d4c6" class="outline-4">
+<h4 id="what-the-hell-just-happened--layers--network-layer"><a id="org243d4c6"></a><span class="section-number-4">7.1.3</span> network layer</h4>
+<div class="outline-text-4" id="text-what-the-hell-just-happened--layers--network-layer">
 <p>
 Hey wait, aren't we talking about networks already? Confusing! Well this
 specifically refers to routing of network traffic over multiple devices.
@@ -503,9 +503,9 @@ others.
 </div>
 </div>
 
-<div id="outline-container-org75ede4b" class="outline-4">
-<h4 id="org75ede4b"><span class="section-number-4">7.1.4</span> transport layer</h4>
-<div class="outline-text-4" id="text-7-1-4">
+<div id="outline-container-org700cbd1" class="outline-4">
+<h4 id="what-the-hell-just-happened--layers--transport-layer"><a id="org700cbd1"></a><span class="section-number-4">7.1.4</span> transport layer</h4>
+<div class="outline-text-4" id="text-what-the-hell-just-happened--layers--transport-layer">
 <p>
 This is primarily a layer about checking for errors and retransmission of
 lost data. <code>TCP</code> and <code>UDP</code> are transport layers. Sometimes you hear <code>TCP</code>
@@ -515,9 +515,9 @@ together.
 </div>
 </div>
 
-<div id="outline-container-org3657409" class="outline-4">
-<h4 id="org3657409"><span class="section-number-4">7.1.5</span> session layer</h4>
-<div class="outline-text-4" id="text-7-1-5">
+<div id="outline-container-orgdcb594e" class="outline-4">
+<h4 id="what-the-hell-just-happened--layers--session-layer"><a id="orgdcb594e"></a><span class="section-number-4">7.1.5</span> session layer</h4>
+<div class="outline-text-4" id="text-what-the-hell-just-happened--layers--session-layer">
 <p>
 This layer is about handshakes and establishing persistent connections. It
 also can handle forms of authentication and reconnection. <code>TCP</code> and <code>UDP</code>
@@ -526,9 +526,9 @@ both span across this and the transport layer.
 </div>
 </div>
 
-<div id="outline-container-org1cfd692" class="outline-4">
-<h4 id="org1cfd692"><span class="section-number-4">7.1.6</span> presentation layer</h4>
-<div class="outline-text-4" id="text-7-1-6">
+<div id="outline-container-orgad537b2" class="outline-4">
+<h4 id="what-the-hell-just-happened--layers--presentation-layer"><a id="orgad537b2"></a><span class="section-number-4">7.1.6</span> presentation layer</h4>
+<div class="outline-text-4" id="text-what-the-hell-just-happened--layers--presentation-layer">
 <p>
 This is primarily about encryption but could be anything that converts data
 from one form to another. Encryption is generally handled at the OS level.
@@ -536,9 +536,9 @@ from one form to another. Encryption is generally handled at the OS level.
 </div>
 </div>
 
-<div id="outline-container-org4588474" class="outline-4">
-<h4 id="org4588474"><span class="section-number-4">7.1.7</span> application layer</h4>
-<div class="outline-text-4" id="text-7-1-7">
+<div id="outline-container-org6a7e8bb" class="outline-4">
+<h4 id="what-the-hell-just-happened--layers--application-layer"><a id="org6a7e8bb"></a><span class="section-number-4">7.1.7</span> application layer</h4>
+<div class="outline-text-4" id="text-what-the-hell-just-happened--layers--application-layer">
 <p>
 These aren't applications themselves, but means to communicate with
 applications. How do you talk to a specific application on your computer? If
@@ -553,11 +553,11 @@ there.
 </div>
 </div>
 
-<div id="outline-container-org93e6185" class="outline-3">
-<h3 id="org93e6185"><span class="section-number-3">7.2</span> the request and response model</h3>
-<div class="outline-text-3" id="text-7-2">
+<div id="outline-container-orgae3bae4" class="outline-3">
+<h3 id="what-the-hell-just-happened--the-request-and-response-model"><a id="orgae3bae4"></a><span class="section-number-3">7.2</span> the request and response model</h3>
+<div class="outline-text-3" id="text-what-the-hell-just-happened--the-request-and-response-model">
 <p>
-HTTP (Hyper Text Transfer Proctocol) is an <a href="#org4588474">application layer</a> protocol that we
+HTTP (Hyper Text Transfer Proctocol) is an <a href="#what-the-hell-just-happened--layers--application-layer">application layer</a> protocol that we
 use for almost all of our web technology. The client (which is typically a
 web browser, but could also be virtually anything) sends something called a
 request to the server. The server processes this request, and sends back some
@@ -565,9 +565,9 @@ kind of response.
 </p>
 </div>
 
-<div id="outline-container-org3285211" class="outline-4">
-<h4 id="org3285211"><span class="section-number-4">7.2.1</span> how web pages work in http</h4>
-<div class="outline-text-4" id="text-7-2-1">
+<div id="outline-container-orgeb09785" class="outline-4">
+<h4 id="what-the-hell-just-happened--the-request-and-response-model--how-web-pages-work-in-http"><a id="orgeb09785"></a><span class="section-number-4">7.2.1</span> how web pages work in http</h4>
+<div class="outline-text-4" id="text-what-the-hell-just-happened--the-request-and-response-model--how-web-pages-work-in-http">
 <p>
 When you go to a site like <a href="http://google.com">http://google.com</a>, your browser sends a <code>GET</code>
 request to Google. There's some additional meta data your browser will send
@@ -599,9 +599,9 @@ something like visiting <a href="http://google.com">http://google.com</a>.
 </div>
 </div>
 
-<div id="outline-container-org3e1d745" class="outline-4">
-<h4 id="org3e1d745"><span class="section-number-4">7.2.2</span> what about curl?</h4>
-<div class="outline-text-4" id="text-7-2-2">
+<div id="outline-container-orgf9883a0" class="outline-4">
+<h4 id="what-the-hell-just-happened--the-request-and-response-model--what-about-curl"><a id="orgf9883a0"></a><span class="section-number-4">7.2.2</span> what about curl?</h4>
+<div class="outline-text-4" id="text-what-the-hell-just-happened--the-request-and-response-model--what-about-curl">
 <p>
 <code>curl</code> is our command line HTTP tool. We can send requests with it like it
 was a browser, and we can get the response back. We can give <code>curl</code> "flags"
@@ -619,9 +619,9 @@ produce the same results across machines.
 </div>
 </div>
 
-<div id="outline-container-orgea17fce" class="outline-2">
-<h2 id="orgea17fce"><span class="section-number-2">8</span> next up</h2>
-<div class="outline-text-2" id="text-8">
+<div id="outline-container-org118e22b" class="outline-2">
+<h2 id="next-up"><a id="org118e22b"></a><span class="section-number-2">8</span> next up</h2>
+<div class="outline-text-2" id="text-next-up">
 <p>
 For our next trick, we'll send some <a href="./software-engineering-starter-web-02.html">nice HTML</a>.
 </p>
