@@ -7,7 +7,7 @@ categories: software-engineering
 ---
 #+END_EXPORT
 
-#+title:    Software Engineering - Starter Web app
+#+title:    Software Engineering - Starter Web app 1
 #+author:   Logan Barnett
 #+email:    logustus@gmail.com
 #+date:     <2018-06-13 Wed>
@@ -71,7 +71,7 @@ running, with maybe a web interface.
 ** system software
 *** homebrew
    [[https://brew.sh][Homebrew]] is needed to install some basic stuff. Follow the link and follow
-   it's instructions. See the [[shell]] and [[terminal commands]] section for learning
+   it's instructions. See the [[shell][shell]] and [[terminal commands][terminal commands]] section for learning
    how to install Homebrew.
 
    Once you have that, we'll want to install Homebrew's =cask= system, which
@@ -267,8 +267,8 @@ running, with maybe a web interface.
   Example app listening on port 3000!
   #+end_src
 
-  Now let's make a new tab (Command-T on MacOS). You might have to =cd= back to
-  your project directory:
+  Now let's make a new tab in your terminal (Command-T on MacOS). You might have
+  to =cd= back to your project directory:
 
   #+begin_src shell
   cd ~/dev/cat-hate
@@ -281,3 +281,137 @@ running, with maybe a web interface.
   $ curl http://localhost:3000
   ohai
   #+end_src
+
+* what the hell just happened?
+
+  In short, thousands of little assumptions we make in the world of technology
+  came together and something actually worked.
+
+  In the long, let's talk about networking.
+
+** layers
+
+   Networked architecture exists as a series of abstract layers. We've heard so
+   much about how computers are all about 1s and 0s but we need to derive
+   meaning from those. Usually in the world of computing, we aren't thinking
+   about those individual bits. Instead we're thinking in "abstract" terms. For
+   our purposes, abstract means we've moved to a conceptual place where we can
+   focus on only the things that matter about our topic. As we move between
+   layers we can think about just the areas of focus for that layer, because we
+   can assume other layers have done their jobs. This is a mental tool we use
+   because the amount of things that need to happen for a web page to load is
+   staggering. Breaking down these things into to tiny concepts that are easy to
+   mentally digest is perhaps the hardest problem we have in computer
+   engineering (and perhaps other forms of engineering as well).
+
+   Here we'll go over the various network layers. You don't need to memorize
+   them, but knowing they are there is helpful. These are presented in order.
+
+*** physical layer
+    This is the medium in which the communication happens. This could be radio
+    waves, a fucking wire, or even study hall notes. Barbed wire was used to
+    demo Ethernet, so I'm told.
+
+*** data link layer
+    This layer groups up data into chunks called frames or packets. Ethernet
+    exists as one of these layers or a kind of data-link sublayer. Wireless
+    specifications also exist on this as well. The data link layer is where your
+    =MAC= address comes from.
+
+*** network layer
+
+    Hey wait, aren't we talking about networks already? Confusing! Well this
+    specifically refers to routing of network traffic over multiple devices.
+    This is how information from your computer travels over your wifi, goes
+    through your router, and then goes out to the Internet. Most often the
+    network layer you'll be working with is =IP= (just =IP=) but there are
+    others.
+
+*** transport layer
+
+    This is primarily a layer about checking for errors and retransmission of
+    lost data. =TCP= and =UDP= are transport layers. Sometimes you hear =TCP=
+    referred to as =TCP/IP= but that's mostly referring to how they typically go
+    together.
+
+*** session layer
+
+    This layer is about handshakes and establishing persistent connections. It
+    also can handle forms of authentication and reconnection. =TCP= and =UDP=
+    both span across this and the transport layer.
+
+*** presentation layer
+
+    This is primarily about encryption but could be anything that converts data
+    from one form to another. Encryption is generally handled at the OS level.
+
+*** application layer
+
+    These aren't applications themselves, but means to communicate with
+    applications. How do you talk to a specific application on your computer? If
+    I run a server on my computer, will it be the only one? No. You can run lots
+    and lots of servers, and you're probably running lots of them right now
+    without realizing it. In the world of =TCP= and =UDP=, applications are
+    denoted by something called a "port". Some of them are reserved for specific
+    kinds of applications, but there's not necessarily a strict enforcement
+    there.
+
+** the request and response model
+   HTTP (Hyper Text Transfer Proctocol) is an [[application layer][application layer]] protocol that we
+   use for almost all of our web technology. The client (which is typically a
+   web browser, but could also be virtually anything) sends something called a
+   request to the server. The server processes this request, and sends back some
+   kind of response.
+
+*** how web pages work in http
+    When you go to a site like [[http://google.com]], your browser sends a =GET=
+    request to Google. There's some additional meta data your browser will send
+    along as well, such as saying automatically that you prefer US English, and
+    that it wants HTML. Google's servers see this request, and the server
+    decides it will send you back a web page (in HTML) for the response. It will
+    also ensure the web page is in US English.
+
+    Your browser will see that Google's homepage has =link= tags to CSS files,
+    so it will send additional requests to download those. If there are =script=
+    tags that have =src= attributes, it will also send requests for those. The
+    Google web servers will dutifully respond with the requested CSS and
+    JavaScript files in kind.
+
+    #+begin_src plantuml :file request-response-html-example-01.svg
+    User -> Browser: Go to http://google.com
+    Browser -> "Google Server": Send request to\nGoogle servers
+    "Google Server" --> Browser: Send response\nwith HTML page
+    Browser -> "Google Server": Send request for\nCSS/JavaScript files
+    "Google Server" --> Browser: Send responses\nfor files requested
+    Browser --> User: Show pretty webpage\nto user
+    #+end_src
+
+    #+RESULTS:
+    [[file:request-response-html-example-01.svg]]
+
+    This is a _sequence_ diagram that shows the communication process of doing
+    something like visiting [[http://google.com]].
+
+*** persistence :noexport:
+    Once the response has been transmitted, the server or the client is free to
+    sever the connection. This means the request/response model is not
+    persistent. Because it's not persistent, there's no built-in way to know if
+    one request is somehow related to any other request. But then how do all of
+    those websites seem to know who you are every time you go to a new page?
+
+*** what about curl?
+
+    =curl= is our command line HTTP tool. We can send requests with it like it
+    was a browser, and we can get the response back. We can give =curl= "flags"
+    that tell it to give us more information about what it's sending and what it
+    receives. In the instructions above, we tested our server using =curl=
+    because it doesn't tend to complicate things like the browser can easily do.
+    We can use =curl= to automate communication to any web server as well, and
+    since everyone has =curl= or can get it somehow, we can send =curl= commands
+    (as text) to anyone else and they can run it and verify our results. This is
+    handy when you need to get help with something and need to consistently
+    produce the same results across machines.
+
+* next up
+
+  For our next trick, we'll send some [[./software-engineering-starter-web-02.org][nice HTML]].
