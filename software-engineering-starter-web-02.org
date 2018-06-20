@@ -80,7 +80,7 @@ a real web browser.
    Here, we're going to announce that we're sending HTML. We do this by setting
    the =Content-Type= header to =text/html=. This is a special value that we
    call a MIME type, which we can get into later. I checked Express's API docs
-   for now to set headers, and this is what we need to do to indicate we're
+   for how to set headers, and this is what we need to do to indicate we're
    sending HTML back:
 
    #+begin_src js
@@ -112,8 +112,8 @@ a real web browser.
 
    Once you've added these changes, save the file and restart the server. Use
    control-c to kill the server when you're in the terminal tab that has the
-   server running. Once that's done, you can start the server back up with =yarn
-   start=.
+   server running. Once that's done, you can start the server back up with =node
+   server.js=.
 
    Now that the server is back up and running, navigate to [[http://localhost:3000]]
    in your browser of choice. If everything worked well, you should see
@@ -164,7 +164,7 @@ a real web browser.
    prefers =text/html= like this code that won't put in just yet:
 
    #+begin_src js
-   res.accepts('text/html')
+   req.accepts('text/html')
    #+end_src
 
    We want to check if the client wants =text/html= and respond with actual

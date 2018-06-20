@@ -11,8 +11,8 @@ some well formatted HTML. We want this so we can also test our web server with
 a real web browser.
 </p>
 
-<div id="outline-container-org0f4e5db" class="outline-2">
-<h2 id="why"><a id="org0f4e5db"></a><span class="section-number-2">1</span> why?</h2>
+<div id="outline-container-org39c60f9" class="outline-2">
+<h2 id="why"><a id="org39c60f9"></a><span class="section-number-2">1</span> why?</h2>
 <div class="outline-text-2" id="text-why">
 <p>
 If your server is already running, you can visit it in your browser by
@@ -24,8 +24,8 @@ we can make a pretty page with meaningful content.
 </div>
 </div>
 
-<div id="outline-container-orgcfebca5" class="outline-2">
-<h2 id="responding-with-html"><a id="orgcfebca5"></a><span class="section-number-2">2</span> responding with html</h2>
+<div id="outline-container-orgf37fd62" class="outline-2">
+<h2 id="responding-with-html"><a id="orgf37fd62"></a><span class="section-number-2">2</span> responding with html</h2>
 <div class="outline-text-2" id="text-responding-with-html">
 <p>
 Right now we're sending plain text over the wire with this expression:
@@ -37,8 +37,8 @@ Right now we're sending plain text over the wire with this expression:
 </div>
 </div>
 
-<div id="outline-container-org5f1a6c5" class="outline-3">
-<h3 id="responding-with-html--variable-names"><a id="org5f1a6c5"></a><span class="section-number-3">2.1</span> variable names</h3>
+<div id="outline-container-org077634d" class="outline-3">
+<h3 id="responding-with-html--variable-names"><a id="org077634d"></a><span class="section-number-3">2.1</span> variable names</h3>
 <div class="outline-text-3" id="text-responding-with-html--variable-names">
 <p>
 <code>res</code> is short for <code>response</code>. This a common convention in Express examples.
@@ -61,8 +61,8 @@ experienced.
 </div>
 </div>
 
-<div id="outline-container-org4125beb" class="outline-3">
-<h3 id="responding-with-html--announcing-the-html"><a id="org4125beb"></a><span class="section-number-3">2.2</span> announcing the html</h3>
+<div id="outline-container-org823f837" class="outline-3">
+<h3 id="responding-with-html--announcing-the-html"><a id="org823f837"></a><span class="section-number-3">2.2</span> announcing the html</h3>
 <div class="outline-text-3" id="text-responding-with-html--announcing-the-html">
 <p>
 Both requests and responses have additional meta-data attached to them that
@@ -85,7 +85,7 @@ Additional headers are separated by line breaks, as shown above.
 Here, we're going to announce that we're sending HTML. We do this by setting
 the <code>Content-Type</code> header to <code>text/html</code>. This is a special value that we
 call a MIME type, which we can get into later. I checked Express's API docs
-for now to set headers, and this is what we need to do to indicate we're
+for how to set headers, and this is what we need to do to indicate we're
 sending HTML back:
 </p>
 
@@ -126,8 +126,8 @@ little more flavor to our site.
 <p>
 Once you've added these changes, save the file and restart the server. Use
 control-c to kill the server when you're in the terminal tab that has the
-server running. Once that's done, you can start the server back up with <code>yarn
-   start</code>.
+server running. Once that's done, you can start the server back up with <code>node
+   server.js</code>.
 </p>
 
 <p>
@@ -144,8 +144,8 @@ something like this:
 </div>
 </div>
 
-<div id="outline-container-org2a56310" class="outline-3">
-<h3 id="responding-with-html--curl-again"><a id="org2a56310"></a><span class="section-number-3">2.3</span> curl again</h3>
+<div id="outline-container-org8685abf" class="outline-3">
+<h3 id="responding-with-html--curl-again"><a id="org8685abf"></a><span class="section-number-3">2.3</span> curl again</h3>
 <div class="outline-text-3" id="text-responding-with-html--curl-again">
 <p>
 Let's try this again with our prior tool, <code>curl</code>.
@@ -173,8 +173,8 @@ multiple content types.
 </div>
 </div>
 
-<div id="outline-container-org5a30efa" class="outline-3">
-<h3 id="responding-with-html--the-accept-header"><a id="org5a30efa"></a><span class="section-number-3">2.4</span> the accept header</h3>
+<div id="outline-container-orgdbf6568" class="outline-3">
+<h3 id="responding-with-html--the-accept-header"><a id="orgdbf6568"></a><span class="section-number-3">2.4</span> the accept header</h3>
 <div class="outline-text-3" id="text-responding-with-html--the-accept-header">
 <p>
 When your web browser sends a request to a server, it will generally ask for
@@ -196,7 +196,7 @@ prefers <code>text/html</code> like this code that won't put in just yet:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-js">res.accepts<span style="color: #4f97d7;">(</span><span style="color: #2d9574;">'text/html'</span><span style="color: #4f97d7;">)</span>
+<pre class="src src-js">req.accepts<span style="color: #4f97d7;">(</span><span style="color: #2d9574;">'text/html'</span><span style="color: #4f97d7;">)</span>
 </pre>
 </div>
 
@@ -212,8 +212,8 @@ Welcome to the official site for justified cat hatred.
 </div>
 </div>
 
-<div id="outline-container-org4400718" class="outline-3">
-<h3 id="responding-with-html--homework"><a id="org4400718"></a><span class="section-number-3">2.5</span> homework</h3>
+<div id="outline-container-orgc8afa62" class="outline-3">
+<h3 id="responding-with-html--homework"><a id="orgc8afa62"></a><span class="section-number-3">2.5</span> homework</h3>
 <div class="outline-text-3" id="text-responding-with-html--homework">
 <p>
 Instead of telling you what the code is here, I'm going to have you <span class="underline">figure
@@ -244,7 +244,7 @@ compare.
 <span style="color: #7590db;">htmlValid</span>=false
 <span style="color: #7590db;">textValid</span>=false
 
-<span style="color: #7590db;">correctHtml</span>=&lt;&lt;EOF
+<span style="color: #7590db;">correctHtml</span>=$<span style="color: #4f97d7;">(</span><span style="color: #fa8072;">cat</span> &lt;&lt;EOF
 <span style="color: #ffff00; font-weight: bold;">&lt;html&gt;</span>
 <span style="color: #ffff00; font-weight: bold;"> &lt;head&gt;</span>
 <span style="color: #ffff00; font-weight: bold;"> &lt;/head&gt;</span>
@@ -261,6 +261,7 @@ compare.
 <span style="color: #ffff00; font-weight: bold;">&lt;/html&gt;</span>
 
 <span style="color: #ffff00; font-weight: bold;">EOF</span>
+<span style="color: #4f97d7;">)</span>
 <span style="color: #4f97d7; font-weight: bold;">if</span> <span style="color: #4f97d7;">[</span> <span style="color: #2d9574;">"$htmlResult"</span> = <span style="color: #2d9574;">"$correctHtml"</span> <span style="color: #4f97d7;">]</span>; <span style="color: #4f97d7; font-weight: bold;">then</span>
     <span style="color: #7590db;">htmlValid</span>=true
 <span style="color: #4f97d7; font-weight: bold;">else</span>
@@ -302,8 +303,8 @@ To run the test, use:
 </div>
 </div>
 
-<div id="outline-container-orgf23b26c" class="outline-4">
-<h4 id="responding-with-html--homework--tips"><a id="orgf23b26c"></a><span class="section-number-4">2.5.1</span> tips</h4>
+<div id="outline-container-org8081c6a" class="outline-4">
+<h4 id="responding-with-html--homework--tips"><a id="org8081c6a"></a><span class="section-number-4">2.5.1</span> tips</h4>
 <div class="outline-text-4" id="text-responding-with-html--homework--tips">
 <p>
 Don't forget to restart the server every time you save your changes!
@@ -313,8 +314,8 @@ Don't forget to restart the server every time you save your changes!
 </div>
 </div>
 
-<div id="outline-container-org357ea1f" class="outline-2">
-<h2 id="the-next-thing"><a id="org357ea1f"></a><span class="section-number-2">3</span> the next thing</h2>
+<div id="outline-container-orgf94beed" class="outline-2">
+<h2 id="the-next-thing"><a id="orgf94beed"></a><span class="section-number-2">3</span> the next thing</h2>
 <div class="outline-text-2" id="text-the-next-thing">
 <p>
 After we get the homework test passing we can move onto the next thing, which
