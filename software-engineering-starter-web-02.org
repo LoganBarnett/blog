@@ -1,7 +1,7 @@
 #+BEGIN_EXPORT html
 ---
 layout: default
-title: Software Engineering - Starter Web app
+title: Software Engineering - Starter Web app 2
 date: 2018-06-13
 categories: software-engineering
 ---
@@ -15,7 +15,7 @@ categories: software-engineering
 #+tags:     tutorials software web
 #+auto_id:  t
 
-As a continuation of [[./software-engineering-starter-web-02.org][Starter Web App]], we'll be making our server respond with
+As a continuation of [[./software-engineering-starter-web.org][Starter Web App]], we'll be making our server respond with
 some well formatted HTML. We want this so we can also test our web server with
 a real web browser.
 
