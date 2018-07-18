@@ -1,0 +1,200 @@
+#+BEGIN_EXPORT html
+---
+layout: default
+title: Software Engineering - Starter Web app 3
+date: 2018-07-10
+categories: software-engineering
+---
+#+END_EXPORT
+#+title:    Software Engineering - Starter Web app 3
+#+author:   Logan Barnett
+#+email:    logustus@gmail.com
+#+date:     <2018-07-10 Tue>
+#+language: en
+#+tags:     tutorials software web
+#+auto_id:  t
+
+This is the third installment of this [[./software-engineering-starter-web.org][Starter Web App]] series I'm doing. In
+[[./software-engineer-starter-web-02.org][part 2]] we made our app server respond with different formats based on headers
+the client sends. Now we're going to use dynamic data!
+
+If you're still on lesson 2, this will be cheating to continue. Spoiler alert!
+
+This is about what we should have had from lesson 2.
+
+#+include: "./software-engineering-starter-web-03-start.js" src js
+
+* providing data
+  :PROPERTIES:
+  :CUSTOM_ID: providing-data
+  :END:
+
+Let's add an endpoint (request handler) that gets us a list of cats. We're going
+to model our endpoints after REST. I have a post that gives a very high level
+overview of REST, which you can read but isn't required to move forward. The
+real basic gist is that with REST, our endpoints are modeled as noun-like
+things, and we have a very small number of fixed verb-like things we can do with
+the noun-like things.
+
+Our endpoint for cats will simply be =/cats=.
+
+#+begin_src js
+  app.get('/cats', (req, res) => {
+    res.send([
+      'Chester',
+      'Foof',
+      'Garfield',
+      'Hobbes',
+      'Puss',
+      'Tom',
+      'Tony',
+      'Whiskers',
+    ])
+  })
+#+end_src
+
+Doing a =GET= on =/cats= will provide a JSON list of cat names back. These are
+all very legitimate cat names. I checked.
+
+Let's fire our server up and verify we can actually see these.
+
+#+begin_src shell
+$ curl http://localhost:3000/cats
+["Chester","Foof","Garfield","Hobbes","Puss","Tom","Tony","Whiskers"]
+#+end_src
+
+Whoa, it's like the _exact_ same set of strings we passed to =res.send=! Spooky.
+
+* making the data easy to change
+  :PROPERTIES:
+  :CUSTOM_ID: making-the-data-easy-to-change
+  :END:
+
+  Okay let's get rid of "Foof" because I only know one person who has a Foof cat
+  and while that's kind of neat name it's pretty dumb of me to treat that as
+  data. We'll change "Foof" to "Mr. Druthersworth" because that's a badass cat
+  name.
+
+  I'll wait until you get that done and test it with =curl=. Don't forget to
+  restart the node process when you make a change!
+
+  This is pretty stupid. Any time we want to change the data, we have to change
+  our program and restart it. That's because we're not really changing data.
+  We're changing (source) code. To make it use real data, we should read it from
+  a data source.
+
+** fs
+   :PROPERTIES:
+   :CUSTOM_ID: making-the-data-easy-to-change--fs
+   :END:
+
+   =fs= is a module built into Node.js that handles interacting with the file
+   system (hence "fs"). Computers are mostly fancy machines that present files.
+   *Remember this*. We're going to put our cat name list into a file.
+
+   Let's make a JSON file. JSON stands for JavaScript Object Notation. The
+   format that JSON uses isn't actually JavaScript but it's very close. It's
+   incredibly picky compared to JavaScript. Notably different from what we've
+   written thus far, it can't use single quotes (everything is double quoted if
+   it's a string), and there can be no trailing comma. A trailing comma is a
+   comma presented at the end of some comma separated sequence. Trailing commas
+   are boss because you don't have to think about making sure you remove that
+   last comma or adding one should you rearrange a list. But we're doing JSON so
+   fuck you. One last notable thing about JSON is that you can copy and paste
+   JSON directly into JavaScript and it will parse just fine. Not all JavaScript
+   works as JSON though.
+
+   #+begin_src json
+   [
+    "Chester",
+    "Mr. Druthersworth",
+    "Garfield",
+    "Hobbes",
+    "Puss",
+    "Tom",
+    "Tony",
+    "Whiskers"
+   ]
+   #+end_src
+
+   Wow, this looks like the _exact_ same thing our =curl= output has, except
+   broken into multiple lines! That's because it is. The line breaks are not of
+   consequence so long as it doesn't happen inside a string. Let's save this
+   file as =cats.json=.
+
+   Now we'll make our server load this file. First, we'll need to require =fs=.
+   Instead of giving you the syntax this time, I'm going to let you look it up.
+   The JS file you have right now has a great =require= example. My suggestion
+   is to keep your =require= calls all in the same spot, and towards the top of
+   the file before real logic begins. This part isn't critical, but I find it
+   easier to find my way around: I sort the statements alphabetically. So the
+   =require= call for =express= would come before =fs=. It makes things easier
+   to find. Some engineers like to group things together loosely by some kind of
+   arbitrary association (here goes the web things, here goes the file things,
+   etc), but these loose associations don't actually communicate anything and
+   rarely do things fall into such nice and neat buckets.
+
+   Now that we have =fs=, we can call =fs.readFile=. =readFile= takes a path to
+   a file, optional options (as in you don't need to provide the options, they
+   are optional...), and a callback. The callback is a function we give
+   =readFile=, and =readFile= itself will call this function once the file has
+   been loaded. The function is supposed to take an error and data as two
+   parameters. That's a pretty simple rundown of the function. You can see more
+   details from the [[https://nodejs.org/api/fs.html#fs_fs_readfile_path_options_callback][documentation on readFile here]] if you like, but we can go
+   with my summary for now. For the path, we will use a relative path of
+   ~'./cats.json'~. For the options, we can give it ='utf8'=. The callback
+   needs to take an =error= and =data= parameters. If =readFile= was successful,
+   =error= will be =null=. This is an exercise I will leave for you. The
+   documentation has an example of how to use the callback. Be sure this code
+   goes inside of your =get= handler. This is because we need it to re-run the
+   file load every time we get a request. We can save the file and it will cause
+   a reload of the file. We won't need to restart!
+
+   Once we have the callback setup, we need to do our due diligence and handle
+   the error condition. Handling errors is not extra stuff - it's part of your
+   job. Later, we'll go over tricks to make this an automatic process, but for
+   now it will be a matter of your personal discipline. If there's an error, we
+   don't want to =throw= it like the documentation shows. We're going to respond
+   to the client with an error code. Generally, we can respond with anything in
+   the 5xx range because loosely the 5xx range means that the server screwed up
+   somehow. 500 is a general catch all, and we should use that.
+
+   The general code for sending a 500 looks like this:
+
+   #+begin_src js
+     res.send(500, 'Could not load cat data!')
+   #+end_src
+
+** parsing
+   :PROPERTIES:
+   :CUSTOM_ID: making-the-data-easy-to-change--parsing
+   :END:
+   If data loading worked (the =error= variable is =null=), we can use it now as
+   a big string. That's part of what ='utf8'= gives us. Without it, =data= would
+   be a =Buffer= which is something to look at another day.
+
+   We're going to take that string and pass it to this global thing that just
+   hangs around: =JSON.parse=. =JSON= is a global variable and =parse= is a
+   function on it. =parse= takes a string and returns an object that the JSON
+   represents. Pass =parse= your data, and out will come the cats. You can
+   then do =res.send= on the cats.
+
+   I'm intentionally leaving things a little looser here so the work is on your
+   end. Remember that even though our new setup will let us change the JSON file
+   without reloading the server, we'll still need to reload the server for any
+   code changes.
+* cheats!
+  :PROPERTIES:
+  :CUSTOM_ID: cheats!
+  :END:
+
+  I strongly recommend struggling a little bit, but if you get really stuck,
+  this section below should get you by. Part of the process is figuring this
+  stuff out as you go. Senior Engineers are constantly googling things and
+  visiting Stack Overflow for answers, documentation, known issues, etc.
+  Anything that can help them move past particular problems. There is no shame
+  in looking stuff up. If you can't use Google, it's honestly a valid reason to
+  go home for the day. But all that said, sometimes it's time to just ask for
+  help.
+
+  #+include: "./software-engineering-starter-web-03-end.js" src js

@@ -1,0 +1,293 @@
+---
+layout: default
+title: Software Engineering - Starter Web app 3
+date: 2018-07-10
+categories: software-engineering
+---
+<p>
+This is the third installment of this <a href="./software-engineering-starter-web.html">Starter Web App</a> series I'm doing. In
+<a href="./software-engineer-starter-web-02.html">part 2</a> we made our app server respond with different formats based on headers
+the client sends. Now we're going to use dynamic data!
+</p>
+
+<p>
+If you're still on lesson 2, this will be cheating to continue. Spoiler alert!
+</p>
+
+<p>
+This is about what we should have had from lesson 2.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-js"><span style="color: #4f97d7; font-weight: bold;">const</span> <span style="color: #7590db;">express</span> = require<span style="color: #4f97d7;">(</span><span style="color: #2d9574;">'express'</span><span style="color: #4f97d7;">)</span>
+<span style="color: #4f97d7; font-weight: bold;">const</span> <span style="color: #7590db;">app</span> = express<span style="color: #4f97d7;">()</span>
+app.get<span style="color: #4f97d7;">(</span><span style="color: #2d9574;">'/'</span>, <span style="color: #bc6ec5;">(</span>req, res<span style="color: #bc6ec5;">)</span> =&gt; <span style="color: #bc6ec5;">{</span>
+  <span style="color: #4f97d7; font-weight: bold;">if</span><span style="color: #2d9574;">(</span>req.accepts<span style="color: #67b11d;">(</span><span style="color: #2d9574;">'text/html'</span><span style="color: #67b11d;">)</span><span style="color: #2d9574;">)</span> <span style="color: #2d9574;">{</span>
+    res.set<span style="color: #67b11d;">(</span><span style="color: #2d9574;">'Content-Type'</span>, <span style="color: #2d9574;">'text/html'</span><span style="color: #67b11d;">)</span>
+    res.send<span style="color: #67b11d;">(</span><span style="color: #2d9574;">'\</span>
+<span style="color: #2d9574;">     &lt;html&gt;\</span>
+<span style="color: #2d9574;">       &lt;body&gt;\</span>
+<span style="color: #2d9574;">         Welcome to the official site for &lt;em&gt;justified&lt;/em&gt;\</span>
+<span style="color: #2d9574;">         &lt;strong&gt;cat hatred&lt;/strong&gt;.\</span>
+<span style="color: #2d9574;">       &lt;/body&gt;\</span>
+<span style="color: #2d9574;">     &lt;/html&gt;'</span><span style="color: #67b11d;">)</span>
+  <span style="color: #2d9574;">}</span> <span style="color: #4f97d7; font-weight: bold;">else</span> <span style="color: #2d9574;">{</span>
+    res.set<span style="color: #67b11d;">(</span><span style="color: #2d9574;">'Content-Type'</span>, <span style="color: #2d9574;">'text/plain'</span><span style="color: #67b11d;">)</span>
+    res.send<span style="color: #67b11d;">(</span><span style="color: #2d9574;">'ohai'</span><span style="color: #67b11d;">)</span>
+  <span style="color: #2d9574;">}</span>
+<span style="color: #bc6ec5;">}</span><span style="color: #4f97d7;">)</span>
+app.listen<span style="color: #4f97d7;">(</span><span style="color: #a45bad;">3000</span>, <span style="color: #bc6ec5;">()</span> =&gt; console.log<span style="color: #bc6ec5;">(</span><span style="color: #2d9574;">'Example app listening on port 3000!'</span><span style="color: #bc6ec5;">)</span><span style="color: #4f97d7;">)</span>
+</pre>
+</div>
+
+<div id="outline-container-orgfa97916" class="outline-2">
+<h2 id="providing-data"><a id="orgfa97916"></a><span class="section-number-2">1</span> providing data</h2>
+<div class="outline-text-2" id="text-providing-data">
+<p>
+Let's add an endpoint (request handler) that gets us a list of cats. We're going
+to model our endpoints after REST. I have a post that gives a very high level
+overview of REST, which you can read but isn't required to move forward. The
+real basic gist is that with REST, our endpoints are modeled as noun-like
+things, and we have a very small number of fixed verb-like things we can do with
+the noun-like things.
+</p>
+
+<p>
+Our endpoint for cats will simply be <code>/cats</code>.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-js">app.get<span style="color: #4f97d7;">(</span><span style="color: #2d9574;">'/cats'</span>, <span style="color: #bc6ec5;">(</span>req, res<span style="color: #bc6ec5;">)</span> =&gt; <span style="color: #bc6ec5;">{</span>
+  res.send<span style="color: #2d9574;">(</span><span style="color: #67b11d;">[</span>
+    <span style="color: #2d9574;">'Chester'</span>,
+    <span style="color: #2d9574;">'Foof'</span>,
+    <span style="color: #2d9574;">'Garfield'</span>,
+    <span style="color: #2d9574;">'Hobbes'</span>,
+    <span style="color: #2d9574;">'Puss'</span>,
+    <span style="color: #2d9574;">'Tom'</span>,
+    <span style="color: #2d9574;">'Tony'</span>,
+    <span style="color: #2d9574;">'Whiskers'</span>,
+  <span style="color: #67b11d;">]</span><span style="color: #2d9574;">)</span>
+<span style="color: #bc6ec5;">}</span><span style="color: #4f97d7;">)</span>
+</pre>
+</div>
+
+<p>
+Doing a <code>GET</code> on <code>/cats</code> will provide a JSON list of cat names back. These are
+all very legitimate cat names. I checked.
+</p>
+
+<p>
+Let's fire our server up and verify we can actually see these.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">$ curl http://localhost:3000/cats
+<span style="color: #4f97d7;">[</span><span style="color: #2d9574;">"Chester"</span>,<span style="color: #2d9574;">"Foof"</span>,<span style="color: #2d9574;">"Garfield"</span>,<span style="color: #2d9574;">"Hobbes"</span>,<span style="color: #2d9574;">"Puss"</span>,<span style="color: #2d9574;">"Tom"</span>,<span style="color: #2d9574;">"Tony"</span>,<span style="color: #2d9574;">"Whiskers"</span><span style="color: #4f97d7;">]</span>
+</pre>
+</div>
+
+<p>
+Whoa, it's like the <span class="underline">exact</span> same set of strings we passed to <code>res.send</code>! Spooky.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org62ec124" class="outline-2">
+<h2 id="making-the-data-easy-to-change"><a id="org62ec124"></a><span class="section-number-2">2</span> making the data easy to change</h2>
+<div class="outline-text-2" id="text-making-the-data-easy-to-change">
+<p>
+Okay let's get rid of "Foof" because I only know one person who has a Foof cat
+and while that's kind of neat name it's pretty dumb of me to treat that as
+data. We'll change "Foof" to "Mr. Druthersworth" because that's a badass cat
+name.
+</p>
+
+<p>
+I'll wait until you get that done and test it with <code>curl</code>. Don't forget to
+restart the node process when you make a change!
+</p>
+
+<p>
+This is pretty stupid. Any time we want to change the data, we have to change
+our program and restart it. That's because we're not really changing data.
+We're changing (source) code. To make it use real data, we should read it from
+a data source.
+</p>
+</div>
+
+<div id="outline-container-org6a5dc9d" class="outline-3">
+<h3 id="making-the-data-easy-to-change--fs"><a id="org6a5dc9d"></a><span class="section-number-3">2.1</span> fs</h3>
+<div class="outline-text-3" id="text-making-the-data-easy-to-change--fs">
+<p>
+<code>fs</code> is a module built into Node.js that handles interacting with the file
+system (hence "fs"). Computers are mostly fancy machines that present files.
+<b>Remember this</b>. We're going to put our cat name list into a file.
+</p>
+
+<p>
+Let's make a JSON file. JSON stands for JavaScript Object Notation. The
+format that JSON uses isn't actually JavaScript but it's very close. It's
+incredibly picky compared to JavaScript. Notably different from what we've
+written thus far, it can't use single quotes (everything is double quoted if
+it's a string), and there can be no trailing comma. A trailing comma is a
+comma presented at the end of some comma separated sequence. Trailing commas
+are boss because you don't have to think about making sure you remove that
+last comma or adding one should you rearrange a list. But we're doing JSON so
+fuck you. One last notable thing about JSON is that you can copy and paste
+JSON directly into JavaScript and it will parse just fine. Not all JavaScript
+works as JSON though.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-json"><span style="color: #4f97d7;">[</span>
+ <span style="color: #2d9574;">"Chester"</span>,
+ <span style="color: #2d9574;">"Mr. Druthersworth"</span>,
+ <span style="color: #2d9574;">"Garfield"</span>,
+ <span style="color: #2d9574;">"Hobbes"</span>,
+ <span style="color: #2d9574;">"Puss"</span>,
+ <span style="color: #2d9574;">"Tom"</span>,
+ <span style="color: #2d9574;">"Tony"</span>,
+ <span style="color: #2d9574;">"Whiskers"</span>
+<span style="color: #4f97d7;">]</span>
+</pre>
+</div>
+
+<p>
+Wow, this looks like the <span class="underline">exact</span> same thing our <code>curl</code> output has, except
+broken into multiple lines! That's because it is. The line breaks are not of
+consequence so long as it doesn't happen inside a string. Let's save this
+file as <code>cats.json</code>.
+</p>
+
+<p>
+Now we'll make our server load this file. First, we'll need to require <code>fs</code>.
+Instead of giving you the syntax this time, I'm going to let you look it up.
+The JS file you have right now has a great <code>require</code> example. My suggestion
+is to keep your <code>require</code> calls all in the same spot, and towards the top of
+the file before real logic begins. This part isn't critical, but I find it
+easier to find my way around: I sort the statements alphabetically. So the
+<code>require</code> call for <code>express</code> would come before <code>fs</code>. It makes things easier
+to find. Some engineers like to group things together loosely by some kind of
+arbitrary association (here goes the web things, here goes the file things,
+etc), but these loose associations don't actually communicate anything and
+rarely do things fall into such nice and neat buckets.
+</p>
+
+<p>
+Now that we have <code>fs</code>, we can call <code>fs.readFile</code>. <code>readFile</code> takes a path to
+a file, optional options (as in you don't need to provide the options, they
+are optional&#x2026;), and a callback. The callback is a function we give
+<code>readFile</code>, and <code>readFile</code> itself will call this function once the file has
+been loaded. The function is supposed to take an error and data as two
+parameters. That's a pretty simple rundown of the function. You can see more
+details from the <a href="https://nodejs.org/api/fs.html#fs_fs_readfile_path_options_callback">documentation on readFile here</a> if you like, but we can go
+with my summary for now. For the path, we will use a relative path of
+<code>'./cats.json'</code>. For the options, we can give it <code>'utf8'</code>. The callback
+needs to take an <code>error</code> and <code>data</code> parameters. If <code>readFile</code> was successful,
+<code>error</code> will be <code>null</code>. This is an exercise I will leave for you. The
+documentation has an example of how to use the callback. Be sure this code
+goes inside of your <code>get</code> handler. This is because we need it to re-run the
+file load every time we get a request. We can save the file and it will cause
+a reload of the file. We won't need to restart!
+</p>
+
+<p>
+Once we have the callback setup, we need to do our due diligence and handle
+the error condition. Handling errors is not extra stuff - it's part of your
+job. Later, we'll go over tricks to make this an automatic process, but for
+now it will be a matter of your personal discipline. If there's an error, we
+don't want to <code>throw</code> it like the documentation shows. We're going to respond
+to the client with an error code. Generally, we can respond with anything in
+the 5xx range because loosely the 5xx range means that the server screwed up
+somehow. 500 is a general catch all, and we should use that.
+</p>
+
+<p>
+The general code for sending a 500 looks like this:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-js">res.send<span style="color: #4f97d7;">(</span><span style="color: #a45bad;">500</span>, <span style="color: #2d9574;">'Could not load cat data!'</span><span style="color: #4f97d7;">)</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org3bcb411" class="outline-3">
+<h3 id="making-the-data-easy-to-change--parsing"><a id="org3bcb411"></a><span class="section-number-3">2.2</span> parsing</h3>
+<div class="outline-text-3" id="text-making-the-data-easy-to-change--parsing">
+<p>
+If data loading worked (the <code>error</code> variable is <code>null</code>), we can use it now as
+a big string. That's part of what <code>'utf8'</code> gives us. Without it, <code>data</code> would
+be a <code>Buffer</code> which is something to look at another day.
+</p>
+
+<p>
+We're going to take that string and pass it to this global thing that just
+hangs around: <code>JSON.parse</code>. <code>JSON</code> is a global variable and <code>parse</code> is a
+function on it. <code>parse</code> takes a string and returns an object that the JSON
+represents. Pass <code>parse</code> your data, and out will come the cats. You can
+then do <code>res.send</code> on the cats.
+</p>
+
+<p>
+I'm intentionally leaving things a little looser here so the work is on your
+end. Remember that even though our new setup will let us change the JSON file
+without reloading the server, we'll still need to reload the server for any
+code changes.
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-org78b07ab" class="outline-2">
+<h2 id="cheats!"><a id="org78b07ab"></a><span class="section-number-2">3</span> cheats!</h2>
+<div class="outline-text-2" id="text-cheats!">
+<p>
+I strongly recommend struggling a little bit, but if you get really stuck,
+this section below should get you by. Part of the process is figuring this
+stuff out as you go. Senior Engineers are constantly googling things and
+visiting Stack Overflow for answers, documentation, known issues, etc.
+Anything that can help them move past particular problems. There is no shame
+in looking stuff up. If you can't use Google, it's honestly a valid reason to
+go home for the day. But all that said, sometimes it's time to just ask for
+help.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-js"><span style="color: #4f97d7; font-weight: bold;">const</span> <span style="color: #7590db;">express</span> = require<span style="color: #4f97d7;">(</span><span style="color: #2d9574;">'express'</span><span style="color: #4f97d7;">)</span>
+<span style="color: #4f97d7; font-weight: bold;">const</span> <span style="color: #7590db;">fs</span> = require<span style="color: #4f97d7;">(</span><span style="color: #2d9574;">'fs'</span><span style="color: #4f97d7;">)</span>
+<span style="color: #4f97d7; font-weight: bold;">const</span> <span style="color: #7590db;">app</span> = express<span style="color: #4f97d7;">()</span>
+
+app.get<span style="color: #4f97d7;">(</span><span style="color: #2d9574;">'/'</span>, <span style="color: #bc6ec5;">(</span>req, res<span style="color: #bc6ec5;">)</span> =&gt; <span style="color: #bc6ec5;">{</span>
+  <span style="color: #4f97d7; font-weight: bold;">if</span><span style="color: #2d9574;">(</span>req.accepts<span style="color: #67b11d;">(</span><span style="color: #2d9574;">'text/html'</span><span style="color: #67b11d;">)</span><span style="color: #2d9574;">)</span> <span style="color: #2d9574;">{</span>
+    res.set<span style="color: #67b11d;">(</span><span style="color: #2d9574;">'Content-Type'</span>, <span style="color: #2d9574;">'text/html'</span><span style="color: #67b11d;">)</span>
+    res.send<span style="color: #67b11d;">(</span><span style="color: #2d9574;">'\</span>
+<span style="color: #2d9574;">     &lt;html&gt;\</span>
+<span style="color: #2d9574;">       &lt;body&gt;\</span>
+<span style="color: #2d9574;">         Welcome to the official site for &lt;em&gt;justified&lt;/em&gt;\</span>
+<span style="color: #2d9574;">         &lt;strong&gt;cat hatred&lt;/strong&gt;.\</span>
+<span style="color: #2d9574;">       &lt;/body&gt;\</span>
+<span style="color: #2d9574;">     &lt;/html&gt;'</span><span style="color: #67b11d;">)</span>
+  <span style="color: #2d9574;">}</span> <span style="color: #4f97d7; font-weight: bold;">else</span> <span style="color: #2d9574;">{</span>
+    res.set<span style="color: #67b11d;">(</span><span style="color: #2d9574;">'Content-Type'</span>, <span style="color: #2d9574;">'text/plain'</span><span style="color: #67b11d;">)</span>
+    res.send<span style="color: #67b11d;">(</span><span style="color: #2d9574;">'ohai'</span><span style="color: #67b11d;">)</span>
+  <span style="color: #2d9574;">}</span>
+<span style="color: #bc6ec5;">}</span><span style="color: #4f97d7;">)</span>
+
+app.get<span style="color: #4f97d7;">(</span><span style="color: #2d9574;">'/cats'</span>, <span style="color: #bc6ec5;">(</span>req, res<span style="color: #bc6ec5;">)</span> =&gt; <span style="color: #bc6ec5;">{</span>
+  fs.readFile<span style="color: #2d9574;">(</span><span style="color: #2d9574;">'./cats.json'</span>, <span style="color: #2d9574;">'utf8'</span>, <span style="color: #67b11d;">(</span>error, data<span style="color: #67b11d;">)</span> =&gt; <span style="color: #67b11d;">{</span>
+    <span style="color: #4f97d7; font-weight: bold;">if</span><span style="color: #b1951d;">(</span>error<span style="color: #b1951d;">)</span> <span style="color: #b1951d;">{</span>
+      res.send<span style="color: #4f97d7;">(</span><span style="color: #a45bad;">500</span>, <span style="color: #2d9574;">'Could not load cat data!'</span><span style="color: #4f97d7;">)</span>
+    <span style="color: #b1951d;">}</span> <span style="color: #4f97d7; font-weight: bold;">else</span> <span style="color: #b1951d;">{</span>
+      <span style="color: #4f97d7; font-weight: bold;">const</span> <span style="color: #7590db;">cats</span> = JSON.parse<span style="color: #4f97d7;">(</span>data<span style="color: #4f97d7;">)</span>
+      res.send<span style="color: #4f97d7;">(</span>cats<span style="color: #4f97d7;">)</span>
+    <span style="color: #b1951d;">}</span>
+  <span style="color: #67b11d;">}</span><span style="color: #2d9574;">)</span>
+<span style="color: #bc6ec5;">}</span><span style="color: #4f97d7;">)</span>
+
+app.listen<span style="color: #4f97d7;">(</span><span style="color: #a45bad;">3000</span>, <span style="color: #bc6ec5;">()</span> =&gt; console.log<span style="color: #bc6ec5;">(</span><span style="color: #2d9574;">'Example app listening on port 3000!'</span><span style="color: #bc6ec5;">)</span><span style="color: #4f97d7;">)</span>
+</pre>
+</div>
+</div>
+</div>
