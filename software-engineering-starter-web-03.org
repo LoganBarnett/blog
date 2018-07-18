@@ -15,7 +15,7 @@ categories: software-engineering
 #+auto_id:  t
 
 This is the third installment of this [[./software-engineering-starter-web.org][Starter Web App]] series I'm doing. In
-[[./software-engineer-starter-web-02.org][part 2]] we made our app server respond with different formats based on headers
+[[./software-engineering-starter-web-02.org][part 2]] we made our app server respond with different formats based on headers
 the client sends. Now we're going to use dynamic data!
 
 If you're still on lesson 2, this will be cheating to continue. Spoiler alert!

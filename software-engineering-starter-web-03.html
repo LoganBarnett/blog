@@ -6,7 +6,7 @@ categories: software-engineering
 ---
 <p>
 This is the third installment of this <a href="./software-engineering-starter-web.html">Starter Web App</a> series I'm doing. In
-<a href="./software-engineer-starter-web-02.html">part 2</a> we made our app server respond with different formats based on headers
+<a href="./software-engineering-starter-web-02.html">part 2</a> we made our app server respond with different formats based on headers
 the client sends. Now we're going to use dynamic data!
 </p>
 
@@ -21,6 +21,7 @@ This is about what we should have had from lesson 2.
 <div class="org-src-container">
 <pre class="src src-js"><span style="color: #4f97d7; font-weight: bold;">const</span> <span style="color: #7590db;">express</span> = require<span style="color: #4f97d7;">(</span><span style="color: #2d9574;">'express'</span><span style="color: #4f97d7;">)</span>
 <span style="color: #4f97d7; font-weight: bold;">const</span> <span style="color: #7590db;">app</span> = express<span style="color: #4f97d7;">()</span>
+
 app.get<span style="color: #4f97d7;">(</span><span style="color: #2d9574;">'/'</span>, <span style="color: #bc6ec5;">(</span>req, res<span style="color: #bc6ec5;">)</span> =&gt; <span style="color: #bc6ec5;">{</span>
   <span style="color: #4f97d7; font-weight: bold;">if</span><span style="color: #2d9574;">(</span>req.accepts<span style="color: #67b11d;">(</span><span style="color: #2d9574;">'text/html'</span><span style="color: #67b11d;">)</span><span style="color: #2d9574;">)</span> <span style="color: #2d9574;">{</span>
     res.set<span style="color: #67b11d;">(</span><span style="color: #2d9574;">'Content-Type'</span>, <span style="color: #2d9574;">'text/html'</span><span style="color: #67b11d;">)</span>
@@ -36,12 +37,13 @@ app.get<span style="color: #4f97d7;">(</span><span style="color: #2d9574;">'/'</
     res.send<span style="color: #67b11d;">(</span><span style="color: #2d9574;">'ohai'</span><span style="color: #67b11d;">)</span>
   <span style="color: #2d9574;">}</span>
 <span style="color: #bc6ec5;">}</span><span style="color: #4f97d7;">)</span>
+
 app.listen<span style="color: #4f97d7;">(</span><span style="color: #a45bad;">3000</span>, <span style="color: #bc6ec5;">()</span> =&gt; console.log<span style="color: #bc6ec5;">(</span><span style="color: #2d9574;">'Example app listening on port 3000!'</span><span style="color: #bc6ec5;">)</span><span style="color: #4f97d7;">)</span>
 </pre>
 </div>
 
-<div id="outline-container-orgfa97916" class="outline-2">
-<h2 id="providing-data"><a id="orgfa97916"></a><span class="section-number-2">1</span> providing data</h2>
+<div id="outline-container-orgc07afb7" class="outline-2">
+<h2 id="providing-data"><a id="orgc07afb7"></a><span class="section-number-2">1</span> providing data</h2>
 <div class="outline-text-2" id="text-providing-data">
 <p>
 Let's add an endpoint (request handler) that gets us a list of cats. We're going
@@ -93,8 +95,8 @@ Whoa, it's like the <span class="underline">exact</span> same set of strings we 
 </div>
 </div>
 
-<div id="outline-container-org62ec124" class="outline-2">
-<h2 id="making-the-data-easy-to-change"><a id="org62ec124"></a><span class="section-number-2">2</span> making the data easy to change</h2>
+<div id="outline-container-orge38525b" class="outline-2">
+<h2 id="making-the-data-easy-to-change"><a id="orge38525b"></a><span class="section-number-2">2</span> making the data easy to change</h2>
 <div class="outline-text-2" id="text-making-the-data-easy-to-change">
 <p>
 Okay let's get rid of "Foof" because I only know one person who has a Foof cat
@@ -116,8 +118,8 @@ a data source.
 </p>
 </div>
 
-<div id="outline-container-org6a5dc9d" class="outline-3">
-<h3 id="making-the-data-easy-to-change--fs"><a id="org6a5dc9d"></a><span class="section-number-3">2.1</span> fs</h3>
+<div id="outline-container-org52161a4" class="outline-3">
+<h3 id="making-the-data-easy-to-change--fs"><a id="org52161a4"></a><span class="section-number-3">2.1</span> fs</h3>
 <div class="outline-text-3" id="text-making-the-data-easy-to-change--fs">
 <p>
 <code>fs</code> is a module built into Node.js that handles interacting with the file
@@ -214,8 +216,8 @@ The general code for sending a 500 looks like this:
 </div>
 </div>
 
-<div id="outline-container-org3bcb411" class="outline-3">
-<h3 id="making-the-data-easy-to-change--parsing"><a id="org3bcb411"></a><span class="section-number-3">2.2</span> parsing</h3>
+<div id="outline-container-org5be2444" class="outline-3">
+<h3 id="making-the-data-easy-to-change--parsing"><a id="org5be2444"></a><span class="section-number-3">2.2</span> parsing</h3>
 <div class="outline-text-3" id="text-making-the-data-easy-to-change--parsing">
 <p>
 If data loading worked (the <code>error</code> variable is <code>null</code>), we can use it now as
@@ -240,8 +242,8 @@ code changes.
 </div>
 </div>
 </div>
-<div id="outline-container-org78b07ab" class="outline-2">
-<h2 id="cheats!"><a id="org78b07ab"></a><span class="section-number-2">3</span> cheats!</h2>
+<div id="outline-container-org1575a3a" class="outline-2">
+<h2 id="cheats!"><a id="org1575a3a"></a><span class="section-number-2">3</span> cheats!</h2>
 <div class="outline-text-2" id="text-cheats!">
 <p>
 I strongly recommend struggling a little bit, but if you get really stuck,
