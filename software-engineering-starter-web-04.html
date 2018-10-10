@@ -1,0 +1,493 @@
+---
+layout: default
+title: Software Engineering - Starter Web app 4
+date: 2018-08-24
+categories: software-engineering
+---
+
+<p>
+In this episode, our hero (that's you!) will be learning a tool that is helpful
+in virtually any kind of development you will wind up working in: Version
+control. Version control is rarely taught in school. It can be somewhat a deep
+topic, but we'll go over some basics of how you see it in the open source world,
+which can carry over significantly to the commercial world.
+</p>
+
+<div id="outline-container-org07476c9" class="outline-2">
+<h2 id="what's-version-control"><a id="org07476c9"></a><span class="section-number-2">1</span> what's version control?</h2>
+<div class="outline-text-2" id="text-what's-version-control">
+<p>
+Version control is like the double-entry bookkeeping technique of saving all
+of your hard work. If you recall on the last lesson, there was an off-the-cuff
+statement about how your computer is just a fancy interface for working with
+files. Version control typically excels at handling text files. This blog post
+is a text file. HTML is text files. The original file that the blog post is
+generated from is a text file. SVG images are also text files. There's also
+non-text files. Generally we call these binary files, but really we could also
+call them shit-files. That's a completely objective industry term and not me
+showing any bias at all. Honest.
+</p>
+
+<p>
+Double entry bookkeeping is something you might have had some exposure to in
+grade school, where you have to write down every credit and debit that hits
+your account, and there will be a corresponding debit or credit on some other
+account. It's a ruthlessly simple model for handling money. We're going to use
+a ruthlessly simple model for handling changes in text files. Version control
+systems can handle binary files too, but things are more eww there, so we're
+just going to skip over that for now.
+</p>
+
+<p>
+Like the bookkeeping stuff, version control is expressed as just a series of
+changes. Sure, you can write down what the final amount is somewhere in your
+checking account, but the final amount is always some composition of all the
+credits and debits since the dawn of time against your account. In the same
+way any given text file can be seen as the composition of <b>changes</b> happening
+over time to a text file.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgefa2c83" class="outline-2">
+<h2 id="why"><a id="orgefa2c83"></a><span class="section-number-2">2</span> why?</h2>
+<div class="outline-text-2" id="text-why">
+<p>
+There's a lot of benefits that fall out of version control, but perhaps a
+primary driver for it is it allows us to capture a state in time that your
+source code was in. As of version x in the software, some things might be
+known such as features, bugs, and other behaviors. If we need to, we can go
+back to that point. We can make fixes against software that we released a
+while back.
+</p>
+
+<p>
+Making fixes against older versions of the software can be helpful if we're
+working on some shiny new feature, but we found out some critical bug in our
+software that our uses are on right now. Caught with our proverbial software
+pants down, we don't want to have to discard our current work nor do we want
+to inflict some half-complete feature upon our users. Instead we can get in
+our version-control-time-machine and assume a prior state of the code base,
+make the fix, and roll it out. Once we're done we can switch back to working
+on our shiny new feature.
+</p>
+
+<p>
+At its most basic form, version control can serve as a super efficient text
+backup system. It keeps a history of all of your changes made in little slices
+at a time, and it stores these changes are just a series of changes (add this
+line here, remove this other one, etc). Even if you aren't planning on doing
+releases/rollbacks, or don't want to share code with others, you <span class="underline">need</span> to be
+on version control. And believe me, if you want to find work out there, it
+will be a boon in a job interview for your first position to be able to say
+"yeah I use this". Otherwise they'll have to teach it to you, and while that's
+all find and good, this is a fundamental skill we expect software engineers in
+the industry to know.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org12d4bad" class="outline-2">
+<h2 id="git"><a id="org12d4bad"></a><span class="section-number-2">3</span> git</h2>
+<div class="outline-text-2" id="text-git">
+<p>
+There are lots of version control systems out there, but <code>git</code> is kind of the
+gold standard. Open source, free, and serverless, <code>git</code> can be very powerful
+(thus very complicated) and an easy defacto standard for version control
+software.
+</p>
+
+<p>
+If you're on MacOS, you might have <code>git</code> installed already. That's okay but
+let's make sure we're on the latest version with this:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">$ brew install git
+</pre>
+</div>
+
+<p>
+While waiting for that to install, let's go over some <code>git</code> trivia. <code>git</code> was
+a tool born of necessity as part of working on the Linux kernel. Torvalds
+stated he named it "git" (roughly meaning idiot) because he needed to be
+reminded that he was an idiot, or something. <code>git</code> transformed an insanely
+vast open source project into something more manageable. <code>git</code> is
+"distributed", meaning there's no central server that you <span class="underline">must</span> use. This
+allows for arbitrary organization of your repository. Repository is the word
+we give to a single code base, but repository doesn't imply code since it
+works with just text. Sometimes we call a repository a "repo" for short.
+</p>
+
+<p>
+This arbitrary organization allowed the Linux kernel to be divided up in a
+more organic fashion. Linus Torvalds could assign a kind of trust to
+"generals" in his open source army, who in turn could have lieutenants. This
+means there's a kind of flow to the work being done. Lieutenants contribute to
+various changes in the code base, which get reviewed, corrected, and vetted by
+the generals. The generals then present the changes to Linus directly. This is
+really helpful when you maintain a complex operating system kernel on largely
+your spare time.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org4454b49" class="outline-2">
+<h2 id="creating-your-first-repo"><a id="org4454b49"></a><span class="section-number-2">4</span> creating your first repo</h2>
+<div class="outline-text-2" id="text-creating-your-first-repo">
+<p>
+From working on our prior <code>cat-hatred</code> directory, we already have a code base
+ready to become a repository.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">$ cd ~/dev/cat-hatred
+</pre>
+</div>
+
+<p>
+From here, we can do our initialization command.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">$ git init
+
+Initialized empty Git repository<span style="color: #4f97d7; font-weight: bold;"> in</span> /Users/me/dev/cat-hatred/.git/
+</pre>
+</div>
+
+<p>
+That's it for making the repo! Kind of.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org3e46e12" class="outline-2">
+<h2 id="ignoring-files"><a id="org3e46e12"></a><span class="section-number-2">5</span> ignoring files</h2>
+<div class="outline-text-2" id="text-ignoring-files">
+<p>
+We're not going to add everything to the repository.
+</p>
+</div>
+
+<div id="outline-container-org3f53cff" class="outline-3">
+<h3 id="ignoring-files--generated-files"><a id="org3f53cff"></a><span class="section-number-3">5.1</span> generated files</h3>
+<div class="outline-text-3" id="text-ignoring-files--generated-files">
+<p>
+Generally we want to not add generated files to our version control. This is
+because generated files can get large, unwieldy, and they are generally
+derived from some other authoritative file. This means pretty much anyone can
+regenerate those files at any time if we needed them. We want to discourage
+editing of generated files because when you run the generator again, and now
+you can see there's a change, who is correct in that change? It's hard to
+provide a concretely correct answer there, so best to opt out of that risk in
+the first place. If we need the generated files changed, we should assume the
+generator is always safe to run and that the source file that produces the
+generated file will somehow reflect the needed changes.
+</p>
+
+<p>
+Since we're in a Node project, the <code>node_modules</code> directory fits this bill
+perfectly of a series of generated files. The entire directory is managed by
+our package manager (for us, <code>yarn</code>). We want to ignore <code>node_modules</code>. <code>git</code>
+conventionally uses a <code>.gitignore</code> file to list file/directory names and
+patterns in order to ensure those files aren't "checked in". "Checking in" is
+something we do with our files. I don't recall if <code>git</code> specifically uses that
+terminology but I'm a little old and some the vocabulary from older systems
+will bleed over there. Rest assured there are people older than me in software
+engineering probably.
+</p>
+
+<p>
+We can create our <code>.gitignore</code> file and add <code>node_modules</code> to it in one
+stroke:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">$ echo <span style="color: #2d9574;">"node_modules"</span> &gt; .gitignore
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgb80b24b" class="outline-3">
+<h3 id="ignoring-files--editor-specific-files"><a id="orgb80b24b"></a><span class="section-number-3">5.2</span> editor specific files</h3>
+<div class="outline-text-3" id="text-ignoring-files--editor-specific-files">
+<p>
+Depending on your editor choice, this may not be the complete story. Editors
+love to store their project+editor unique settings in a given repository. It
+would be easy to find out what those files are named and also add them to
+<code>.gitignore</code> but I urge you not to do that. There are a <span class="underline">lot</span> of editors out
+there, and you don't want to inflict your holy editor upon others (just like
+you wouldn't want their garbage editors inflicted upon you). In this case
+"others" can also be your future self. For example, I'm going strong on Emacs
+right now, but I can quickly recall using seven other editors I've used
+before that, each with its own config files. It's your responsibility to
+avoid adding unnecessary clutter to the repository.
+</p>
+
+<p>
+With <code>git</code> you can add a global ignore file like so:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">$ git config --global core.excludesfile <span style="color: #2d9574;">'~/.gitignore'</span>
+</pre>
+</div>
+
+<p>
+Find out what your editor's temporary and hidden files are and add them to
+this global git ignore file. If you change editors later, simply add to the
+file. You can even add ignore settings for your operating system as well
+(think <code>Thumbs.db</code> from Windows and <code>.DS_Store</code> on MacOS).
+</p>
+
+<p>
+While digging around for examples I found this excellent <a href="https://github.com/github/gitignore/tree/master/Global">gitignore repository</a>
+where you can just lift settings for your editor and/or operating system. You
+can copy across multiple files, just separate them with lines. You can add
+comments starting with the <code>#</code> character to document sections if you like.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org90d92bd" class="outline-2">
+<h2 id="adding-your-files"><a id="org90d92bd"></a><span class="section-number-2">6</span> adding your files</h2>
+<div class="outline-text-2" id="text-adding-your-files">
+<p>
+Make sure if you're jumping around that you've handled everything in the
+<a href="#ignoring-files">5</a> section. Now we're going to add files to this repository.
+First, we can look to see what files are available with the <code>git status</code>
+command.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">$ git status
+
+On branch master
+
+No commits yet
+
+Untracked files:
+  <span style="color: #4f97d7;">(</span>use <span style="color: #2d9574;">"git add &lt;file&gt;..."</span> to include<span style="color: #4f97d7; font-weight: bold;"> in</span> what will be committed<span style="color: #4f97d7;">)</span>
+
+  accept-test.sh
+  .gitignore
+  package.json
+  server.js
+  yarn.lock
+
+nothing added to commit but untracked files present <span style="color: #4f97d7;">(</span>use <span style="color: #2d9574;">"git add"</span> to track<span style="color: #4f97d7;">)</span>
+
+</pre>
+</div>
+
+<p>
+Your version may be more colorful than my post's, and that's okay. Generally
+untracked and modified files are displayed in red. Files that are "staged" for
+commit are shown in green. I realized red/green color blindness is very
+common, and I think these colors can be configured, but I haven't looked into
+that yet.
+</p>
+
+<p>
+To stage these files, we can use <code>git add &lt;file1&gt;, &lt;file2&gt;, ...</code>. You can also
+indicate a directory and it will get everything under that directory that
+isn't being ignored. Ignored files won't show up in the <code>git status</code> output
+<span class="underline">so long as they weren't committed earlier</span>.
+</p>
+
+<p>
+If your output differs than mine above then definitely ask about it, or
+retrace your steps. It can be a pain to take out files you didn't mean to add.
+You also lose badass points.
+</p>
+
+<p>
+Once you've made sure that's all correct, we'll add these files just one at a
+time to get used to the flow:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">$ git add accept-test.sh .gitignore package.json server.js yarn.lock
+</pre>
+</div>
+
+<p>
+And now when you do <code>git status</code> again, you should see these are ready to
+commit:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">$ git status
+
+On branch master
+
+No commits yet
+
+Changes to be committed:
+  <span style="color: #4f97d7;">(</span>use <span style="color: #2d9574;">"git rm --cached &lt;file&gt;..."</span> to unstage<span style="color: #4f97d7;">)</span>
+
+  new file:   .gitignore
+  new file:   accept-test.sh
+  new file:   package.json
+  new file:   server.js
+  new file:   yarn.lock
+</pre>
+</div>
+
+<p>
+All of the files will be green! And it describes that they are ready to be
+committed. Let's commit them!
+</p>
+</div>
+</div>
+
+<div id="outline-container-org95aedd1" class="outline-2">
+<h2 id="committing-files"><a id="org95aedd1"></a><span class="section-number-2">7</span> committing files</h2>
+<div class="outline-text-2" id="text-committing-files">
+<p>
+Regardless of where you stand with commitment, you must commit your files or
+this just isn't going to work between us. Generally when you issue a commit
+command, you are presented with your editor (whatever your system has listed
+for <code>EDITOR</code> in your shell's environment variables - frequently this is <code>nano</code>
+or <code>vim</code> but could be configured to be a number of things). This is so we can
+write a meaningful message for our commit. Instead of getting into those
+editors, we're going to use the <code>-m</code> flag to specify the commit message for
+today.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">$ git commit -m <span style="color: #2d9574;">"initial commit"</span>
+
+  <span style="color: #4f97d7;">[</span>master <span style="color: #bc6ec5;">(</span>root-commit<span style="color: #bc6ec5;">)</span> <span style="color: #a45bad;">8aed320</span><span style="color: #4f97d7;">]</span> initial commit
+  <span style="color: #a45bad;">5</span> files changed, <span style="color: #a45bad;">380</span> insertions<span style="color: #4f97d7;">(</span>+<span style="color: #4f97d7;">)</span>
+  create mode <span style="color: #a45bad;">100644</span> .gitignore
+  create mode <span style="color: #a45bad;">100755</span> accept-test.sh
+  create mode <span style="color: #a45bad;">100644</span> package.json
+  create mode <span style="color: #a45bad;">100644</span> server.js
+  create mode <span style="color: #a45bad;">100644</span> yarn.lock
+</pre>
+</div>
+
+<p>
+The exact commit hash (<code>8aed320</code>) and insertions may differ for you and that's
+okay. Although the files listed should be the same. That's our first commit!
+</p>
+
+<p>
+In <code>git</code>, everything is represented as a series of commits along these things
+called branches or "refs". We'll get more into branching later.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org21245a3" class="outline-2">
+<h2 id="pushing-files"><a id="org21245a3"></a><span class="section-number-2">8</span> pushing files</h2>
+<div class="outline-text-2" id="text-pushing-files">
+<p>
+Right now, if your machine just caught fire and melted, you'd still lose your
+work forever and you'd probably be really sad because you lost all of this and
+those questionable pictures you weren't sure if you should put in a shared
+location for privacy reasons. All the work we've done thus far in <code>git</code> has
+been local. That means you could do this without any server connection. You
+can now bring your laptop out to the wilderness on that stupid camping trip
+and tell your hippie friends to piss off while you whip up a script that
+replaces their dog walking talents with a Roomba, and then commit that shit.
+I'm not bitter.
+</p>
+
+<p>
+We want to push your commit up to a server. There's a number of places we can
+put this, and they are free. Generally I use Github for my public stuff, and
+Bitbucket for my private stuff (both of which are free for their public and
+private use, respectively). There's also Gitlab, which you can self host and
+there's an online version, but I'm less familiar with its monetary aspects.
+</p>
+</div>
+
+<div id="outline-container-orgedb5e53" class="outline-4">
+<h4 id="pushing-files--github"><a id="orgedb5e53"></a><span class="section-number-4">8.0.1</span> github</h4>
+<div class="outline-text-4" id="text-pushing-files--github">
+<p>
+Go to <a href="https://github.com">Github</a> and setup an account there. Follow their instructions for
+setting up an SSH key. This will take some time and that's okay.
+</p>
+
+<p>
+Once it's done, you can create a new repository by going to their <a href="https://github.com/new">new
+repository page</a>. Name the project "cat-hatred" (avoid spaces and caps!). You
+can leave the rest blank or default, and just click the create repository
+button. If you decided to go with something that's not Github, that's okay
+and the steps will likely be similar.
+</p>
+
+<p>
+Once you did that successfully, you'll be on a page that shows you what the
+repository git URL is. For me, it's
+<code>git@github.com:LoganBarnett/cat-hatred.git</code>. Yours will be similar but
+using your username instead of mine. Make sure you use yours and not mine!
+Okay?
+</p>
+
+<p>
+Okay.
+</p>
+
+<p>
+Copy that URL and go back to your terminal. You can add the repository to
+"origin", which is kind of a default "remote" (we'll dive into that more
+later).
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">$ git remote add origin git@github.com:LoganBarnett/cat-hatred.git
+</pre>
+</div>
+
+<p>
+That's what my command looks like - don't forget that yours should be using
+your username so it will be different than mine!
+</p>
+
+<p>
+Once that's done, we can do our first push with this command:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">$ git push
+
+Counting objects: <span style="color: #a45bad;">7,</span> done.
+Delta compression using up to <span style="color: #a45bad;">4</span> threads.
+Compressing objects: <span style="color: #a45bad;">100%</span> <span style="color: #4f97d7;">(</span><span style="color: #a45bad;">6/6</span><span style="color: #4f97d7;">)</span>, done.
+Writing objects: <span style="color: #a45bad;">100%</span> <span style="color: #4f97d7;">(</span><span style="color: #a45bad;">7/7</span><span style="color: #4f97d7;">)</span>, <span style="color: #a45bad;">4.26</span> KiB | <span style="color: #a45bad;">2.13</span> MiB/s, done.
+Total <span style="color: #a45bad;">7</span> <span style="color: #4f97d7;">(</span>delta <span style="color: #a45bad;">0</span><span style="color: #4f97d7;">)</span>, reused <span style="color: #a45bad;">0</span> <span style="color: #4f97d7;">(</span>delta <span style="color: #a45bad;">0</span><span style="color: #4f97d7;">)</span>
+To github.com:LoganBarnett/cat-hatred.git
+* <span style="color: #4f97d7;">[</span>new branch<span style="color: #4f97d7;">]</span>      master -&gt; master
+</pre>
+</div>
+
+<p>
+Assuming everything went without a hitch, you'll see some output like that.
+It will take a couple of seconds typically, as now you're reaching over a
+network. Congrats! You can even browse to your repo's page on Github and see
+the source code there. Mine is here:
+<a href="https://github.com/LoganBarnett/cat-hatred">https://github.com/LoganBarnett/cat-hatred</a>
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org913d5e2" class="outline-2">
+<h2 id="more-but..."><a id="org913d5e2"></a><span class="section-number-2">9</span> more, but&#x2026;</h2>
+<div class="outline-text-2" id="text-more-but...">
+<p>
+There's a <b>lot</b> more to <code>git</code> than what I've shown you thus far, but now you
+can continue to do work, commit files that you change or add, and push them to
+your repository's online copy. In the future I will share code with you using
+<code>git</code>. For a solo endeavor, the skillset you have now will suffice. Now we can
+get back to making awesome software!
+</p>
+</div>
+</div>
