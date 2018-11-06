@@ -192,7 +192,7 @@ running, with maybe a web interface.
   :PROPERTIES:
   :CUSTOM_ID: take-a-break
   :END:
-  Good job! Let's take a minute to look around and not see a screw for a few
+  Good job! Let's take a minute to look around and not see a screen for a few
   minutes.
 
 * setting up your project
