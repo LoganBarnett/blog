@@ -6,15 +6,13 @@ permalink: /resume/
 
 # Logan Barnett #
 
-> Email: [logustus@gmail.com](mailto://logustus@gmail.com)
->
-> Mobile: 602.264.3584
->
-> Blog: http://loganbarnett.github.io/blog/
->
-> Twitter: [@logan_barnett](https://twitter.com/logan_barnett)
->
-> Github: https://github.com/loganbarnett
+  Email: [logustus@gmail.com](mailto://logustus@gmail.com)
+  
+  Mobile: 602.264.3584
+  
+  Blog: [http://loganbarnett.github.io/blog/](http://loganbarnett.github.io/blog/)
+  
+  Github: [https://github.com/loganbarnett](https://github.com/loganbarnett)
 
 
 
