@@ -20,12 +20,10 @@ permalink: /resume/
 
 ## Job experience ##
 
-### NWEA ###
-* OECD - Senior Engineer serving as Angular and Javascript expertise needed by
-  the team.
+### NWEA (2016-current) ###
+* OECD - Served as Angular and Javascript expertise needed by the team.
   * Migrated the administration portion of the project onto Webpack.
   * Created unit testing pattern that is easier to maintain and author.
-  * Implemented custom login system in Angular.
   * Helped significantly improve the Protractor.js test stability, including
     implementing custom waits for CSS animations, and drawing on screenshots as
     a means of debugging failing tests caused by obscured objects the tests were
@@ -35,9 +33,7 @@ permalink: /resume/
     translation with a friendly lookup name.
 * Item Experience - Senior Engineer providing expertise in Angular and
   Javascript.
-  * Migrated several projects onto ESLint.
   * Migrated the item editor to Webpack.
-  * Implemented Babel transformations for a critical backend Node.js service.
 * Ongoing company assistance and work on shared projects such as the style
   guide.
   * Helped with Webpack setup on the style guide.
@@ -45,7 +41,17 @@ permalink: /resume/
   * Presented Angular-React demo + PR to show we don't need to write shared
     components for both Angular and React (the org uses both in different
     teams).
-  * Assisted UX team in making more semantic styling.
+* Assessment (2)
+  * Built a React-Redux user interface for proctoring (running) student tests.
+    The UI used algebraic data types with Flow.
+    * Mocks were kept in sync with the Swagger definitions, and all data was
+      santized at virtually no cost. The UI oftentimes was the insurance that
+      APIs stayed true to their contract.
+    * Achieved 100% type coverage, and 350+ acceptance test scenarios.
+    * Feature flag system allowed features to be overridden by QA, and turned on
+      at a specific time.
+    * Closest application to the organization's ongoing CICD efforts.
+    * Worked closely with other teams to ensure smooth cross communication.
 
 ### IT-Motives `->` UTi `->` DSV (2014-2016) ###
 
@@ -143,7 +149,8 @@ permalink: /resume/
   * .net desktop client
 
 ## Proficiencies ##
-* **Javascript** - React, Redux, Three, Angular, Node, ES6, Webpack, Flow, npm
+* **Javascript** - React, Redux, Three, Angular, Node, ES6, Webpack, Flow,
+  Express, npm
 * **.net** - C#, Boo, Unity/Mono, MVC, WCF, NUnit, OData, Powershell
 * **Java** - Swing, JAX-RS, JRuby, JUnit, SNMP4J
 * **Ruby** - Ruby on Rails, Sinatra, JRuby, Cucumber, RSpec
@@ -153,7 +160,9 @@ permalink: /resume/
 
 ## Side projects ##
 
-* **meta-game** - And editor using React + Redux + Three used for creating games
+* **roid-miner** - An editor for a game I'm building using Angular + Three for
+  dynamically generating levels using rapid construction of asteroids and their
+  layouts in a level.
 * **iOS** - A probability calculator for Warhammer 40K dice rolls in Swift
 * **Unity** - Writing desktop/mobile games using Mono + C# and Boo (.net 3.5)
 * **Monkeybars** - MVC desktop GUI framework using JRuby and Swing
