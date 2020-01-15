@@ -1,19 +1,18 @@
 #+BEGIN_EXPORT html
 ---
 layout: default
-title: The Ultimate CI/CD Setup
+title: CI/CD
 date: 2018-01-01
 categories: software-engineering
 ---
 #+END_EXPORT
 
-#+TITLE:   The Ultimate CI/CD Setup
-#+AUTHOR:  Logan Barnett
-#+EMAIL:   logustus@gmail.com
-#+DATE:    <2018-01-01 Mon>
-#+TAGS:    software-engineering
-
-#+TOC: headlines 3
+#+TITLE:  The Ultimate CI/CD Setup
+#+AUTHOR: Logan Barnett
+#+EMAIL:  logustus@gmail.com
+#+DATE:   <2018-01-01 Mon>
+#+TAGS:   software-engineering
+#+TOC:    headlines 3
 
 * introduction
 
@@ -65,6 +64,28 @@ software does what we think it should do. Those checks can be run as part of
 that deployment process. Any failure in the process means no deployment. The
 general approach here is to automate virtually every part of this process.
 
+** small releases
+Releases should be done frequently and not when people are about to go home for
+the day. Frequent releases mean small releases. That means if something goes
+wrong, it's not painful to roll back. With orgs that do giant releases, they
+generally do a big release, and then hold a [[https://project-management-knowledge.com/definitions/w/war-room/][war room]] to catch the fallout. When
+you have several applications each with several features and fixes, you've
+introduced so many variables that it's nearly impossible to narrow down the
+culprit in a timely fashion when _your app is broken in the sacred production
+environment_. Any integration point requires people from multiple teams - I've
+even seen where an integration between two apps pulls in people from 3-4 teams
+because two teams stand in the middle of the apps (usually operations and
+security). This is a colossal waste of resources and very damaging to your
+team's morale. If someone deploys a new button and the button screws up your
+page layout, reverting is a no brainer.
+
+** feature flags
+You can use flags (generally configuration variables) in your codebase to
+disable or enable certain features. Take the button out entirely and only enable
+it when you want to. This makes it easy to deploy changes all the way to
+production because your code when deployed shouldn't do anything until you
+actually flip the switch. This is
+
 * automation
 
 ** tests
@@ -91,56 +112,70 @@ environment the setup occurs.
 
 Let's cover some environments and how you'd use them:
 
-- =local= :: This is your local environment, or what you do to iterate quickly
-             on your machine. I've seen some places that don't actually have a
-             local environment. You just edit in a develop server that might or
-             might not be shared by other engineers. This is bad. Having your
-             engineer be able to work from anywhere is valuable. Connection
-             issues should not hamper your development process. That means you
-             need to be able to run as much as possible locally and test as much
-             as possible locally.
-- =develop= :: (Or =dev=) is an environment with a singular purpose: It
-               demonstrates that the software can run when it's not in the
-               =local= environment. I recommend =develop= continues to run with
-               whatever mocks you have. Your CI/CD setup should automatically
-               deploy to this environment once you successfully automatically
-               test and build the software. You can use it as a "here's what's
-               current" place as well. I would let QA know about this
-               environment, but create the expectation that there's a proverbial
-               gun pointed at it. The data that exists there, and any running
-               processes are forfeit no a whim.
-- =integration= :: This like =develop= except it interfaces with real external
-                   tooling. If your app needs to talk to another app, this is
-                   the environment where it _actually_ happens. If you're in a
-                   large org with lots of apps, this is where all of them can
-                   meet. Lots of shops like to gate deployment here - meaning
-                   some human has to hit a button to make what's in =develop=
-                   is deployed to =integration=. This is not a great idea. The
-                   problem gating an =integration= deployment is trying to solve
-                   is that if someone else relies on your software working a
-                   certain way, then your cutting-edge deployments will break
-                   their stuff. Breaking here is a good thing. We need to be
-                   able to enable or disable functionality using feature flags,
-                   or use versioned API calls to prevent backwards incompatible
-                   changes from breaking our consumers. Automated deploys to
-                   =integration= allow us to catch those. The whole point of
-                   this environment is that we find out what's breaking when we
-                   connect everything together. If this hampers your consumers'
-                   development process, then have a discussion about how to mock
-                   whatever it is they are consuming.
-- =staging= :: This is QA's test bed. It should be a gated. The reason being is
-               that QA needs to be able to test things without the test subject
-               being ripped out from under them. That said, it's not an excuse
-               to allow =staging= to drift far behind of what =develop= is. The
-               larger the delta in changes, the more painful it will be to fix
-               any problems that got deployed.
-- =production= :: AKA =prod=. This is where our end users consume our software.
-                  This place is sacred ground and changes made to this
-                  environment should be made with extreme caution. Deployment
-                  should be gated here, but realistically speaking you could
-                  have multiple production deployments per day. Any time QA
-                  approves a software change in =staging= we should do a
-                  deployment to =production=.
+- local :: This is your local environment, or what you do to iterate quickly on
+           your machine. I've seen some places that don't actually have a local
+           environment. You just edit in a develop server that might or might
+           not be shared by other engineers. This is bad. Having your engineer
+           be able to work from anywhere is valuable. Connection issues should
+           not hamper your development process. That means you need to be able
+           to run as much as possible locally and test as much as possible
+           locally.
+- develop :: (Or =dev=) is an environment with a singular purpose: It
+             demonstrates that the software can run when it's not in the =local=
+             environment. I recommend =develop= continues to run with whatever
+             mocks you have. Your CI/CD setup should automatically deploy to
+             this environment once you successfully automatically test and build
+             the software. You can use it as a "here's what's current" place as
+             well. I would let QA know about this environment, but create the
+             expectation that there's a proverbial gun pointed at it. The data
+             that exists there, and any running processes are forfeit no a whim.
+- integration :: This like =develop= except it interfaces with real external
+                 tooling. If your app needs to talk to another app, this is the
+                 environment where it _actually_ happens. If you're in a large
+                 org with lots of apps, this is where all of them can meet. Lots
+                 of shops like to gate deployment here - meaning some human has
+                 to hit a button to make what's in =develop= is deployed to
+                 =integration=. This is not a great idea. The problem gating an
+                 =integration= deployment is trying to solve is that if someone
+                 else relies on your software working a certain way, then your
+                 cutting-edge deployments will break their stuff. Breaking here
+                 is a good thing. We need to be able to enable or disable
+                 functionality using feature flags, or use versioned API calls
+                 to prevent backwards incompatible changes from breaking our
+                 consumers. Automated deploys to =integration= allow us to catch
+                 those. The whole point of this environment is that we find out
+                 what's breaking when we connect everything together. If this
+                 hampers your consumers' development process, then have a
+                 discussion about how to mock whatever it is they are consuming.
+- staging :: This is QA's test bed. It should be gated. The reason being is that
+             QA needs to be able to test things without the test subject being
+             ripped out from under them. That said, it's not an excuse to allow
+             =staging= to drift far behind of what =develop= is. The larger the
+             delta in changes, the more painful it will be to fix any problems
+             that got deployed.
+- production :: AKA =prod=. This is where our end users consume our software.
+                This place is sacred ground and changes made to this environment
+                should be made with extreme caution. Deployment should be gated
+                here, but realistically speaking you could have multiple
+                production deployments per day. Any time QA approves a software
+                change in =staging= we should do a deployment to =production=.
+
+#+begin_src plantuml :file cicd-flow.svg :java -Djava.awt.headless=true
+
+package "Auto deploy" {
+  [local] -> [dev]
+  [dev] -> [int]
+}
+
+package "Gated deployment" {
+  [int] -> [stg]
+  [stg] -> [prod]
+}
+
+#+end_src
+
+#+RESULTS:
+[[file:cicd-flow.svg]]
 
 ** release notes
 
