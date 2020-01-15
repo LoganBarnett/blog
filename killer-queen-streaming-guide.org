@@ -4,6 +4,7 @@ layout: default
 title: Killer Queen Streaming Guide
 date: 2017-11-05
 categories: killer-queen
+parent: killer-queen.org
 ---
 #+END_EXPORT
 

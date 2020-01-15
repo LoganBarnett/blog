@@ -4,6 +4,7 @@ layout: default
 title: Software Engineering - Starter Web app 3
 date: 2018-07-10
 categories: software-engineering
+parent: software-engineering-starter-web.org
 ---
 #+END_EXPORT
 #+title:    Software Engineering - Starter Web app 3

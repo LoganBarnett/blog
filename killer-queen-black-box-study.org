@@ -4,15 +4,16 @@ layout: default
 title: Killer Queen Black Box Study
 date: 2018-01-14
 categories: killer-queen
+parent: killer-queen.org
 ---
 #+END_EXPORT
 
-#+title:  Killer Queen Black Box Study
-#+author: Logan Barnett
-#+email:  logustus@gmail.com
-#+date:   <2018-01-14 Sun>
-#+tags:   killer-queen
-#+toc:    headlines 3
+#+title:   Killer Queen Black Box Study
+#+author:  Logan Barnett
+#+email:   logustus@gmail.com
+#+date:    <2018-01-14 Sun>
+#+tags:    killer-queen
+#+toc:     headlines 3
 #+auto_id: t
 
 * changelog
@@ -20,7 +21,7 @@ categories: killer-queen
   :CUSTOM_ID: changelog
   :END:
 - <2018-06-05 Tue> :: add section about [[characters][character controllers]].
-- <2018-03-22 Thu> :: add section about [[game stutter]].
+- <2018-03-22 Thu> :: add section about [[game stutter][game stutter]].
 - <2018-01-21 Sun> :: add section about [[frame rate][frame rate and vsync]].
 * introduction
   :PROPERTIES:
@@ -882,6 +883,15 @@ package character1 {
 
     Observe the ledge.
 
-#+begin_src js
+    #+begin_src js
 
-#+end_src
+    #+end_src
+
+    #+begin_export html
+    <div>
+      <img
+        style="position: relative; top: 10em; left: 10em;image-rendering: pixelated; width: 40em"
+        src="/blog/assets/kq-grassy-platform-01.png"
+      />
+    </div>
+    #+end_export
