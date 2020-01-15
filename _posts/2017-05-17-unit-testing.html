@@ -1,39 +1,43 @@
 ---
 layout: default
-title: How to Make Unit Testing not so much of a pain
+title: Painless(er) unit tests
 date: 2017-05-17 12:00:00
 categories: testing
 ---
-<div id="outline-container-org7275c16" class="outline-2">
-<h2 id="org7275c16"><span class="section-number-2">1</span> How to Make Unit Testing not so much of a pain</h2>
-<div class="outline-text-2" id="text-1">
 <div id="table-of-contents">
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#org7275c16">1. How to Make Unit Testing not so much of a pain</a>
+<li><a href="#how-to-make-unit-testing-not-so-much-of-a-pain">1. How to Make Unit Testing not so much of a pain</a>
 <ul>
-<li><a href="#orga3324ad">1.1. Unit Testing</a></li>
-<li><a href="#orgd5dc600">1.2. Primer</a></li>
-<li><a href="#orge4a6051">1.3. Dress for Success</a>
+<li><a href="#how-to-make-unit-testing-not-so-much-of-a-pain--unit-testing">1.1. Unit Testing</a></li>
+<li><a href="#how-to-make-unit-testing-not-so-much-of-a-pain--primer">1.2. Primer</a></li>
+<li><a href="#how-to-make-unit-testing-not-so-much-of-a-pain--dress-for-success">1.3. Dress for Success</a>
 <ul>
-<li><a href="#org01bfd21">1.3.1. Do not DRY your tests</a></li>
-<li><a href="#orgccd0db6">1.3.2. Test Driven Development</a></li>
-<li><a href="#org98aa9f8">1.3.3. Keep your tests</a></li>
-<li><a href="#orgc7d9973">1.3.4. Assert a single truth per test</a></li>
-<li><a href="#org467748f">1.3.5. Avoid blob tests</a></li>
+<li><a href="#how-to-make-unit-testing-not-so-much-of-a-pain--dress-for-success--do-not-[[https://en.wikipedia.org/wiki/don't_repeat_yourself][dry]]-your-tests">1.3.1. Do not DRY your tests</a></li>
+<li><a href="#how-to-make-unit-testing-not-so-much-of-a-pain--dress-for-success--test-driven-development">1.3.2. Test Driven Development</a></li>
+<li><a href="#how-to-make-unit-testing-not-so-much-of-a-pain--dress-for-success--keep-your-tests">1.3.3. Keep your tests</a></li>
+<li><a href="#how-to-make-unit-testing-not-so-much-of-a-pain--dress-for-success--assert-a-single-truth-per-test">1.3.4. Assert a single truth per test</a></li>
+<li><a href="#how-to-make-unit-testing-not-so-much-of-a-pain--dress-for-success--clearly-state-your-intent">1.3.5. Clearly state your intent</a></li>
+<li><a href="#how-to-make-unit-testing-not-so-much-of-a-pain--dress-for-success--avoid-blob-tests">1.3.6. Avoid blob tests</a></li>
+<li><a href="#how-to-make-unit-testing-not-so-much-of-a-pain--dress-for-success--use-acceptance-tests-instead">1.3.7. Use acceptance tests instead</a></li>
+<li><a href="#how-to-make-unit-testing-not-so-much-of-a-pain--dress-for-success--or-use-an-algebraic-type-system-instead">1.3.8. Or use an algebraic type system instead</a></li>
+<li><a href="#how-to-make-unit-testing-not-so-much-of-a-pain--dress-for-success--admissions">1.3.9. Admissions</a></li>
 </ul>
 </li>
-<li><a href="#org75eb2eb">1.4. Conclusion</a></li>
+<li><a href="#how-to-make-unit-testing-not-so-much-of-a-pain--conclusion">1.4. Conclusion</a></li>
 </ul>
 </li>
 </ul>
 </div>
 </div>
+<div id="outline-container-orgccbc63c" class="outline-2">
+<h2 id="how-to-make-unit-testing-not-so-much-of-a-pain"><span class="section-number-2">1</span> How to Make Unit Testing not so much of a pain</h2>
+<div class="outline-text-2" id="text-how-to-make-unit-testing-not-so-much-of-a-pain">
 </div>
-<div id="outline-container-orga3324ad" class="outline-3">
-<h3 id="orga3324ad"><span class="section-number-3">1.1</span> Unit Testing</h3>
-<div class="outline-text-3" id="text-1-1">
+<div id="outline-container-org1d773c3" class="outline-3">
+<h3 id="how-to-make-unit-testing-not-so-much-of-a-pain--unit-testing"><span class="section-number-3">1.1</span> Unit Testing</h3>
+<div class="outline-text-3" id="text-how-to-make-unit-testing-not-so-much-of-a-pain--unit-testing">
 <p>
 I find myself talking a lot about unit testing in my current workplace. Over
 time I've learned things from others as well as developed some habits that have
@@ -45,9 +49,9 @@ which my code can work.
 </div>
 </div>
 
-<div id="outline-container-orgd5dc600" class="outline-3">
-<h3 id="orgd5dc600"><span class="section-number-3">1.2</span> Primer</h3>
-<div class="outline-text-3" id="text-1-2">
+<div id="outline-container-orgb7fdf64" class="outline-3">
+<h3 id="how-to-make-unit-testing-not-so-much-of-a-pain--primer"><span class="section-number-3">1.2</span> Primer</h3>
+<div class="outline-text-3" id="text-how-to-make-unit-testing-not-so-much-of-a-pain--primer">
 <p>
 As a quick intro: Unit tests are tiny little bits of code that aren't part of
 your implementation code, but exercise your implementation code. You have a
@@ -60,9 +64,9 @@ run together with a bunch of others just like it.
 </div>
 </div>
 
-<div id="outline-container-orge4a6051" class="outline-3">
-<h3 id="orge4a6051"><span class="section-number-3">1.3</span> Dress for Success</h3>
-<div class="outline-text-3" id="text-1-3">
+<div id="outline-container-orga434cae" class="outline-3">
+<h3 id="how-to-make-unit-testing-not-so-much-of-a-pain--dress-for-success"><span class="section-number-3">1.3</span> Dress for Success</h3>
+<div class="outline-text-3" id="text-how-to-make-unit-testing-not-so-much-of-a-pain--dress-for-success">
 <p>
 Unit testing is hard for a lot of people. I believe a vast majority of the
 difficulty is self inflicted though. I've put together a list of things that are
@@ -72,9 +76,9 @@ remain as exceptions.
 </p>
 </div>
 
-<div id="outline-container-org01bfd21" class="outline-4">
-<h4 id="org01bfd21"><span class="section-number-4">1.3.1</span> Do not <a href="https://en.wikipedia.org/wiki/Don't_repeat_yourself">DRY</a> your tests</h4>
-<div class="outline-text-4" id="text-1-3-1">
+<div id="outline-container-org9633ba8" class="outline-4">
+<h4 id="how-to-make-unit-testing-not-so-much-of-a-pain--dress-for-success--do-not-[[https://en.wikipedia.org/wiki/don't_repeat_yourself][dry]]-your-tests"><span class="section-number-4">1.3.1</span> Do not <a href="https://en.wikipedia.org/wiki/Don't_repeat_yourself">DRY</a> your tests</h4>
+<div class="outline-text-4" id="text-how-to-make-unit-testing-not-so-much-of-a-pain--dress-for-success--do-not-[[https://en.wikipedia.org/wiki/don't_repeat_yourself][dry]]-your-tests">
 <p>
 As I see more and more people doing things like using loops to create tests
 and factoring out swathes of code just to make tests a little more terse, I
@@ -89,9 +93,9 @@ unit tests to be <a href="https://en.wikipedia.org/wiki/Don't_repeat_yourself#DR
 </div>
 </div>
 
-<div id="outline-container-orgccd0db6" class="outline-4">
-<h4 id="orgccd0db6"><span class="section-number-4">1.3.2</span> Test Driven Development</h4>
-<div class="outline-text-4" id="text-1-3-2">
+<div id="outline-container-org521ccf9" class="outline-4">
+<h4 id="how-to-make-unit-testing-not-so-much-of-a-pain--dress-for-success--test-driven-development"><span class="section-number-4">1.3.2</span> Test Driven Development</h4>
+<div class="outline-text-4" id="text-how-to-make-unit-testing-not-so-much-of-a-pain--dress-for-success--test-driven-development">
 <p>
 Test Driven Development, or TDD, is a powerful means of having good unit
 tests in your code. The basic trick to pulling off high test coverage
@@ -109,9 +113,9 @@ write some tests with you.
 </div>
 </div>
 
-<div id="outline-container-org98aa9f8" class="outline-4">
-<h4 id="org98aa9f8"><span class="section-number-4">1.3.3</span> Keep your tests</h4>
-<div class="outline-text-4" id="text-1-3-3">
+<div id="outline-container-orgc95b5a5" class="outline-4">
+<h4 id="how-to-make-unit-testing-not-so-much-of-a-pain--dress-for-success--keep-your-tests"><span class="section-number-4">1.3.3</span> Keep your tests</h4>
+<div class="outline-text-4" id="text-how-to-make-unit-testing-not-so-much-of-a-pain--dress-for-success--keep-your-tests">
 <p>
 Another trick to making TDD shine: Don't delete tests as you put the code
 together. Each new test refines the old behavior, but the old truths you
@@ -120,9 +124,9 @@ assert are still the same.
 </div>
 </div>
 
-<div id="outline-container-orgc7d9973" class="outline-4">
-<h4 id="orgc7d9973"><span class="section-number-4">1.3.4</span> Assert a single truth per test</h4>
-<div class="outline-text-4" id="text-1-3-4">
+<div id="outline-container-orgb4e853e" class="outline-4">
+<h4 id="how-to-make-unit-testing-not-so-much-of-a-pain--dress-for-success--assert-a-single-truth-per-test"><span class="section-number-4">1.3.4</span> Assert a single truth per test</h4>
+<div class="outline-text-4" id="text-how-to-make-unit-testing-not-so-much-of-a-pain--dress-for-success--assert-a-single-truth-per-test">
 <p>
 If you can, and you should be able to do this a lot, make a single assertion
 of truth per test. This means <code>expect</code> or <code>assert</code> once per test. If you want
@@ -143,9 +147,53 @@ are lost.
 </div>
 </div>
 
-<div id="outline-container-org467748f" class="outline-4">
-<h4 id="org467748f"><span class="section-number-4">1.3.5</span> Avoid blob tests</h4>
-<div class="outline-text-4" id="text-1-3-5">
+<div id="outline-container-orgcfa43a1" class="outline-4">
+<h4 id="how-to-make-unit-testing-not-so-much-of-a-pain--dress-for-success--clearly-state-your-intent"><span class="section-number-4">1.3.5</span> Clearly state your intent</h4>
+<div class="outline-text-4" id="text-how-to-make-unit-testing-not-so-much-of-a-pain--dress-for-success--clearly-state-your-intent">
+<p>
+The "it renders" and "it works" kinds of tests are comically bad descriptors
+for a test. Better tests look like "shows a list of users ordered by last
+name". Your test should clearly state its intent of what it's trying to
+test. When a test shows a failure, you as the human must go in and determine
+one of these two outcomes:
+</p>
+
+<ol class="org-ol">
+<li>The test is wrong due to new changes, and must be updated.</li>
+<li>The test is correct, and your implementation needs an update to
+accommodate prior, expected behavior.</li>
+</ol>
+
+<p>
+The only way to truly determine this is to have a clearly written test that
+briefly describes <b>the scenario of the test</b> and <b>the expected outcome</b>.
+</p>
+
+<p>
+As a side note, I strongly prefer to omit the "should" kind of verbiage
+because:
+</p>
+
+<ol class="org-ol">
+<li>80 columns wide is the best. Don't make me lug a monitor to this coffee
+shop so I can read your damn test descriptor. "should " costs you ~6
+precious characters of width, while adding absolutely nothing to your
+test.</li>
+<li>"Should" is a "weasel word", meaning contributes to an ambiguous
+statement. If your test doesn't pass, then it "should"&#x2026;? How's about we
+state clearly that our test does a thing, and anything else is considered
+an error/failure condition? Avoiding weasel words can be scary, because
+it requires a little bit of confidence or gal. That's okay! It's okay to
+make a statement and then be proven wrong! But making statements that are
+never wrong is a defensive strategy you don't need when all of us just
+want to find a way that works (arguably the "right way", if such a thing
+exists).</li>
+</ol>
+</div>
+</div>
+<div id="outline-container-orgb83643f" class="outline-4">
+<h4 id="how-to-make-unit-testing-not-so-much-of-a-pain--dress-for-success--avoid-blob-tests"><span class="section-number-4">1.3.6</span> Avoid blob tests</h4>
+<div class="outline-text-4" id="text-how-to-make-unit-testing-not-so-much-of-a-pain--dress-for-success--avoid-blob-tests">
 <p>
 This ties heavily in with asserting a single truth. Another way of asserting
 a single truth is to avoid the "Given this input I get this slight change in
@@ -168,11 +216,69 @@ alphabetically sorted by first name ascending" is a perfect example of this.
 </p>
 </div>
 </div>
+
+<div id="outline-container-org893725c" class="outline-4">
+<h4 id="how-to-make-unit-testing-not-so-much-of-a-pain--dress-for-success--use-acceptance-tests-instead"><span class="section-number-4">1.3.7</span> Use acceptance tests instead</h4>
+<div class="outline-text-4" id="text-how-to-make-unit-testing-not-so-much-of-a-pain--dress-for-success--use-acceptance-tests-instead">
+<p>
+This might sound like a trolling statement, but seriously, if your
+organization is keen to it - don't write them. Not for applications. Your
+tests should only exercise through the application's normal interface. In
+the case of libraries, it's the API you want to test. If it's a web
+application, then interface through the browser. With a restful service you
+can use <code>curl</code> for most of it, or similar tooling. These "full stack",
+"integration", or "acceptance" tests provide immense value. They test that
+your software does what it says on the tin.
+</p>
+
+<p>
+Consider writing a calculator application. Somewhere in there, I might have
+a plus function for adding two registers together. I can exercise this with
+unit tests until my boss pulls me aside for having a two thousand line file
+for testing a single function that is built into most languages. But it
+still might not work. That's because a calculator application isn't consumed
+via its plus function. There are loads of pieces often involved in our
+software to make it do something that seems very simple to an end user. It's
+better to make sure all of that is connected without having to manually
+dissect each part of your application and discreetly test one piece of it at
+a time, and hope you caught all of the integration points.
+</p>
+</div>
 </div>
 
-<div id="outline-container-org75eb2eb" class="outline-3">
-<h3 id="org75eb2eb"><span class="section-number-3">1.4</span> Conclusion</h3>
-<div class="outline-text-3" id="text-1-4">
+<div id="outline-container-org36a4510" class="outline-4">
+<h4 id="how-to-make-unit-testing-not-so-much-of-a-pain--dress-for-success--or-use-an-algebraic-type-system-instead"><span class="section-number-4">1.3.8</span> Or use an algebraic type system instead</h4>
+<div class="outline-text-4" id="text-how-to-make-unit-testing-not-so-much-of-a-pain--dress-for-success--or-use-an-algebraic-type-system-instead">
+<p>
+Also consider that you should be using the computer and smart people who
+have come before you to have figured some of your work out for you already.
+Having an algebraic type system without binding yourself to sequential
+mutations (I'm looking at you, Object Oriented) means you can eliminate vast
+classes of unit tests you might write. Can this be <code>null</code>? No? Then you
+never have to check for it! Yes? Well then you <span class="underline">must</span> check for it. The type
+system won't let you get away with "Well I just won't pass it <code>null</code>"). Your
+type system can cover 90% of your unit testing needs. The other 10% are
+handled much better by your acceptance tests.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org7863922" class="outline-4">
+<h4 id="how-to-make-unit-testing-not-so-much-of-a-pain--dress-for-success--admissions"><span class="section-number-4">1.3.9</span> Admissions</h4>
+<div class="outline-text-4" id="text-how-to-make-unit-testing-not-so-much-of-a-pain--dress-for-success--admissions">
+<p>
+Admittedly, we may not have as much control over our ecosystem as we would
+like. Perhaps you inherited a suite of unit tests. Nudging towards some kind
+of acceptance tests would be stellar, along with integrating a type system.
+Sometimes we must simply make do.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org4334faf" class="outline-3">
+<h3 id="how-to-make-unit-testing-not-so-much-of-a-pain--conclusion"><span class="section-number-3">1.4</span> Conclusion</h3>
+<div class="outline-text-3" id="text-how-to-make-unit-testing-not-so-much-of-a-pain--conclusion">
 <p>
 There's more we could into here, but perfect is the enemy of good, and I need
 to cut it off at some point. Unit tests can be very handy, make think about

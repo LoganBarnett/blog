@@ -1,14 +1,26 @@
 #+BEGIN_EXPORT html
 ---
 layout: default
-title: How to Make Unit Testing not so much of a pain
+title: Painless(er) unit tests
 date: 2017-05-17 12:00:00
 categories: testing
 ---
 #+END_EXPORT
+#+TITLE:   Painless(er) Unit Tests
+#+AUTHOR:  Logan Barnett
+#+EMAIL:   logustus@gmail.com
+#+DATE:    <2017-05-17 Wed>
+#+TAGS:    software-engineering
+#+TOC:     headlines 3
+#+auto_id: t
 * How to Make Unit Testing not so much of a pain
-#+TOC: headlines 3
+  :PROPERTIES:
+  :CUSTOM_ID: how-to-make-unit-testing-not-so-much-of-a-pain
+  :END:
 ** Unit Testing
+   :PROPERTIES:
+   :CUSTOM_ID: how-to-make-unit-testing-not-so-much-of-a-pain--unit-testing
+   :END:
 I find myself talking a lot about unit testing in my current workplace. Over
 time I've learned things from others as well as developed some habits that have
 served me well. I've gotten applications up to 100% test coverage without
@@ -17,6 +29,9 @@ still a useful metric. I've demonstrated that there is at least _one case_ in
 which my code can work.
 
 ** Primer
+   :PROPERTIES:
+   :CUSTOM_ID: how-to-make-unit-testing-not-so-much-of-a-pain--primer
+   :END:
 As a quick intro: Unit tests are tiny little bits of code that aren't part of
 your implementation code, but exercise your implementation code. You have a
 suite of micro applications that run together to ensure certain behaviors in
@@ -26,6 +41,9 @@ about keeping it. That's basically a unit test. A test harness that you save and
 run together with a bunch of others just like it.
 
 ** Dress for Success
+   :PROPERTIES:
+   :CUSTOM_ID: how-to-make-unit-testing-not-so-much-of-a-pain--dress-for-success
+   :END:
 Unit testing is hard for a lot of people. I believe a vast majority of the
 difficulty is self inflicted though. I've put together a list of things that are
 very helpful with testing. It's by no means exhaustive, and this isn't a
@@ -33,6 +51,9 @@ religion to adopt. I find reasonable exceptions to these rules - but they do
 remain as exceptions.
 
 *** Do not [[https://en.wikipedia.org/wiki/Don't_repeat_yourself][DRY]] your tests
+    :PROPERTIES:
+    :CUSTOM_ID: how-to-make-unit-testing-not-so-much-of-a-pain--dress-for-success--do-not-[[https://en.wikipedia.org/wiki/don't_repeat_yourself][dry]]-your-tests
+    :END:
    As I see more and more people doing things like using loops to create tests
    and factoring out swathes of code just to make tests a little more terse, I
    find the tests get complex enough that I'm about to demand going to demand
@@ -44,6 +65,9 @@ remain as exceptions.
    unit tests to be [[https://en.wikipedia.org/wiki/Don't_repeat_yourself#DRY_vs_WET_solutions][WET]]!
 
 *** Test Driven Development
+    :PROPERTIES:
+    :CUSTOM_ID: how-to-make-unit-testing-not-so-much-of-a-pain--dress-for-success--test-driven-development
+    :END:
    Test Driven Development, or TDD, is a powerful means of having good unit
    tests in your code. The basic trick to pulling off high test coverage
    (getting 100% isn't as impossible as it sounds) is to make sure you always
@@ -58,11 +82,17 @@ remain as exceptions.
    write some tests with you.
 
 *** Keep your tests
+    :PROPERTIES:
+    :CUSTOM_ID: how-to-make-unit-testing-not-so-much-of-a-pain--dress-for-success--keep-your-tests
+    :END:
    Another trick to making TDD shine: Don't delete tests as you put the code
    together. Each new test refines the old behavior, but the old truths you
    assert are still the same.
 
 *** Assert a single truth per test
+    :PROPERTIES:
+    :CUSTOM_ID: how-to-make-unit-testing-not-so-much-of-a-pain--dress-for-success--assert-a-single-truth-per-test
+    :END:
    If you can, and you should be able to do this a lot, make a single assertion
    of truth per test. This means ~expect~ or ~assert~ once per test. If you want
    to assert more things, write more tests. They might even be mostly
@@ -79,7 +109,43 @@ remain as exceptions.
    granted. When you make multiple assertions per test, the truths of your work
    are lost.
 
+*** Clearly state your intent
+    :PROPERTIES:
+    :CUSTOM_ID: how-to-make-unit-testing-not-so-much-of-a-pain--dress-for-success--clearly-state-your-intent
+    :END:
+    The "it renders" and "it works" kinds of tests are comically bad descriptors
+    for a test. Better tests look like "shows a list of users ordered by last
+    name". Your test should clearly state its intent of what it's trying to
+    test. When a test shows a failure, you as the human must go in and determine
+    one of these two outcomes:
+
+    1. The test is wrong due to new changes, and must be updated.
+    2. The test is correct, and your implementation needs an update to
+       accommodate prior, expected behavior.
+
+    The only way to truly determine this is to have a clearly written test that
+    briefly describes *the scenario of the test* and *the expected outcome*.
+
+    As a side note, I strongly prefer to omit the "should" kind of verbiage
+    because:
+
+    1. 80 columns wide is the best. Don't make me lug a monitor to this coffee
+       shop so I can read your damn test descriptor. "should " costs you ~6
+       precious characters of width, while adding absolutely nothing to your
+       test.
+    2. "Should" is a "weasel word", meaning contributes to an ambiguous
+       statement. If your test doesn't pass, then it "should"...? How's about we
+       state clearly that our test does a thing, and anything else is considered
+       an error/failure condition? Avoiding weasel words can be scary, because
+       it requires a little bit of confidence or gal. That's okay! It's okay to
+       make a statement and then be proven wrong! But making statements that are
+       never wrong is a defensive strategy you don't need when all of us just
+       want to find a way that works (arguably the "right way", if such a thing
+       exists).
 *** Avoid blob tests
+    :PROPERTIES:
+    :CUSTOM_ID: how-to-make-unit-testing-not-so-much-of-a-pain--dress-for-success--avoid-blob-tests
+    :END:
    This ties heavily in with asserting a single truth. Another way of asserting
    a single truth is to avoid the "Given this input I get this slight change in
    this giant output" kind of tests. The look like tests where inputs are
@@ -99,7 +165,59 @@ remain as exceptions.
    something that makes sense for a list. "It returns a list of users
    alphabetically sorted by first name ascending" is a perfect example of this.
 
+*** Use acceptance tests instead
+    :PROPERTIES:
+    :CUSTOM_ID: how-to-make-unit-testing-not-so-much-of-a-pain--dress-for-success--use-acceptance-tests-instead
+    :END:
+
+    This might sound like a trolling statement, but seriously, if your
+    organization is keen to it - don't write them. Not for applications. Your
+    tests should only exercise through the application's normal interface. In
+    the case of libraries, it's the API you want to test. If it's a web
+    application, then interface through the browser. With a restful service you
+    can use =curl= for most of it, or similar tooling. These "full stack",
+    "integration", or "acceptance" tests provide immense value. They test that
+    your software does what it says on the tin.
+
+    Consider writing a calculator application. Somewhere in there, I might have
+    a plus function for adding two registers together. I can exercise this with
+    unit tests until my boss pulls me aside for having a two thousand line file
+    for testing a single function that is built into most languages. But it
+    still might not work. That's because a calculator application isn't consumed
+    via its plus function. There are loads of pieces often involved in our
+    software to make it do something that seems very simple to an end user. It's
+    better to make sure all of that is connected without having to manually
+    dissect each part of your application and discreetly test one piece of it at
+    a time, and hope you caught all of the integration points.
+
+*** Or use an algebraic type system instead
+    :PROPERTIES:
+    :CUSTOM_ID: how-to-make-unit-testing-not-so-much-of-a-pain--dress-for-success--or-use-an-algebraic-type-system-instead
+    :END:
+    Also consider that you should be using the computer and smart people who
+    have come before you to have figured some of your work out for you already.
+    Having an algebraic type system without binding yourself to sequential
+    mutations (I'm looking at you, Object Oriented) means you can eliminate vast
+    classes of unit tests you might write. Can this be =null=? No? Then you
+    never have to check for it! Yes? Well then you _must_ check for it. The type
+    system won't let you get away with "Well I just won't pass it =null="). Your
+    type system can cover 90% of your unit testing needs. The other 10% are
+    handled much better by your acceptance tests.
+
+*** Admissions
+    :PROPERTIES:
+    :CUSTOM_ID: how-to-make-unit-testing-not-so-much-of-a-pain--dress-for-success--admissions
+    :END:
+
+    Admittedly, we may not have as much control over our ecosystem as we would
+    like. Perhaps you inherited a suite of unit tests. Nudging towards some kind
+    of acceptance tests would be stellar, along with integrating a type system.
+    Sometimes we must simply make do.
+
 ** Conclusion
+   :PROPERTIES:
+   :CUSTOM_ID: how-to-make-unit-testing-not-so-much-of-a-pain--conclusion
+   :END:
   There's more we could into here, but perfect is the enemy of good, and I need
   to cut it off at some point. Unit tests can be very handy, make think about
   your code before you just start typing stuff, serve as excellent test
