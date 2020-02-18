@@ -10,11 +10,13 @@ permalink: /resume/
   
   Mobile: 602.264.3584
   
-  Blog: [http://loganbarnett.github.io/blog/](http://loganbarnett.github.io/blog/)
+  Blog:
+  [https://loganbarnett.github.io/blog/](https://loganbarnett.github.io/blog/)
   
   Github: [https://github.com/loganbarnett](https://github.com/loganbarnett)
   
-  This document was generated from: [https://github.com/LoganBarnett/blog/blob/gh-pages/resume.md](https://github.com/LoganBarnett/blog/blob/gh-pages/resume.md)
+  This document was generated from:
+  [https://github.com/LoganBarnett/blog/blob/gh-pages/resume.md](https://github.com/LoganBarnett/blog/blob/gh-pages/resume.md)
 
 # Job experience
 
