@@ -1273,5 +1273,5 @@ title: Dirshum
    :PROPERTIES:
    :CUSTOM_ID: dirshum--map
    :END:
-  #+attr_html: :width 594px
-  [[~/Dropbox/notes/dirshum-01.png]]
+  #+attr_org: :width 594px
+  [[./dirshum-01.png]]
