@@ -1,1 +1,1277 @@
-/Users/logan/Dropbox/notes/dirshum.org
+#+title:     Dirshum
+#+author:    Logan Barnett
+#+email:     logustus@gmail.com
+#+date:      <2020-01-17 Fri>
+#+language:  en
+#+file_tags: dnd
+#+tags:
+#+auto_id:   t
+#+options:   toc:nil
+
+#+BEGIN_EXPORT html
+---
+categories: dnd
+date: 2020-01-24
+layout: default
+title: Dirshum
+---
+#+END_EXPORT
+
+* local dictionary                                                 :noexport:
+  :PROPERTIES:
+  :VISIBILITY: folded
+  :CUSTOM_ID: local-dictionary
+  :END:
+
+#  LocalWords:  Caheia caheia Greyhawk Nentir primordials azgaar rexalstan Azgaar
+#  LocalWords:  Feywild Aaldir dirshum Zell Dee Kadrick Dee's dee's goblinoid
+#  LocalWords:  Dunja Minheimia Bailel Burdunn Perrin Thorin Ydrellia Emmeri
+#  LocalWords:  Heildan Cendwar Fe'Trassus Goroita Kep Aelar
+#  LocalWords:  Golani Grumsvelt Grumsvelt's Valaria Silverstar
+#  LocalWords:  Bel'aheldanii Bel'aheldan Bel'heldin Val'Genier
+#  LocalWords:  Minheimia Minheimian Minheimians
+#  LocalWords:  darkvision
+#  LocalWords:  Valan Sque valan
+#  LocalWords:  Gyoro
+#  LocalWords:  Nomasgard Duranae
+#  LocalWords:  dragonborn
+#  LocalWords:  draconic
+#  LocalWords:  Avandra Avandra's Bahamut Tiamat
+#  LocalWords:  Cyorro
+#  LocalWords:  Glintstrad
+#  LocalWords:  Vyxt Vyxtian Vyxtian's Scherix
+
+* Dirshum
+  :PROPERTIES:
+  :VISIBILITY: content
+  :CUSTOM_ID: dirshum
+  :UNNUMBERED: toc
+  :END:
+
+  #+toc: headlines 3 local
+
+  A world made for my D&D campaigns. It's easy to destroy a world that you made
+  yourself!
+
+** Golani Grumsvelt's Guide to Dirshum
+   :PROPERTIES:
+   :CUSTOM_ID: dirshum--golani-grumsvelt's-guide-to-dirshum
+   :END:
+   This is a series of essays written in the voice of [[Golani Grumsvelt]], a
+   pompous and arrogantly privileged playboy. He tends to dismiss mythical
+   things, in spite of how true they might actually be.
+
+*** Account of Duranae
+    :PROPERTIES:
+    :CUSTOM_ID: dirshum--golani-grumsvelt's-guide-to-dirshum--account-of-duranae
+    :END:
+    Nicknamed "Jewel of Dirshum", Duranae has established itself as a grand
+    intersection of being both a melting pot of cultures and a city that
+    prospers from all of the things a fantastical realm has to offer. It has a
+    population of roughly three million souls (determined through magical
+    scrying). Sitting in the middle of the world and a coastal city, it has an
+    advantaged position for trade. All walks of life can be found here, but it
+    is predominantly human in the populace. While the races do mix there, they
+    also tend to gather in their own burrows and neighborhoods. It's rumored
+    some of the dwarves of Dirshum never see the light of day, content to work
+    their trades in the areas below.
+
+    Duranae has a little bit of something for everyone, except for privacy of
+    course. It's a city you can easily disappear in, but you're never by
+    yourself no matter how alone you might feel.
+
+    Areas in Duranae can be rough 5 major sections. The outer city comprises the
+    farmlands. These are protected by the city watch, but aside from occasional
+    patrols this is more of a first-responder force. The farms provide some
+    sustenance for the city, but it is not nearly enough to sustain a population
+    of this magnitude. The primary crops consist of potatoes, wheat, and other
+    cheap-to-grow foods that are appropriate for the teeming masses.
+
+    As you move further into the city, before its walls, you will come across
+    its slums. These are hodge podge sheds and rickety dwellings that lean up
+    against the walls of Duranae. This is where the poorest of the poor live.
+    The city guards rarely patrol here, and those that do have a very cynical
+    outlook on life and their guard duties as well. EDIT: And let me tell you,
+    threatening me to divulge my sources is a criminal act! Or at least it
+    should be. I am your humble explorer - a cartographer of societies! Not a
+    study of the laws of just one city. But worry not Sheriff Vrot: Your guards
+    will still let me in the city if I make their pouches bulbous enough with
+    coin.
+
+    The third section, past the walls, is a place most people have been to and
+    think of when they mention Duranae. This is the middle quarter. It extends
+    from the walls marking the slums and farmlands all the way to the coast.
+    This is where the docks conduct their day to day affairs. Nomasgard has a
+    section of the docks devoted to its navy. Other parts of the docks are
+    closely connected to the bean counters of the trading guilds, and all goods
+    are carefully monitored and recorded. After seeing that, I wish I'd
+    considered starting a lucrative venture in parchment making! There are also
+    less savory parts of the docks. The privateer wharfs is a very no
+    questions-asked kind of place. My brave assistants stood firmly to see and
+    record everything though. Only a total of three fingers were lost during
+    entire endeavor. I count that a success. Ah - one more notable thing: the
+    middle quarter of Duranae is a large, think ring. The middle is empty! But
+    that brings us to our next section.
+
+    The fourth section is the lower quarter. Some of it sees sunlight, but much
+    of it is underground. In the middle quarter, the cityscape will rapidly
+    transition downhill and end in a great lift. Here the goods from below come
+    up, and the supplies needed for the city's lower area go down. Many dwarves
+    live in the lower quarter, but it's not exclusive to them. Much of the
+    digging is done by kobolds that I am assured to be quite friendly, but sadly
+    I could not spare assistants that day to test this claim. The kobolds have
+    dug out much of the aqueducts, channels of lava flow for the forges, and
+    even much of the mining. The dwarves there claim it is shoddy work, but even
+    they admit the city rests easily upon all of it. I couldn't find a single
+    gnome there!
+
+    Going further up from the middle quarter is the fifth and final section: The
+    upper quarter. The upper quarter is a ring that is wider than Duranae's
+    middle quarter. This is the floating part of the city, suspended high above
+    the highest buildings in the middle quarter. The lift from the lower quarter
+    reaches all the way to the upper quarter. The center where the lift reaches
+    the height of the upper quarter is a series crystalline bridges that run to
+    the ring where the upper quarter proper is. All goods go through the
+    strictest of checks, and the guards here are well paid by the trade guilds
+    to ensure no bribery can ever work. Here is where you can find the finest
+    food, wines, clothing, and even the most beautiful of the goodly races, no
+    matter what your preferences are. There are many elves and gnomes here. Any
+    artisan with a valuable trade can make a go here. Every single dwelling here
+    has a view that stretches inwards to the below quarters or out into the
+    beautiful countryside or coast of Nomasgard, depending on where you rest
+    upon the ring.
+
+    My later chapters will cover arcane influences on Duranae, the religious
+    establishments, and law and crime. Duranae is such a rich and wonderful city
+    that also has many secrets and splendors - all you have to do is look!
+*** Avandra's Smile
+    :PROPERTIES:
+    :CUSTOM_ID: dirshum--golani-grumsvelt's-guide-to-dirshum--avandra's-smile
+    :END:
+
+    Taken from Golani Grumsvelt's "Avandra's Smile", which was delayed in its
+    printing due to a strange goblin raid on the trade lines carrying inks:
+
+    Avandra has smiled upon all of us at one point or another in our lives.
+    Every time we attribute some favorable event as luck, we pay her a small
+    amount of reverence, and this sustains the goddess. Or so the priests of her
+    clergy tell me.
+
+    As part of our cataloging of the entire world of Duranae, we sometimes have
+    to do brave or absurd things. This time, bravery was not in high demand. We
+    entered as recent converts to a location I will not disclose today, and we
+    were able to learn much of the inner workings of the goddess and her
+    followers with an inside perspective.
+
+    The priests themselves are aloof and superstitious, and will attribute every
+    bloody sunny day in a summer to their goddess. They also carry around
+    sentimental trinkets that are unique to the individual, and they seem to
+    constantly fidget with it. You'd think it were a holy symbol with how the
+    priests grasp them! The priests feel that avoiding bad luck is just another
+    form of good luck. As a result they do all kinds of things to avoid bad luck
+    that we heard as children: They only walk on the right side of a fountain,
+    they avoid crossing the path of a black cat, and sprinkle their doorways
+    with spices during the 13th day of the month. Between myself and my
+    assistants infiltrating their order, we mixed up which superstitions we
+    chose in advance, but nobody seemed to notice. They are just happy to see
+    other people saying everything is good or bad luck!
+
+    Temples of Avandra are established places in part because it is not easy to
+    have sacred grounds on the move. There have been attempts at wheeled temples
+    in the past, but they never proved out. Instead they settle on doing
+    frequent redecoration. Avandra is also an aspect of change. The temples are
+    very open places and the winds can be felt shifting about no matter where
+    you stand. At the center of this is a fountain and it's typically littered
+    with copper coins. The clergy cleans it out daily and uses the coins as
+    donations. What Avandra gives to those who toss coins in her fountains we
+    did not find out.
+
+    Many deities reinvest in the societies that invest in their own churches.
+    Avandra's is no different. She deeply invests in the arts, fashion, music.
+    Avandra's followers also run many orphanages. The orphanages are stinking
+    cesspits crowded with simple brats! I lost my best shoes to one of those
+    thieving curs! But it makes one realize just how relative luck can be for
+    these orphanages to be considered good fortune for someone.
+
+    Unless you've suffered some kind of recent memory loss by an evil wizard,
+    you'll have heard "Avandra smile upon you!" or some similar statement. In
+    the common tongue this can show someone's eloquent upbringing and for the
+    masses it can sometimes be used facetiously.
+
+    Avandra's teachings guide us to live in the moment, take risks (fortune does
+    not come often at random but needs opportunity), and to ourselves be good
+    luck to others by readily offering help to any in need. As a result, she has
+    the most of her divinely blessed follows afield, manifesting good works in
+    her name. You'd think she encourages all of them to buffoons about their
+    inert little trinkets as well, for as good as the clergy follow that
+    pattern.
+
+    Paladins of her order tend to favor longer weapons and lighter armor.
+    Bringing good luck in the form of help to others is the essence of these
+    martial priests. I saw one whose mount was a beautiful fey horse, which you
+    can learn about in my other book: Fey-folk of Duranae. Her less martial
+    followers dress very plainly for the road, but you can always pick them
+    apart by their wavy lined holy symbols and belts adorned with various good
+    luck charms.
+
+    Avandra opposes devils above all. The contract locks things in and is used
+    to restrict fortune in the future. It robs those in the contract of their
+    future consent and therefore their freedom to have a blessed life. Devils
+    encompass everything she hates about contracts and how the fine print always
+    seems to capture mortals. She spends a lot of effort trying to thwart their
+    plans, but as gods do not directly exert their will in our realm, it's very
+    easy for the devils to operate without much interference. Some things they
+    catch, but much slips past her watch. For that matter she finds non-devilish
+    contracts distasteful for the same reasons. I for one feel this is naive
+    even for a god. My contracts I've established ensure I have a good and long
+    service from my assistants if they want to get paid. The turnover is very
+    high in my field!
+
+    Throughout history Avandra's power has waxed and waned. When she had a
+    disproportionate number of followers in the past, art flourished, gambling
+    institutions suffered, and rulers had a hard time keeping their thrones
+    under their rumps. When her followers dwindled, fashion stagnated, family
+    lines tended to keep their rule for generations, and people generally had a
+    sour outlook on their lives.
+
+    The last chosen of Avandra was a halfling named Rendil Fulburrow. It was
+    only revealed afterwards that he was a chosen, and he had no idea. Rendil,
+    simply put, is a fool that should have died long before history wrote his
+    name down. Every poor expense turned into some wonderful investment. Dangers
+    were diverted around him without his knowing, and he merrily strode along as
+    he did his "long walk" across the continent. He even wrote about his
+    travels, but even Avandra can't overcome the raw sales of my works! Quality
+    means something, my dear.
+
+    Avandra's relationships with the other gods is rather fleeting. In one
+    moment she will embrace Corellon as a the godly equivalent of a mate, and
+    other times they are all but enemies. It sounds like my third ex wife! Feel
+    free to pick up a copy of "The Wives of Dirshum" to broaden your views on
+    marriage.
+
+    Sehanine is an ally of Avandra and the priests attributed this to the
+    constant ebb and flow of the moon. This is utterly stupid. Changing
+    constantly is still a constant! The moon moves predictably. "Charting
+    Dishum's Night" covers this in great detail.
+
+    Avandra opposes Asmodeus most of all, with Bane a close second. Tyranny in
+    all of its forms is what she hates, and what those two bring about. It is
+    rumored that Avandra has specially appointed members of her church that hunt
+    down devil cults and slay them all before they grow too strong. Believe me
+    that these are myths, my friend. I have scoured our historical texts for
+    mass cultist slayings and on the rare occasion that it does happen, it's
+    never by some hooded priests carrying around luck rabbits' feet!
+
+    The clergy itself doesn't have an official structure. Most of the time they
+    don't have a collective direction. When I was there I saw them determining
+    some course of action for the sect, I saw them enumerate the choices and
+    then cast dice. It is this author's humble opinion that the church of
+    Avandra endures only because of, well, luck!
+
+    Avandra might be an essential member of the gods but if I were to become a
+    man of the cloth I'd keep looking and not leave my life up to chance.
+*** Elves
+    :PROPERTIES:
+    :CUSTOM_ID: dirshum--golani-grumsvelt's-guide-to-dirshum--elves
+    :END:
+
+**** variety of blood
+     :PROPERTIES:
+     :CUSTOM_ID: dirshum--golani-grumsvelt's-guide-to-dirshum--elves--variety-of-blood
+     :END:
+
+     It is theorized that elves are the creations of Sehanine - an
+     ever-changing shape-shifter god. Many races are said to have spawned from
+     the elves. The most apparent ones are the high elves of Bel'aheldan and
+     the wood elves of Minheimia.
+
+     Less known of elvish relations are harpies, banshees, eldarin, and even
+     ghouls.
+
+     Rest assured that any form an elf takes will always be better than yours.
+     Hubris!
+
+***** harpies
+      :PROPERTIES:
+      :CUSTOM_ID: dirshum--golani-grumsvelt's-guide-to-dirshum--elves--variety-of-blood--harpies
+      :END:
+      Cruel and spiteful creatures, the first harpy is said to come from a
+      female elf who stumbled upon Sehanine himself in a forest. Sehanine paid
+      her no attention and had departed as quickly as he was noticed. But the
+      elf had fallen in love. She was unable to find him, and fell into a deep
+      sorrow. She cursed the gods for exposing her to such beauty. Her hatred
+      took form and gave her wings, and turned her heart to evil.
+
+      That an elf could get so resentful and disgruntled to turn their arms to
+      feathered wings and legs of a bird of prey is ridiculous. Elves fall in
+      love and have highly emotional heartbreaks all of the time, but we never
+      hear about them turning to harpies.
+
+***** banshees
+      :PROPERTIES:
+      :CUSTOM_ID: dirshum--golani-grumsvelt's-guide-to-dirshum--elves--variety-of-blood--banshees
+      :END:
+
+      Scholars record that Banshees are elves who lived lives of excess of
+      some kind, and when they perished they continued to live on as dreadful
+      undead creatures. They beautiful yet marred apparitions whose love for
+      their excess continues in their restless afterlife. They dwell in their
+      homes of old, usually in ruins of elven establishments. Given time they
+      drive out all of the other occupants, or kill them, assuming they didn't
+      do either in their former lives already.
+
+      To stop a banshee is a boastful claim indeed. The banshee's wail brings
+      their suffering unto their victims, and the wail is often too much for
+      the living to bear.
+
+      On my travels we came across forgotten wood-elven cities, and one such
+      had a mirror. My companion picked it up, and looked upon it. I could see
+      in the reflection a gaunt, ghostly face behind him, with glowing eyes.
+      It was reaching towards him. I turned to face it, thinking the
+      reflection was showing me where the real creature was. But nothing was
+      there. When I turned back to my companion, Wilfred I think was his name,
+      the mirror was on the ground, and Wilfred was no where to be seen. I
+      looked for 10 minutes, which is twice the time I promise to any of my
+      guides.
+
+      In my nightmares I think of that face in the mirror. I still remember
+      Wilfred's face staring back at me too. The face in the mirror perfectly
+      matches the accounts I could find of the pale and ale-addled folks I
+      could find.
+
+      Many rumors exist of such a mirror exist. Some claim it can be a portal
+      to a realm that is a dark mockery of ours called the "Shadowfell" or
+      some such nonsense, and its location is always that of the banshee's
+      domain. A domain locked in permanent pain and suffering. That's right,
+      my friend: Even elves and their offshoots suffer better than you do.
+      Others have said a blade could be forged around a shard of such a
+      mirror, and its cut saps the life out of anything it touches. If one
+      wielded two such blades and rang them together, it would create a
+      splitting sound akin to the wail of a banshee, and to similar deadly
+      effect! Fortunately we do not live in such a world of madness, and no
+      scholar has documented such weapons.
+
+***** eldarin
+      :PROPERTIES:
+      :CUSTOM_ID: dirshum--golani-grumsvelt's-guide-to-dirshum--elves--variety-of-blood--eldarin
+      :END:
+
+      The elves will tell you that eldarin are but a close cousin race like
+      the wood elves are to the high elves, and they change their appearance
+      and demeanor with the seasons. They are said to be much more strongly
+      tied with the fey and share the whimsicalness that comes with it. I've
+      met an eldarin once and it didn't change with the seasons, but every
+      day! The elves come up with such stories, and they make things difficult
+      to get a true account!
+
+***** TODO ghouls
+      :PROPERTIES:
+      :CUSTOM_ID: dirshum--golani-grumsvelt's-guide-to-dirshum--elves--variety-of-blood--ghouls
+      :END:
+      Logan didn't fill this out.
+
+**** Bel'aheldan
+     :PROPERTIES:
+     :CUSTOM_ID: dirshum--golani-grumsvelt's-guide-to-dirshum--elves--bel'aheldan
+     :END:
+
+***** magical wonderment
+      :PROPERTIES:
+      :CUSTOM_ID: dirshum--golani-grumsvelt's-guide-to-dirshum--elves--bel'aheldan--magical-wonderment
+      :END:
+      In Bel'aheldan, even the peasant class seem to be tied with some magic.
+      They have the floors swept with unmanned brooms, and clean clothes of
+      their masters with but a thought.
+
+      They call themselves the high elves - one presumes because they are so
+      arrogant - and seem to universally display an affinity to the use of
+      magical spells.
+
+      The nation of Bel'aheldan itself carries with it a mission to use magic
+      for the betterment of all, and rid of us the need for manual labors and
+      petty chores. But they don't understand that summoned food and water can
+      never beat finely aged wine. Cleaning clothing is more than washing - it
+      is restoring the original lift to the clothes! What magic makes a collar
+      carry the flare of knowing a servant has poured their love of the craft
+      and even the love of their master into it? I still miss Wilfred's
+      attention to detail. But I digress.
+
+      When they aren't trying to foolishly rid themselves of the peasantry,
+      they collectively apply magic to create wondrous infrastructure. It is
+      said that even the small villages of Bel'aheldan harbor portals to
+      Cendwar in the event of some catastrophic emergency.
+
+***** army
+      :PROPERTIES:
+      :CUSTOM_ID: dirshum--golani-grumsvelt's-guide-to-dirshum--elves--bel'aheldan--army
+      :END:
+
+      Troops carry medallions that notify their generals of death of the troops
+      from afar. The troops themselves can also be signaled for withdrawal with
+      the medallions. The medallion changes from a gentle blue to a deep yellow
+      when the troop is being summoned. It is no surprise that the elven army
+      calls their troops "Bel'heldin" - roughly "sky-fighters" in the common
+      tongue, and the generals are "Val'Genier", or "seeing suns".
+
+      If "Bel'heldin" sounds familiar to you, it is because "Bel'aheldan"
+      itself translates into common as "People of the sky", "Moon shone ones",
+      or "Star children" depending on the inflection.
+
+***** dress
+      :PROPERTIES:
+      :CUSTOM_ID: dirshum--golani-grumsvelt's-guide-to-dirshum--elves--bel'aheldan--dress
+      :END:
+
+      The high elves tend to decorate themselves with feathers and moon stone.
+      To be high elf of Bel'aheldan is to be elevated, wise, connected with
+      the weave which is the essence of the world, and most of all it's easy
+      to hold your nose up to the rest of us.
+
+***** houses
+      :PROPERTIES:
+      :CUSTOM_ID: dirshum--golani-grumsvelt's-guide-to-dirshum--elves--bel'aheldan--houses
+      :END:
+
+      Bel'aheldan have houses devoted to the various schools of magic, and
+      some houses whose specialty is either divine or of some non-scholastic
+      arcane source. Houses can be thought of as loose affiliations of
+      families who share interest in the same sorts of discoveries. The
+      reality is much more complex than that, but it's a good place to start.
+      Houses all must devote a share of their populace to guard or patrol
+      duty. The most common patrols are for Tentaku to keep the orcs from
+      making incursions. The patrols themselves can address small amounts of
+      orcs on their own, but anything larger and they call upon the
+      Bel'heldin. Contributing to army functions are a way for a house lacking
+      in magical accomplishments to earn some prestige. In the past, the less
+      prestigious houses were underrepresented in Bel'aheldanii affairs, and
+      so houses resorted to toxic extremes to earn recognition and therefore
+      power amongst their peers.
+
+      Today, Bel'aheldan ensures that all houses can only go so far with their
+      prestige. Instead prestigious positions are managed by multiple houses,
+      and a house may only have so many dignitaries.
+
+***** magic
+      :PROPERTIES:
+      :CUSTOM_ID: dirshum--golani-grumsvelt's-guide-to-dirshum--elves--bel'aheldan--magic
+      :END:
+      The Bel'aheldanii do not covet magical knowledge for their sole use, and
+      freely share it. Some of the best dwarven architects are known to study
+      a great deal amongst these elves. This is so they can use enchanted
+      materials to do more with their structures.
+
+      In its darker times, there was less regulation on what kinds of magics
+      were studied, and houses contended more fiercely for honor and
+      recognition amongst their ranks. The combination of these things has led
+      to Bel'aheldan's greatest disasters - such as fiendish incursions and a
+      nation-wide spell cast upon every citizen within its borders.
+
+      Exploration of the weave is kept in check today as well. Magical studies
+      require researchers from at least three houses are participating in the
+      study.
+
+***** neighbors
+      :PROPERTIES:
+      :CUSTOM_ID: dirshum--golani-grumsvelt's-guide-to-dirshum--elves--bel'aheldan--neighbors
+      :END:
+
+****** Tentaku
+       :PROPERTIES:
+       :CUSTOM_ID: dirshum--golani-grumsvelt's-guide-to-dirshum--elves--bel'aheldan--neighbors--tentaku
+       :END:
+       The elves and orcs have a long standing hatred. There are no embassies
+       amongst these lands. Bel'aheldan has taken up the mantle of being the
+       first line of defense in orcish incursion. Along the southern borders
+       of Tentaku are Bel'aheldanii patrols. The eastern border and lake of
+       Toadslick is held by Bel'aheldanii. Nomasgard used to hold the land,
+       but when orcs broke through and circled into elven territory through a
+       relatively unguarded border, it was deemed that Bel'aheldanii would
+       hold jurisdiction there. Nomasgard bolsters Tentaku's eastern front
+       with troops of their own. Many trackers and scouts receive their
+       training alongside the elves. It is a strong symbol of the alliance of
+       the two nations, and rumored to be the result of most half elves born
+       out of Duranae. Here the elves do all the teaching, because as we all
+       know, Elves are better than us at everything.
+
+****** Minheimia
+       :PROPERTIES:
+       :CUSTOM_ID: dirshum--golani-grumsvelt's-guide-to-dirshum--elves--bel'aheldan--neighbors--minheimia
+       :END:
+       The nation of Minheimia has an estranged relationship with Bel'aheldan.
+       Minheimia contributes to southeastern patrols, and fill gaps in the
+       Bel'aheldanii defenses as needed. This is out of sense of kindred and
+       hatred of orcs in equal parts. Though there are writings indicating
+       that Bel'aheldan and Minheimia were both a single nation, but the high
+       elves lorded over their more nature-bound cousins. The wood elves
+       claimed second class citizenry, and were considered subjugated. Some of
+       the oldest wood elves compare it to outright slavery. The ancient
+       members of the Bel'aheldanii claim it was for their protection and
+       welfare. Both can agree that wood elves departed to the east and stood
+       in a line that marks the Bel'aheldanii-Minheimian border today. Then
+       they did the most absurd thing; they stared at each other for 3 days
+       and 3 nights. At which point they parted, and Minheimia has been its
+       own sovereign nation since then.
+
+       The foundation of Minheimia is considered mythical as much of the other
+       elves' ancient history. There is evidence of heavy conflict in
+       Bel'aheldan's soil. Shallow graves, armor and weapons left with the
+       bodies, and ruins of towns that never got rebuilt litter Bel'aheldan
+       everywhere, not in any relation to the Bel'aheldanii-Tentakish border.
+       There are some records that indicate Bel'aheldan entered a time called
+       "The Blight of Devils", which suggests one side or another employed
+       infernal powers long ago - probably for the civil war itself.
+
+       If elves wouldn't lean so hard on their symbolism maybe we'd know the
+       real truth.
+
+       Elves forget slowly, and for generations to stop passing on their
+       inherited hatreds takes much longer than the rest of us, but there are
+       signs of healing. Minheimia lends its scouts and naturalists to aid the
+       Bel'aheldan borders with Tentaku.
+
+****** Nomasgard
+       :PROPERTIES:
+       :CUSTOM_ID: dirshum--golani-grumsvelt's-guide-to-dirshum--elves--bel'aheldan--neighbors--nomasgard
+       :END:
+
+       The melting pot nation of Nomasgard share a close alliance with
+       Bel'aheldan. Duranae's use of magic in the city's foundation itself
+       has attracted the high wizards of Bel'aheldan since the nations have
+       recorded history of each other. Nomasgard's arcanists similarly
+       frequent to the capital of Cendwar to delve into more magical secrets.
+
+       Wizards from both cities can easily afford the teleportation fees.
+
+       Nomasgard and Bel'aheldan share defensive duties amongst Tentaku's
+       southeastern borders. Both elven blade and bow-work are passed onto the
+       troops there, and combative casters can put their magical theories to
+       the test. Can you imagine how dangerous magical studies would be if
+       they were practiced indoors with nothing but the citizenry nearby? I
+       shudder to think of the property damage.
+***** trade
+      :PROPERTIES:
+      :CUSTOM_ID: dirshum--golani-grumsvelt's-guide-to-dirshum--elves--bel'aheldan--trade
+      :END:
+      The chief export of Bel'aheldan is magic - in a sense. Wizards can be
+      chartered to perform great magical acts, give advice on arcane matters,
+      create magical artifacts, and some suggest the capture and storage of
+      weapons too powerful for individuals or even nations to responsibly
+      bear.
+
+      In turn Bel'aheldan seeks magics to supplement their own arts. The state
+      itself pays handsomely for moonstone. Officials whisper when there is
+      enough moonstone accumulated to have a statue of every high elf, all the
+      high elves will depart the realm and take on a new form that is one of
+      raw magic, and they shall live in the weave itself.
+
+**** Minheimia
+     :PROPERTIES:
+     :CUSTOM_ID: dirshum--golani-grumsvelt's-guide-to-dirshum--elves--minheimia
+     :END:
+     The elven nation of Minheimia takes its name from the elvish "minhela",
+     meaning "unshackled", "unbridled", or even "unsaddled", and the "eimia"
+     part of the name means "stand of" in common, but backwards because it's
+     elvish. Minheimia claims to have splintered from Bel'aheldan in a civil
+     war that - I can't make this up - ended with all of the wood elves and
+     high elves staring at each other at what is now the border between the
+     two, and not a drop of blood.
+
+***** fertile land unspoiled
+      :PROPERTIES:
+      :CUSTOM_ID: dirshum--golani-grumsvelt's-guide-to-dirshum--elves--minheimia--fertile-land-unspoiled
+      :END:
+
+      Minheimia is a beautiful land with lush grasslands broken by dense
+      forests with proud trees. Spire Fur trees grow to enormous heights and
+      cast out wide branches. Much of the forests, including the capital of
+      Kep Aelar itself, are covered by a canopy that leaves everything dark,
+      like a deep overcast without the gloom. At least most of the time. Some
+      places in those forests instill some primal fear - like every branch is
+      an outreached arm, and every shadow conceals eyes that stare upon you
+      with dreadful malice.
+
+      Even the mountains to Minheimia's eastern side are covered in lush
+      plant life. The Ring River between Minheimia and Nomasgard is said to
+      look like moving glass.
+
+      In my travels, I never found a farm of any kind. No fields, no fenced
+      areas, and no obviously domesticated animals. The Minheimians truly live
+      in harmony with the land.
+
+***** military
+      :PROPERTIES:
+      :CUSTOM_ID: dirshum--golani-grumsvelt's-guide-to-dirshum--elves--minheimia--military
+      :END:
+
+      The primary armed forces in Minheimia are their scout-trackers, and
+      naturalists. The scout-trackers are said to do sniper duty - killing
+      enemy leaders and sending armies into disarray - all without being
+      caught. The naturalists command nature itself to lash out at their foes.
+      Imagine grass tickling an armored army! Ridiculous!
+
+
+***** structures
+      :PROPERTIES:
+      :CUSTOM_ID: dirshum--golani-grumsvelt's-guide-to-dirshum--elves--minheimia--structures
+      :END:
+
+      Every structure in Minheimia looks like a stone ruin. Half made
+      buildings with no roofs - sometimes they have more complicated
+      configurations, but all of them share a sense of exposure and a deep
+      lack of privacy. The wood elves are an open people and either sleep
+      under the stars or the trees. Some have dirt or leaf litter for
+      flooring. Generally if some elves want a private conversation, they
+      either go for a walk or write in the dirt to one another.
+
+      One structure of note is the arena of Kep Aelar, which suggests a savage
+      side to the wood elves, in keeping with their close bond to nature.
+
+***** neighbors
+      :PROPERTIES:
+      :CUSTOM_ID: dirshum--golani-grumsvelt's-guide-to-dirshum--elves--minheimia--neighbors
+      :END:
+
+****** Nomasgard
+       :PROPERTIES:
+       :CUSTOM_ID: dirshum--golani-grumsvelt's-guide-to-dirshum--elves--minheimia--neighbors--nomasgard
+       :END:
+
+       Records exist of a war when the simple southwester folk of Nomasgard
+       began a lumbering project that went unchecked. Though still Nomasgard
+       territory, the scout-trackers of Minheimia learned of this and began
+       humiliating the lumberjacks of the area. Humiliation then turned to
+       injury. Eventually injury gave way to death. A war was started.
+       Nomasgardian forces were dispatched, and though blood was shed on both
+       sides, Nomasgard shed the most. In an act of frustration the forces
+       were split and went to set fire to the trees as a way of injuring the
+       elves. The original lumber project was forgotten, and only vengeance
+       was what the humans had appetite for. The wood elves record that,
+       without any prompting on their end, gnomes of the local area -
+       presumably living in or under these trees - baffled the humans with
+       illusions and caused the humans to set fire to their own crops! The
+       humans eventually learned to touch a tree before burning it. The elves
+       surrendered to spare a forest that wasn't even theirs. The Nomasgard
+       general was a practical one, and conscripted the elves to help them
+       push the borders of Tentaku back on the Nomasgard front. They
+       accomplished their goal, but all of the scout-trackers perished.
+
+       Today Minheimia and Nomasgard live in peace and have better outlines of
+       territory and respect for the land. A descendant of the general gave
+       the land won by the scout-trackers to Minheimia. Nomasgard forces hold
+       it to this day, but Minheimians are considered sovereigns to that odd
+       spec of territory. Some of the relatives of the scout-trackers travel
+       the grave sites there as pilgrimage.
+
+****** Gazgren
+       :PROPERTIES:
+       :CUSTOM_ID: dirshum--golani-grumsvelt's-guide-to-dirshum--elves--minheimia--neighbors--gazgren
+       :END:
+
+       Gazgren is far from the bulk of Minheimia, but the grave sites near
+       Tentaku are not. The hatred of orcs and elves is well known enough for
+       a silly goblin to tell you. The hobgoblins planned an ambush for the
+       main remembrance day at the grave site, and upon executing it were able
+       to capture all of the elves there. Just as their relatives were pushed
+       to conscription, so too were these elves compelled by the goblinoids to
+       fight for territory and spoils for the goblinoid armies. They initially
+       performed well, and earned much trust from the goblinoids from
+       consistent results. The hogoblin commanders promised freedom once the
+       next camp was taken, but the promise was remade again for yet another
+       camp, and so on. Not being a group of just scout-trackers, these
+       elves were able to fool the hobgoblins into approaching an orc
+       stronghold thinking its defenders dead and spoils ready for the taking.
+       The orcs thought themselves to be reinforced by a neighboring tribe
+       that was weaker and understood who was really in charge. Both parties
+       were caught by surprise when the veil was removed. Inside the camp the
+       fight was brutal. The few survivors were swiftly dispatched by the wood
+       elves, and they razed the camp. A war wagon piled with orc ears and
+       hobgoblin heads was found deserted in Gazgren's territory just outside
+       of Tentaku. The hogoblins received the message that the elves would not
+       be used in such a way again.
+
+****** Tentaku
+       :PROPERTIES:
+       :CUSTOM_ID: dirshum--golani-grumsvelt's-guide-to-dirshum--elves--minheimia--neighbors--tentaku
+       :END:
+
+       One topic any two kinds of elves can agree on is hatred of orcs.
+       Minheimia sends small parties of its ranging and naturalist troops to
+       help watch the southeastern borders of Tentaku. They also have members
+       that help watch Tentaku's easter fronts, and watch over their burial
+       shrines. That area is technically under Minheimia's jurisdiction, but
+       Nomasgard bolsters its forces and the Nomasgardians sent there benefit
+       from training of how to live off the land, scout unseen, and talk to
+       chipmunks.
+
+       The elves would never allow me to journey with them, but I was able to
+       present myself as a transfer to the Nomasgardian troop posted there. I
+       learned how to find berries! I am unsure why Nomasgard continues to
+       send troops specifically for training and patrol duties. How can you
+       fend off orcs with berries?
+
+****** Glintstrad
+       :PROPERTIES:
+       :CUSTOM_ID: dirshum--golani-grumsvelt's-guide-to-dirshum--elves--minheimia--neighbors--glintstrad
+       :END:
+
+       The relationship between dwarves and elves is a strange one. Dwarves
+       seem to have a respect for the more practical elven crafts, even if
+       they might scoff at parts of the design. It's hard to tell if they are
+       competing with each other or there is some rivalry that goes back to
+       ancient, unwritten times. Glintstrad uses the Road of Bones as a major
+       trade route.
+
+***** shrouded past
+      :PROPERTIES:
+      :CUSTOM_ID: dirshum--golani-grumsvelt's-guide-to-dirshum--elves--minheimia--shrouded-past
+      :END:
+
+      Logan didn't fill this out. Later!
+
+*** Valan
+    :PROPERTIES:
+    :CUSTOM_ID: dirshum--golani-grumsvelt's-guide-to-dirshum--valan
+    :END:
+
+**** summary
+     :PROPERTIES:
+     :CUSTOM_ID: dirshum--golani-grumsvelt's-guide-to-dirshum--valan--summary
+     :END:
+
+     The star Valan comes from the elven word for "judge". Every 43 years the
+     star grows to take up a size that is about a quarter of the moon. The
+     most peak time of it lasts for about one month, which the elves call
+     "Sque valan"; elven for "judgment rendered" or "reparations", depending
+     on the inflection. It is bright enough to leave a powerful deep red glow
+     at night. Many of those races without darkvision can see and navigate
+     freely during this time.
+
+     It also has a unique property in that it has a baffling effect on
+     creatures with darkvision. Their darkvision simply doesn't work in those
+     30 or so days. The elves say that this is Valan coming to judge those
+     arrogant enough to walk in the night.
+
+     What's also interesting is that this effect applies even to things that
+     are shielded from the light of Valan. Creatures that dwell underground
+     cannot see at all and must rely upon other senses. Underground creatures
+     fall into two rough categories: One is hibernation. For others, they go
+     to the surface. This makes for a very chaotic time indeed! Most civilized
+     regions have provisions and guards to handle this. Other, more remote
+     areas will either go into their basements or temporarily seeks shelter in
+     places that do have defenses. In Gyoro, it is a capital offense to refuse
+     shelter to any of the goodly races during this 30 day period.
+
+     I used this time to move about the forests of Minheimia and witness some
+     of the most debased acts that druidic circles perform. It is one of my
+     saucier essays that I highly recommend!
+
+**** astronomy
+     :PROPERTIES:
+     :CUSTOM_ID: dirshum--golani-grumsvelt's-guide-to-dirshum--valan--astronomy
+     :END:
+
+     Some have said that Valan is actually another sun that dances in the
+     cosmos with our sun in a double-ellipse where the suns come very close to
+     each other, narrowly miss, and then fling each other way. This absurdity
+     should be dismissed outright. Clearly you can see that Valan is present
+     only at night, and our sun only present at day.
+
+     There are historic paintings that show Valan side by side with the sun
+     during the day. This is assured to be the artistry of a lunatic though!
+
+     Valan drifts across the sky over the course of a year, and is gone for
+     half of the year. Over the course of many years it will change which
+     seasons it can be seen in.
+
+**** customs based on Valan
+     :PROPERTIES:
+     :CUSTOM_ID: dirshum--golani-grumsvelt's-guide-to-dirshum--valan--customs-based-on-valan
+     :END:
+
+     The tribes-people of Egalstan remember where Valan was when they were born
+     and prescribe characteristics to themselves. They use this to determine
+     compatibility during courtship, among other things.
+
+     Nomasgard sends troops of its armies to known caves and builds fires to
+     lure out creatures that are otherwise blind to everything else. This
+     becomes a killing field, and many trophies are gathered during this time.
+     It's considered a sort of reward for many soldiers, and a way to blend
+     different units together to trade stories, techniques, drinks, and to even
+     "work off steam". Though no steam is produced. I am sorry to say, my
+     friend, I was not able to find any dealings with steam in my readings or
+     talking to elders of this affair. I shall endeavor to be of strong mind
+     and health for my next Sque Valan so I can report back more!
+
+     The orcs of Tentaku believe Valan to be the eye of Gruumsh coming closer
+     to see that the orcs are worthy. This incites them to aggressive action.
+     Armies are said to repel their attacks, but many, sneakier orcs manage to
+     slip by and wreak havoc in the bergs behind the army lines. Even with a
+     chaotic countryside, the orcs numbers dwindle rapidly from losses of
+     fighting. After Valan recedes, those near Tentaku celebrate.
+
+     Gazgren's goblinoids do the opposite of the orcs, and will set aside their
+     internal differences. Leaders of the legions dine with one another and
+     speak of greater conquests for Maglubiyet. The years that follow are
+     sorrowful for Gazgren's neighbors.
+
+     The elves of Bel'aheldan use this time to get in more meditation time and
+     self reflect upon the last 43 years. They make new resolutions to better
+     themselves, or begin a new task. Some will use this time to more deeply
+     explore their romance lives. Many of their tales of love center around
+     this time. But elven romance novels are so boring! They just stare at each
+     other for pages and pages!
+
+     The rugged people of Vyxt use Sque Valan to hunt great beasts that trouble
+     their lands, or could trouble their parched lands, for that matter.
+
+     As mentioned earlier, the druidic rites of Sque Valan for the Minheimians
+     are quite debased. I have gone into greater detail in my __Eithics and
+     Debauchery of Shape Changing__ writing. I could not go into details here
+     for many establishments do not want such texts for general audiences to
+     read.
+
+**** Valan resolutions
+     :PROPERTIES:
+     :CUSTOM_ID: dirshum--golani-grumsvelt's-guide-to-dirshum--valan--valan-resolutions
+     :END:
+
+     I had witnessed my first Sque Valan at the ripe age of 11. By the time the
+     next one comes I will be in my 50s and plan to have complete replaced my
+     personal library with my own writings.
+
+*** Vyxt and dragonborn
+    :PROPERTIES:
+    :CUSTOM_ID: dirshum--golani-grumsvelt's-guide-to-dirshum--vyxt-and-dragonborn
+    :END:
+
+    Golani Grumsvelt's __Hirelings are Forever__ contains a lot of useful
+    information on Vyxt and dragonborn initially. Later it tangents onto some
+    escapade involving one "Valaria Silverstar" hunting him for some kind of
+    vengeance; all for reasons that seem to baffle Grumsvelt.
+
+**** origins
+     :PROPERTIES:
+     :CUSTOM_ID: dirshum--golani-grumsvelt's-guide-to-dirshum--vyxt-and-dragonborn--origins
+     :END:
+     It is commonly known that the nation of Vyxt is a majority of dragonborn
+     citizens. Legend has it that this was at one point the home of dragons.
+     Vyxt is syntactically very close to the draconic word "vyskarix", which
+     closely translates to "home" in the common tongue. The dragons would
+     fight amongst each other and their losses became great. The dragons
+     agreed to leave each other alone and allow lesser creatures to handle
+     their squabbles while the dragons bathed in piles of riches in peace.
+
+     If you believe that pile of rubble, let me go on: It is said that Tiamat,
+     the evil queen of dragons, birthed the first kobolds by hatching her eggs
+     prematurely. Tiamat's estranged lover, Bahamut, had sequestered some of
+     the same eggs for himself, and incubated the dragonborn from them. Both
+     races spread across the land of Vyxt, and brought riches to their dragon
+     lords as homage. Happy dragons meant intact villages.
+
+     At some point, a powerful red dragon backed by a conniving green dragon
+     and a devious blue dragon positioned themselves as the most powerful
+     dragons of Vyxt. From there they claimed rulership over the dragonborn,
+     and the world itself entered a dark age.
+
+     The dragonborn clans, for both better and worse, boast their lineage back
+     to such times. Many clans allied themselves to the chromatic dragons and
+     benefited greatly. Some worked in secret to help eventually overthrow the
+     chromatic dragons. Today the dragonborn clans don't see things as allies
+     of good and evil as you and I might see it. Instead the clans aligned
+     with chromatics are seen as loyal, yet simple. The clans aligned against
+     the chromatics are seen as intelligent, but scheming. There are of course
+     exceptions and these sweeping generalizations primarily exhibit
+     themselves when dragonborn gossip much like those in Egalstan do about
+     the phase of the red star they were born under. It also comes out in
+     ceremonies between the nobles of the dragonborn courts. The traits of a
+     clan are used as a kind of honorific, and those traits are said to hail
+     back to an age when the dragons ruled, and the dragonborn were but
+     servants to the dragons.
+
+**** courts
+     :PROPERTIES:
+     :CUSTOM_ID: dirshum--golani-grumsvelt's-guide-to-dirshum--vyxt-and-dragonborn--courts
+     :END:
+
+     The dragonborn courts are a sight to behold. Everything that is dragonborn
+     is impressively big. Their ceilings rise high, and tapestries must be
+     equally long. The artisanship lacks the flare you see in the sturdy
+     dwarven stonework or fine elven ornaments.
+
+     The royalty of Vyxt allowed me to sit in on their court proceedings and a
+     aspiring ambassador explained all of the nuances to me. It was a very
+     straightforward affair. Usually I have to sneak in and remain hidden for
+     these sorts of things! Although I will say, dragonborn court servants make
+     lousy grape peelers. They just gave them to me mashed!
+
+**** titles
+     :PROPERTIES:
+     :CUSTOM_ID: dirshum--golani-grumsvelt's-guide-to-dirshum--vyxt-and-dragonborn--titles
+     :END:
+
+     When using charms and other lures to get a loose tongue, the Vyxtians
+     warm up fastest with proper use of their clan titles than exotic trinkets
+     or the sounds of coins rubbing together.
+
+     When speaking to each other their clan heritage comes out in formal,
+     structured ways that give respects to the formally acknowledge strengths
+     of the clan. Dragonborn use a subtle pre-title as a means of indicating
+     peacefulness or goodwill, and it is always respectful. For example, The
+     Scherix clan is known to be fair. The honorific form of Scherix is "Fair
+     Scherix" in the common tongue. Dragonborn even love it when their clan
+     honorific is used in another tongue such as common. It gives them a
+     little flavor over their one-word complement they receive by showing its
+     various subtleties and color from other languages. To show even a common
+     dragonborn their honorific when addressing them never goes unnoticed.
+
+     To use the dragonborn clan's negative honorific is to be abrasive,
+     insulting, or even aggressive in an imminent way. Like the positive
+     honorific, it never goes unnoticed, and is never spoken in jest, no matter
+     how familiar you might be with the dragonborn or their clan. This leads to
+     many conflicts with other races where respect and bonding is communicated
+     in ways that are very complex to the dragonborn. Using our example of
+     Scherix, they are known to be greedy. The negative honorific is "Greedy
+     Scherix".
+
+     If you try to make up a negative honorific (like "Wasteful Scherix"), it's
+     confusing and comes off as non-sequitur. While the dragonborn might
+     understand that you're trying to insult them, the feeling of just how off
+     your statement is will overpower that, generally.
+
+     Leaving off an honorific has an interesting interaction. Dragonborn are
+     very direct in their social dealings. Leaving off the honorific in their
+     clan name means you know their clan, but you don't wish to honor or
+     dishonor it. You don't really wish anything with it at all. It
+     communicates an indifference that other races might be insulted by. For
+     dragonborn it simply means you have no immediate desire to strengthen a
+     relationship with them (friend or foe). It's generally used when
+     communicating with strangers or talking about trade matters.
+
+**** trade
+     :PROPERTIES:
+     :CUSTOM_ID: dirshum--golani-grumsvelt's-guide-to-dirshum--vyxt-and-dragonborn--trade
+     :END:
+     Dragonborn chief exports are glass of all kinds from their deserts, and
+     miscellaneous treasures. The glass some dragonborn can create with their
+     powerful breath. I am told that many go digging in the sands to find the
+     wealth of dragons left behind from their wars, but I know better! They
+     have quite a racket going on, creating baubles behind their shops and
+     talking about how they come from some forgotten age! Bah! But the stories
+     sound good. I managed to procure some and plan on taking the stories with
+     me to Duranae to fetch a handy sum. I might be on to them, but I can't
+     blame them, can I?
+**** food
+     :PROPERTIES:
+     :CUSTOM_ID: dirshum--golani-grumsvelt's-guide-to-dirshum--vyxt-and-dragonborn--food
+     :END:
+
+     Dragonborn are hulking, brutish creatures and have monstrous appetites
+     compared to the other goodly races. Vyxt's primary import is food, and
+     for their own food it tends to be primarily meat. Meat is the filler
+     ingredient in their dishes, with other nutrients being wrapped or stuffed
+     in the meat almost apologetically. Vyxt's deserts don't leave much
+     fertile land for tilled fields and wheat. Instead Vyxtian farms are
+     mostly for raising indigenous desert livestock, such as any large
+     serpents, also small serpents, cows, goats, pigs, and rarely giant
+     insects. It's not uncommon for Vyxtian ranchers to be skilled warriors
+     out of necessity of their trade.
+
+     I highly recommend pork-wrapped viper sauteed in (giant) scorpion venom.
+     As a national delicacy goes, it does not disappoint! It should be noted
+     that elves might want to try a different dish, due to the hallucinogenic
+     properties of the venom on elven physiology. This is no recreational
+     hallucinogen but instead tends to provoke violent actions from the
+     consumer.
+
+**** army
+     :PROPERTIES:
+     :CUSTOM_ID: dirshum--golani-grumsvelt's-guide-to-dirshum--vyxt-and-dragonborn--army
+     :END:
+     Clans pay the state in tithe of recruits for soldiers. Soldiers hold a
+     lot of honor amongst the dragonborn, and even a retired veteran is
+     held in a baseline reverence.
+
+     All aspects of the Vyxt armies involve some kind of magical assault.
+     Scouts learn both simple spells to move faster or help themselves remain
+     hidden. The rank and file troops learn simple attack spells or even
+     spells that augment their brute strength. Shock troops pick up defensive
+     spells that make their forms hard to make out, or minor teleportation
+     spells to get in and out quickly. Drake riders learn spells that anchor
+     their flying prey so the ground units can finish them off. Even the lowly
+     gate wall guards learn spells of compulsion and detection to spot thieves
+     and contraband; Though they did use this to determine I had fine nymphish
+     pipeweed on hand and confiscated it! I had intended to use that pipeweed
+     to give to the general. It would've relaxed her to the point of letting
+     me see how their mysterious black claws operate.
+**** research and discovery
+     :PROPERTIES:
+     :CUSTOM_ID: dirshum--golani-grumsvelt's-guide-to-dirshum--vyxt-and-dragonborn--research-and-discovery
+     :END:
+
+     The citizens of Vyxt are hardy, strong, and proud. They lack many of the
+     creature comforts you and I know of. For them, life is a trial to prove
+     oneself. They are less likely to use contraptions and devices to make
+     life easier. However Vyxt invests much in sorcerous studies. Unlike the
+     utility and art of Bel'aheldanii magical works, Vyxtian magic is
+     primarily studied for combat and those spells that promise high value in
+     war are prioritized. Even in times of peace, the Vyxt believe that the
+     next war is around the bend. Any dragonborn will tell you that casting
+     off the dragon rule was a cost they don't wish to pay a second time.
+
+     One should be careful about asking about such things. My assistant
+     Valaria was fingered to the authorities and immediately detained by some
+     of Bahamut's order. When dealing with strict authorities such as those in
+     Vyxt, it is important to use proxies to gather information as I have.
+     Imagine if I had my papers confiscated! Sometimes I wonder what happened
+     to Valaria. She was always a clever conversationalist, and loyal to the
+     end I am absolutely sure. Still, better to leave the area just in case.
+
+**** religions
+     :PROPERTIES:
+     :CUSTOM_ID: dirshum--golani-grumsvelt's-guide-to-dirshum--vyxt-and-dragonborn--religions
+     :END:
+
+     The primary deities worshiped in Vyxt are Bahamut and Tiamat - the dragon
+     gods of the pantheon. The dragonborn relationship with dragons is a
+     complicated one. They hate the dragons for enslavement, but derive
+     incredible pride in themselves and, as part of themselves, their draconic
+     heritage. Dragons represent power to them; Sometimes terrible, and
+     sometimes wonderful.
+
+     While Tiamat is known to be a god of evil, the dragonborn see a
+     practicality in that evil when it comes to war. In their view, killing is
+     never a good thing, but it is sometimes (or oftentimes, depending on
+     which dragonborn you're talking to) necessary. Instead of worshiping her
+     for evil purposes, they instead venerate her aspect of vengeance and
+     wealth - to match the needs of war and the benefit of spoils from that
+     war. In the mind of a Vyxtian, leaving the spoils is just wasteful, and
+     even disrespectful to the dead. Paladins of Tiamat are employed as
+     warrior-generals of their armies, and an order of them comprises one kind
+     of their elite strike forces.
+
+     Bahamut is revered by almost all nobles. His followers comprise most of
+     the churches of healing, and their holy knights help police internal
+     affairs of Vyxt. If there is a traitor in their midst, the holy knights
+     of Bahamut work tirelessly to root them out. Bahamut's holy knights can
+     detect magical auras and even sense lies. It is important to gather the
+     unfettered truth when compiling these works of mine. To evade these
+     powers it is good to be in a place where a magical aura already exists,
+     or be ready to create your own with blessed holy water or druidic
+     berries - items which seem innocent enough but baffle such detection. I
+     have heard other writers carry a talking doll or illusory pocket
+     paintings to ensure the schools of magic shown are expected. Rest assured
+     that my techniques are much more advanced than these ideas that were
+     surely thought up on a short wagon ride.
+
+     Worshipers from both sides accept Bahamut and Tiamat's relationship as a
+     complex one, much as the dragonborn themselves have a complex
+     relationship with dragons. Worshipers of one dragon deity will show
+     respect and sometimes even act in partnership with the deity of the
+     other.
+
+**** external affairs
+     :PROPERTIES:
+     :CUSTOM_ID: dirshum--golani-grumsvelt's-guide-to-dirshum--vyxt-and-dragonborn--external-affairs
+     :END:
+
+     The most immediate neighbors of Vyxt are the dwarves of Glintstrad and
+     the humans of Cyorro. Their histories together are mottled with wars over
+     resources. There is a friendly relationship with Nomasgard, and a niche
+     one with Bel'aheldan. Other nations are too far or too unconcerned with
+     Vyxt to be of great interest to the nation as a whole.
+***** Glintstrad
+      :PROPERTIES:
+      :CUSTOM_ID: dirshum--golani-grumsvelt's-guide-to-dirshum--vyxt-and-dragonborn--external-affairs--glintstrad
+      :END:
+
+      One such war was fought mostly underground - the dwarves had dug their
+      tunnels far into Vyxtian territory and they happened upon preserved
+      dragon hordes from ancient times. The dwarves had pilfered much by the
+      time the horde-guards had spotted them. The Vyxt do not act kindly when
+      one uses a pick to pry the gemstones out of their history. While the
+      dwarves were in their primary terrain, the dragonborn were fighting with
+      a cause they felt righteous. The dwarves were beaten back and they left
+      empty handed. Today there is a treaty in place declaring clearly that
+      the borders between the two extend underground as well. Maps have been
+      drawn showing such caverns. Though one expects such boundaries are hard
+      to enforce, and a dwarf would be a fool to call out for Vyxtian guards
+      upon arriving in a large dragon horde and the owner nowhere to be seen.
+
+***** Cyorro
+      :PROPERTIES:
+      :CUSTOM_ID: dirshum--golani-grumsvelt's-guide-to-dirshum--vyxt-and-dragonborn--external-affairs--cyorro
+      :END:
+      Long ago, Cyorro was duped by a clever dragon into laying siege to an
+      area of worthless sand in Vyxt territory. The dragonborn didn't put up
+      much of a fight for that area, and lost much territory in this process.
+      Today Cyorro has offered some of that land back in reparation, but the
+      spoils are gone forever - probably hidden near the basements and attics
+      of many a warrior's inheritors. Legend has it that the dragon sought a
+      dark green orb with power to bring back the dead or capture souls for
+      strange and mostly unknown soul magic. I just wish I could blame a
+      crafty green dragon for anything the dragonborn authorities didn't like!
+
+***** Nomasgard
+      :PROPERTIES:
+      :CUSTOM_ID: dirshum--golani-grumsvelt's-guide-to-dirshum--vyxt-and-dragonborn--external-affairs--nomasgard
+      :END:
+      Across the Valiant Sea, Nomasgard is the closest sea-based state to
+      Vyxt, and much trading is done there instead of traversing Glintstrad -
+      depending on where the good are coming from. Nomasgard, Glintstrad, and
+      Vyxt all donate a pool of patrol fleets, which are even cross-staffed
+      between the nations of Nomasgard and Glintstrad. Still, Vyxt keeps a
+      navy of its own. Self sufficiency is vital to the dragonborn, and they
+      view slavery in many forms - alliances and politics potentially being
+      another kind.
+
+***** Pirates
+      :PROPERTIES:
+      :CUSTOM_ID: dirshum--golani-grumsvelt's-guide-to-dirshum--vyxt-and-dragonborn--external-affairs--pirates
+      :END:
+
+      Dragonborn pirates operate large vessels instead of smaller and faster
+      ones. They are escorted by a convoy and while they can't always catch
+      trade ships, they can corral their victims or even take on lightly
+      guarded trade ships. The navies usually can only track such ships from
+      their smaller reconnaissance vessels. Any good dragonborn captain will
+      have a sorcerer onboard to hide its location or even completely relocate
+      the ship. This keeps the pirates at large and still having much larger
+      ships for large hauls and a sort of base of operations from which other
+      pirates strike out.
+
+      It is said an order of dragonborn is maintained who seek wizardry from
+      the elves of Bel'aheldan. Not all dragonborn can easily harness their
+      dragonic heritage for sorcerous powers. However, the costs of such a
+      journey for an individual are many, especially for a lone trip. Typically
+      only the nobility can afford the trips, let alone the steep costs of such
+      tutelage. These warrior-wizards are said to be represented in every
+      clan - a way of stating that the dragonborn embrace their draconic
+      heritage by choice rather than necessity.
+
+** historic characters
+   :PROPERTIES:
+   :CUSTOM_ID: dirshum--historic-characters
+   :END:
+*** Golani Grumsvelt
+    :PROPERTIES:
+    :CUSTOM_ID: dirshum--historic-characters--golani-grumsvelt
+    :END:
+    Self proclaimed lore master of Dirshum, Grumsvelt is a wanderer at heart.
+    He's been to every major city in the known world, and some rumor that he's
+    made it a point to stay at least one night in every berg in the world as
+    well. Before Duranae's mishap, he had written much on Dirshum. Books of
+    his can be found in sitting rooms, waiting areas, libraries, and inns -
+    all with the letters "GG" prominently traced in brass upon the cover.
+    Having lived around or in Dirshum, your characters would know much about
+    the city. This primer would tell you much if you were an outsider
+    from another world though...
+** nations                                                         :noexport:
+   :PROPERTIES:
+   :CUSTOM_ID: dirshum--nations
+   :END:
+
+   | name                | race       | pop | type | name    | capitol   | notes      |
+   |                     |            |     |      | pool    |           |            |
+   |---------------------+------------+-----+------+---------+-----------+------------|
+   | Bel'aheldan         | high elves |     |      |         | Cendwar   |            |
+   | Chuzhou             | human      |     |      | chinese |           | mages      |
+   | Cyorro              | human      |     |      |         |           |            |
+   | Tentaku             | orcs       |     |      |         |           |            |
+   | Glintstrad          | dwarves    |     |      |         |           |            |
+   | Minheimia           | wood elves |     |      |         | Kep Aelar |            |
+   | Nomasgard           | human      |     |      | celtic  | Duranae   |            |
+   | Gazgren             | globinoids |     |      |         |           |            |
+   | Tribes of Egalstan  | human      |     |      | slavic  | Warg      | barbarians |
+   | Vyxt                | dragonborn |     |      |         |           |            |
+   | Saim Hain Horseclan | human      |     |      | slavic  |           | barbarians |
+
+*** Tribes of Egalstan
+    :PROPERTIES:
+    :CUSTOM_ID: dirshum--nations--tribes-of-egalstan
+    :END:
+    The 5 tribes of Egalstan live off of its bountiful lands in a harsh
+    harmony with each other.
+**** Saim Hain Horse Clan
+     :PROPERTIES:
+     :CUSTOM_ID: dirshum--nations--tribes-of-egalstan--saim-hain-horse-clan
+     :END:
+     Baranov runs the horse clan.
+
+     (outdated) The party has freed the first band of the horse clan. There
+     are 11 bands total.
+
+     - Mirimi (son of Baranov)
+
+     Random names:
+     - Stolia
+     - Sukalia
+***** Gulmav
+      :PROPERTIES:
+      :CUSTOM_ID: dirshum--nations--tribes-of-egalstan--saim-hain-horse-clan--gulmav
+      :END:
+      The party ambushed, captured, and then charmed Gulmav while he was on
+      guard duty at night. He prefers a spear but knows how to fire a bow from
+      horseback as well. He's one of the more skilled warriors of the band.
+***** freedom?
+      :PROPERTIES:
+      :CUSTOM_ID: dirshum--nations--tribes-of-egalstan--saim-hain-horse-clan--freedom
+      :END:
+      The party has cleared the goblin hovel where the band drops off its
+      tithe. The tribe will be uneasy about this. There's a reason the players
+      didn't find any prisoners in there: The tribe polices itself quite well
+      and delivers on its tithe without issue. But, the chieftain's son had
+      recently struck a Bugbear, and it brought about a violent death. The
+      chieftain is thinking emotionally right now and willing to lend aid to
+      the party.
+
+      He can muster the bands of the horse clans together.
+**** Stone Gusts
+     :PROPERTIES:
+     :CUSTOM_ID: dirshum--nations--tribes-of-egalstan--stone-gusts
+     :END:
+     These people are in the frigid mountains. They believe they have giant
+     blood in their names. The prefer to wait for prey to come across and they
+     pounce on it. They bring down large prey such as mammoths with ambushes
+     and ferocious surprise.
+**** Vinesbane
+     :PROPERTIES:
+     :CUSTOM_ID: dirshum--nations--tribes-of-egalstan--vinesbane
+     :END:
+     Excels in trapping for furs and game-y meats. They also gather a lot of
+     herbs and berries from the trees. They know more about medicine than the
+     other tribes, and have a skill at living off the lands that exceeds even
+     that of the other tribes.
+**** Quvitol (outdated)                                            :noexport:
+     :PROPERTIES:
+     :CUSTOM_ID: dirshum--nations--tribes-of-egalstan--quvitol-outdated
+     :END:
+     This tribe hunts by encircling a large area and playing a lot of noise
+     and closing the circle as they do so, and then can easily take the
+     animals they need for food. They do fine work with their gatherings to
+     make musical instruments and other more sophisticated trappings that
+     makes them look more civilized. They are the least superstitious of magic
+     and that by itself has earned them much distrust amongst the other
+     tribes. Still, they are recognized as a fully autonomous tribe.
+
+     They are great at baffling tactics.
+**** Quvitol
+     :PROPERTIES:
+     :CUSTOM_ID: dirshum--nations--tribes-of-egalstan--quvitol
+     :END:
+     The Quvitol are members of Egalstan that practice magic in secret. They
+     are everywhere and no where. Unlike other clans which camp, hunt, and
+     otherwise live together, the Quvitol are interlaced amongst the tribes.
+     During midsummer's festival they will keep an eye out for potential
+     budding members. Quvitol recruits are offered solidarity, support, wisdom
+     to hide their abilities from the superstitious members of their tribe,
+     and how to find other Quvitol.
+
+     Discovery of a Quvitol member, in the best of circumstances, is exile.
+     Though the reactions can often get the Quvitol member killed.
+
+** map
+   :PROPERTIES:
+   :CUSTOM_ID: dirshum--map
+   :END:
+  #+attr_html: :width 594px
+  [[~/Dropbox/notes/dirshum-01.png]]
