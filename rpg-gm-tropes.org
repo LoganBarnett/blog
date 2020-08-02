@@ -1,0 +1,380 @@
+#+title:     RPG GM Tropes
+#+author:    Logan Barnett
+#+email:     logustus@gmail.com
+#+date:      <2020-02-24 Mon>
+#+language:  en
+#+file_tags:
+#+tags:      dnd
+
+* local dictionary                                                 :noexport:
+
+* RPG GM Tropes
+** some background
+   I DM'ed 2nd edition Dungeon and Dragons in my early teens. I'd say it was an
+   awkward phase of my life, but things haven't really gotten less awkward, just
+   differently. My DM career has improved with my life experiences. I've been
+   running a campaign series since 2018. I've lost players, gained players. I've
+   run bad sessions, and had to lock horns with some players that are very
+   opinionated.
+
+   I've also been a player for just about as long for another group, and I get
+   to learn from my DM's mistakes (as I see them), and the strong points.
+
+   I don't think I have every answer, but I find articulating my
+   mind space in a way that others understand is a very useful exercise. And
+   hey, maybe it'll help someone else.
+
+** the checklist
+   I've done some reading and found there's some kind of checklist that most
+   experienced (see vocal) DMs I've taken any kind of advice from is good.
+   Perhaps you've heard it before: Don't over prep, prep, rule of cool, NPC
+   pools, have a session 0, etc. But find it requires more context. Without
+   context, I'm just as likely to bumble into the problem and wind up learning
+   the lesson the hard way. I'd like to avoid those generally, as they can be
+   quite painful. So, I won't be rattling off some checklist, but instead going
+   over the things I've experienced with some depth.
+
+** dysfunctions
+
+   There's definitely dysfunctions you can have as a DM, and I feel like as the
+   DM you are the one who sets the tone of your table. The players are involved
+   just as you are, but when it's your table, you have the power to govern it.
+   If it doesn't happen to be your table, well, that gets tricky.
+*** not your table
+    I've played with a group where this is the case, and it definitely can create
+    some social tensions. The DM does the prep but other people host. The hosts
+    have the benefit of not traveling, but they lose the benefit of a mental
+    health break for the campaign if they are having a rough day. It's important
+    to consider that their rough days might have little to nothing at all to do
+    with your campaign. I highly recommend reading up on Spoon Theory if you
+    aren't familiar with the idea. I've definitely skipped out on some sessions
+    just because there was too much social tension going on at the table. The
+    tension might even be healthy/normal stuff, but it was too much for me when
+    considering everything else in your life. I'm glad I can just call in on
+    those days.
+
+*** significant other
+
+    I don't think having a significant other as one of your players is
+    automatically a dysfunction, but it's worth considering that it _could be
+    dysfunctional_. Remember that your biases are largely invisible to you, and
+    one of the lovely thing about [[dice]] is that they remove a great amount of the
+    biases from you. However you have to stick with the dice rolls.
+
+*** using your screen to lie
+
+    This feels like Gragaxian era player-DM hostility. It might be tempting to
+    fudge rolls because your boss is underperforming, but the flip to that is
+    that you're robbing your players of their victories. Defeating the boss
+    isn't necessarily the victory. But getting that amazing hit in at just the
+    right time is a huge victory for the player.
+
+    Similarly, you could fudge your rolls to go easier on the players. This is
+    probably more a matter of opinion, but I feel you shouldn't do this. The
+    randomness a d20 offers is great, and combat should never be a certainty.
+    Every fight should involve risk of some kind, and if there is risk then
+    there is reward (not just treasure - but in narrative and enjoyment). Also,
+    if you pull a shot on player A, will you do the same when it's player B's
+    turn? Are you really allowing player A to learn the right lesson? Things
+    just get harder for inexperienced players later. Instead of pulling a shot,
+    allow the players to call in a favor for a raise (that's why it's in the
+    game), or use some other narrative _outside of dice and combat_. And
+    sometimes a PC death can be a wonderful thing, narratively speaking.
+    Characters can show their loyalties to each other. Raising player A becomes
+    a quest of its own that just writes itself. Player A now has a chance to
+    feel indebted to their party, and the bond is strengthened. Death or even
+    near death creates vulnerable moments, and that's wonderful for story
+    telling.
+
+    Your screen is a chance to build suspense, to cut the players out of bias.
+    I like to roll for encounters on each day, but I roll them at night. That
+    way if it's a day encounter, they can run into it anytime between waking and
+    the next day they wake. You can also make players wonder if you're rolling
+    for attacks, traps being triggered, etc. And if you do it enough, and make
+    it look convincing, it keeps them on their toes. To make it look convincing,
+    you need to look at the dice, and then consider what that might mean. You
+    could even make something up briefly and then just not act upon it. It's the
+    perfect fake tell to throw.
+
+*** story preparation
+
+    On occasion I daydream about my campaign. I consider what's going on, and
+    what could happen. And really, besides having some stat blocks ready and
+    maybe some props (if that's your style), that should be enough.
+
+    Prepping for the story invites bias to yourself as a storyteller. Here's
+    kind of a contrarian stance: Your job is not to tell the story as a DM. Your
+    job is to set the stage. You use metaphorical props to dress up your scene
+    and provide it to the players. Your players are the primary actors. Your
+    playwright is a combination of dice and players.
+
+    Instead I like to think of there being a world, and whether the world has
+    players in it or not, it still turns. Market prices rise and fall. Nations
+    war with each other, and later make peace. Evil creatures spill from
+    whatever holes birth them, until culled. Villagers band resources together
+    to do this culling. Power hungry people work to seize power. Your world is a
+    rich place for stories to happen, and all of them can happen at a moment's
+    notice. Consider who the big players are of your world, and how their
+    ambitions cause events to sway in their favor.
+
+    Then drop the players into such a world, and let them become big players who
+    set their own series of events in motion. The big people are out there, but
+    perhaps they have not yet noticed nor cared about the party. Maybe they
+    have, but the assassins will take time to reach them, or the smear campaign
+    needs time to warm up such that these powerful individuals should be locked
+    up rather than let to roam free, unchecked, and above the law.
+
+*** tell instead of show
+
+    This is ancient storytelling advice. You must show instead of tell. This
+    means you want to stay away from factual descriptions you'd see in some
+    boring textbook. "You arrive at the town" is certainly easy, but there's no
+    flavor. Try something like this:
+
+    "As you crest the hill, you can see the double-ring of the city's walls.
+    Nestled in its center are spires of smooth marble. From here you can hear
+    the low buzz of the city's bustle. The glint of spearpoints from the guards
+    at the city gates catches the sun and makes you squint for a moment. The
+    breeze picks up and the manure of the surrounding farmland makes your face
+    scrunch for a moment. Welcome to Duranae, the jewel of Nomasgard."
+
+    I wouldn't necessarily write this down. Though sometimes I write down some
+    parts I think will stand out. To me, "tell" is stating a fact. "Show" means
+    you impregnate the senses. There's a lot more than 5! You can talk about how
+    things are cold. Talk about how there's an overcast, yet the green of the
+    grass is crisp in your eyes. You hear the sound of wheats cackling against
+    themselves when the wind picks up. The city smells of body odor and bile.
+    You feel the cobblestone vibrate as the mounted soldiers pass you on their
+    way to the gates.
+
+    This is stuff you can think up a little bit ahead of time, but you're also
+    just pulling it directly out of your ass. The more you do it, the better you
+    get. It might seem like this causes things to drag on, but players drink
+    this up. Their imagination thirsts for detail. They want to be there with
+    you in your mind's eye. Embellish. Always embellish. And when the players
+    want to interact with that embellishment, let them! I mentioned mounted
+    soldiers. The party's rogue wants to see if he can pinch some orders from
+    the belt of one of the soldiers in the back of the troop. Go for it! This is
+    what rogues are built for. Now you have a story about entering this
+    stinking, busy city, and the first thing the fucking burglar does is
+    snatches something that doesn't belong to them. And then the story gets
+    better when the party has to break the burglar out of the jail. In order to
+    do so, you have to work out some kind of deal with the local underbelly.
+    This underbelly that your burglar doesn't have a great history with. But
+    maybe the party never knew this, because the burglar kept secrets! Oh wow.
+    Could you imagine such a session? Who cares about your quest you planned.
+    You have all the time in the world to weave the "main" story back in. Just
+    make connections later.
+
+*** puzzles and riddles
+    Puzzles and riddles are, at best, going to appeal to one of your players.
+    Hardly the whole group. Even a party exclusively made of wizards is going to
+    have some wizards that are less "thinky" than others. The lure of puzzles
+    and riddles is that when you read and book or watch a movie with it, the
+    affordances of a movie or book is that they can advance time to the viewer
+    as well as understanding. Your table cannot do this. You can give more and
+    more hints if they get stuck, and then it becomes less satisfying for
+    everyone in the end, including you, the DM.
+
+    If you want a puzzle for players to tackle, put a door in front of them
+    during a situation where there are a lot of unknowns. It can be a mighty
+    door, with a intricate locking mechanism, and fearsome statues of giant
+    dragon heads poised to breathe on the poor fool with the lock picks. The
+    party will use the tools at their disposal to open the door, but which one?
+    The dwarf with the hammer could bash it in, or the wizard could use knock on
+    it. But both of those are loud, and one takes longer than the other.
+    Firebolt will cause smoke to carry through the cave, and might even make
+    breathing difficult. The rogue can't get high enough up to the dragon heads
+    to determine for sure if they are traps, but damn they look like a trap. And
+    more importantly, their trigger and exactly what they will do - it could
+    breathe fumes into the whole room - not just the sucker who picked the
+    locks. The ranger could employ their pet to sniff the area to tell if there
+    are certain creatures that inhabit this area (and you should let it work! It
+    smells like orcs in here...). The druid might be able to conjure or persuade
+    an insect to climb through the keyhole and report back what it sees. The
+    naive warlock might just misty step to the other side, and have zero support
+    from their allies for a few rounds while everyone tries to beat the door
+    down, hearing the screams of their friend being assaulted by some unseen
+    horror.
+
+    The players will think through their tools (or not), and it becomes a big
+    part of the fun. You're playing a table-top RPG. Not some computer game
+    where the inputs and outputs are relatively fixed. This is where your medium
+    excels, so let it!
+
+
+*** house rules
+    One of my favorite examples of house rules turning upside down is in Matt
+    Mercer's first campaign for Critical Role. I love these folks. They showed
+    me what D&D could be, and are responsible for getting me back into it and
+    giving me such a creative outlet in life. And also I want to learn from
+    things I feel like bit them.
+
+    From watching his campaign (like, all of it) and also thumbing through the
+    feats section of his campaign book, I get the impression Mercer doesn't feel
+    like spellcasters are powerful enough. If you tally things in up in the
+    various player materials, you'll find for sure that spellcasters have fewer
+    feats available to them (circa 5th edition) than the non-casting
+    counterparts. As a spellcaster, you distinguish yourself mostly through your
+    spell choices, with a smattering of other things (sorcerous origin, school
+    of study, religious domain, etc). A wizard that takes telekinesis is
+    different than a wizard that takes fireball. Taking a two handed hammer over
+    a two handed sword _really isn't that different_, but taking great weapon
+    master vs mobile is very different. Take a look at the feat schedule for all
+    the classes. You'll notice that everyone gets the same number of feats -
+    except rogues who get one more, and fighters who get two more.
+
+    Standard rules are that if you cast a level spell (as in 1st level or up),
+    any other spells you are permitted to cast that turn must be a cantrip.
+    Likewise, if you cast a spell (not a cantrip), you can cast a cantrip as a
+    bonus action. This all assumes the casting time permits this. No cantrips
+    are bonus actions for good reason, but Quicken changes this at a price.
+
+    Mercer's house rule basically substitutes "cantrip" with "3rd level spell or
+    lower" throughout. Before you correct me, hold on. This means you can
+    possible double or even triple-tap _fireballs_ before _initiative is even
+    rolled_. And this happened. And the fucking sorcerer soloed an entire
+    encounter. The look on Matt's face was one of daggers that day. Or at least
+    that's my recollection of it. Afterwards he knocked it down to "2nd level
+    spells or lower". Give me some time and I'll abuse that too...
+
+    If you're reading this, chances are you are not a game designer specifically
+    from D&D. So you don't have all the notes, all the arguments, and the 40 or
+    so years of history to know how to just tweak a single rule in the middle of
+    a _giant ecosystem of other rules_. And before you say it's not that big,
+    _consider every spell is a rule_.
+
+    I'm not saying you shouldn't ever house rule, but you should do so both
+    deliberately and sparingly. Matt Mercer was deliberate, and as far as I know
+    it was the only notable thing he house ruled (so, sparingly too). Even then,
+    it bit him and he had to dial it back. His players weren't the crunch heads
+    that could've continued to make him regret it, fortunately.
+
+    Also, a house rule should be included in your session 0, because players
+    build their characters around the confines of the rules. When you change
+    rules without telling them, you're squashing their carefully laid plans.
+    Don't do this. Not without getting buy in for your session 0.
+
+    Even then, make sure your motivations aren't for [[realism]]. Your game's rules
+    should outline a way that everyone can have fun that's consistent. Before
+    you bring down that house rule, consider: Is it _really that bad to leave as
+    it was_?
+
+*** realism
+    Add rules to supplement what exists already because it makes things fun and
+    interesting. Not because you want a simulator. When the rules don't seem to
+    jive with how you think things should go, I invite you to revisit your
+    interpretation of the rules. Don't add dexterity modifiers to walking speed.
+    _Dextrous_ doesn't necessarily mean _fast_. _Mobile_ doesn't necessarily
+    mean _coordinated_. Hit points aren't necessarily meat points (they could be
+    some combination of plot armor, meat, will to live, and rolling with the
+    punches earned from countless fights).
+*** balancing
+    Show me one underpowered or overpowered thing in 5th edition, and I'll show
+    you something you don't understand.
+
+    One thing I like to remind my players when they get janky with spells:
+    Whatever bullshit they came up with that's crazy powerful is also available
+    to the bad guys. You want to polymorph that thing into a snail, then put it
+    in a metal tube, and break concentration to see the thing squirt out both
+    ends in a macabre shower of gristle? Just wait to see what the Evil Druid
+    Enclave has in store for you when each member casts Conjure Woodland Beings,
+    each bringing out 8 sprites that can fly and cast polymorph. They make their
+    own cliffs!
+
+** good habits
+
+*** roll with it
+    Be a _slave_ to the dice. They set you free. No player can blame you for
+    their shitty rolls. Imagine how badass your boss looks when he lands that
+    critical hit on the warrior and knocks her down. Then he looks up at the
+    cleric and licks his lips. He knows who he's going for next!
+
+    Call for rolls constantly. This is also counter advice, but it's good
+    advice, and here's why: Players spend painstaking amounts of time on their
+    characters, and the painful part to them is picking from all the good
+    choices they have. Proficiencies, powers, spells, and other specializations
+    make some characters better at some things than others. If you have a
+    character who learned how to use a two handed sword, and even learned a
+    fighting style with it, then you want that character to swing it. Similarly
+    if someone at your table put together a character who is a con artist, then
+    let them con.
+
+    You do this by calling for rolls. You don't have to have them roll Deception
+    for every lie they tell, but you can call for it during a the course of a
+    conversation. When the party is in the wilderness, the important of the
+    group's tracker is highlighted when the city boy rushes out into the bushes
+    and gets lost. The barbarian in the group can cleave goblins without
+    breaking a sweat, but nobody will let her into the city without a fast
+    talker spinning a wild tale of the barbarian's indentured servitude, and how
+    the city's law allows for all of the party to enter, so long as the speaker
+    keeps everyone in line.
+
+    Some find part of their immersion with the "crunch" or the stats and numbers
+    of the game system. While this doesn't have to be you, it's helpful to
+    respect that this probably applies to someone at your table. Let their
+    numbers guide their character. Furthermore, also respect the roll itself.
+    I've have players who hate the roll. But the roll is liberating as a DM. You
+    can make anything happen by calling for a roll, as long as you can own the
+    outcome. Don't try to control the outcome with a roll. Rolls fight predicted
+    outcomes. Instead, roll the dice first and then use the result to prompt
+    your next narrative. If your paladin can't hit anything (dice are cold, and
+    rolling low tonight), then your paladin can spin it as having lost her
+    conviction - they'd let that thief go because she knew the thief was going
+    to feed the stolen bread to his family. Now the paladin isn't so sure of
+    herself and her righteous position she so readily takes. Her head isn't in
+    the game. A great player may even use that moment to reach out to another
+    character, and be helped or rebuffed. No answer is wrong! But it will be
+    memorable. Or, you know, you can throw up your hands and say "dice are
+    bullshit", and now you're just worse off than when you started.
+
+*** props
+
+    I like me some props. Props are little things, like miniatures, but also can
+    include a cape you wear on your person, despite also wearing that shirt from
+    the last video game you played. Other props can be a lack of lighting,
+    candles (be mindful of unattended, open flames), and music from movies and
+    video games that match your setting and the theme of the moment.
+
+    I love video game music far more than movie music. The reason being is that
+    video game music is designed not for one specific moment, but for a general
+    moment (like combat, or dialog, or tension, or discovery). It's also not too
+    invasive. Movie scores oftentimes make loud noises to accompany some
+    dramatic moment in the movie, like when a bomb goes off or the character
+    ends their dance with a flourish. Your moments are more like what a video
+    game has.
+
+    These props all help set the mood. Think of movies you watch, like Lord of
+    the Rings. One actor is littered with props: A long beard, thick linen robes
+    and a wrinkly, pointed hat. That's a wizard! But we all know that was an
+    actor. If we stop thinking about the story of Lord or the Rings for a
+    moment, we'll quickly realize that actor has bills, probably a family,
+    fiends, and has certain apps installed on his smart phone. But the props are
+    so rich in the movies that they help us slip into immersion. As DMs we can't
+    be expected to match the budget and skill of all of those involved in a
+    movie. However we can buy $10 worth of fantasy coins, or paint the goblins
+    mostly green and toss them in some dip to make them pop a little. We can
+    even take a little extra time to add some flourish to the maps we draw with
+    wet erase markers. Add a line and a circle to show a torch sconce. Put a rug
+    on the ground, or a pile of hay. It's so much more immersive than lined
+    boxes everywhere. Don't worry about the time it takes to add a little extra.
+    The story must keep moving, but not necessarily at some crazy fast pace.
+
+*** embellish
+
+*** let the players drive the story
+
+*** cards on the table
+    Don't just tip your hand with your secret story elements. Drop the whole
+    hand of cards on the table.
+
+*** your plot is their backgrounds
+
+*** embrace the heroism of the player characters
+
+*** make your monsters mean
+
+*** steer clear of house rules
+
+
+*** make a party together
