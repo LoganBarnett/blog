@@ -1,0 +1,89 @@
+#+title: Graphing and Plotting
+#+author: Logan Barnett
+#+email: logustus@gmail.com
+#+language: en
+#+tags: graphs org-mode
+#+options: toc:t
+
+* introduction
+
+=org-mode= supports graphing with =gnuplot=. This can be done directly with
+=#+plot= but it's very rudimentary. It can also be done with =org-babel= and I
+can still feed tables into it.
+
+* reading material and citations
+
+- [[http://orgmode.org/worg/org-contrib/babel/languages/ob-doc-gnuplot.html#orgfbe3a85][ob-gnuplot docs]] :: Has lots of good examples for =gnuplot= via =ob-gnuplot=.
+- [[http://orgmode.org/manual/Org_002dPlot.html][org-plot docs]] :: =org-plot= documentation. Examples feel sparse for my simian
+     mind.
+- [[http://orgmode.org/worg/org-tutorials/org-plot.html][org-plot tutorial]] :: And has [[http://orgmode.org/worg/org-tutorials/org-plot.org][the org mode version]] I can use as reference.
+- [[https://lists.gnu.org/archive/html/emacs-orgmode/2012-03/msg01019.html][Plotting (with gnuplot) using dates timestamps]] :: Mailing list discussion
+     showing how =org-timestamp= columns get converted to another format.
+- [[http://www.gnuplot.info/documentation.html][gnuplot documentation]]
+
+* plot
+
+* ob-gnuplot
+
+=ob-gnuplot= is the =org-babel= approach. It's much more powerful but much more
+explicit. Basically it allows expression as pure =gnuplot= code.
+
+** reset
+The =*gnuplot*= buffer is basically a repl for =gnuplot=. In order to ensure
+settings don't bleed over between evaluations, use =reset= to make sure prior
+runs don't influence the current run.
+
+#+begin_src gnuplot
+  reset
+#+end_src
+
+** separator
+Tables fed to =gnuplot= are tab separated. Set this to properly distinguish
+columns apart from each other.
+
+#+begin_src gnuplot
+  set datafile separator "\t"
+#+end_src
+
+** dates
+
+Dates are harder to work with. There's a few =gnuplot= settings that are just a
+given with dates/times. The dates provided by =org-timestamp= are converted to
+the format =YYYY-MM-DD-hh:mm:ss=. The hours, minutes, and seconds are all always
+"00". This is determinable by looking at the =*gnuplot*= buffer, which will show
+a temporary path where the file will be emitted such as
+=/var/folders/2g/7v48qrcn2nqgm9_dl173mhd80000gn/T/babel-3445j1/gnuplot-344q9h=.
+
+
+** working example
+
+"Real" data!
+#+tblname: example-data-01
+| time             | ufo sightings | taylor swift songs produced |
+|------------------+---------------+-----------------------------|
+| <2010-12-16 Sat> |             1 |                          45 |
+| <2012-12-16 Sat> |             2 |                          24 |
+| <2014-12-16 Sat> |             6 |                          12 |
+| <2016-12-16 Sat> |            30 |                           5 |
+| <2017-12-16 Sat> |            50 |                           3 |
+
+#+begin_src gnuplot :var data=example-data-01 :file gnuplot-example-01.png
+  reset
+  # org-babel passes gnuplot a payload that's tab separated.
+  set datafile separator "\t"
+  set xdata time
+  set xlabel "time"
+  set yrange [0:]
+  # This is the format that org-babel sends to gnuplot.
+  set timefmt "%Y-%m-%d-%H:%M:%S"
+  set xrange ["2010-12-03-00:00:00":]
+  set format x '%Y-%m-%d'
+  set xtics format "%b %d"
+  # 564 is the magical width of 80 columns at the present font settings.
+  set term png size 564, 400
+  plot data u 1:2 w linespoints title 'ufo sightings', \
+       data u 1:3 w linespoints title 'taylor swift songs produced'
+#+end_src
+
+#+RESULTS:
+[[file:gnuplot-example-01.png]]
