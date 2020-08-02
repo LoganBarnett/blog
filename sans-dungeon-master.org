@@ -1,0 +1,264 @@
+#+title:     Sans Dungeon Master
+#+author:    Logan Barnett
+#+email:     logustus@gmail.com
+#+date:      <2020-03-31 Tue>
+#+language:  en
+#+file_tags: dnd
+#+tags:
+#+auto_id:   t
+#+options:   toc:nil
+
+#+BEGIN_EXPORT html
+---
+categories: dnd
+date: 2020-03-31
+layout: default
+title: Sans Dungeon Master
+---
+#+END_EXPORT
+
+* local dictionary                                                 :noexport:
+  :PROPERTIES:
+  :CUSTOM_ID: local-dictionary
+  :END:
+#  LocalWords:  DM DMG
+* Playing without a Dungeon Master
+  :PROPERTIES:
+  :CUSTOM_ID: playing-without-a-dungeon-master
+  :END:
+  Dungeon masters can be hard to come by. It's a lot of work to be a dungeon
+  master even if you can get away with minimal preparation. It can also be
+  emotionally exhausting as you try to provide incentives for your table full of
+  chaotic neutral cunctors to move forward. Cat herders have it easier than
+  this.
+
+** but really, why?
+   :PROPERTIES:
+   :CUSTOM_ID: playing-without-a-dungeon-master--but-really-why
+   :END:
+
+   It's worth noting that any mechanism that removes the need for a DM also
+   necessarily means that, as an actual DM, you could reduce the work you need
+   to do.
+
+   My particular incentive was to provide a trainer when it comes to the crunch.
+   I think we want to be welcoming to all kinds of people to the vast world that
+   is table top role playing. Not everyone has been playing games of any kind
+   which strengthen one's ability to process made up rules and see a play space
+   within it. So I want to create a space where I can teach people the crunch of
+   the game without the pressure of being in a big group. I realize not everyone
+   needs this. However I submit to you that people who need that additional
+   experience and confidence are not representing at our tables today. By
+   definition they could not be there without some kind of Herculean will. We've
+   inadvertently chased them off. But that's okay, because in this document we
+   will build a playground for new players to understand the game without all
+   the peer pressure and social expectations to obey.
+
+   Aside from that, you could run a session when the DM can't make it or
+   something with your characters, and see what they do as they plod along. You
+   can still role play without NPCs or a crafty DM!
+
+** dungeons
+   :PROPERTIES:
+   :CUSTOM_ID: playing-without-a-dungeon-master--dungeons
+   :END:
+   Appendix A of the Dungeon Master's Guide (henceforth the DMG) has provided
+   looks like a great tool for generating dungeons of many kinds. I'll come back
+   and update this after I've had a chance to play with it.
+
+*** descending further
+    :PROPERTIES:
+    :CUSTOM_ID: playing-without-a-dungeon-master--dungeons--descending-further
+    :END:
+
+    There are two descending features in a dungeon: One is via the random room
+    generation in the DMG, which has lots of options for going down. The other
+    is, if no other downstairs passages have been created, create a simple
+    downstairs in the furthest corner (coin flip or roll-off if equidistant).
+    This happens for the last room to be generated.
+** monsters
+   :PROPERTIES:
+   :CUSTOM_ID: playing-without-a-dungeon-master--monsters
+   :END:
+
+   "Monster" is the word we will use for any enemy creature. The creature could
+   be human, for example, but we will still refer to it as a monster.
+
+   We said we wanted to have combats for training purposes. So we need to
+   generate them. This should be based on the challenge rating system, though
+   it's well understood that the challenge rating becomes less accurate as the
+   players become more powerful.
+
+*** population
+    :PROPERTIES:
+    :CUSTOM_ID: playing-without-a-dungeon-master--monsters--population
+    :END:
+    Let's say that a floor is all that a party is expected to handle at a time.
+    The DMG states that six to eight medium or hard encounters is something a
+    party should be able to handle in a day. So we could staff a floor with
+    monsters. But how many? Do we stuff them all in one room? Do we place them
+    evenly? We could generate enough for one medium encounter per room. In some
+    ways it's a little silly to have a bunch of monsters in rooms waiting to be
+    killed, but let's solve this problem first before fixing the flavor here.
+
+    I'm looking at playing with two players. At level 1, two kobolds are
+    considered a medium encounter. 3 kobolds are considered hard. 4 goes up to
+    deadly. We want to avoid deadly - mostly. If possible we want to skew it to
+    medium and hard. In my example, we'll want 1d2+1 kobolds. The minimum is 2
+    and the maximum is 4. Hopefully we don't get a lot of 4s. But we might! That
+    is another problem to account for.
+
+
+*** difficulty of the floor
+    :PROPERTIES:
+    :CUSTOM_ID: playing-without-a-dungeon-master--monsters--difficulty-of-the-floor
+    :END:
+    Each floor should have same encounter table and therefore difficulty. Each
+    time a new floor is visited, use a new encounter table.
+*** what are the other monsters doing while I kill their friends?
+    :PROPERTIES:
+    :CUSTOM_ID: playing-without-a-dungeon-master--monsters--what-are-the-other-monsters-doing-while-i-kill-their-friends
+    :END:
+
+    The monsters should be able to hear the clang of metal and the shouts of
+    verbal spells from a door that is essentially a series of 2x6s banded
+    together. Monsters in adjacent rooms that hear fights will be prepared for
+    the door to open, and will have held actions to attack.
+
+    If the players can get the drop on the monsters in a given room, and can
+    take them down in the surprise round without using loud things, then the
+    adjacent rooms won't hear anything.
+
+*** this dungeon's dice are hot, and it's too hard
+    :PROPERTIES:
+    :CUSTOM_ID: playing-without-a-dungeon-master--monsters--this-dungeon's-dice-are-hot-and-it's-too-hard
+    :END:
+
+    Let's agree that players can and should choose to flee when things get too
+    tough. We could roll a deadly encounter three times in a row and after that,
+    the party is likely tapped if not wiped entirely. If the players retreat out
+    the entrance (even with monsters in pursuit), we'll consider them as fled
+    from the monsters and will make it back to town. There they can rest up and
+    go again. The layout will remain the same, but monsters will have
+    replenished their numbers. Every room will have the same encounter roll
+    again.
+
+    This only applies if the floor was not cleared. If the floor was not
+    cleared, then leave it cleared.
+
+*** haha I put them at the end of the room and now they have to run to me
+    :PROPERTIES:
+    :CUSTOM_ID: playing-without-a-dungeon-master--monsters--haha-i-put-them-at-the-end-of-the-room-and-now-they-have-to-run-to-me
+    :END:
+
+    Since dice determine the length and width of the room, we can also use dice
+    to place the creatures within it. We'll need to use dice higher than the
+    total dimension being rolled for. So if the width of a room is 17 5'
+    squares, then we need to use a d20 and simply reroll anything over 17 until
+    we get a lower number. We could also use a d20 for a 11 5' room, but we
+    might wind up rerolling a lot. Switching to a d12 would be better. Always
+    use the smallest. If a creature placement lands atop another, put the new
+    creature adjacent. Before rolling, establish what North is in your dungeon.
+    Then roll a d8 and consult the table:
+
+    | roll | offset    |
+    |------+-----------|
+    |    1 | north     |
+    |    2 | northeast |
+    |    3 | east      |
+    |    4 | southeast |
+    |    5 | south     |
+    |    6 | southwest |
+    |    7 | west      |
+    |    8 | northwest |
+
+*** they always go for the tank
+    :PROPERTIES:
+    :CUSTOM_ID: playing-without-a-dungeon-master--monsters--they-always-go-for-the-tank
+    :END:
+
+    There aren't really tanks in D&D, and we should avoid that here. There's
+    something extra to track though for monsters, which is a similar concept
+    from MUDs and later most MMOs - "aggro". This is generally handled by the
+    computer and tracks damage over time between all of the sources, and the
+    monster attacks whoever is doing the most damage. Then special "tank"
+    abilities increase the aggro on the tank character so they can draw attacks
+    on their hard-to-kill selves. It's both silly and very computation heavy.
+    We'll use something simpler.
+
+    When characters are seen by a monster, the monster needs to pick one. The
+    one picked is generally the one it will stick with.
+
+    If multiple characters are visible, and none of them are engaged in melee,
+    roll the lowest die needed for the number of characters seen and reroll
+    anything exceeding the party size. Before rolls are made, establish numbers
+    for the party.
+
+    If there are multiple characters, and some are engaged in melee, first
+    determine if the character wants to dogpile or split off. Use a 1d10. On a 8
+    and up they will choose a character locked in melee. Otherwise they pick
+    someone not tied up. Then divide and roll off.
+
+    Monsters will remain engaged until dead or the knock out the other
+    character. Monsters won't attempt to kill unconscious characters. If a
+    monster is grappled and pulled away, it will shift to its grappler.
+
+    Monsters that are grappled will always attempt to attack their grappler.
+
+    Monsters that are prone will attempt to stand up, unless they are grappled.
+    In that case they will attempt to break the grapple.
+
+    If a monster has ranged and melee options, it will use ranged only if it
+    cannot reach its target or if every party member is engaged in melee.
+
+    A monster switches to melee if it has a melee option and a party member
+    comes within 5 feet of it. If it has no melee option, it will move as far
+    away from the party member as possible (accepting the opportunity attack),
+    avoiding provoking other opportunity attacks if possible, and then use its
+    ranged attack.
+
+    Monsters always take the first opportunity attack.
+
+*** special abilities
+    :PROPERTIES:
+    :CUSTOM_ID: playing-without-a-dungeon-master--monsters--special-abilities
+    :END:
+
+    Monsters should use their special abilities as much as possible. But using
+    them indifferently without a DM is problematic. Here we will go over various
+    abilities and how it changes monster behaviors.
+
+**** pack tactics
+     :PROPERTIES:
+     :CUSTOM_ID: playing-without-a-dungeon-master--monsters--special-abilities--pack-tactics
+     :END:
+
+     Monsters with pack tactics will prefer to dogpile their opponents. The
+     values for the rolls are reversed. On a 1d0 roll of 3 or higher, the
+     monster picks a target already in melee range.
+
+*** generating a theme for the floor
+    :PROPERTIES:
+    :CUSTOM_ID: playing-without-a-dungeon-master--monsters--generating-a-theme-for-the-floor
+    :END:
+
+    While it can be cool to have a whole floor filled with kobolds, it's nice to
+    mix it up sometimes with other things.
+
+**** allies
+     :PROPERTIES:
+     :CUSTOM_ID: playing-without-a-dungeon-master--monsters--generating-a-theme-for-the-floor--allies
+     :END:
+
+     Many monsters have something they consider to be an ally. If the ally is
+     weaker, generate more of them. If the ally is stronger, generate only one
+     of them. Some monsters have mounts, but that's not covered yet.
+
+    | monster | are allies with | relationship to ally |
+    |---------+-----------------+----------------------|
+    | kobolds | rats            | stronger             |
+    | kobolds | winged kobold   | weaker               |
+    | kobolds | dragon          | weaker               |
+    | goblins | bugbears        | weaker               |
+    | goblins | hobgoblins      | weaker               |
+    |         |                 |                      |
