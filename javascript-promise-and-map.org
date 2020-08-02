@@ -21,6 +21,9 @@ thinking of =map= and through it get a simpler understanding of how the elusive
 JavaScript =Promise= works.
 
 * the type signature of map
+:PROPERTIES:
+:CUSTOM_ID: the-type-signature-of-map
+:END:
 Let's take the ML notation for =map= of a list:
 
 #+begin_example elm
@@ -64,6 +67,9 @@ this will seem backwards to you. The reason this is done is to aid with partial
 application - an important tool in function composition.
 
 * expressing map functionally
+:PROPERTIES:
+:CUSTOM_ID: expressing-map-functionally
+:END:
 We could write our list's map function like this:
 
 #+name: map-list
@@ -98,6 +104,9 @@ With the =Functor=, the ML expression for map becomes:
 #+end_example
 
 * promise
+:PROPERTIES:
+:CUSTOM_ID: promise
+:END:
 
 Tiny! Now let's take a look at something more complicated in JS: Promises. Stay
 with me while we stitch this together. =Promise= in JS has a then method that
@@ -154,6 +163,9 @@ new Left(1)    // Left is the "left" form of Either.
 #+end_src
 
 * in conclusion
+:PROPERTIES:
+:CUSTOM_ID: in-conclusion
+:END:
 I hope this has been informative of the power of =map=. When you hear FP
 enthusiasts talking about how most everything can be handled with some
 combination of =map=, =filter=, and =fold= (=reduce=), one can see how it's more

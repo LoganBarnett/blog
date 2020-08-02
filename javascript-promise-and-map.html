@@ -11,9 +11,9 @@ thinking of <code>map</code> and through it get a simpler understanding of how t
 JavaScript <code>Promise</code> works.
 </p>
 
-<div id="outline-container-orge705a86" class="outline-2">
-<h2 id="orge705a86"><span class="section-number-2">1</span> the type signature of map</h2>
-<div class="outline-text-2" id="text-1">
+<div id="outline-container-the-type-signature-of-map" class="outline-2">
+<h2 id="the-type-signature-of-map"><span class="section-number-2">1</span> the type signature of map</h2>
+<div class="outline-text-2" id="text-the-type-signature-of-map">
 <p>
 Let&rsquo;s take the ML notation for <code>map</code> of a list:
 </p>
@@ -34,7 +34,7 @@ Take this add example:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-js" id="orgd2a1080"><span style="color: #51afef;">const</span> <span style="color: #DFDFDF;">add</span> = x =&gt; y =&gt; x + y
+<pre class="src src-js" id="org111f4d2"><span style="color: #51afef;">const</span> <span style="color: #DFDFDF;">add</span> = x =&gt; y =&gt; x + y
 </pre>
 </div>
 
@@ -72,15 +72,15 @@ application - an important tool in function composition.
 </div>
 </div>
 
-<div id="outline-container-org9681415" class="outline-2">
-<h2 id="org9681415"><span class="section-number-2">2</span> expressing map functionally</h2>
-<div class="outline-text-2" id="text-2">
+<div id="outline-container-expressing-map-functionally" class="outline-2">
+<h2 id="expressing-map-functionally"><span class="section-number-2">2</span> expressing map functionally</h2>
+<div class="outline-text-2" id="text-expressing-map-functionally">
 <p>
 We could write our list&rsquo;s map function like this:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-js" id="org92f32c7"><span style="color: #51afef;">const</span> <span style="color: #DFDFDF;">mapList</span> = f =&gt; xs =&gt; xs.map<span style="color: #51afef;">(</span>f<span style="color: #51afef;">)</span>
+<pre class="src src-js" id="org7c900b5"><span style="color: #51afef;">const</span> <span style="color: #DFDFDF;">mapList</span> = f =&gt; xs =&gt; xs.map<span style="color: #51afef;">(</span>f<span style="color: #51afef;">)</span>
 </pre>
 </div>
 
@@ -122,9 +122,9 @@ With the <code>Functor</code>, the ML expression for map becomes:
 </div>
 </div>
 
-<div id="outline-container-org71e8bd9" class="outline-2">
-<h2 id="org71e8bd9"><span class="section-number-2">3</span> promise</h2>
-<div class="outline-text-2" id="text-3">
+<div id="outline-container-promise" class="outline-2">
+<h2 id="promise"><span class="section-number-2">3</span> promise</h2>
+<div class="outline-text-2" id="text-promise">
 <p>
 Tiny! Now let&rsquo;s take a look at something more complicated in JS: Promises. Stay
 with me while we stitch this together. <code>Promise</code> in JS has a then method that
@@ -195,9 +195,9 @@ function we wrote earlier, and let&rsquo;s compose it with <code>map</code>.
 </div>
 </div>
 
-<div id="outline-container-org5a5cc97" class="outline-2">
-<h2 id="org5a5cc97"><span class="section-number-2">4</span> in conclusion</h2>
-<div class="outline-text-2" id="text-4">
+<div id="outline-container-in-conclusion" class="outline-2">
+<h2 id="in-conclusion"><span class="section-number-2">4</span> in conclusion</h2>
+<div class="outline-text-2" id="text-in-conclusion">
 <p>
 I hope this has been informative of the power of <code>map</code>. When you hear FP
 enthusiasts talking about how most everything can be handled with some
