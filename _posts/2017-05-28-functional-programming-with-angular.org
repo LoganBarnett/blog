@@ -1,0 +1,142 @@
+#+BEGIN_EXPORT html
+---
+layout: default
+title: Functional Programming with Angular
+---
+#+END_EXPORT
+
+#+TOC: headlines 3
+
+* Functional Programming with Angular
+Angular.js has paid my bills for about 4 years now. It's a behemoth framework
+commonly adopted by larger organizations wishing to get into the rich web client
+space. The larger organizations come from "tried and true" Java or C# frameworks
+like Spring, Struts, Dropwizard, MVC.net, and others I'm sure I've missed. If
+so, a lot of the trimmings that Angular has are very comfortable to you. There's
+a routing mechanism, there's an MVC-like structure, templates, and you have
+means of making things "private" in this icky JavaScript that looks so goofy and
+unsafe.
+
+It's no secret I've been happily learning, applying, and [[https://soundcloud.com/lambda-cast][shouting out about
+functional programming]]. Prior blog posts, a functional programming podcast that
+I appear in, and lots of things that show up in my Twitter feed all point to
+this.
+
+** Angular and Functional programming
+How do Angular and functional programming relate? Well, not directly. If
+anything there's an inverse relationship. Angular wants you to mutate a bunch of
+things, whereas functional programming excels at working with immutable data.
+Angular has big OO-like constructs, whereas functional programming steps away
+from all of core things about OO (encapsulation, polymorphism, and inheritance).
+I have a personal project written in Angular and at time of writing I'm still
+writing Angular code for my day job. A lot of us can't choose what we will be
+using for 8 hours a day. In the case of my personal project, I've tried starting
+over, but there's just too much I'd have to reimplement. I didn't get far with
+the reimplementation before my motivation died out. Momentum is an important
+consideration with any body of software.
+
+** Checklist to get functional
+As I've been working with Angular more and more, I find myself using its
+features less and less. Things like ~factory~ and ~service~ are virtually
+unheard of. For my personal project I'm becoming more and more tempted to use
+something like ~angular-react-directive~ to push my template work to. There's a
+few things that had to come together to do that.
+
+*** Get on a package manager
+    I really like Webpack. Like any tool in the JS ecosystem, it takes some time
+    to get setup the way you want it, but it's very worth it. Browserify seems
+    like it might work too, but I feel like Webpack configs tend to be very
+    light, and more importantly standalone. This will make it easy to implement
+    step 2 below.
+*** Export all the things
+    Use the ~import~ and ~export~ syntax to provide and consume simple
+    functions. If you actually need an Angular service such as ~$http~, have
+    your function take it. If it gets onerous, you can always partially apply it
+    out. When you do this, your unit tests no longer need to worry about the
+    order of ~$provide~ and ~inject~. The ritual required to put things together
+    before you can even run your test is small to non-existent. The standard
+    ritual to Angular's unit tests can become so large that I see teams start
+    heavily applying [[https://en.wikipedia.org/wiki/Don't_repeat_yourself][DRY]] to the tests. Now the tests are small applications of
+    their own that probably also need tests.
+*** Demolish privacy
+    Javascript doesn't directly have a ~private~ you can use to prevent
+    outsiders from touching stuff you own. Instead you can do some scope
+    trickery that essentially pulls off the same thing. You'll find this code is
+    the hardest to test, and I'm guessing also the code that breaks the most. Be
+    aggressive about pulling out bits of that into standalone functions that
+    don't need a ~this~ and don't mutate anything. Then it becomes easy to
+    convince your team that making it public is harmless. If it really needs to
+    mutate something, make the function immutable and then in the place it was
+    used, perform the mutation. Getting perfect immutable code in even staunch
+    functional languages is impossible, but you can quarantine the areas needing
+    mutation.
+*** Pass more parameters
+    The lengths OO goes to in order to prevent passing parameters around is
+    extraordinary. Partial application handles this plenty well. Favor passing
+    in more parameters, and keep the "config" parameters towards the front, with
+    the "data" parameters towards the back. This makes partial application
+    easier. Be aggressive about passing functions into the function as a means
+    of "specializing" your functions. Think about =map=: It takes a list and a
+    function that transforms each element in the list. =map= doesn't know
+    anything about your application. The function you pass =map= can be more
+    intimate, however. This is how =map= can be so useful yet so generic.
+    Remember that "abstract" and "generic" being dirty words is a product of
+    traditional OO beliefs. If you find that you have code that operates on
+    things that differ by name alone, you are doing duplication and you are
+    looking at a great candidate for a generic plus specialized functions to
+    add.
+*** Pass functions, not objects
+    Sure, you can pass along =$http= to your restful calls and go from there,
+    but why not pass a function instead such as =$http.get=, or simply use
+    =$http= in its function form? Now your rest code becomes vastly more
+    generic. You take a function that maybe takes some config but always returns
+    a promise. Can you mock that? Can you give it something that _didn't_
+    originate from =$http=? Sure, at some point you probably want to pull in
+    =$http=, but you can push that off for as long as is reasonable. Your
+    business logic needn't even know it uses Angular, and you're not wrapping a
+    bunch of stuff to accomplish this. When you pass functions, you specialize
+    the function. In the functional world we call these Higher Order Functions,
+    which are basically functions that take functions. Normally abstraction is a
+    dirty word in the OO community. Consider that virtually anything that's an
+    abstraction in OO is really just wrapping. True abstraction is stripping
+    away all of the things that are unimportant to your code such that the core
+    concerns are laid bare. In the case of =map=, it has no idea what your lists
+    are for, what elements are inside of them, and how those elements work. It
+    just knows how to flow over the list and produce a copy. The morphism
+    provided (a function that goes from =T= to =U=) has the true knowledge
+    (hence providing the specialization). All =map= knows is the function must
+    go from =T= to =U=. Is =map= a dirty abstraction? I think not. The fact that
+    map does so little is what makes it so generically applicable to many
+    situations.
+*** Mutate state at the last possible second
+    =$scope= needs to be written to in order for meaningful things to happen in
+    Angular. If you can wait until the last possible moment to mutate =$scope=,
+    then that means everything prior to that mutation is functional -
+    potentially pure (per the functional definition). A warning though: Be
+    careful about binding function calls to the scope directly via the template
+    system. Angular does a ~===~ on the results of a function binding, and it
+    will continue running the =$digest= cycle until the data from the bindings
+    stops changing. Immutable transformations (=map=/=filter= are easy examples)
+    often emit a new object or list on each call. Angular will see your
+    immutable structure is referentially different from your last immutable
+    structure and mark it as changed _even if it's the same data_. You'll see
+    that the =$digest= cycle has ended with about 10 runs and an error saying
+    it's given up. To avoid that, I find keeping these assignments in the
+    controller is a very safe thing to do.
+
+** Added benefit: Unit testing
+   You'll find that taking these steps will make unit testing in Angular vastly
+   easier. You don't have to worry about structuring your tests such that
+   =$provide= is always used before =inject=, because you don't need to pull in
+   these Angular objects to perform a test. Just pass in functions that perform
+   an outcome. Sure, you can use your favorite mocking library, but the amount
+   of ritual involved in a mock takes on its most slim form. If Javascript unit
+   testing is still fuzzy for you, check out my post on [[2017-05-17-unit-testing][How to Make Unit Testing
+   not so Much of a Pain]].
+
+* Conclusion
+
+Angular does a bit to discourage functional programming, but you can side step
+most of the hard stuff. Once you're doing most of your work in functional land,
+you can step up your unit testing and enjoy some solid benefits that help you
+reason about your code.

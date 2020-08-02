@@ -1,0 +1,73 @@
+Procedural generation has been something of keen interest to me for a while now.
+This kind of work is tied up in all kinds of algorithmic computer-science-y
+stuff that's a source of endless fascinating. One of the big things I like about
+it is it puts the hard work of content generation towards the computer.
+Computers aren't very clever, but they have immense computational brute
+strength. We can leverage this to create content derived from abstract reasoning
+rather than heaps of raw data.
+
+You can't have generated content be bespoke, and that's a common argument for
+having human artists/musicians/etc create content. It's valid, but it ignores a
+key component that is rarely leveraged in generated content: the content can be
+dynamic and responsive. I don't mean responsive in the sense of [responsive web
+design], but responsive in that it can respond to the changing circumstances of
+the world around us. What if your music would get more intense as your heartbeat
+went up, and more mellow if your heartbeat went down? What if games could ensure
+that they threw something exciting and fun your way if you haven't had anything
+exciting and fun happen in a while? These things are not only possible with
+procedural generation, but they are _afforded_. Bespoke content creation is much
+harder to tailor on the fly.
+
+I've been working on an asteroid mining game, which I have dubbed roid-miner. It
+started off as a desire to make my own voxel games which I reduced further and
+further into the current two dimensional game I have it as now. Originally, the
+game has a level with "asteroids" generated using perlin noise. Perlin noise is
+a great place to start with creating smooth randomized values. They don't look
+much like asteroids though. Not only do I want convincing looking asteroids, but
+I want different kinds of asteroids too. Tweaking a perlin noise generator to do
+this is just a ton of work. I did some research on the topic and came across
+[this wonderful article on procedural generation]. It shows on how their project
+they composed generators on the fly by chopping up generators into tiny little
+bits.
+
+Migrate away from the Unity game engine and towards a pure web setup using WebGL
+and Angular.js, and now I have an editor that allows me to compose asteroids on
+the go. Many of the generation bits have little or nothing to do with asteroids,
+and composition is rather fast even if the interface isn't very streamlined yet.
+Let's go through the process of making an asteroid generator.
+
+I'll start with a basic shape. I like my asteroids being circular in nature, so
+I'll start with my ellipse sequencer. Sequencers are things that place down
+content where there was no content before. It's not necessarily always going to
+be used as a starting point, but all starting points will originate from a
+sequencer.
+
+Circles are pretty boring for asteroids, so let's introduce some variance here.
+Using this mutator, we can "rough up" the edges of the ellipse. We can dial the
+factor to make it more or less rough.
+
+Now we have a bunch of gaps in the asteroid's perimeter. This will be a problem
+when we fill in the middle, as we need distinct boundaries to fill within. So we
+can take the radial line sequencer, which adds blocks between points in a radial
+fashion. Now we have a circularish loop that's very uneven and bumpy (kind of
+like a floating space rock should be). But it's hollow.
+
+To remove its hollow quality, we can use this fill component that stacks the
+inside with cubes.
+
+Now that we have a single asteroid done, we can increment the seed of the
+generator. This whole time we've been looking at a single asteroid, but we're
+really just seeing a single preview for what the entire generator can look like.
+We want to flip through some different seed values to get an idea for what other
+asteroids will look like from this same generator.
+
+Some potential factoids:
+
+Originally I wanted to make the claim that art budgets in video games continues
+to climb while the engineering effort is relatively small or showing little
+growth in comparison. However I haven't been able to find any hard data for
+this. I have often heard that the engineering teams will often finish long
+before the art teams are able to wrap up on a given game. This is purely hearsay
+as far as I can tell though. Impressions can wildly vary from reality.
+
+
