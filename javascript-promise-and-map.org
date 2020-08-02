@@ -1,0 +1,161 @@
+#+BEGIN_EXPORT html
+---
+layout: default
+title: Promise and map with JavaScript
+date: 2020-08-01
+categories: software-engineering
+---
+#+END_EXPORT
+
+#+title:     Promise and map with JavaScript
+#+author:    Logan Barnett-Hoy
+#+email:     logustus@gmail.com
+#+date:      <2020-08-01 Sat>
+#+language:  en
+#+file_tags: 
+#+tags:      software functional-programming
+#+auto_id:   t
+
+Typically when we think of =map= we think of lists, but we can widen our
+thinking of =map= and through it get a simpler understanding of how the elusive
+JavaScript =Promise= works.
+
+* the type signature of map
+Let's take the ML notation for =map= of a list:
+
+#+begin_example elm
+((a -> b) -> List a -> List b)
+#+end_example
+
+With ML notation, the best way to read this is that the last arrow is the return
+type. The reason the notation exists this way is because functions in a
+functional language can be modeled as unary, or meaning they only have one
+argument. One can imagine multiple argument functions as sytactic sugar.
+
+Take this add example:
+
+#+name: add
+#+begin_src js :results none
+const add = x => y => x + y
+#+end_src
+
+The ML notation for add is =(number -> number -> number)=, where the first two
+numbers are parameters and the third is the return type.
+
+Embedded functions are delieniated with parenthesis. Looking back at our map
+example:
+
+#+begin_example elm
+((a -> b) -> List a -> List b)
+#+end_example
+
+=(a -> b)= means the first argument is a function that takes an =a= and returns
+a =b=. In ML's type notation, type parameters can appear as lowercase letters.
+It's also notable that type parameters such as =a= and =b= can be the same type,
+but they are permitted to differ. Depending on how deep you get into type
+theory, =a= and =b= could represent any different form of data. For example the
+type of a could the number 5 (not just any =number=), and type =b= would be
+something related to 5 by virtue of the transformation function.
+
+In functional programming, usually the arguments that "configure" or specialize
+the function come first. The data portion of the function comes last. If you
+come from a background such as Ruby, C#, Java, or JavaScript (think =lodash=),
+this will seem backwards to you. The reason this is done is to aid with partial
+application - an important tool in function composition.
+
+* expressing map functionally
+We could write our list's map function like this:
+
+#+name: map-list
+#+begin_src js :results none :tangle yes
+const mapList = f => xs => xs.map(f)
+#+end_src
+
+Yes, we're borrowing from the existing =Array.prototype.map= here. We will come
+back to this function later.
+
+Back to =map=: Let's take a step back from our =map= signature. Should we care
+about whether or not it's a list we want to transform? Could we apply =map= in
+other contexts? Some languages allow =map= to operate on a map structure (an
+associative list), where each value undergoes a transformation and the operation
+produces a new map structure.
+
+In category theory, we can represent lists in a more generic sense: A =Functor=.
+In the vaguest sense a Functor is a kind of structure. Even calling a =Functor=
+a "container" might make some intuitive sense, but that can be too constraining
+a term.
+
+We generally write Functors as =F a=, meaning a =Functor= parameterized by type
+=a=. Functors themselves are type parameters, which are further paramterized by
+=a=. This feature in a typed language is called Higher Kinded Types, or HKT.
+Without it, we must express these types individually. So that means one map type
+for lists, one for associative lists, and so on.
+
+With the =Functor=, the ML expression for map becomes:
+
+#+begin_example elm
+((a -> b) -> F a -> F b)
+#+end_example
+
+* promise
+
+Tiny! Now let's take a look at something more complicated in JS: Promises. Stay
+with me while we stitch this together. =Promise= in JS has a then method that
+can be used to operate on the promises' data. You could think of it as a
+callback that is executed when the promise resolves, but that's very imperative
+thinking and we don't do that here. For a moment, let's make a functional-esque
+version of =Promise's= =then=:
+
+#+begin_src js :results none
+const then = f => p => p.then(f)
+#+end_src
+
+This looks familiar, but the names are different. This is essentially the same
+thing as =map=. Let's do some renaming and create a real method for =Promise=:
+=map=.
+
+#+begin_src js :results none
+Promise.prototype.map = function(fn) { return this.then(fn) }
+#+end_src
+
+Basically we made an alias here. There's no material difference between =map=
+and =then=. The =map= method just delegates to =then=. Let's go back to our list
+version of =map= and rewrite it to account for functors:
+
+#+begin_src js :results none
+const map = fn => f => f.map(fn)
+#+end_src
+
+Now =map= works for both =Array= and =Promise=. One of the things we get from
+doing this is we create an ecosystem that begs for function composition. With
+function composition we're just stitching together functionality from things we
+already understand because they are very simple.
+
+Even if we don't go deep into a rich ecosystem of curried functions, we can
+still benefit having these two things nudged a little closer. Take our =add=
+function we wrote earlier, and let's compose it with =map=.
+
+#+begin_src js :results none
+new Just(1)    // Just is the "value" form of Maybe.
+  .map(add(1)) // Maybe(2)
+  .map(add(2)) // Maybe(4)
+
+new Nothing()  // Nothing is the "null" form of Maybe.
+  .map(add(1)) // Nothing
+  .map(add(2)) // Yep. Still Nothing.
+
+new Right(1)   // Right is the "value" form of Either, by convention.
+  .map(add(1)) // Either(2)
+  .map(add(2)) // Either(3)
+
+new Left(1)    // Left is the "left" form of Either.
+  .map(add(1)) // Either(1)
+  .map(add(2)) // Either(1)
+#+end_src
+
+* in conclusion
+I hope this has been informative of the power of =map=. When you hear FP
+enthusiasts talking about how most everything can be handled with some
+combination of =map=, =filter=, and =fold= (=reduce=), one can see how it's more
+than just list comprehensions which few of us get to remain in when writing real
+world software.
