@@ -1,0 +1,194 @@
+#+title:     World Building
+#+author:    Logan Barnett-Hoy
+#+email:     logustus@gmail.com
+#+date:      <2020-05-17 Sun>
+#+language:  en
+#+file_tags:
+#+tags:
+
+These are my thoughts on world building for a fictional world. There will be a
+skews towards worlds in a table top role playing experience, and moreso towards
+a fantasy setting.
+
+* cause and effect
+A fun thing to think about with world building is what you would think would
+fall out of it. There are basic decisions to societies, fantastical or not. When
+you introduce something to your world, you're making it different from the world
+we live in now. No matter how remote your world is from our current world, the
+created world will be defined by how it is different from our current one. When
+you change something about the world, think about how it effects the major
+aspects of society, the bestiary (if applicable), and even the world's
+geography. It might not shape all of these things, but it should influence at
+least one. I would even go as far as to say with a little thought you can make
+your world change effect everything - some in minor ways and others in major
+ways.
+
+** eating and drinking
+Creatures generally need to eat and drink to live. Even in a sci-fi setting,
+robots would need some kind of power source or even lubricants to keep the parts
+from wearing down. How do the people of your society gather food?
+
+*** societies and their food sources
+A hunter-gatherer society roams the land - typically in a known rotation that
+follows favorable weather. Staying in one place too long can put too much of a
+hardship on the land's resources. Plants are picked clean, and the game is
+driven out or wiped out.
+
+In an agrarian society, most of the food comes from fields of food that is grown
+and tended, and then later harvested. Agrarian societies might celebrate the
+harvest. They can also thrive in places with harsh winters, though such
+societies would have means to store their food, and likely have winter
+activities - something different than farming when farming just doesn't work.
+Though it could be preparing for next year's crops. Agrarian societies generally
+struggle in places with steep hills or overgrown vegetation. Agrarian societies
+might be dominantly farmers, but efficient farming techniques means a society
+can support specialists. People who guard the farmers, who can study things such
+as chemistry or the movements of the stars. A knight cannot swing a sword
+without a blacksmith to create the sword, the miner to gather the iron and coal,
+and above all else: food to feed them all, grown by a farmer.
+
+Some societies might trade their goods and services for food - modern cities do
+this today in essence.
+
+Not all farming would be fields of wheat as far as the eye can see on a sunny
+day. Wood elves might have farms but not like how you and I would see it.
+Perhaps their closeness with nature means the food almost comes to them. Each
+elf might grow plenty of food near their individual dwellings. Such things might
+be permaculture such that the elf needn't spend a majority of their existence
+tending to the crops. It would provide variety and to many non-wood-elves, it
+would just appear to be beautiful, lush nature.
+
+Underground creatures might harvest mushrooms.
+
+*** hunting and populations
+Hunting beasts for food is a reasonable supplement to cultivated food, but
+generally it is not sustainable for moderate numbers of them to exist in one
+place for long. Consider 20 wolves and how much meat they'd need to eat in a
+single day to just break even. With that many kills, consider also how alert the
+prey would become lest they die off. In the real world, populations of predators
+and prey fluctuates and can become unsustainable. Generally creatures have
+behaviors or aspects that help regulate this a bit - though they are always
+imperfect. For the examples with wolves - there can only be one alpha with a
+pack. Contending alphas that don't fall in line must form their own packs - and
+with that comes territory shifts. The effect is the wolf packs spread out. In
+circumstances of overpopulation they could even spread into civilized areas.
+These are areas wolves generally would not go because the protectors kill the
+wolves, or at least make credible threats to kill them. But when one needs to
+eat and the food is scarce, one becomes more daring or starves.
+
+Most creatures that exist by nature rarely pick starvation.
+
+*** the value of food producers
+
+Are food producers considered honored members of society? If so, how important
+is it for a given child to grow to be a farmer? Are children a means of
+producing farm hands, and therefore a fertile coupling is a cherished thing?
+
+Even societies with lowly peasants are highly valued - just in aggregate. No
+individual peasant is valuable. But when considering them in bulk they become
+assets that lords will make power plays to seize ever greater amounts of them,
+and therefore more resources to sustain an even more powerful civilization.
+
+** power
+
+In this context, power is simply the ability to make decisions. Who gets to make
+the decisions in the society? The wealthy? The honored? A class set by
+birthright? Warriors? Each of these can have profound effects on how the society
+is structured. Even more exotic forms could be power that goes to external
+entities, such as a more powerful nation that has installed a puppet government
+or even rules it directly. Perhaps, above a normal power structure, monsters
+treat the humanoid population like cattle and feast upon them every year. A
+tribe might have to sacrifice a virgin or some other life offering.
+
+*** wealth as power
+
+**** pause the bias
+I want to start here by talking about the real world and our feelings about
+money. Most of us have jobs or perhaps support someone with a job, which is work
+in its own right. We might feel like money is too often abused and its effects
+seem more harmful than good. For the purposes of building a society in an
+imaginary place it can help to suspend our biases (no matter how deserved they
+might be) in order to build a convincing and richly detailed society. Save the
+money-as-evil stuff for your villains. Also consider that we don't have the same
+angst towards feudal societies that implicitly understand to be very flawed, but
+it doesn't stop us from creating very entertaining stories about princes and
+princesses.
+
+**** what constitutes as wealth?
+
+Money makes the world go 'round. Having a high amount of money or even
+non-currency material with some economic benefit constitutes as wealth. The
+wealthy generally see things as potential investments, or a waste of an
+investment. While one may not have lots of money in the coffers, one could have
+many enterprises that bring in lots of funding which gets invested back into the
+original enterprises or new ones - in this case the enterprises themselves are
+the representation of wealth. These enterprises could be textiles, medicine,
+education, mining, lending, or even estates.
+
+"Old money" represents monetary gains made generations ago that the rich can
+coast off of today without necessarily being as mindful or involved in how that
+money is replenished - though parents would be negligent not to teach their
+children how to take over the family business and survive in the world that they
+themselves also likely inherited.
+
+In the real world, Sportsball players become rich but without knowledge on how
+to grow, invest, or create trusts out of their money, their supply can dry up as
+quickly as it was earned. In a fantasy world this would play out as
+adventurers - people whose skills amasses them enough fortune to catapult them
+far out of their financial classes - but they will sink back down without the
+know-how to keep it going. This is what being born into wealth buys you: The
+tricks of the trade to keep one's wealth. Just like Sportsball players in the
+real world, adventurers can learn some of these tricks through advisors or
+perhaps they are quick learners with a knack for high-level money handling. Your
+society should probably have very few of these or the world may seem unstable,
+unconvincing, and most importantly: it dulls the flavor of a good rags-to-riches
+story.
+
+**** stuff wealthy people like
+
+When one has enough money one can use it in an exploratory fashion. Wealthy
+people can invest in a portfolio of endeavors and still have enough to dip their
+toes into more risky prospects. When a prospect begins to show some promise, the
+investors can push more funds into it to make their investment grow. A wealthy
+person might think themselves cold and calculating in their investments, but
+their biases are revealed by what they invest in - especially when it comes to
+investing in the esoteric.
+
+Wealthy people structure their lives around wealth. They make it a point to
+display their wealth to others. People who are close to a wealthy person may
+offer the wealthy person favors in order to gain contracts, investment, etc that
+the wealthy person can provide. But they can't do any of those things if they
+don't know the person is wealthy. Being outwardly wealthy also means one can
+be in the company of other wealthy people. This makes for good opportunities,
+and family arrangements can proffer for financial allies in the future.
+
+This all is why status is so important to the wealthy. In fact (at least in
+story writing - this author isn't at all wealthy), for wealthy people the day to
+day management of money becomes unimportant and the projection of status becomes
+far more important. Hire people to do what hired people are good at: Jobs.
+
+**** wealthy people calling the shots
+
+When wealthy people call the shots, it's just as political as any other
+gathering of power. There is limitless posturing, maneuvering, allying,
+proverbial backstabbing, lies, and damn lies. A group of wealthy people might
+agree to invest their funds in some portioned amount towards different causes to
+help run the society. Without roads, everyone suffers. Cities need waste
+management, protection, means to put out fires, etc. A ruling guild of merchants
+will be no stranger to any of these aspects - no matter how menial or dirty
+these things might be. Remember: Wealthy people just hire folks to do this dirty
+work. Managing the work from afar is just more of their status showing.
+
+*** title as power
+*** rank as power
+
+*** esteem as power
+
+* magic
+** levels of magic
+** healing
+*** reviving the dead
+*** lichdom, vampirism, other forms of agelessness
+** magic at war
+** the social vulgarity of casting of magic
+*** a metaphor: magic and guns
