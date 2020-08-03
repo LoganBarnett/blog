@@ -45,7 +45,7 @@ const add = x => y => x + y
 The ML notation for add is =(number -> number -> number)=, where the first two
 numbers are parameters and the third is the return type.
 
-Embedded functions are delieniated with parenthesis. Looking back at our map
+Embedded functions are delineated with parenthesis. Looking back at our map
 example:
 
 #+begin_example elm
