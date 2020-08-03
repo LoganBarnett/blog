@@ -42,8 +42,11 @@ Take this add example:
 const add = x => y => x + y
 #+end_src
 
-The ML notation for add is =(number -> number -> number)=, where the first two
+The ML notation for =add= is =(number -> number -> number)=, where the first two
 numbers are parameters and the third is the return type.
+
+We'll use this =add= function later to show off =map= in action, since =map=
+needs a function to apply to some data.
 
 Embedded functions are delineated with parenthesis. Looking back at our map
 example:
@@ -57,7 +60,7 @@ a =b=. In ML's type notation, type parameters can appear as lowercase letters.
 It's also notable that type parameters such as =a= and =b= can be the same type,
 but they are permitted to differ. Depending on how deep you get into type
 theory, =a= and =b= could represent any different form of data. For example the
-type of a could the number 5 (not just any =number=), and type =b= would be
+type of =a= could be the number 5 (not just any =number=), and type =b= would be
 something related to 5 by virtue of the transformation function.
 
 In functional programming, usually the arguments that "configure" or specialize
@@ -86,16 +89,18 @@ other contexts? Some languages allow =map= to operate on a map structure (an
 associative list), where each value undergoes a transformation and the operation
 produces a new map structure.
 
-In category theory, we can represent lists in a more generic sense: A =Functor=.
-In the vaguest sense a Functor is a kind of structure. Even calling a =Functor=
-a "container" might make some intuitive sense, but that can be too constraining
-a term.
+Lists can be thought of in a more generic sense: a =Functor=. In the vaguest
+sense a =Functor= is a kind of structure. Even calling a =Functor= a "container"
+might make some intuitive sense, but that can be too constraining a term.
 
-We generally write Functors as =F a=, meaning a =Functor= parameterized by type
-=a=. Functors themselves are type parameters, which are further paramterized by
-=a=. This feature in a typed language is called Higher Kinded Types, or HKT.
-Without it, we must express these types individually. So that means one map type
-for lists, one for associative lists, and so on.
+Functors are generally written as =F a=, meaning a =Functor= parameterized by
+type =a=. Functors themselves are type parameters, which are further
+parameterized by =a=. This is because there isn't a hierarchy of class
+inheritance in this model. Instead a =Functor= is a loose category of things
+that you can apply =map= to. The language feature to have type parameters on a
+type parameter is called Higher Kinded Types, or HKT. Without it, we must
+express these types individually. So that means one =map= type for lists, one
+for associative lists, and so on.
 
 With the =Functor=, the ML expression for map becomes:
 
@@ -109,7 +114,7 @@ With the =Functor=, the ML expression for map becomes:
 :END:
 
 Tiny! Now let's take a look at something more complicated in JS: Promises. Stay
-with me while we stitch this together. =Promise= in JS has a then method that
+with me while we stitch this together. =Promise= in JS has a =then= method that
 can be used to operate on the promises' data. You could think of it as a
 callback that is executed when the promise resolves, but that's very imperative
 thinking and we don't do that here. For a moment, let's make a functional-esque
@@ -140,26 +145,47 @@ doing this is we create an ecosystem that begs for function composition. With
 function composition we're just stitching together functionality from things we
 already understand because they are very simple.
 
+* bonus: maybe
 Even if we don't go deep into a rich ecosystem of curried functions, we can
 still benefit having these two things nudged a little closer. Take our =add=
 function we wrote earlier, and let's compose it with =map=.
 
+One may think of =Maybe= as simply being a sum type of =a | Nothing=. In
+JavaScript you could think of this as =anything | void= (where =void= is =null=
+or =undefined=, thanks JS!). This gets messy if that =anything= is =null=. More
+importantly neither of these things necessarily have =map=, and we can't easily
+tell which of the two members in the union we are looking at.
+
+This is why =Maybe= is expressed as =Just a | Nothing=. =Just a= has =map=,
+which allows us to transform =a= without really knowing if we are dealing with a
+=Just a= or a =Nothing=. Similarly =Nothing= has =map=, but it's a no-op since
+there is _nothing_ to do. Get it?
+
 #+begin_src js :results none
 new Just(1)    // Just is the "value" form of Maybe.
-  .map(add(1)) // Maybe(2)
-  .map(add(2)) // Maybe(4)
+  .map(add(1)) // Just(2)
+  .map(add(2)) // Just(4)
 
 new Nothing()  // Nothing is the "null" form of Maybe.
   .map(add(1)) // Nothing
   .map(add(2)) // Yep. Still Nothing.
+#+end_src
 
+It's important to note in both cases we are dealing with a =Maybe= and therefore
+we are safe to pass a =Maybe number= around.
+
+* bonus bonus: either
+=Either= is similar to =Maybe=. Its type is =Left a | Right b=. =Left= is the
+no-op case and =Right= is the case we care about, at least in regards to =map=.
+
+#+begin_src js :results none
 new Right(1)   // Right is the "value" form of Either, by convention.
-  .map(add(1)) // Either(2)
-  .map(add(2)) // Either(3)
+  .map(add(1)) // Right(2)
+  .map(add(2)) // Right(3)
 
 new Left(1)    // Left is the "left" form of Either.
-  .map(add(1)) // Either(1)
-  .map(add(2)) // Either(1)
+  .map(add(1)) // Left(1)
+  .map(add(2)) // Left(1)
 #+end_src
 
 * in conclusion

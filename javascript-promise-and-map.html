@@ -34,13 +34,18 @@ Take this add example:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-js" id="org111f4d2"><span style="color: #51afef;">const</span> <span style="color: #DFDFDF;">add</span> = x =&gt; y =&gt; x + y
+<pre class="src src-js" id="org1ea2285"><span style="color: #51afef;">const</span> <span style="color: #DFDFDF;">add</span> = x =&gt; y =&gt; x + y
 </pre>
 </div>
 
 <p>
-The ML notation for add is <code>(number -&gt; number -&gt; number)</code>, where the first two
+The ML notation for <code>add</code> is <code>(number -&gt; number -&gt; number)</code>, where the first two
 numbers are parameters and the third is the return type.
+</p>
+
+<p>
+We&rsquo;ll use this <code>add</code> function later to show off <code>map</code> in action, since <code>map</code>
+needs a function to apply to some data.
 </p>
 
 <p>
@@ -58,7 +63,7 @@ a <code>b</code>. In ML&rsquo;s type notation, type parameters can appear as low
 It&rsquo;s also notable that type parameters such as <code>a</code> and <code>b</code> can be the same type,
 but they are permitted to differ. Depending on how deep you get into type
 theory, <code>a</code> and <code>b</code> could represent any different form of data. For example the
-type of a could the number 5 (not just any <code>number</code>), and type <code>b</code> would be
+type of <code>a</code> could be the number 5 (not just any <code>number</code>), and type <code>b</code> would be
 something related to 5 by virtue of the transformation function.
 </p>
 
@@ -80,7 +85,7 @@ We could write our list&rsquo;s map function like this:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-js" id="org7c900b5"><span style="color: #51afef;">const</span> <span style="color: #DFDFDF;">mapList</span> = f =&gt; xs =&gt; xs.map<span style="color: #51afef;">(</span>f<span style="color: #51afef;">)</span>
+<pre class="src src-js" id="org2f39b17"><span style="color: #51afef;">const</span> <span style="color: #DFDFDF;">mapList</span> = f =&gt; xs =&gt; xs.map<span style="color: #51afef;">(</span>f<span style="color: #51afef;">)</span>
 </pre>
 </div>
 
@@ -98,18 +103,20 @@ produces a new map structure.
 </p>
 
 <p>
-In category theory, we can represent lists in a more generic sense: A <code>Functor</code>.
-In the vaguest sense a Functor is a kind of structure. Even calling a <code>Functor</code>
-a &ldquo;container&rdquo; might make some intuitive sense, but that can be too constraining
-a term.
+Lists can be thought of in a more generic sense: a <code>Functor</code>. In the vaguest
+sense a <code>Functor</code> is a kind of structure. Even calling a <code>Functor</code> a &ldquo;container&rdquo;
+might make some intuitive sense, but that can be too constraining a term.
 </p>
 
 <p>
-We generally write Functors as <code>F a</code>, meaning a <code>Functor</code> parameterized by type
-<code>a</code>. Functors themselves are type parameters, which are further paramterized by
-<code>a</code>. This feature in a typed language is called Higher Kinded Types, or HKT.
-Without it, we must express these types individually. So that means one map type
-for lists, one for associative lists, and so on.
+Functors are generally written as <code>F a</code>, meaning a <code>Functor</code> parameterized by
+type <code>a</code>. Functors themselves are type parameters, which are further
+parameterized by <code>a</code>. This is because there isn&rsquo;t a hierarchy of class
+inheritance in this model. Instead a <code>Functor</code> is a loose category of things
+that you can apply <code>map</code> to. The language feature to have type parameters on a
+type parameter is called Higher Kinded Types, or HKT. Without it, we must
+express these types individually. So that means one <code>map</code> type for lists, one
+for associative lists, and so on.
 </p>
 
 <p>
@@ -127,7 +134,7 @@ With the <code>Functor</code>, the ML expression for map becomes:
 <div class="outline-text-2" id="text-promise">
 <p>
 Tiny! Now let&rsquo;s take a look at something more complicated in JS: Promises. Stay
-with me while we stitch this together. <code>Promise</code> in JS has a then method that
+with me while we stitch this together. <code>Promise</code> in JS has a <code>then</code> method that
 can be used to operate on the promises&rsquo; data. You could think of it as a
 callback that is executed when the promise resolves, but that&rsquo;s very imperative
 thinking and we don&rsquo;t do that here. For a moment, let&rsquo;s make a functional-esque
@@ -167,36 +174,74 @@ doing this is we create an ecosystem that begs for function composition. With
 function composition we&rsquo;re just stitching together functionality from things we
 already understand because they are very simple.
 </p>
+</div>
+</div>
 
+<div id="outline-container-orgf9f25e9" class="outline-2">
+<h2 id="orgf9f25e9"><span class="section-number-2">4</span> bonus: maybe</h2>
+<div class="outline-text-2" id="text-4">
 <p>
 Even if we don&rsquo;t go deep into a rich ecosystem of curried functions, we can
 still benefit having these two things nudged a little closer. Take our <code>add</code>
 function we wrote earlier, and let&rsquo;s compose it with <code>map</code>.
 </p>
 
+<p>
+One may think of <code>Maybe</code> as simply being a sum type of <code>a | Nothing</code>. In
+JavaScript you could think of this as <code>anything | void</code> (where <code>void</code> is <code>null</code>
+or <code>undefined</code>, thanks JS!). This gets messy if that <code>anything</code> is <code>null</code>. More
+importantly neither of these things necessarily have <code>map</code>, and we can&rsquo;t easily
+tell which of the two members in the union we are looking at.
+</p>
+
+<p>
+This is why <code>Maybe</code> is expressed as <code>Just a | Nothing</code>. <code>Just a</code> has <code>map</code>,
+which allows us to transform <code>a</code> without really knowing if we are dealing with a
+<code>Just a</code> or a <code>Nothing</code>. Similarly <code>Nothing</code> has <code>map</code>, but it&rsquo;s a no-op since
+there is <span class="underline">nothing</span> to do. Get it?
+</p>
+
 <div class="org-src-container">
 <pre class="src src-js"><span style="color: #51afef;">new</span> <span style="color: #FCCE7B;">Just</span><span style="color: #51afef;">(</span><span style="color: #e69055; font-weight: bold;">1</span><span style="color: #51afef;">)</span>    <span style="color: #62686E;">// </span><span style="color: #62686E;">Just is the "value" form of Maybe.</span>
-  .map<span style="color: #51afef;">(</span>add<span style="color: #C57BDB;">(</span><span style="color: #e69055; font-weight: bold;">1</span><span style="color: #C57BDB;">)</span><span style="color: #51afef;">)</span> <span style="color: #62686E;">// </span><span style="color: #62686E;">Maybe(2)</span>
-  .map<span style="color: #51afef;">(</span>add<span style="color: #C57BDB;">(</span><span style="color: #e69055; font-weight: bold;">2</span><span style="color: #C57BDB;">)</span><span style="color: #51afef;">)</span> <span style="color: #62686E;">// </span><span style="color: #62686E;">Maybe(4)</span>
+  .map<span style="color: #51afef;">(</span>add<span style="color: #C57BDB;">(</span><span style="color: #e69055; font-weight: bold;">1</span><span style="color: #C57BDB;">)</span><span style="color: #51afef;">)</span> <span style="color: #62686E;">// </span><span style="color: #62686E;">Just(2)</span>
+  .map<span style="color: #51afef;">(</span>add<span style="color: #C57BDB;">(</span><span style="color: #e69055; font-weight: bold;">2</span><span style="color: #C57BDB;">)</span><span style="color: #51afef;">)</span> <span style="color: #62686E;">// </span><span style="color: #62686E;">Just(4)</span>
 
 <span style="color: #51afef;">new</span> <span style="color: #FCCE7B;">Nothing</span><span style="color: #51afef;">()</span>  <span style="color: #62686E;">// </span><span style="color: #62686E;">Nothing is the "null" form of Maybe.</span>
   .map<span style="color: #51afef;">(</span>add<span style="color: #C57BDB;">(</span><span style="color: #e69055; font-weight: bold;">1</span><span style="color: #C57BDB;">)</span><span style="color: #51afef;">)</span> <span style="color: #62686E;">// </span><span style="color: #62686E;">Nothing</span>
   .map<span style="color: #51afef;">(</span>add<span style="color: #C57BDB;">(</span><span style="color: #e69055; font-weight: bold;">2</span><span style="color: #C57BDB;">)</span><span style="color: #51afef;">)</span> <span style="color: #62686E;">// </span><span style="color: #62686E;">Yep. Still Nothing.</span>
+</pre>
+</div>
 
-<span style="color: #51afef;">new</span> <span style="color: #FCCE7B;">Right</span><span style="color: #51afef;">(</span><span style="color: #e69055; font-weight: bold;">1</span><span style="color: #51afef;">)</span>   <span style="color: #62686E;">// </span><span style="color: #62686E;">Right is the "value" form of Either, by convention.</span>
-  .map<span style="color: #51afef;">(</span>add<span style="color: #C57BDB;">(</span><span style="color: #e69055; font-weight: bold;">1</span><span style="color: #C57BDB;">)</span><span style="color: #51afef;">)</span> <span style="color: #62686E;">// </span><span style="color: #62686E;">Either(2)</span>
-  .map<span style="color: #51afef;">(</span>add<span style="color: #C57BDB;">(</span><span style="color: #e69055; font-weight: bold;">2</span><span style="color: #C57BDB;">)</span><span style="color: #51afef;">)</span> <span style="color: #62686E;">// </span><span style="color: #62686E;">Either(3)</span>
+<p>
+It&rsquo;s important to note in both cases we are dealing with a <code>Maybe</code> and therefore
+we are safe to pass a <code>Maybe number</code> around.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgcd0d57f" class="outline-2">
+<h2 id="orgcd0d57f"><span class="section-number-2">5</span> bonus bonus: either</h2>
+<div class="outline-text-2" id="text-5">
+<p>
+<code>Either</code> is similar to <code>Maybe</code>. Its type is <code>Left a | Right b</code>. <code>Left</code> is the
+no-op case and <code>Right</code> is the case we care about, at least in regards to <code>map</code>.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-js"><span style="color: #51afef;">new</span> <span style="color: #FCCE7B;">Right</span><span style="color: #51afef;">(</span><span style="color: #e69055; font-weight: bold;">1</span><span style="color: #51afef;">)</span>   <span style="color: #62686E;">// </span><span style="color: #62686E;">Right is the "value" form of Either, by convention.</span>
+  .map<span style="color: #51afef;">(</span>add<span style="color: #C57BDB;">(</span><span style="color: #e69055; font-weight: bold;">1</span><span style="color: #C57BDB;">)</span><span style="color: #51afef;">)</span> <span style="color: #62686E;">// </span><span style="color: #62686E;">Right(2)</span>
+  .map<span style="color: #51afef;">(</span>add<span style="color: #C57BDB;">(</span><span style="color: #e69055; font-weight: bold;">2</span><span style="color: #C57BDB;">)</span><span style="color: #51afef;">)</span> <span style="color: #62686E;">// </span><span style="color: #62686E;">Right(3)</span>
 
 <span style="color: #51afef;">new</span> <span style="color: #FCCE7B;">Left</span><span style="color: #51afef;">(</span><span style="color: #e69055; font-weight: bold;">1</span><span style="color: #51afef;">)</span>    <span style="color: #62686E;">// </span><span style="color: #62686E;">Left is the "left" form of Either.</span>
-  .map<span style="color: #51afef;">(</span>add<span style="color: #C57BDB;">(</span><span style="color: #e69055; font-weight: bold;">1</span><span style="color: #C57BDB;">)</span><span style="color: #51afef;">)</span> <span style="color: #62686E;">// </span><span style="color: #62686E;">Either(1)</span>
-  .map<span style="color: #51afef;">(</span>add<span style="color: #C57BDB;">(</span><span style="color: #e69055; font-weight: bold;">2</span><span style="color: #C57BDB;">)</span><span style="color: #51afef;">)</span> <span style="color: #62686E;">// </span><span style="color: #62686E;">Either(1)</span>
+  .map<span style="color: #51afef;">(</span>add<span style="color: #C57BDB;">(</span><span style="color: #e69055; font-weight: bold;">1</span><span style="color: #C57BDB;">)</span><span style="color: #51afef;">)</span> <span style="color: #62686E;">// </span><span style="color: #62686E;">Left(1)</span>
+  .map<span style="color: #51afef;">(</span>add<span style="color: #C57BDB;">(</span><span style="color: #e69055; font-weight: bold;">2</span><span style="color: #C57BDB;">)</span><span style="color: #51afef;">)</span> <span style="color: #62686E;">// </span><span style="color: #62686E;">Left(1)</span>
 </pre>
 </div>
 </div>
 </div>
 
 <div id="outline-container-in-conclusion" class="outline-2">
-<h2 id="in-conclusion"><span class="section-number-2">4</span> in conclusion</h2>
+<h2 id="in-conclusion"><span class="section-number-2">6</span> in conclusion</h2>
 <div class="outline-text-2" id="text-in-conclusion">
 <p>
 I hope this has been informative of the power of <code>map</code>. When you hear FP
