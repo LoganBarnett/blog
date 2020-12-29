@@ -1,0 +1,28 @@
+#+title:     Captain Toofsnaggle
+#+author:    Logan Barnett
+#+email:     logustus@gmail.com
+#+date:      <2020-12-28 Mon>
+#+language:  en
+#+tags:      dnd
+#+file_tags:
+#+auto_id:   t
+#+toc:       nil
+
+#+BEGIN_EXPORT html
+---
+categories: dnd
+date: 2020-12-28
+layout: default
+title: Captain Toofsnaggle
+---
+#+END_EXPORT
+
+# :PROPERTIES:
+# :VISIBILITY: content
+# :CUSTOM_ID: captain-toofsnaggle
+# :UNNUMBERED: toc
+# :END:
+
+#+toc: headlines 5 local
+
+#+include: "~/notes/rpgs.org::#dnd-5e--characters--captain-toofsnaggle" :lines "1-"
