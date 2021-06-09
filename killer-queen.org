@@ -19,5 +19,5 @@ I've played some Killer Queen and helped put together streaming. Though the tech
 for Portland's streaming setup has dramatically improved, the streaming guide is
 left up for posterity.
 
-+ [[./killer-queen-black-bock-study.org][Killer Queen black box study]]
++ [[./killer-queen-black-box-study.org][Killer Queen black box study]]
 + [[./killer-queen-streaming-guide.org][Killer Queen streaming guide]]
