@@ -48,7 +48,7 @@ title: Dirshum
   :UNNUMBERED: toc
   :END:
 
-  #+toc: headlines 3 local
+  #+toc: headlines 5 local
 
   A world made for my D&D campaigns. It's easy to destroy a world that you made
   yourself!
