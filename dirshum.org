@@ -728,6 +728,38 @@ title: Dirshum
 
       Logan didn't fill this out. Later!
 
+
+*** Human domains
+:PROPERTIES:
+:CUSTOM_ID: dirshum--golani-grumsvelt's-guide-to-dirshum--human-domains
+:END:
+**** Tribes of Egalstan
+:PROPERTIES:
+:CUSTOM_ID: dirshum--golani-grumsvelt's-guide-to-dirshum--human-domains--tribes-of-egalstan
+:END:
+
+It is a common misconception that Egalstan is a singular nation of tribal
+humans. Traders, missionaries, and scholars such as myself quickly learn that
+the truth of the matter is that Egalstan is the name given to the loose alliance
+of tribes. However history is replete with nations trying to pick on one tribe
+and finding the tribes unite against them! This is well documented in my prior
+books.
+
+***** Natural Intuition
+:PROPERTIES:
+:CUSTOM_ID: dirshum--golani-grumsvelt's-guide-to-dirshum--human-domains--tribes-of-egalstan--natural-intuition
+:END:
+
+The tribes people of Eglastan share a few things in common and one of them is
+their intuition. Leaning on that rather than research and scholarly pursuits,
+they pass their knowledge down in spoken form. The tribes people have a fair
+amount of literacy, but they treat it more as a vocation. They use the written
+word mostly for poetry. A more practical use of their writing is to
+
+**** Cyorro
+:PROPERTIES:
+:CUSTOM_ID: dirshum--golani-grumsvelt's-guide-to-dirshum--human-domains--cyorro
+:END:
 *** Valan
     :PROPERTIES:
     :CUSTOM_ID: dirshum--golani-grumsvelt's-guide-to-dirshum--valan
