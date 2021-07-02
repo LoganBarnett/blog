@@ -770,32 +770,28 @@ word mostly for poetry. A more practical use of their writing is to
      :CUSTOM_ID: dirshum--golani-grumsvelt's-guide-to-dirshum--valan--summary
      :END:
 
-     The star Valan comes from the elven word for "judge". Every 43 years the
-     star grows to take up a size that is about a quarter of the moon. The
-     most peak time of it lasts for about one month, which the elves call
-     "Sque valan"; elven for "judgment rendered" or "reparations", depending
-     on the inflection. It is bright enough to leave a powerful deep red glow
-     at night. Many of those races without darkvision can see and navigate
-     freely during this time.
+The star Valan comes from the elven word for "judge". Every 43 years the star
+grows to take up a size that is about a quarter of the moon. The most peak time
+of it lasts for about one month, which the elves call "Sque valan"; elven for
+"judgment rendered" or "reparations", depending on the inflection. It is bright
+enough to leave a faint deep red glow at night.
 
-     It also has a unique property in that it has a baffling effect on
-     creatures with darkvision. Their darkvision simply doesn't work in those
-     30 or so days. The elves say that this is Valan coming to judge those
-     arrogant enough to walk in the night.
+It also has a unique property in that it has a baffling effect on creatures with
+darkvision. Their darkvision simply doesn't work in those 30 or so days. The
+elves say that this is Valan coming to judge those arrogant enough to walk in
+the night. Those who have darkvision describe their sight in the dark as being a
+red that seems impossibly dim but strains the eyes as if it were intensely
+bright.
 
-     What's also interesting is that this effect applies even to things that
-     are shielded from the light of Valan. Creatures that dwell underground
-     cannot see at all and must rely upon other senses. Underground creatures
-     fall into two rough categories: One is hibernation. For others, they go
-     to the surface. This makes for a very chaotic time indeed! Most civilized
-     regions have provisions and guards to handle this. Other, more remote
-     areas will either go into their basements or temporarily seeks shelter in
-     places that do have defenses. In Gyoro, it is a capital offense to refuse
-     shelter to any of the goodly races during this 30 day period.
-
-     I used this time to move about the forests of Minheimia and witness some
-     of the most debased acts that druidic circles perform. It is one of my
-     saucier essays that I highly recommend!
+What's also interesting is that this effect applies even to things that are
+shielded from the light of Valan, and even during the day when Valan is no where
+to be seen. Creatures that dwell underground cannot see at all and must rely
+upon other senses. Underground creatures fall into two rough categories: One is
+hibernation. For others, they go to the surface. This makes for a very chaotic
+time indeed! Most civilized regions have provisions and guards to handle this.
+Other, more remote areas will either go into their basements or temporarily
+seeks shelter in places that do have defenses. In Gyoro, it is a capital offense
+to refuse shelter to any of the goodly races during this 30 day period.
 
 **** astronomy
      :PROPERTIES:
