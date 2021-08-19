@@ -6,6 +6,7 @@
 #+file_tags:
 #+tags:
 #+options:     H:6 num:nil
+#+macro:       years-experience (eval (- (nth 5 (decode-time)) 2004))
 # #+select_tags: sre leader structure
 
 # Front matter needed by Jekyll.
@@ -58,6 +59,14 @@ permalink: /resume/
 
 This document was generated from:
 https://github.com/LoganBarnett/blog/blob/gh-pages/resume.org
+* Summary
+
+I've been a professional software engineer for {{{years-experience}}} years.
+I've worked on video games, embedded devices, web applications, desktop
+applications, and managed server infrastructure. I prefer a sustainable approach
+to software development and maintenance alike. I enjoy providing guidance and
+tackling difficult problems. I feel good and functional documentation is the
+road to well maintained and understood software.
 
 * Job Experience :structure:
 ** NWEA (2016-current)
@@ -234,12 +243,14 @@ This is my obligatory buzzword list.
 ** Languages
 *** Javascript
 React, Redux, Three, Angular, Node, ES6, Webpack, Flow, npm, yarn.
-*** .net
-C#, Boo, Unity/Mono, MVC, WCF, NUnit, OData, Powershell.
 *** Java
 Swing, JAX-RS, JRuby, JUnit, SNMP4J.
+*** .net
+C#, Boo, Unity/Mono, MVC, WCF, NUnit, OData, Powershell.
 *** Ruby
 Ruby on Rails, Sinatra, JRuby, Cucumber, RSpec.
+*** Rust
+Actix, futures, abstract data types, monad chains, and avoiding =unwrap= ;)
 ** Databases
 MongoDB, MySql, SQL Server, Oracle + PL/SQL.
 ** Misc
@@ -247,15 +258,24 @@ Jenkins, JIRA, Pivotal Tracker, Trello, git, Perforce, svn, hg, Plastic SCM,
 vim, emacs, literate programming, functional programming.
 
 * Side projects :structure:
-1. [[https://github.com/loganbarnett/blog/tree/gh-pages/resume.org][This résumé]] :: Uses =org-mode= document and =jekyll= to generate an HTML
+1. [[https://github.com/loganbarnett/blog/tree/gh-pages/resume.org][This résumé]] - Uses =org-mode= document and =jekyll= to generate an HTML
    based résumé.
-2. meta-game - And editor using React + Redux + Three used for creating games
-3. iOS - A probability calculator for Warhammer 40K dice rolls in Swift
-4. Unity - Writing desktop/mobile games using Mono + C# and Boo (.net 3.5)
-5. Monkeybars - MVC desktop GUI framework using JRuby and Swing
-6. Jemini - 2D game framework for JRuby
-7. Rawr - A packaging system creating double clickable app bundles for JRuby
-8. Catch-a-Capcha - Node.js implementation of Pictionary
+2. [[https://github.com/LoganBarnett/dotfiles][My own dotfiles]] - If we value infrastructure as code, why not for our local
+   machines? Also contains my Emacs configuration.
+3. A few literate programs: [[https://github.com/LoganBarnett/40k-dps][40k-dps]], [[https://github.com/LoganBarnett/airbrush-dias][airbrush-dias]], [[https://github.com/LoganBarnett/typedef-gen][typedef-gen]].
+4. [[https://github.com/LoganBarnett/flow-degen][flow-degen]] - Generate typesafe validation/deserialization JavaScript code.
+5. [[https://github.com/LoganBarnett/cubed.js][cubed.js]] - A library to help me work on my voxel game.
+6. [[https://github.com/LoganBarnett/runner][runner]] - My attempt at making a Rust command line replacement of
+   Alfred/Quicksilver.
+7. [[https://github.com/LoganBarnett/jj][jj]] - Run Jenkins jobs from the command line and see the output. Rust.
+8. roid-miner - A generated asteroid mining game with a powerful editor for
+   composing asteroid generators in real time.
+9. meta-game - And editor using React + Redux + Three used for creating games
+10. Various Unity games - Writing desktop/mobile games using Mono + C# and Boo
+    (.net 3.5).
+11. Monkeybars - MVC desktop GUI framework using JRuby and Swing.
+12. Jemini - 2D game framework for JRuby.
+13. Rawr - A packaging system creating double clickable app bundles for JRuby.
 
 * Education :structure:
 
