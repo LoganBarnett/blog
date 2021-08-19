@@ -1,0 +1,127 @@
+/**
+ * I did try making the line height lower than 1.5 but it crams things too much.
+ * Reading becomes very strained amongst the lists.
+ */
+.page-content {
+  line-height: 1.5;
+}
+
+/**
+ * Given our line height of 1.5 (lower becomes difficult to read), we should be
+ * able to remove our margin-bottom completely.
+ */
+h1, h2, h3, h4, h5, h6 {
+  margin-bottom: 0;
+}
+
+/**
+ * Make it obvious that we're looking at a header. Works great in print and
+ * removes reliance upon color to communicate the header-ness.
+ */
+h1::before {
+  content: "·";
+  margin-right: 0.25rem;
+}
+h2::before {
+  content: "··";
+  margin-right: 0.25rem;
+}
+h3::before {
+  content: "···";
+  margin-right: 0.25rem;
+}
+h4::before {
+  content: "····";
+  margin-right: 0.25rem;
+}
+h5::before {
+  content: "·····";
+  margin-right: 0.25rem;
+}
+h6::before {
+  content: "······";
+  margin-right: 0.25rem;
+}
+
+/**
+ * Give us back some more vertical space. This was set to 15px before.
+ */
+p, blockquote, pre, ul, ol, dl, figure, .highlight {
+  margin-bottom: 0.5rem;
+}
+
+h1 {
+  font-size: 1.4rem;
+}
+
+/* Tags get exported too, but we don't want to see them. */
+.tag {
+  display: none;
+}
+
+h2 {
+  display: flex;
+  align-items: center;
+  text-align: center;
+}
+h2::after,h2::before {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid var(--head2-color);
+}
+h2:not(:empty)::before {
+  margin-right: 0.25em;
+  max-width: 1rem;
+}
+h2:not(:empty)::after {
+  margin-left: 0.25em;
+}
+
+.outline-text-2 {
+}
+dl {
+  /**
+   * Works better than a border to display grid lines.
+   * dt and dd must reset the background color.
+   */
+  background-color: var(--border-color-soft);
+  display: grid;
+  /**
+   * Create an inner padding of sorts, which lets the background come through,
+   * and create the inner grid lines for us.
+   */
+  grid-gap: 1px;
+  grid-template-columns: 1fr 4fr;
+  /**
+   * Padding is required to make the background color draw a border line around
+   * the dl.
+   */
+  padding: 1px;
+  width: 100%;
+}
+dt {
+  background-color: var(--background-color);
+  color: var(--link-color);
+  /**
+   * Add some padding so the grid lines don't look so crude.
+   */
+  padding: 0.25rem;
+}
+/**
+ * The border doesn't show up in print, so add the colon in to help visually
+ * pick apart the definition from the title.
+ */
+@media print {
+  dt::after {
+    content: ":";
+  }
+}
+
+dd {
+  background-color: var(--background-color);
+  text-align: left;
+  /**
+   * Add some padding so the grid lines don't look so crude.
+   */
+  padding: 0.25rem;
+}

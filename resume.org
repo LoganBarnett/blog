@@ -1,12 +1,29 @@
-#+title:     Résumé
-#+author:    Logan Barnett
-#+email:     logustus@gmail.com
-#+date:      <2020-01-13 Mon>
-#+language:  en
+#+title:       Résumé
+#+author:      Logan Barnett
+#+email:       logustus@gmail.com
+#+date:        <2020-01-13 Mon>
+#+language:    en
 #+file_tags:
 #+tags:
+#+options:     H:6 num:nil
+# #+select_tags: sre leader structure
 
-* Logan Barnett
+# Front matter needed by Jekyll.
+#+begin_export html
+---
+layout: default
+title: Résumé
+date: 2020-01-13
+categories: software-engineering
+---
+#+end_export
+
+# Our CSS specific to the resume.
+#+begin_export html
+<link rel="stylesheet" type="text/css" href="resume.css" />
+#+end_export
+
+* Logan Barnett :noexport:
   old markdown stuff:
 
 ---
@@ -32,146 +49,254 @@ permalink: /resume/
 ## Job experience ##
 
 ### NWEA ###
-* OECD - Senior Engineer serving as Angular and Javascript expertise needed by
-  the team.
-  * Migrated the administration portion of the project onto Webpack.
-  * Created unit testing pattern that is easier to maintain and author.
-  * Implemented custom login system in Angular.
-  * Helped significantly improve the Protractor.js test stability, including
-    implementing custom waits for CSS animations, and drawing on screenshots as
-    a means of debugging failing tests caused by obscured objects the tests were
-    trying to click on.
-  * Created script to serve as a first pass at converting all hard-coded strings
-    inside of Angular templates into i18n version, and storing the English
-    translation with a friendly lookup name.
-* Item Experience - Senior Engineer providing expertise in Angular and
-  Javascript.
-  * Migrated several projects onto ESLint.
-  * Migrated the item editor to Webpack.
-  * Implemented Babel transformations for a critical backend Node.js service.
-* Ongoing company assistance and work on shared projects such as the style
-  guide.
-  * Helped with Webpack setup on the style guide.
-  * Setup CSS Modules in the style guide, and educated on their usage.
-  * Presented Angular-React demo + PR to show we don't need to write shared
-    components for both Angular and React (the org uses both in different
-    teams).
-  * Assisted UX team in making more semantic styling.
+* Contact :structure:
 
-### IT-Motives `->` UTi `->` DSV (2014-2016) ###
++ Email: [[mailto://logustus@gmail.com][logustus@gmail.com]]
++ Mobile: 602.264.3584
++ Blog: https://loganbarnett.github.io/blog/
++ Github: https://github.com/loganbarnett
 
-* Client Portal - Senior Engineer leading the UI of Client Portal at UTi and
-  providing expertise for AngularJS
-  * Restructured the AngularJS app to take on a larger scale of UI
-  * Implemented caching for values that rarely change
-  * Educated team on quirks of Javascript and AngularJS
-  * Migrated the team to TDD and got the UI up to 100% test coverage
-  * Provided advice for other teams at UTi as they considered taking on
-    AngularJS as a UI framework
-  * Setup Jenkins for automated CI and test coverage reporting
-  * Setup Cucumber testing to make executable business requirements
-* Identity Management - Lead engineer on company-wide self-user-management app
-  * React + Redux in a functional style
-  * Highly test driven
-  * Webpack, ES6, Browser-sync, CSSModules
-  * Interfaced heavily with Oracle's security stack
-  * Intended as a pilot project for React for upgrading legacy projects
-    piecemeal
+This document was generated from:
+https://github.com/LoganBarnett/blog/blob/gh-pages/resume.org
 
-### E-Line Media (2013-2014) ###
+* Job Experience :structure:
+** NWEA (2016-current)
+At NWEA I have worked at several teams (typical for the org) and formed many
+cross team connections. I was primarily hired for JavaScript and Angular.js
+experience but dipped into many other disciplines.
+*** DevOps
+Joined DevOps team to help with in-house infrastructure applications and tools.
+1. Assumed stewardship over all of our in-house applications which controlled
+   the colo, managed deployments, managed release planning, and credential
+   synchronization. All programs enjoyed improvements over reproducible builds,
+   better tests, memoized API calls, and automatic deployments to keep them
+   working in a rapidly changing ecosystem.
+2. Provided significant direction for Build Engineering sub team to help
+   consolidate a wide spread of tech employed. One example is consolidating all
+   of our Jenkins build agents into the Cloud Swarm - a flexible pool of
+   Dockerized Jenkins agents.
+3. Brought perspective to the team who don't have to consume their tools the way
+   the engineering teams have to.
+*** Assessment
+Senior engineer spearheading new proctor interface.
+**** Summative Proctor UI
+Built a React-Redux user interface for proctoring (running) student tests.
++ Powerful tests :: The UI used algebraic data types with Flow instead of
+  ordinary unit tests. Automated tests are Cucumber + Nightwatch.js to pilot a
+  browser using tests that relatively untrained QA members could contribute to.
+  Achieved 100% type coverage, and 350+ acceptance test scenarios.
++ Automatic Swagger synchronization :: Mocks were kept in sync with the Swagger
+  definitions, and all data was sanitized at virtually no cost. The UI
+  oftentimes was the insurance that APIs stayed true to their contract.
++ Deployment :: Helped create a Feature flag system allowed features to be
+  overridden by QA, to be deployed immediately yet turned on at a predetermined
+  time. Closest application to the organization's ongoing CICD efforts.
++ Collaboration :: Worked closely with other teams to ensure smooth cross
+  communication between UI and severs. Ongoing org assistance and worked on
+  shared projects such as the style guide.
+***** JavaScript technologies employed :nodejs:
++ Helped with Webpack setup on the style guide.
++ Setup CSS Modules in the style guide, and educated on their usage.
++ Presented Angular-React demo + PR to show we don't need to write shared
+  components for both Angular and React.
 
-* E-Line Publishing Platform - Software Engineer assisting in construction of an
-  MMO game engine
-  * Continued support of Atlantis Remixed project from ASU partnership.
-  * Implemented Action-Condition-System - a server side game logic editing
-    system for game designers.
-  * Implemented dialog system and later extended it to also be a web authoring
-    tool.
-  * Implemented distribution system that interfaces with JMS for providing
-    realtime communication
-  * Designed and built in-game UI using Angular.JS and fed it data via a
-    socket server.
+*** Item Experience
+Senior Engineer providing JavaScript expertise.
+**** Build and deployment :sre:
+Streamlined a manual build and deploy process.
+**** Babel :nodejs:
+Implemented Babel transformations for a critical backend Node.js service.
+*** OECD
+Senior Engineer serving as Angular and Javascript expertise needed by the team.
+1. Migrated the administration portion of the project onto Webpack.
+2. Created unit testing pattern that is easier to maintain and author.
+3. Helped significantly improve the Protractor.js test stability, including
+   implementing custom waits for CSS animations, and drawing on screenshots as a
+   means of debugging failing tests caused by obscured objects the tests were
+   trying to click on.
+4. Created script to serve as a first pass at converting all hard-coded strings
+   inside of Angular templates into i18n version, and storing the English
+   translation with a friendly lookup name.
 
-### Arizona State University (2011-2013) ###
+*** UX/UI organizational needs
+Ongoing company assistance and work on shared projects such as the style
+guide.
+1. Helped with Webpack setup on the style guide.
+2. Setup CSS Modules in the style guide, and educated on their usage.
+3. Presented Angular-React demo + PR to show we don't need to write shared
+   components for both Angular and React (the org uses both in different
+   teams).
+4. Assisted UX team in making more semantic styling.
+5. Acquired and provided accessibility (a11y) expertise.
 
-* AtlantisRemixed - Co-lead/senior Developer to make a game series to eventually
-  become an MMO
-  * Developed integrated logic system for game designers to code without heavy
-    coding knowledge.
-  * Designed build system and significant portions of the patching system.
-  * Optimized level loading, character composition, and editing tools all built
-    in Unity using .net.
-  * Integrated game with a Ruby on Rails web stack
-  * Managed small team of software developers
-  * Managed Scrum/Agile process
-  * Continued working remotely with team when I moved to Portland with a good
-    deal of success.
+** IT-Motives -> UTi -> DSV (2014-2016)
+*** Client Portal
+Senior Engineer leading the UI of Client Portal at UTi and
+providing expertise for Angular.JS.
+1. Restructured the AngularJS app to take on a larger scale of UI.
+2. Implemented caching for values that rarely change.
+3. Educated team on quirks of Javascript and AngularJS.
+4. Migrated the team to TDD and got the UI up to 100% test coverage.
+5. Provided advice for other teams at UTi as they considered taking on.
+6. AngularJS as a UI framework.
+7. Setup Jenkins for automated CI and test coverage reporting.
+8. Setup Cucumber testing to make executable business requirements.
+*** Identity Management
+Lead engineer on company-wide self-user-management app.
+1. React + Redux in a functional style.
+2. Highly test driven.
+3. Webpack, ES6, Browser-sync, CSSModules.
+4. Interfaced heavily with Oracle's security stack.
+5. Intended as a pilot project for React for upgrading legacy projects
+   piecemeal.
 
-### GoDaddy Inc (2010-2011) ###
+** Arizona State University -> E-Line Media (2011-2014)
 
-* Hosted Exchange - Providing Exchange as a hosted/shared solution
-  * Maintenance and enhancements to a Legacy .net app
-  * Extensive work with Powershell to work closely with Exchange 2010
-  * Created support tools using MVC3
+*** AtlantisRemixed
+Co-lead/senior Developer to make a game series to eventually become an MMO.
+1. Developed integrated logic system for game designers to code without heavy
+   coding knowledge.
+2. Designed build system and significant portions of the patching system.
+3. Optimized level loading, character composition, and editing tools all built
+   in Unity using .net.
+4. Integrated game with a Ruby on Rails web stack.
+5. Managed small team of software developers.
+6. Managed Scrum/Agile process.
+7. Continued working remotely with team when I moved to Portland with a good
+   deal of success.
 
-### Integrum Technologies (2009-2010) ###
+*** E-Line Publishing Platform
+Software Engineer assisting in construction of an MMO game engine.
+1. Continued support of Atlantis Remixed project from ASU partnership.
+2. Implemented Action-Condition-System - a server side game logic editing
+   system for game designers.
+3. Implemented dialog system and later extended it to also be a web authoring
+   tool.
+4. Implemented distribution system that interfaces with JMS for providing
+   realtime communication.
+5. Designed and built in-game UI using Angular.JS and fed it data via a
+   socket server.
 
-* On the Record Sports - Backend to a fantasy sports app that used SportsDB feed
-  * Consumed complex JSON services
-  * Worked very closely with client as main contact remotely using Skype and
-    company’s Scrum/Project tracking software
-* 7th Day Adventists - Customizable sites that can display different kinds of
-    content based on extensions installed
-  * Worked on a legacy Rails app with thousands of users
-  * Improved the existing custom deployment scheme
-  * Worked with various users on bugs
+** GoDaddy Inc (2010-2011)
+*** Hosted Exchange
+Providing Exchange as a hosted/shared solution.
+1. Maintenance and enhancements to a Legacy .net app.
+2. Extensive work with Powershell to work closely with Exchange 2010.
+3. Created support tools using MVC3.
 
-* Valley Metro - Public bus schedule system for seeing when/where busses run
-  * Imported data from their system using background processes
-  * Displayed route info using their CSS and layout
-  * Handicap compliance
+** Integrum Technologies (2009-2010)
+Worked as a Rails developer and did extensive pair programming.
+*** On the Record Sports
+Backend to a fantasy sports app that used SportsDB feed.
+1. Consumed complex JSON services
+2. Worked very closely with client as main contact remotely using Skype and
+   company’s Scrum/Project tracking software
+*** 7th Day Adventists
+Customizable sites that can display different kinds of content based on
+extensions installed.
+1. Worked on a legacy Rails app with thousands of users
+2. Improved the existing custom deployment scheme
+3. Worked with various users on bugs
 
-### Happy Camper Studios (2007-2009) ###
+*** Valley Metro
+Public bus schedule system for seeing when/where busses run.
+1. Imported data from their system using background processes.
+2. Displayed route info using their CSS and layout.
+3. =a11y= compliance.
 
-* Skywire Interface - Manages settings and shows diagnostics for satellite
-  modems
-  * Managed relationship with business's primary contact - Radyne (now Comtech)
-  * Desktop application with many forms (20+)
-  * Utilized SNMP4J to communicate with modems over the SNMP protocol
-  * Installers written for Windows, Linux, and OSX.
-* Claim Tracker - Manages clients and phone script/history for tracking problems
-  with claims
-  * Managed relationship with business's secondary client - New Haven Dental
-* JotBot - Happy Camper Studios' product
-  * Main contribution was against the export feature (CSV, XML, PDF)
+** Happy Camper Studios (2007-2009)
+*** Skywire Interface
+Manages settings and shows diagnostics for satellite modems.
+1. Managed relationship with business's primary contact - Radyne (now Comtech).
+2. Desktop application with many forms (20+).
+3. Utilized SNMP4J to communicate with modems over the SNMP protocol.
+4. Installers written for Windows, Linux, and OSX.
+*** Claim Tracker
+Manages clients and phone script/history for tracking problems with claims.
+1. Managed relationship with business's secondary client - New Haven Dental
+2. Built the initial version of the application using Monkeybars.
+*** JotBot
+Happy Camper Studios' product.
+1. Main contribution was against the export feature (CSV, XML, PDF)
 
-### UHaul International (2004-2007) ###
+** UHaul International (2004-2007)
+Entry level software engineering position.
+*** Claim Center
+Tracked and processed claims (UHaul is self insured).
+1. SOAP web services and .net remoting.
+2. Bridged Java-based system with existing .net infrastructure
+*** Hitch Central
+Handles ordering of new hitches and manages hitch inventory.
+1. .net desktop client
 
-* Claim Center - Tracked and processed claims (UHaul is self insured)
-  * SOAP web services and .net remoting
-  * Bridged Java-based system with existing .net infrastructure
-* Hitch Central - Ordered new hitches and managed hitch inventory
-  * .net desktop client
+* Proficiencies :structure:
+This is my obligatory buzzword list.
+** Languages
+*** Javascript
+React, Redux, Three, Angular, Node, ES6, Webpack, Flow, npm, yarn.
+*** .net
+C#, Boo, Unity/Mono, MVC, WCF, NUnit, OData, Powershell.
+*** Java
+Swing, JAX-RS, JRuby, JUnit, SNMP4J.
+*** Ruby
+Ruby on Rails, Sinatra, JRuby, Cucumber, RSpec.
+** Databases
+MongoDB, MySql, SQL Server, Oracle + PL/SQL.
+** Misc
+Jenkins, JIRA, Pivotal Tracker, Trello, git, Perforce, svn, hg, Plastic SCM,
+vim, emacs, literate programming, functional programming.
 
-## Proficiencies ##
-* **Javascript** - React, Redux, Three, Angular, Node, ES6, Webpack, Flow, npm
-* **.net** - C#, Boo, Unity/Mono, MVC, WCF, NUnit, OData, Powershell
-* **Java** - Swing, JAX-RS, JRuby, JUnit, SNMP4J
-* **Ruby** - Ruby on Rails, Sinatra, JRuby, Cucumber, RSpec
-* **Databases** - MongoDB, MySql, SQL Server, Oracle + PL/SQL
-* **Misc** - Jenkins, JIRA, Pivotal Tracker, Trello, git, Perforce, svn, hg,
-  Plastic SCM
+* Side projects :structure:
+1. [[https://github.com/loganbarnett/blog/tree/gh-pages/resume.org][This résumé]] :: Uses =org-mode= document and =jekyll= to generate an HTML
+   based résumé.
+2. meta-game - And editor using React + Redux + Three used for creating games
+3. iOS - A probability calculator for Warhammer 40K dice rolls in Swift
+4. Unity - Writing desktop/mobile games using Mono + C# and Boo (.net 3.5)
+5. Monkeybars - MVC desktop GUI framework using JRuby and Swing
+6. Jemini - 2D game framework for JRuby
+7. Rawr - A packaging system creating double clickable app bundles for JRuby
+8. Catch-a-Capcha - Node.js implementation of Pictionary
 
-## Side projects ##
+* Education :structure:
 
-* **meta-game** - And editor using React + Redux + Three used for creating games
-* **iOS** - A probability calculator for Warhammer 40K dice rolls in Swift
-* **Unity** - Writing desktop/mobile games using Mono + C# and Boo (.net 3.5)
-* **Monkeybars** - MVC desktop GUI framework using JRuby and Swing
-* **Jemini** - 2D game framework for JRuby
-* **Rawr** - A packaging system creating double clickable app bundles for JRuby
-* **Catch-a-Capcha** - Node.js implementation of Pictionary
+** DeVry University
 
-## Education ##
+Graduated 2004 with BS in Computer Engineering Technology
 
-* DeVry University, graduated 2004 with BS in Computer Engineering Technology
+* COMMENT views
+
+I wind up doing a lot of things at the places I work, and I can't possibly
+include every tiny accomplishment (nor every major accomplishment) at every
+place that I work. I feel it's a good idea to show _how_ I have been well suited
+for the role I am applying for.
+
+This document is setup to express certain views of my career history. By
+coloring my data in certain ways, I can render a resume that reflects a variety
+of things without me having to keep all of those resumes up to date.
+
+** using headlines and tags to produce views
+
+A headline with tags makes the most sense to me in terms of things to show or
+not show. This doesn't always translate well when exporting to markdown, but I
+think I can make this work by setting the heading to some fixed amount. To do so
+I must assume a structure. I think the relative structure of workplace ->
+project -> accomplishment will do just fine there. Each of those three entities
+will be an =org-mode= heading. Hopefully in the export, it will be rendered as a
+list once it gets to accomplishments.
+
+Then what I do is I add a tag to each accomplishment. I then indicate that only
+certain tags are visible during the export.
+
+What this approach misses is that I don't get to use a sentence. Perhaps with
+some CSS I could remove the line break from the heading and the entry, and make
+it look like a label with a description.
+
+
+
+* COMMENT settings
+This heading must go on the bottom. It is implicitly not exported, and settings
+can be set here.
+
+Local Variables:
+org-html-toplevel-hlevel:1
+End:

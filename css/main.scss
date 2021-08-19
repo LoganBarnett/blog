@@ -3,6 +3,16 @@
 ---
 @charset "utf-8";
 
+:root {
+  --background-color: #282c34;
+  --foreground-color: #bbc2cf;
+  --head1-color: #51afef;
+  --head2-color: #C57BDB;
+  --head3-color: #a991f1;
+  --head4-color: #7cc3f3;
+  --link-color: #51afef;
+  --border-color-soft: black;
+}
 
 
 // Our variables
@@ -13,8 +23,8 @@ $base-line-height: 1.5;
 
 $spacing-unit:     30px;
 
-$text-color:       #DDD;
-$background-color: #222;
+$text-color:       var(--foreground-color);
+$background-color: var(--background-color);
 $brand-color:      #2a7ae2;
 
 // $grey-color:       #828282;
@@ -28,10 +38,10 @@ $content-width:    800px;
 $on-palm:          600px;
 $on-laptop:        800px;
 
-$head1: #4f97d7;
-$head2: #2d9574;
-$head3: #67b11d;
-$head4: #b1951d;
+$head1: var(--head1-color);
+$head2: var(--head2-color);
+$head3: var(--head3-color);
+$head4: var(--head4-color);
 
 
 // Using media queries with like this:
@@ -42,16 +52,16 @@ $head4: #b1951d;
 //     }
 // }
 @mixin media-query($device) {
-    @media screen and (max-width: $device) {
-        @content;
-    }
+  @media screen and (max-width: $device) {
+    @content;
+  }
 }
 
 
 
 // Import partials from `sass_dir` (defaults to `_sass`)
 @import
-        "base",
-        "layout",
-        "syntax-highlighting"
+"base",
+"layout",
+"syntax-highlighting"
 ;
