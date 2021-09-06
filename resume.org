@@ -1,11 +1,11 @@
-#+title:       Résumé
+#+title:       Logan Barnett's Résumé
 #+author:      Logan Barnett
 #+email:       logustus@gmail.com
-#+date:        <2020-01-13 Mon>
+#+date:        <2021-09-06 Mon>
 #+language:    en
 #+file_tags:
 #+tags:
-#+options:     H:6 num:nil
+#+options:     H:6 num:nil tags:nil creator:nil date:nil tasks:nil author:nil
 #+macro:       years-experience (eval (- (nth 5 (decode-time)) 2004))
 # #+select_tags: sre leader structure
 
