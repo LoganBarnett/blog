@@ -7,6 +7,7 @@
 #+tags:
 #+options:     H:6 num:nil tags:nil creator:nil date:nil tasks:nil author:nil
 #+macro:       years-experience (eval (- (nth 5 (decode-time)) 2004))
+#+auto_id:     t
 # #+select_tags: sre leader structure
 
 # Front matter needed by Jekyll.
@@ -25,6 +26,9 @@ categories: software-engineering
 #+end_export
 
 * Logan Barnett :noexport:
+:PROPERTIES:
+:CUSTOM_ID: logan-barnett
+:END:
   old markdown stuff:
 
 ---
@@ -51,6 +55,9 @@ permalink: /resume/
 
 ### NWEA ###
 * Contact :structure:
+:PROPERTIES:
+:CUSTOM_ID: contact
+:END:
 
 + Email: [[mailto://logustus@gmail.com][logustus@gmail.com]]
 + Mobile: 602.264.3584
@@ -60,6 +67,9 @@ permalink: /resume/
 This document was generated from:
 https://github.com/LoganBarnett/blog/blob/gh-pages/resume.org
 * Summary
+:PROPERTIES:
+:CUSTOM_ID: summary
+:END:
 
 I've been a professional software engineer for {{{years-experience}}} years.
 I've worked on video games, embedded devices, web applications, desktop
@@ -69,11 +79,20 @@ tackling difficult problems. I feel good and functional documentation is the
 road to well maintained and understood software.
 
 * Job Experience :structure:
+:PROPERTIES:
+:CUSTOM_ID: job-experience
+:END:
 ** NWEA (2016-current)
+:PROPERTIES:
+:CUSTOM_ID: job-experience--nwea-2016-current
+:END:
 At NWEA I have worked at several teams (typical for the org) and formed many
 cross team connections. I was primarily hired for JavaScript and Angular.js
 experience but dipped into many other disciplines.
 *** DevOps
+:PROPERTIES:
+:CUSTOM_ID: job-experience--nwea-2016-current--devops
+:END:
 Joined DevOps team to help with in-house infrastructure applications and tools.
 1. Assumed stewardship over all of our in-house applications which controlled
    the colo, managed deployments, managed release planning, and credential
@@ -87,8 +106,14 @@ Joined DevOps team to help with in-house infrastructure applications and tools.
 3. Brought perspective to the team who don't have to consume their tools the way
    the engineering teams have to.
 *** Assessment
+:PROPERTIES:
+:CUSTOM_ID: job-experience--nwea-2016-current--assessment
+:END:
 Senior engineer spearheading new proctor interface.
 **** Summative Proctor UI
+:PROPERTIES:
+:CUSTOM_ID: job-experience--nwea-2016-current--assessment--summative-proctor-ui
+:END:
 Built a React-Redux user interface for proctoring (running) student tests.
 + Powerful tests :: The UI used algebraic data types with Flow instead of
   ordinary unit tests. Automated tests are Cucumber + Nightwatch.js to pilot a
@@ -104,18 +129,33 @@ Built a React-Redux user interface for proctoring (running) student tests.
   communication between UI and severs. Ongoing org assistance and worked on
   shared projects such as the style guide.
 ***** JavaScript technologies employed :nodejs:
+:PROPERTIES:
+:CUSTOM_ID: job-experience--nwea-2016-current--assessment--summative-proctor-ui--javascript-technologies-employed
+:END:
 + Helped with Webpack setup on the style guide.
 + Setup CSS Modules in the style guide, and educated on their usage.
 + Presented Angular-React demo + PR to show we don't need to write shared
   components for both Angular and React.
 
 *** Item Experience
+:PROPERTIES:
+:CUSTOM_ID: job-experience--nwea-2016-current--item-experience
+:END:
 Senior Engineer providing JavaScript expertise.
 **** Build and deployment :sre:
+:PROPERTIES:
+:CUSTOM_ID: job-experience--nwea-2016-current--item-experience--build-and-deployment
+:END:
 Streamlined a manual build and deploy process.
 **** Babel :nodejs:
+:PROPERTIES:
+:CUSTOM_ID: job-experience--nwea-2016-current--item-experience--babel
+:END:
 Implemented Babel transformations for a critical backend Node.js service.
 *** OECD
+:PROPERTIES:
+:CUSTOM_ID: job-experience--nwea-2016-current--oecd
+:END:
 Senior Engineer serving as Angular and Javascript expertise needed by the team.
 1. Migrated the administration portion of the project onto Webpack.
 2. Created unit testing pattern that is easier to maintain and author.
@@ -128,6 +168,9 @@ Senior Engineer serving as Angular and Javascript expertise needed by the team.
    translation with a friendly lookup name.
 
 *** UX/UI organizational needs
+:PROPERTIES:
+:CUSTOM_ID: job-experience--nwea-2016-current--ux/ui-organizational-needs
+:END:
 Ongoing company assistance and work on shared projects such as the style
 guide.
 1. Helped with Webpack setup on the style guide.
@@ -139,7 +182,13 @@ guide.
 5. Acquired and provided accessibility (a11y) expertise.
 
 ** IT-Motives -> UTi -> DSV (2014-2016)
+:PROPERTIES:
+:CUSTOM_ID: job-experience--it-motives-->-uti-->-dsv-2014-2016
+:END:
 *** Client Portal
+:PROPERTIES:
+:CUSTOM_ID: job-experience--it-motives-->-uti-->-dsv-2014-2016--client-portal
+:END:
 Senior Engineer leading the UI of Client Portal at UTi and
 providing expertise for Angular.JS.
 1. Restructured the AngularJS app to take on a larger scale of UI.
@@ -151,6 +200,9 @@ providing expertise for Angular.JS.
 7. Setup Jenkins for automated CI and test coverage reporting.
 8. Setup Cucumber testing to make executable business requirements.
 *** Identity Management
+:PROPERTIES:
+:CUSTOM_ID: job-experience--it-motives-->-uti-->-dsv-2014-2016--identity-management
+:END:
 Lead engineer on company-wide self-user-management app.
 1. React + Redux in a functional style.
 2. Highly test driven.
@@ -160,8 +212,14 @@ Lead engineer on company-wide self-user-management app.
    piecemeal.
 
 ** Arizona State University -> E-Line Media (2011-2014)
+:PROPERTIES:
+:CUSTOM_ID: job-experience--arizona-state-university-->-e-line-media-2011-2014
+:END:
 
 *** AtlantisRemixed
+:PROPERTIES:
+:CUSTOM_ID: job-experience--arizona-state-university-->-e-line-media-2011-2014--atlantisremixed
+:END:
 Co-lead/senior Developer to make a game series to eventually become an MMO.
 1. Developed integrated logic system for game designers to code without heavy
    coding knowledge.
@@ -175,6 +233,9 @@ Co-lead/senior Developer to make a game series to eventually become an MMO.
    deal of success.
 
 *** E-Line Publishing Platform
+:PROPERTIES:
+:CUSTOM_ID: job-experience--arizona-state-university-->-e-line-media-2011-2014--e-line-publishing-platform
+:END:
 Software Engineer assisting in construction of an MMO game engine.
 1. Continued support of Atlantis Remixed project from ASU partnership.
 2. Implemented Action-Condition-System - a server side game logic editing
@@ -187,20 +248,35 @@ Software Engineer assisting in construction of an MMO game engine.
    socket server.
 
 ** GoDaddy Inc (2010-2011)
+:PROPERTIES:
+:CUSTOM_ID: job-experience--godaddy-inc-2010-2011
+:END:
 *** Hosted Exchange
+:PROPERTIES:
+:CUSTOM_ID: job-experience--godaddy-inc-2010-2011--hosted-exchange
+:END:
 Providing Exchange as a hosted/shared solution.
 1. Maintenance and enhancements to a Legacy .net app.
 2. Extensive work with Powershell to work closely with Exchange 2010.
 3. Created support tools using MVC3.
 
 ** Integrum Technologies (2009-2010)
+:PROPERTIES:
+:CUSTOM_ID: job-experience--integrum-technologies-2009-2010
+:END:
 Worked as a Rails developer and did extensive pair programming.
 *** On the Record Sports
+:PROPERTIES:
+:CUSTOM_ID: job-experience--integrum-technologies-2009-2010--on-the-record-sports
+:END:
 Backend to a fantasy sports app that used SportsDB feed.
 1. Consumed complex JSON services
 2. Worked very closely with client as main contact remotely using Skype and
    company’s Scrum/Project tracking software
 *** 7th Day Adventists
+:PROPERTIES:
+:CUSTOM_ID: job-experience--integrum-technologies-2009-2010--7th-day-adventists
+:END:
 Customizable sites that can display different kinds of content based on
 extensions installed.
 1. Worked on a legacy Rails app with thousands of users
@@ -208,56 +284,110 @@ extensions installed.
 3. Worked with various users on bugs
 
 *** Valley Metro
+:PROPERTIES:
+:CUSTOM_ID: job-experience--integrum-technologies-2009-2010--valley-metro
+:END:
 Public bus schedule system for seeing when/where busses run.
 1. Imported data from their system using background processes.
 2. Displayed route info using their CSS and layout.
 3. =a11y= compliance.
 
 ** Happy Camper Studios (2007-2009)
+:PROPERTIES:
+:CUSTOM_ID: job-experience--happy-camper-studios-2007-2009
+:END:
 *** Skywire Interface
+:PROPERTIES:
+:CUSTOM_ID: job-experience--happy-camper-studios-2007-2009--skywire-interface
+:END:
 Manages settings and shows diagnostics for satellite modems.
 1. Managed relationship with business's primary contact - Radyne (now Comtech).
 2. Desktop application with many forms (20+).
 3. Utilized SNMP4J to communicate with modems over the SNMP protocol.
 4. Installers written for Windows, Linux, and OSX.
 *** Claim Tracker
+:PROPERTIES:
+:CUSTOM_ID: job-experience--happy-camper-studios-2007-2009--claim-tracker
+:END:
 Manages clients and phone script/history for tracking problems with claims.
 1. Managed relationship with business's secondary client - New Haven Dental
 2. Built the initial version of the application using Monkeybars.
 *** JotBot
+:PROPERTIES:
+:CUSTOM_ID: job-experience--happy-camper-studios-2007-2009--jotbot
+:END:
 Happy Camper Studios' product.
 1. Main contribution was against the export feature (CSV, XML, PDF)
 
 ** UHaul International (2004-2007)
+:PROPERTIES:
+:CUSTOM_ID: job-experience--uhaul-international-2004-2007
+:END:
 Entry level software engineering position.
 *** Claim Center
+:PROPERTIES:
+:CUSTOM_ID: job-experience--uhaul-international-2004-2007--claim-center
+:END:
 Tracked and processed claims (UHaul is self insured).
 1. SOAP web services and .net remoting.
 2. Bridged Java-based system with existing .net infrastructure
 *** Hitch Central
+:PROPERTIES:
+:CUSTOM_ID: job-experience--uhaul-international-2004-2007--hitch-central
+:END:
 Handles ordering of new hitches and manages hitch inventory.
 1. .net desktop client
 
 * Proficiencies :structure:
+:PROPERTIES:
+:CUSTOM_ID: proficiencies
+:END:
 This is my obligatory buzzword list.
 ** Languages
+:PROPERTIES:
+:CUSTOM_ID: proficiencies--languages
+:END:
 *** Javascript
+:PROPERTIES:
+:CUSTOM_ID: proficiencies--languages--javascript
+:END:
 React, Redux, Three, Angular, Node, ES6, Webpack, Flow, npm, yarn.
 *** Java
+:PROPERTIES:
+:CUSTOM_ID: proficiencies--languages--java
+:END:
 Swing, JAX-RS, JRuby, JUnit, SNMP4J.
 *** .net
+:PROPERTIES:
+:CUSTOM_ID: proficiencies--languages--.net
+:END:
 C#, Boo, Unity/Mono, MVC, WCF, NUnit, OData, Powershell.
 *** Ruby
+:PROPERTIES:
+:CUSTOM_ID: proficiencies--languages--ruby
+:END:
 Ruby on Rails, Sinatra, JRuby, Cucumber, RSpec.
 *** Rust
+:PROPERTIES:
+:CUSTOM_ID: proficiencies--languages--rust
+:END:
 Actix, futures, abstract data types, monad chains, and avoiding =unwrap= ;)
 ** Databases
+:PROPERTIES:
+:CUSTOM_ID: proficiencies--databases
+:END:
 MongoDB, MySql, SQL Server, Oracle + PL/SQL.
 ** Misc
+:PROPERTIES:
+:CUSTOM_ID: proficiencies--misc
+:END:
 Jenkins, JIRA, Pivotal Tracker, Trello, git, Perforce, svn, hg, Plastic SCM,
 vim, emacs, literate programming, functional programming.
 
 * Side projects :structure:
+:PROPERTIES:
+:CUSTOM_ID: side-projects
+:END:
 1. [[https://github.com/loganbarnett/blog/tree/gh-pages/resume.org][This résumé]] - Uses =org-mode= document and =jekyll= to generate an HTML
    based résumé.
 2. [[https://soundcloud.com/lambda-cast][Lambda Cast]] - I costar in a podcast about function functional programming.
@@ -279,12 +409,21 @@ vim, emacs, literate programming, functional programming.
 14. Rawr - A packaging system creating double clickable app bundles for JRuby.
 
 * Education :structure:
+:PROPERTIES:
+:CUSTOM_ID: education
+:END:
 
 ** DeVry University
+:PROPERTIES:
+:CUSTOM_ID: education--devry-university
+:END:
 
 Graduated 2004 with BS in Computer Engineering Technology
 
 * COMMENT views
+:PROPERTIES:
+:CUSTOM_ID: views
+:END:
 
 I wind up doing a lot of things at the places I work, and I can't possibly
 include every tiny accomplishment (nor every major accomplishment) at every
@@ -296,6 +435,9 @@ coloring my data in certain ways, I can render a resume that reflects a variety
 of things without me having to keep all of those resumes up to date.
 
 ** using headlines and tags to produce views
+:PROPERTIES:
+:CUSTOM_ID: views--using-headlines-and-tags-to-produce-views
+:END:
 
 A headline with tags makes the most sense to me in terms of things to show or
 not show. This doesn't always translate well when exporting to markdown, but I
@@ -315,6 +457,9 @@ it look like a label with a description.
 
 
 * COMMENT settings
+:PROPERTIES:
+:CUSTOM_ID: settings
+:END:
 This heading must go on the bottom. It is implicitly not exported, and settings
 can be set here.
 
