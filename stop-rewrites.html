@@ -1,0 +1,412 @@
+---
+layout: default
+title: Consider Not Doing That Rewrite
+date: 2021-12-08
+categories: software-engineering
+---
+
+<p>
+I&rsquo;ve always heard the software engineering industry is a rapidly changing
+industry. One of the things that contributes to it (and not the other way
+around) is the frequency at which we abandon a pile of work and just start anew.
+</p>
+
+<p>
+I have not had good experience with this, and this post will go into why. At a
+very high level, here&rsquo;s there&rsquo;s one really big point I want to drive home:
+Rewrites won&rsquo;t unburden a project from technical debt.
+</p>
+
+<div id="outline-container-orgf16acb3" class="outline-2">
+<h2 id="orgf16acb3"><span class="section-number-2">1</span> Technical Debt</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+To understand more deeply about why we want to rewrite a particular piece of
+software, we need to first understand the prime motivation and establish it in
+this article&rsquo;s lexicon.
+</p>
+
+<p>
+Technical debt is, in its vaguest sense, a shortcut taken. In the interest of
+short term gains, long term gains are sacrificed. This isn&rsquo;t always as sinister
+as it sounds. However, projects can become so weighed down by their technical
+debt that they cannot move forward anymore. Let&rsquo;s go through a thought
+experiment that has nothing at all to do with software.
+</p>
+
+<p>
+We all have busy days. Let&rsquo;s imagine a day where things get busy: You skip
+brushing your teeth in the morning so you can squeeze in a few more minutes to
+get to work. Your teeth are external facing bones - they can survive a day of
+the bacteria running unchecked. At work, you order the fastest food you can get
+and eat it at your desk so you can have more desk time or you don&rsquo;t miss that
+meeting. The food isn&rsquo;t healthy, but your stomach acid can strip impurities off
+of steel - you&rsquo;ll be alright with one more grease bomb. When you return home
+(late), you order some pizza because you can&rsquo;t be bothered to make dinner, and
+you barely get to say hello to your children, let alone talk to them about their
+lives, school work, etc before they have to go to bed. By the time you&rsquo;re all
+done, you&rsquo;re exhausted, so you watch TV for the rest of the night. Eventually
+you fall asleep and start the cycle anew. Hopefully tomorrow will go better.
+</p>
+
+<p>
+I think we&rsquo;ve all had days like this. Ideally, it&rsquo;s painfully obvious that at
+if all of this stuff keeps up, you&rsquo;ll need to go to the dentist and get a root
+canal. The food you ate will transform your gut bacteria to demand more pizza
+and grease bombs. Your kids will grow far apart from you, because you&rsquo;re never
+available to be present in their lives. My point probably sounds asinine, but we
+all suffer from it. We catch ourselves trying too hard at a particular thing for
+weeks on end. We course correct, and we try to make space for all the busy stuff
+in life, and focus on the few things that are truly important to us.
+</p>
+
+<p>
+The grease bomb, pizza, and neglected dental hygiene are all forms of technical
+debt that you are conscious of. What about sitting at your desk all day?
+Sedentary lifestyles aren&rsquo;t considered healthy. There&rsquo;s many forms of short-cut
+decisions made that you weren&rsquo;t even aware of. This also applies to technical
+debt.
+</p>
+
+<p>
+In the software industry, we tend to use technical debt as a mark of shame. But
+really, no software project is absent of it. At some point, we need to do
+something and move on.
+</p>
+
+<p>
+That said, technical debt can run unchecked. The blame can be relatively equal:
+The software engineers on a project are only so patient, and the folks cutting
+the checks for software engineer salaries can&rsquo;t write blank checks. At some
+point the project must launch. Maybe you think you have a project with no
+technical debt, and maybe that&rsquo;s true - but is that project actually in use?
+Without a time constraint, it can be very difficult to finish a project.
+</p>
+
+<p>
+We do have a few techniques on how to avoid this, and I&rsquo;ll try going into some
+of that. Let&rsquo;s take a look at the old software we want to rewrite.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orge3ac324" class="outline-2">
+<h2 id="orge3ac324"><span class="section-number-2">2</span> Legacy</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+Software is not often viewed as fine wines - they do not age nicely. Words like
+&ldquo;cruft&rdquo;, and &ldquo;hacky&rdquo; get thrown around. Legacy is oftentimes the term we give to
+a project we don&rsquo;t like anymore, because it uses that old technology that
+doesn&rsquo;t make our résumés look good. It has poor decisions made against it which
+have accumulated worse than barnacles on the hull of a ship. Legacy should truly
+mean &ldquo;It&rsquo;s in use&rdquo;, or &ldquo;It&rsquo;s in production&rdquo;, rather than that old pile of slop
+that we liken to Jim Crow laws.
+</p>
+
+<p>
+Legacy is powerful. It means your software is in use. Don&rsquo;t ever turn your back
+on legacy. Unless you&rsquo;re a startup that&rsquo;s yet to launch, chances are legacy is
+what pays your bills. Without it, you are nothing.
+</p>
+
+<p>
+Legacy can still be hard to work with though. Changing one part of the software
+is likely to break some poorly tested or documented behavior. Rolling out
+changes, once they are made, can be frustrating and error prone. Generally, the
+engineers on the project won&rsquo;t feel like they are setup for success, and they
+won&rsquo;t feel like the organization appreciates their efforts, let alone supports
+them. This might be far from the truth, but one easy way to make a software
+engineer feel bad about their work is to make their work impossible to succeed.
+Legacy systems are generally really good at that.
+</p>
+
+<p>
+One of the ways an organization tries to deal with technical debt is by hiring
+people who can either work on new shiny replacements, or maintain the legacy
+software. Pulling in more talent might be the right move, but it won&rsquo;t solve the
+real issue. Throwing enough money at the problem might look like a great idea on
+paper, but it neglects the cause of technical debt in the first place. A mistake
+not learned is a mistaken doomed for repetition.
+</p>
+
+<p>
+To restate that point, because of its importance: Rewriting software will not
+buy any reprieve from technical debt.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org58fccd8" class="outline-2">
+<h2 id="org58fccd8"><span class="section-number-2">3</span> The Model</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+The model is the core of any software endeavor. I&rsquo;m not talking about doing UML
+modeling necessarily. A model is a representation - full stop. Models are
+created and enforced by the software. A legacy system with no documented model
+still has one - it&rsquo;s just invisible. These are some of the worst models, because
+it&rsquo;s only sitting partially in gray matter (someone&rsquo;s brains), which we know to
+be a faulty storage and retrieval system.
+</p>
+
+<p>
+Maybe your model is well documented, but your software is riddled with edge
+cases. All that means is that you have two models: The model you want, and the
+model you have. The software has the final say on the model.
+</p>
+
+<p>
+To establish a good model, you need two big habits to start with:
+</p>
+<ol class="org-ol">
+<li>You maintain your documentation, so your written model and actual model are
+never far apart.</li>
+<li>You have a far-seeing perspective on the direction of the project.</li>
+</ol>
+
+<p>
+These are easier said than done.
+</p>
+</div>
+
+<div id="outline-container-orge68a838" class="outline-3">
+<h3 id="orge68a838"><span class="section-number-3">3.1</span> Maintaining Documentation</h3>
+<div class="outline-text-3" id="text-3-1">
+<p>
+Maintaining documentation is tricky. Too much documentation and it&rsquo;s a pain to
+read, and easy to miss things. Too little documentation, and you diverge from
+your actual model. I could write an entire post about documentation and I&rsquo;d
+probably still need to break it apart. What I can offer for documentation being
+both good and relevant is the documentation&rsquo;s locality, and abandoning the idea
+that documentation can skip be skipped.
+</p>
+
+<p>
+Locality of documentation is simply how close the documentation is to the
+subject matter, in terms of its physical proximity. For example, surprising
+twists and turns in the source code should be documented right where those
+twists and turns are made, as code comments. Justify why you are doing something
+surprising. It makes your code easier to review, and easier for those hacks to
+potentially be removed in the future if their justification is no longer
+relevant. Without those kinds of code comments, you&rsquo;re leaving future
+generations to have to remove a vital organ from the patient in order to
+discover what that organ was doing.
+</p>
+
+<p>
+For documentation that&rsquo;s more overarching for your application, don&rsquo;t
+document that in your application&rsquo;s entrypoint. Move to a README, or even
+better: a place where you can put up diagrams and link to other documentation
+(READMEs can be great entrypoints for this as well, but not all readers will
+have access to your source code, nor want it).
+</p>
+
+<p>
+The single greatest sin of the Agile Manifesto is the words &ldquo;Prefer working
+software over documentation&rdquo;. They are referring to giant contracting work where
+documentation is forever but there&rsquo;s no actual working software yet because it
+wasn&rsquo;t written yet. There&rsquo;s a painted picture of giant organizations that get
+lost in software requirements and documentation, but don&rsquo;t forget, NASA works
+that way and, to date, no small startup has landed on the Moon by building a
+rocket one week at a time. The painted picture is skewed, inaccurate - or at
+least how its come to manifest in the minds of the community. The number of Ruby
+libraries whose documentation is simply the RDoc comments begrudgingly left in
+the codebase (and perhaps ignored) is testament to this. Ruby had its hay day
+but that day is gone. It turns out the ecosystem is just not great for long term
+software projects. The attitude of &ldquo;look at the code&rdquo; for documentation is not
+sustainable.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org8ec3c59" class="outline-3">
+<h3 id="org8ec3c59"><span class="section-number-3">3.2</span> Perspective on What&rsquo;s to Come</h3>
+<div class="outline-text-3" id="text-3-2">
+<p>
+Knowing what you&rsquo;re building is so essential if you&rsquo;re building it. While I
+loathe the actual construction metaphor we use in software engineering, this is
+a place where it is apt. You can construct a building precisely one room at a
+time, but if you don&rsquo;t know how tall the building is going to be (one story, or
+a sky scraper?), or how many rooms you&rsquo;ll need, and what the purposes of the
+rooms will be, things are going to get really tricky. Plumbing, electrical, and
+ventilation all need planning, and it changes at larger scales. The ventilation
+and electrical needs differ between bedrooms, kitchens, gyms, and bathrooms.
+</p>
+
+<p>
+It doesn&rsquo;t mean you need every exacting detail up front, but it does mean you
+need a good idea of where you&rsquo;re going. It&rsquo;s impossible to know exactly what is
+desired from a given project. Software engineers building software for
+themselves can&rsquo;t even get this right.
+</p>
+
+<p>
+But it helps. If you&rsquo;re making a text editor, have you thought about how your
+key bindings are going to work, or are you just going to add them as you go? The
+former leads to Vim&rsquo;s composable key bindings. The latter leads to TextMate,
+which keeps getting reincarnated (TextMate 2, Sublime, Atom, VS Code, and
+whatever is next). Meanwhile, Vim is 30 years old and still attracts new users.
+Emacs enjoys a 45 year age - it doesn&rsquo;t use composable key bindings (unless you
+count <code>evil-mode</code>), but it has a solid model built into its customization.
+TextMate might not even be the first in its lineage, but rest assured there will
+come more. At some point, the editor just becomes so bloated with various needs
+pressed upon it that nobody can make anything new for it. Features are riddled
+with obscure quirks and keeping the system able to build on modern platforms
+becomes increasingly difficult. I haven&rsquo;t even seen these code bases and I know
+this to be true, and the evidence is in the lineage: We keep making the same
+editor over and over again. Why is that? Why weren&rsquo;t we happy with Atom? Why do
+people still learn Emacs and Vim? One set had a model, and the other set were a
+Minimal Viable Products (MVP).
+</p>
+
+<p>
+Gaining this perspective takes time where engineers aren&rsquo;t twiddling bits and
+writing code. It takes time where documents are put together, and understanding
+is laid out. Make room for this, lest you lose the true model of the
+application. You&rsquo;ll know you missed the mark when you feel like your application
+is riddled with edge cases.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgfded86e" class="outline-3">
+<h3 id="orgfded86e"><span class="section-number-3">3.3</span> Edge Cases</h3>
+<div class="outline-text-3" id="text-3-3">
+<p>
+We&rsquo;ve talked a little bit about edge cases but haven&rsquo;t established exactly what
+they are. Edge cases are simply exceptions. Spelling in the English language is
+riddled with edge cases. <a href="https://www.econtentpro.com/blog/i-before-e-except-after-c-exceptions/18">&ldquo;I before E except after C&rdquo;</a> is a really common one, but
+even the linked article I point to says there are exceptions to that exception.
+Exceptception! But software gets like that too. We say we always do this one
+thing for billing, except in the case of that one client. Our application
+displays a table with 8 columns, except when the first record has a certain
+value and then it&rsquo;s either 5 columns or 12.
+</p>
+
+<p>
+Edge cases is the real model coming out, and the engineers on the project are
+chasing it like a rainbow. Edge cases are a sign that the code is too specific.
+It needs more generic things in place so it can hinge at certain points more
+easily. If a particular action needs to be done by a certain client, don&rsquo;t make
+that happen for the client - use your data (model) to handle that via some kind
+of flag or other state you can examine. Then that client is flagged with the
+state you expect. Huzzah! Now the state you&rsquo;re talking about is not specific to
+the client. When you see this state, you do this other thing. If you see a
+different state, you might do something else entirely. It&rsquo;s a system that now
+expresses not just one thing thought to be an exception, but all of the
+exceptions!
+</p>
+
+<p>
+Coming back to English, English is composed of many languages, but has its
+lineage in a Germanic language and a Latin language (French, I believe).
+Knowing the origin of the word (Germanic, Latin, or even something else like
+Greek) significantly assists in its spelling. English requires a more complex
+model of a language because of its split heritage. While planning things out is
+important, software is just as organic as a spoken language. It must adapt to
+changing circumstances, and no design will be perfect for all possible futures.
+This why it&rsquo;s important to cultivate a sense of understanding of the code base,
+and understand that looking at an edge case is really just a place where your
+desired model needs to catch up with the actual model.
+</p>
+</div>
+</div>
+</div>
+
+
+
+
+<div id="outline-container-orga663377" class="outline-2">
+<h2 id="orga663377"><span class="section-number-2">4</span> Other Costs of Rewriting</h2>
+<div class="outline-text-2" id="text-4">
+<p>
+Rewriting software is a colossal ask. It&rsquo;s basically saying &ldquo;I need to disappear
+for months, and I will come back with a piece of software that is not in feature
+parity with the old software, and it will actually have more bugs than the old
+software because it isn&rsquo;t as battle tested&rdquo;. And you might think &ldquo;Oh I&rsquo;m
+rewriting it in language X which has strong/static types&rdquo; or &ldquo;I have a new
+testing methodology that will make it impossible to miss such obvious things
+next time&rdquo;, and you&rsquo;re both right and wrong. You&rsquo;ll find the organization won&rsquo;t
+tolerate you disappearing for so long (even if they signed up for it initially),
+and you&rsquo;re back at the point where you are motivated to cut corners again. Once
+again, you&rsquo;re making those tradeoffs which favor short term gains for long term
+gains, because this thing needs to get out the door. Meanwhile, that legacy
+system keeps paying the bills.
+</p>
+
+<p>
+So once you convince the organization to do the rewrite, and you do it, you&rsquo;ll
+forever have this mark upon you. Never again will you be allowed to do a
+rewrite. Fresh blood might be able to make the pitch and say the right things,
+but you&rsquo;re done. And why should it be any other way? The organization extended
+you trust, and you managed to make a clone that&rsquo;s just a little more shiny for
+new prospective engineers. That was not what was promised. Even if they helped
+you create another pile of technical debt.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgb08973f" class="outline-2">
+<h2 id="orgb08973f"><span class="section-number-2">5</span> So What, I&rsquo;m stuck with X while the world moves onto Y?</h2>
+<div class="outline-text-2" id="text-5">
+<p>
+This isn&rsquo;t to say you can&rsquo;t update things. I dislike how much &ldquo;software
+engineering&rdquo; equates to &ldquo;web development&rdquo; - there are many other disciplines
+within software than just web applications! I also feel like I&rsquo;m often at odds
+with the opinions of Martin Fowler, but his article on <a href="https://martinfowler.com/bliki/StranglerFigApplication.html">StrangleFigApplication</a> is
+spot on. Credit where credit is due!
+</p>
+
+<p>
+The gist is that if you need a new system, you need to build it around or within
+the legacy system. Have the old system start deferring calls to the new system,
+or wrap the legacy system in the new system, and have the new system start by
+deferring <span class="underline">all</span> of its calls to the legacy system. Sure it has overhead, but I
+bet it&rsquo;s overhead you can afford. You&rsquo;re in legacy, remember? This allows you to
+safely swap out small pieces of the application at a time, until eventually the
+legacy system either no longer called or just a hallow shell of its former self.
+At some critical point, you flip the rest over.
+</p>
+
+<p>
+This will let you move to new frameworks, or even runtimes. Depending on your
+domain, this might have some obstacles to overcome. I don&rsquo;t know how you&rsquo;d
+migrate a Unity3D game to Unreal. Maybe there&rsquo;s some techniques though. You can
+figure out a strategy (like move your primary game logic to something that both
+Unity3D and Unreal can operate with).
+</p>
+
+<p>
+For web calls, this is basically setting up a reverse proxy between the new and
+legacy system.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org9ae0ef4" class="outline-2">
+<h2 id="org9ae0ef4"><span class="section-number-2">6</span> But you said I&rsquo;ll still have technical debt</h2>
+<div class="outline-text-2" id="text-6">
+<p>
+I did say you&rsquo;ll still have technical debt. You need to cultivate the skill of
+cleaning as you go, and sometimes just leveraging time to actually work on a
+proper solution. Though I will say, once you&rsquo;ve seen abstract solutions to your
+problems, it becomes easier to just put them in to begin with. That first client
+exception that comes in introduces a tag applied to clients that introduces
+additional behavior.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgba6b47e" class="outline-2">
+<h2 id="orgba6b47e"><span class="section-number-2">7</span> Legacy Ain&rsquo;t All That Bad</h2>
+<div class="outline-text-2" id="text-7">
+<p>
+If you&rsquo;re stuck on a legacy system, know that while you probably have some
+difficult times, and you feel like you&rsquo;re trudging through a murky bog, keep in
+mind that time has different meaning to you than an unproven startup. Those
+startups are essentially bleeding out until they can launch and then staunch the
+blood (money) flow. In legacy, you&rsquo;re at least up and running. The trick is to
+avoid egg-on-face, such as promising the world so you can get that rewrite.
+Don&rsquo;t do it!
+</p>
+</div>
+</div>
