@@ -390,17 +390,17 @@ vim, emacs, literate programming, functional programming.
 :END:
 1. [[https://github.com/loganbarnett/blog/tree/gh-pages/resume.org][This résumé]] - Uses =org-mode= document and =jekyll= to generate an HTML
    based résumé.
-2. [[https://soundcloud.com/lambda-cast][Lambda Cast]] - I costar in a podcast about function functional programming.
-3. [[https://github.com/LoganBarnett/dotfiles][My own dotfiles]] - If we value infrastructure as code, why not for our local
-   machines? Also contains my Emacs configuration.
-4. A few literate programs: [[https://github.com/LoganBarnett/40k-dps][40k-dps]], [[https://github.com/LoganBarnett/airbrush-dias][airbrush-dias]], [[https://github.com/LoganBarnett/typedef-gen][typedef-gen]].
-5. [[https://github.com/LoganBarnett/flow-degen][flow-degen]] - Generate typesafe validation/deserialization JavaScript code.
-6. [[https://github.com/LoganBarnett/cubed.js][cubed.js]] - A library to help me work on my voxel game.
-7. [[https://github.com/LoganBarnett/runner][runner]] - My attempt at making a Rust command line replacement of
-   Alfred/Quicksilver.
-8. [[https://github.com/LoganBarnett/jj][jj]] - Run Jenkins jobs from the command line and see the output. Rust.
-9. roid-miner - A generated asteroid mining game with a powerful editor for
+2. [[http://roid.logustus.com:9000][roid-miner]] - A generated asteroid mining game with a powerful editor for
    composing asteroid generators in real time.
+3. [[https://soundcloud.com/lambda-cast][Lambda Cast]] - I costar in a podcast about function functional programming.
+4. [[https://github.com/LoganBarnett/dotfiles][My own dotfiles]] - If we value infrastructure as code, why not for our local
+   machines? Also contains my Emacs configuration.
+5. A few literate programs: [[https://github.com/LoganBarnett/40k-dps][40k-dps]], [[https://github.com/LoganBarnett/airbrush-dias][airbrush-dias]], [[https://github.com/LoganBarnett/typedef-gen][typedef-gen]].
+6. [[https://github.com/LoganBarnett/flow-degen][flow-degen]] - Generate typesafe validation/deserialization JavaScript code.
+7. [[https://github.com/LoganBarnett/cubed.js][cubed.js]] - A library to help me work on my voxel game.
+8. [[https://github.com/LoganBarnett/runner][runner]] - My attempt at making a Rust command line replacement of
+   Alfred/Quicksilver.
+9. [[https://github.com/LoganBarnett/jj][jj]] - Run Jenkins jobs from the command line and see the output. Rust.
 10. meta-game - And editor using React + Redux + Three used for creating games
 11. Various Unity games - Writing desktop/mobile games using Mono + C# and Boo
     (.net 3.5).
