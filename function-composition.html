@@ -1,0 +1,388 @@
+---
+layout: default
+title: Functional Composition
+date: 2022-05-11
+categories: software-engineering
+---
+
+<div id="outline-container-org812f989" class="outline-2">
+<h2 id="org812f989"><span class="section-number-2">1.</span> Function Composition</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+Function composition is the act of treating functions like small lego bricks
+that you tie together. Composing simple, well known functions to achieve complex
+behavior is like having and advanced vocabulary used to discuss a complex topic.
+</p>
+
+<p>
+If you want to try some of this out, I recommend <a href="https://ramdajs.com/repl/">Ramda&rsquo;s REPL</a> for experimenting
+with different JavaScript features such as this.
+</p>
+</div>
+
+<div id="outline-container-orgac17233" class="outline-3">
+<h3 id="orgac17233"><span class="section-number-3">1.1.</span> Bespoke: Average</h3>
+<div class="outline-text-3" id="text-1-1">
+<p>
+Here&rsquo;s some code for writing an <code>average</code> function. It computes an average value
+from a list of numbers. For reference, an average is all of the numbers added
+together and divided by the number of values.
+</p>
+<div class="org-src-container">
+<pre class="src src-js">
+<span style="color: #51afef;">function</span> <span style="color: #5cEfFF;">average</span>(<span style="color: #DFDFDF;">list</span>) {
+  <span style="color: #51afef;">let</span> <span style="color: #DFDFDF;">total</span> = <span style="color: #e69055; font-weight: bold;">0</span>
+  <span style="color: #51afef;">for</span>(<span style="color: #51afef;">let</span> <span style="color: #DFDFDF;">i</span> = <span style="color: #e69055; font-weight: bold;">0</span>; i &lt; list.length; ++i) {
+    total = total + list[i]
+  }
+  <span style="color: #51afef;">const</span> <span style="color: #DFDFDF;">result</span> = total / list.length
+  <span style="color: #51afef;">return</span> result
+}
+
+<span style="color: #62686E;">// </span><span style="color: #62686E;">Test it.</span>
+console.log(average([<span style="color: #e69055; font-weight: bold;">1</span>, <span style="color: #e69055; font-weight: bold;">2</span>, <span style="color: #e69055; font-weight: bold;">3</span>]))
+console.log(average([<span style="color: #e69055; font-weight: bold;">1</span>, <span style="color: #e69055; font-weight: bold;">1</span>, <span style="color: #e69055; font-weight: bold;">1</span>, <span style="color: #e69055; font-weight: bold;">1</span>]))
+console.log(average([<span style="color: #e69055; font-weight: bold;">0</span>, <span style="color: #e69055; font-weight: bold;">1</span>, -<span style="color: #e69055; font-weight: bold;">1</span>]))
+console.log(average([<span style="color: #e69055; font-weight: bold;">2</span>,<span style="color: #e69055; font-weight: bold;">2</span>,<span style="color: #e69055; font-weight: bold;">2</span>,<span style="color: #e69055; font-weight: bold;">2</span>,<span style="color: #e69055; font-weight: bold;">2</span>,<span style="color: #e69055; font-weight: bold;">1</span>]))
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgec4a139" class="outline-3">
+<h3 id="orgec4a139"><span class="section-number-3">1.2.</span> Composed: Average</h3>
+<div class="outline-text-3" id="text-1-2">
+<p>
+Using function composition we can create <code>average</code> a little differently.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-js"><span style="color: #62686E;">// </span><span style="color: #62686E;">We need to make some basic operations compoasable.</span>
+<span style="color: #51afef;">function</span> <span style="color: #5cEfFF;">add</span>(<span style="color: #DFDFDF;">x</span>, <span style="color: #DFDFDF;">y</span>) { <span style="color: #51afef;">return</span> x + y }
+<span style="color: #51afef;">function</span> <span style="color: #5cEfFF;">divide</span>(<span style="color: #DFDFDF;">x</span>, <span style="color: #DFDFDF;">y</span>) { <span style="color: #51afef;">return</span> x / y }
+
+<span style="color: #51afef;">function</span> <span style="color: #5cEfFF;">sum</span>(<span style="color: #DFDFDF;">list</span>) {
+  <span style="color: #51afef;">return</span> list.reduce(add, <span style="color: #e69055; font-weight: bold;">0</span>)
+}
+
+<span style="color: #51afef;">function</span> <span style="color: #5cEfFF;">average</span>(<span style="color: #DFDFDF;">list</span>) {
+  <span style="color: #51afef;">return</span> divide(sum(list), list.length)
+}
+
+<span style="color: #62686E;">// </span><span style="color: #62686E;">Test it.</span>
+console.log(average([<span style="color: #e69055; font-weight: bold;">1</span>, <span style="color: #e69055; font-weight: bold;">2</span>, <span style="color: #e69055; font-weight: bold;">3</span>]))
+console.log(average([<span style="color: #e69055; font-weight: bold;">1</span>, <span style="color: #e69055; font-weight: bold;">1</span>, <span style="color: #e69055; font-weight: bold;">1</span>, <span style="color: #e69055; font-weight: bold;">1</span>]))
+console.log(average([<span style="color: #e69055; font-weight: bold;">0</span>, <span style="color: #e69055; font-weight: bold;">1</span>, -<span style="color: #e69055; font-weight: bold;">1</span>]))
+console.log(average([<span style="color: #e69055; font-weight: bold;">2</span>,<span style="color: #e69055; font-weight: bold;">2</span>,<span style="color: #e69055; font-weight: bold;">2</span>,<span style="color: #e69055; font-weight: bold;">2</span>,<span style="color: #e69055; font-weight: bold;">2</span>,<span style="color: #e69055; font-weight: bold;">1</span>]))
+</pre>
+</div>
+
+<p>
+The results are the same as our bespoke version.
+</p>
+
+<p>
+The value here is not that there is necessarily less code.
+</p>
+
+<p>
+Each function can be thought of independently and solved as an independent
+problem. Can you tell me if <code>add</code> is solid? What about <code>divide</code>? <code>sum</code> gets a
+little more tricky, but even then there&rsquo;s not much to it. when we get to
+<code>average</code> we are only calling two functions and using two parameters.
+</p>
+
+<p>
+When you get really comfortable with functions like <code>map</code>, <code>reduce</code>, and
+<code>filter</code>, almost any operation can be composed using some combination of those
+three. They become the elementary particles of programming.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orga70d25a" class="outline-3">
+<h3 id="orga70d25a"><span class="section-number-3">1.3.</span> Review: Functions as Data part 1</h3>
+<div class="outline-text-3" id="text-1-3">
+<p>
+JavaScript allows functions to be assigned to variables.
+</p>
+
+<p>
+We call this &ldquo;functions as first-class citizens&rdquo;.
+</p>
+
+<p>
+Here&rsquo;s how this looks:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-js"><span style="color: #51afef;">function</span> <span style="color: #5cEfFF;">frobnicate</span>(<span style="color: #DFDFDF;">x</span>) {
+  console.log(<span style="color: #7bc275;">'I frobnicated '</span> + x.toString())
+}
+
+frobnicate(<span style="color: #e69055; font-weight: bold;">1</span>) <span style="color: #62686E;">// </span><span style="color: #62686E;">Just runs frobnicate and passes it 1.</span>
+
+<span style="color: #51afef;">const</span> <span style="color: #DFDFDF;">doAThing</span> = frobnicate
+
+doAThing(<span style="color: #e69055; font-weight: bold;">2</span>) <span style="color: #62686E;">// </span><span style="color: #62686E;">Runs frobnicate and passes it 2.</span>
+</pre>
+</div>
+
+<p>
+This isn&rsquo;t particularly useful but it demonstrates that we can assign a function
+to a variable. In fact when we write <code>function frobincate...</code> we are saying
+<code>frobnicate</code> is a variable too.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org42c1e9d" class="outline-3">
+<h3 id="org42c1e9d"><span class="section-number-3">1.4.</span> Review: Functions as Data part 2</h3>
+<div class="outline-text-3" id="text-1-4">
+<p>
+Normally when we use something like <code>map</code> we pass an <b>anonymous</b> function -
+meaning the function has no name. But what if we pass it a function with a name?
+</p>
+
+<div class="org-src-container">
+<pre class="src src-js"><span style="color: #62686E;">// </span><span style="color: #62686E;">Here, the body of frobnicate is written out as an anonymous function.</span>
+[<span style="color: #e69055; font-weight: bold;">1</span>, <span style="color: #e69055; font-weight: bold;">2</span>, <span style="color: #e69055; font-weight: bold;">3</span>].map(<span style="color: #51afef;">function</span>(<span style="color: #DFDFDF;">x</span>) {
+  console.log(<span style="color: #7bc275;">'I frobnicated '</span> + x.toString())
+})
+
+console.log(<span style="color: #7bc275;">'Switching gears!'</span>)
+
+<span style="color: #51afef;">function</span> <span style="color: #5cEfFF;">frobnicate</span>(<span style="color: #DFDFDF;">x</span>) {
+  console.log(<span style="color: #7bc275;">'I frobnicated '</span> + x.toString())
+}
+
+<span style="color: #62686E;">// </span><span style="color: #62686E;">Here we pass frobnicate as a variable.</span>
+[<span style="color: #e69055; font-weight: bold;">4</span>, <span style="color: #e69055; font-weight: bold;">5</span>, <span style="color: #e69055; font-weight: bold;">6</span>].map(frobnicate)
+</pre>
+</div>
+
+<p>
+This is the &ldquo;how&rdquo; of functional composition. If we can assign a function to a
+variable, that means we can do anything with a function that we can do with a
+variable. One of the things you can do with a variable is you can pass it to
+another function. Computer Science dweebs call a function that <span class="underline">accepts</span> a
+function as a parameter a &ldquo;higher order function&rdquo;. It&rsquo;s just a function that
+takes a function.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgfdf02ea" class="outline-3">
+<h3 id="orgfdf02ea"><span class="section-number-3">1.5.</span> Call Sites in JavaScript</h3>
+<div class="outline-text-3" id="text-1-5">
+<p>
+In order to invoke a function called <code>foo</code> we write <code>foo()</code>. The <code>()</code> after a
+symbol (name) is the indication that this is a function being called. This is
+how JavaScript knows this is a <a href="https://en.wikipedia.org/wiki/Call_site">call site</a> as opposed to just accessing the
+variable&rsquo;s value.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-js"><span style="color: #51afef;">function</span> <span style="color: #5cEfFF;">foo</span>() {
+  console.log(<span style="color: #7bc275;">'foo called'</span>)
+}
+
+foo() <span style="color: #62686E;">// </span><span style="color: #62686E;">Works.</span>
+foo( ) <span style="color: #62686E;">// </span><span style="color: #62686E;">Works.</span>
+foo () <span style="color: #62686E;">// </span><span style="color: #62686E;">Works.</span>
+foo(
+) <span style="color: #62686E;">// </span><span style="color: #62686E;">Works.</span>
+
+<span style="color: #51afef;">const</span> <span style="color: #DFDFDF;">x</span> = <span style="color: #e69055; font-weight: bold;">1</span>
+<span style="color: #51afef;">try</span> {
+  x() <span style="color: #62686E;">// </span><span style="color: #62686E;">Oh noes!</span>
+} <span style="color: #51afef;">catch</span> (e) {
+  console.log(<span style="color: #7bc275;">'Error: '</span> + e)
+}
+</pre>
+</div>
+
+<p>
+If you try this on something that isn&rsquo;t a function, you&rsquo;ll see <code>&lt;variable&gt; is
+not a function</code>.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgf9516b5" class="outline-3">
+<h3 id="orgf9516b5"><span class="section-number-3">1.6.</span> Writing our own Higher Order Function: Map</h3>
+<div class="outline-text-3" id="text-1-6">
+<p>
+Let&rsquo;s make our own simple higher order function. One of the utilities of higher
+order functions is they are inherently <span class="underline">abstract</span>, which kind of means it&rsquo;s
+useless. But the function passed to the higher order function allows the higher
+order function to <span class="underline">specialize</span> while remaining <span class="underline">abstract</span>, and specialization is
+how we achieve usefulness.
+</p>
+
+<p>
+In this case we will implement own version of <code>map</code> on <code>Array</code>.
+</p>
+
+<p>
+<code>map</code> returns a new Array based on the original Array. Every element of that new
+Array has been transformed by a transformational function.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-js"><span style="color: #51afef;">function</span> <span style="color: #5cEfFF;">map</span>(<span style="color: #DFDFDF;">f</span>, <span style="color: #DFDFDF;">originalList</span>) {
+  <span style="color: #51afef;">const</span> <span style="color: #DFDFDF;">newList</span> = []
+  <span style="color: #51afef;">for</span>(<span style="color: #51afef;">let</span> <span style="color: #DFDFDF;">i</span> = <span style="color: #e69055; font-weight: bold;">0</span>; i &lt; originalList.length; ++i) {
+    newList[i] = f(originalList[i])
+  }
+  <span style="color: #51afef;">return</span> newList
+}
+
+console.log(map(<span style="color: #51afef;">function</span>(<span style="color: #DFDFDF;">x</span>) { <span style="color: #51afef;">return</span> x + <span style="color: #e69055; font-weight: bold;">1</span>; }, [<span style="color: #e69055; font-weight: bold;">1</span>, <span style="color: #e69055; font-weight: bold;">2</span>, <span style="color: #e69055; font-weight: bold;">3</span>]))
+<span style="color: #51afef;">function</span> <span style="color: #5cEfFF;">uppercase</span>(<span style="color: #DFDFDF;">s</span>) {
+  <span style="color: #51afef;">return</span> s.toUpperCase()
+}
+console.log(map(uppercase, [<span style="color: #7bc275;">'a'</span>, <span style="color: #7bc275;">'b'</span>, <span style="color: #7bc275;">'c'</span>]))
+</pre>
+</div>
+
+<p>
+Here <code>f</code> is the function being passed, which is just any function. So long as it
+obeys the arity (number of arguments) and returns something, it works.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orge9fbd6f" class="outline-3">
+<h3 id="orge9fbd6f"><span class="section-number-3">1.7.</span> Writing our own Higher Order Function: changeFirstLetter</h3>
+<div class="outline-text-3" id="text-1-7">
+<div class="org-src-container">
+<pre class="src src-js"><span style="color: #51afef;">function</span> <span style="color: #5cEfFF;">uppercase</span>(<span style="color: #DFDFDF;">s</span>) {
+  <span style="color: #51afef;">return</span> s.toUpperCase()
+}
+<span style="color: #51afef;">function</span> <span style="color: #5cEfFF;">lowercase</span>(<span style="color: #DFDFDF;">s</span>) {
+  <span style="color: #51afef;">return</span> s.toLowerCase()
+}
+
+<span style="color: #62686E;">// </span><span style="color: #62686E;">Change the first letter of ever word, using f to do the transformation.</span>
+<span style="color: #51afef;">function</span> <span style="color: #5cEfFF;">changeFirstLetter</span>(<span style="color: #DFDFDF;">s</span>, <span style="color: #DFDFDF;">f</span>) {
+  <span style="color: #51afef;">const</span> <span style="color: #DFDFDF;">words</span> = s.split(<span style="color: #7bc275;">' '</span>) <span style="color: #62686E;">// </span><span style="color: #62686E;">Split words.</span>
+  <span style="color: #51afef;">const</span> <span style="color: #DFDFDF;">newWords</span> = words.map(<span style="color: #51afef;">function</span>(<span style="color: #DFDFDF;">w</span>) {
+    <span style="color: #51afef;">return</span> f(w[<span style="color: #e69055; font-weight: bold;">0</span>]) + w.slice(<span style="color: #e69055; font-weight: bold;">1</span>)
+  })
+  <span style="color: #51afef;">return</span> newWords.join(<span style="color: #7bc275;">' '</span>) <span style="color: #62686E;">// </span><span style="color: #62686E;">Put the words back into a sentence.</span>
+}
+
+console.log(changeFirstLetter(<span style="color: #7bc275;">'i am too lazy to capitalize.'</span>, uppercase))
+console.log(changeFirstLetter(<span style="color: #7bc275;">'CAPSLOCK IS CRUSE CONTROL FOR AWESOME'</span>, lowercase<span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">))</span>
+<span style="color: #62686E;">// </span><span style="color: #62686E;">Change it up - increment the character by 1.</span>
+console.log(changeFirstLetter(<span style="color: #7bc275;">'I am a proper sentence actually.'</span>, <span style="color: #51afef;">function</span>(<span style="color: #DFDFDF;">c</span>) {
+  <span style="color: #51afef;">return</span> String.fromCharCode(c.charCodeAt(<span style="color: #e69055; font-weight: bold;">0</span>) + <span style="color: #e69055; font-weight: bold;">1</span>)
+}))
+</pre>
+</div>
+
+<p>
+The beauty of this is <code>changeFirstLetter</code> doesn&rsquo;t need to know about what kind
+of changes could be made to the first letter. That has been <span class="underline">delegated</span> to the
+function argument <code>f</code>.
+</p>
+</div>
+</div>
+<div id="outline-container-org2fe657c" class="outline-3">
+<h3 id="org2fe657c"><span class="section-number-3">1.8.</span> Simplifying Promises</h3>
+<div class="outline-text-3" id="text-1-8">
+<p>
+Promises are tricky topics in JavaScript that many engineers struggle with.
+Since promises operate on functions they are provided, we can use composition to
+simplify parts of the promise. In some ways promise chains make function
+composition easier to understand.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-js"><span style="color: #62686E;">// </span><span style="color: #62686E;">Fake, to simplify example.</span>
+<span style="color: #51afef;">function</span> <span style="color: #5cEfFF;">readFile</span>(<span style="color: #DFDFDF;">path</span>) {
+  <span style="color: #51afef;">return</span> JSON.stringify({
+    user: <span style="color: #7bc275;">'Me'</span>,
+    accounts: [
+      { totalMoney: <span style="color: #e69055; font-weight: bold;">0</span> },
+      { totalMoney: <span style="color: #e69055; font-weight: bold;">10000</span> },
+      { totalMoney: <span style="color: #e69055; font-weight: bold;">2</span> },
+    ],
+  })
+}
+
+<span style="color: #51afef;">function</span> <span style="color: #5cEfFF;">add</span>(<span style="color: #DFDFDF;">x</span>, <span style="color: #DFDFDF;">y</span>) { <span style="color: #51afef;">return</span> x + y }
+
+<span style="color: #51afef;">function</span> <span style="color: #5cEfFF;">computeAccounts</span>(<span style="color: #DFDFDF;">payload</span>) {
+  <span style="color: #51afef;">return</span> payload
+    .accounts
+    .map(x =&gt; x.totalMoney)
+    .reduce(add, <span style="color: #e69055; font-weight: bold;">0</span>)
+}
+
+<span style="color: #62686E;">// </span><span style="color: #62686E;">Read an account file from a path and compute its total amount.</span>
+<span style="color: #51afef;">function</span> <span style="color: #5cEfFF;">accountTotal</span>(<span style="color: #DFDFDF;">path</span>) {
+  <span style="color: #51afef;">return</span> Promise
+    .resolve(path)
+    <span style="color: #62686E;">// </span><span style="color: #62686E;">readFile could return a Promise instead of a concete value, and this</span>
+    <span style="color: #62686E;">// </span><span style="color: #62686E;">could would remain unchanged.</span>
+    .then(readFile)
+    .then(JSON.parse)
+    .then(computeAccounts)
+}
+
+accountTotal(<span style="color: #7bc275;">'foo.json'</span>).then(amount =&gt; console.log(amount))
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgdbf327f" class="outline-3">
+<h3 id="orgdbf327f"><span class="section-number-3">1.9.</span> Currying to Change Arity</h3>
+<div class="outline-text-3" id="text-1-9">
+<p>
+When doing function composition, you can use a technique called &ldquo;currying&rdquo; to
+provide different function arity (argument count). A function is said to be
+&ldquo;curried&rdquo; if it takes one argument and returns another function.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-js"><span style="color: #51afef;">function</span> <span style="color: #5cEfFF;">add</span>(<span style="color: #DFDFDF;">x</span>) {
+  <span style="color: #62686E;">// </span><span style="color: #62686E;">This function just immediately returns a function.</span>
+  <span style="color: #51afef;">return</span> <span style="color: #51afef;">function</span>(<span style="color: #DFDFDF;">y</span>) {
+    <span style="color: #62686E;">// </span><span style="color: #62686E;">The x variable is pulled in from the scope.</span>
+    <span style="color: #51afef;">return</span> x + y
+  }
+}
+
+console.log(add(<span style="color: #e69055; font-weight: bold;">1</span>)(<span style="color: #e69055; font-weight: bold;">2</span>))
+console.log(add(<span style="color: #e69055; font-weight: bold;">5</span>)(<span style="color: #e69055; font-weight: bold;">5</span>))
+
+<span style="color: #62686E;">// </span><span style="color: #62686E;">Then make a named function with it.</span>
+<span style="color: #51afef;">const</span> <span style="color: #DFDFDF;">addOne</span> = add(<span style="color: #e69055; font-weight: bold;">1</span>)
+console.log(addOne(<span style="color: #e69055; font-weight: bold;">0</span>))
+console.log(addOne(<span style="color: #e69055; font-weight: bold;">1</span>))
+
+<span style="color: #62686E;">// </span><span style="color: #62686E;">Normally "add" has two arguments and therefore is not suitable for map. But</span>
+<span style="color: #62686E;">// </span><span style="color: #62686E;">with a curried add we can use it with map.</span>
+console.log([<span style="color: #e69055; font-weight: bold;">1</span>, <span style="color: #e69055; font-weight: bold;">2</span>, <span style="color: #e69055; font-weight: bold;">3</span>].map(addOne))
+<span style="color: #62686E;">// </span><span style="color: #62686E;">Same as above, but without the named version.</span>
+console.log([<span style="color: #e69055; font-weight: bold;">1</span>, <span style="color: #e69055; font-weight: bold;">2</span>, <span style="color: #e69055; font-weight: bold;">3</span>].map(add(<span style="color: #e69055; font-weight: bold;">1</span>)))
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org5066f3d" class="outline-3">
+<h3 id="org5066f3d"><span class="section-number-3">1.10.</span> Conclusions</h3>
+<div class="outline-text-3" id="text-1-10">
+<p>
+Function composition is a topic with a great deal of depth to it, but in an
+ecosystem like JavaScript you can break down almost any problem into tiny,
+reusable pieces. It takes some practice and starts getting easier with time as
+you build up a stronger vocabulary of functions for yourself.
+</p>
+</div>
+</div>
+</div>
