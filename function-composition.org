@@ -25,10 +25,12 @@ If you want to try some of this out, I recommend [[https://ramdajs.com/repl/][Ra
 with different JavaScript features such as this.
 
 ** Bespoke: Average
+
 Here's some code for writing an =average= function. It computes an average value
 from a list of numbers. For reference, an average is all of the numbers added
 together and divided by the number of values.
-#+begin_src js :results output
+
+#+begin_src js :results output :exports both
 
 function average(list) {
   let total = 0
@@ -50,7 +52,7 @@ console.log(average([2,2,2,2,2,1]))
 
 Using function composition we can create =average= a little differently.
 
-#+begin_src js :results output
+#+begin_src js :results output :exports both
 // We need to make some basic operations compoasable.
 function add(x, y) { return x + y }
 function divide(x, y) { return x / y }
@@ -91,7 +93,7 @@ We call this "functions as first-class citizens".
 
 Here's how this looks:
 
-#+begin_src js :results output
+#+begin_src js :results output :exports both
 function frobnicate(x) {
   console.log('I frobnicated ' + x.toString())
 }
@@ -112,7 +114,7 @@ to a variable. In fact when we write =function frobincate...= we are saying
 Normally when we use something like =map= we pass an *anonymous* function -
 meaning the function has no name. But what if we pass it a function with a name?
 
-#+begin_src js :results output
+#+begin_src js :results output :exports both
 // Here, the body of frobnicate is written out as an anonymous function.
 [1, 2, 3].map(function(x) {
   console.log('I frobnicated ' + x.toString())
@@ -142,7 +144,7 @@ symbol (name) is the indication that this is a function being called. This is
 how JavaScript knows this is a [[https://en.wikipedia.org/wiki/Call_site][call site]] as opposed to just accessing the
 variable's value.
 
-#+begin_src js :results output
+#+begin_src js :results output :exports both
 function foo() {
   console.log('foo called')
 }
@@ -177,7 +179,7 @@ In this case we will implement own version of =map= on =Array=.
 =map= returns a new Array based on the original Array. Every element of that new
 Array has been transformed by a transformational function.
 
-#+begin_src js :results output
+#+begin_src js :results output :exports both
 function map(f, originalList) {
   const newList = []
   for(let i = 0; i < originalList.length; ++i) {
@@ -198,7 +200,7 @@ obeys the arity (number of arguments) and returns something, it works.
 
 ** Writing our own Higher Order Function: changeFirstLetter
 
-#+begin_src js :results output
+#+begin_src js :results output :exports both
 function uppercase(s) {
   return s.toUpperCase()
 }
@@ -210,7 +212,8 @@ function lowercase(s) {
 function changeFirstLetter(s, f) {
   const words = s.split(' ') // Split words.
   const newWords = words.map(function(w) {
-    return f(w[0]) + w.slice(1)
+    const firstLetter = w[0]
+    return f(firstLetter) + w.slice(1)
   })
   return newWords.join(' ') // Put the words back into a sentence.
 }
@@ -226,6 +229,7 @@ console.log(changeFirstLetter('I am a proper sentence actually.', function(c) {
 The beauty of this is =changeFirstLetter= doesn't need to know about what kind
 of changes could be made to the first letter. That has been _delegated_ to the
 function argument =f=.
+
 ** Simplifying Promises
 
 Promises are tricky topics in JavaScript that many engineers struggle with.
@@ -233,7 +237,7 @@ Since promises operate on functions they are provided, we can use composition to
 simplify parts of the promise. In some ways promise chains make function
 composition easier to understand.
 
-#+begin_src js :results output
+#+begin_src js :results output :exports both
 // Fake, to simplify example.
 function readFile(path) {
   return JSON.stringify({
@@ -275,7 +279,7 @@ When doing function composition, you can use a technique called "currying" to
 provide different function arity (argument count). A function is said to be
 "curried" if it takes one argument and returns another function.
 
-#+begin_src js :results output
+#+begin_src js :results output :exports both
 function add(x) {
   // This function just immediately returns a function.
   return function(y) {

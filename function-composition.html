@@ -5,8 +5,8 @@ date: 2022-05-11
 categories: software-engineering
 ---
 
-<div id="outline-container-org812f989" class="outline-2">
-<h2 id="org812f989"><span class="section-number-2">1.</span> Function Composition</h2>
+<div id="outline-container-org1b1a985" class="outline-2">
+<h2 id="org1b1a985"><span class="section-number-2">1.</span> Function Composition</h2>
 <div class="outline-text-2" id="text-1">
 <p>
 Function composition is the act of treating functions like small lego bricks
@@ -20,14 +20,15 @@ with different JavaScript features such as this.
 </p>
 </div>
 
-<div id="outline-container-orgac17233" class="outline-3">
-<h3 id="orgac17233"><span class="section-number-3">1.1.</span> Bespoke: Average</h3>
+<div id="outline-container-org84ca9cc" class="outline-3">
+<h3 id="org84ca9cc"><span class="section-number-3">1.1.</span> Bespoke: Average</h3>
 <div class="outline-text-3" id="text-1-1">
 <p>
 Here&rsquo;s some code for writing an <code>average</code> function. It computes an average value
 from a list of numbers. For reference, an average is all of the numbers added
 together and divided by the number of values.
 </p>
+
 <div class="org-src-container">
 <pre class="src src-js">
 <span style="color: #51afef;">function</span> <span style="color: #5cEfFF;">average</span>(<span style="color: #DFDFDF;">list</span>) {
@@ -46,11 +47,18 @@ console.log(average([<span style="color: #e69055; font-weight: bold;">0</span>, 
 console.log(average([<span style="color: #e69055; font-weight: bold;">2</span>,<span style="color: #e69055; font-weight: bold;">2</span>,<span style="color: #e69055; font-weight: bold;">2</span>,<span style="color: #e69055; font-weight: bold;">2</span>,<span style="color: #e69055; font-weight: bold;">2</span>,<span style="color: #e69055; font-weight: bold;">1</span>]))
 </pre>
 </div>
+
+<pre class="example">
+2
+1
+0
+1.8333333333333333
+</pre>
 </div>
 </div>
 
-<div id="outline-container-orgec4a139" class="outline-3">
-<h3 id="orgec4a139"><span class="section-number-3">1.2.</span> Composed: Average</h3>
+<div id="outline-container-org8c32757" class="outline-3">
+<h3 id="org8c32757"><span class="section-number-3">1.2.</span> Composed: Average</h3>
 <div class="outline-text-3" id="text-1-2">
 <p>
 Using function composition we can create <code>average</code> a little differently.
@@ -77,6 +85,14 @@ console.log(average([<span style="color: #e69055; font-weight: bold;">2</span>,<
 </pre>
 </div>
 
+<pre class="example">
+2
+1
+0
+1.8333333333333333
+</pre>
+
+
 <p>
 The results are the same as our bespoke version.
 </p>
@@ -100,8 +116,8 @@ three. They become the elementary particles of programming.
 </div>
 </div>
 
-<div id="outline-container-orga70d25a" class="outline-3">
-<h3 id="orga70d25a"><span class="section-number-3">1.3.</span> Review: Functions as Data part 1</h3>
+<div id="outline-container-orga16c90b" class="outline-3">
+<h3 id="orga16c90b"><span class="section-number-3">1.3.</span> Review: Functions as Data part 1</h3>
 <div class="outline-text-3" id="text-1-3">
 <p>
 JavaScript allows functions to be assigned to variables.
@@ -128,6 +144,12 @@ doAThing(<span style="color: #e69055; font-weight: bold;">2</span>) <span style=
 </pre>
 </div>
 
+<pre class="example">
+I frobnicated 1
+I frobnicated 2
+</pre>
+
+
 <p>
 This isn&rsquo;t particularly useful but it demonstrates that we can assign a function
 to a variable. In fact when we write <code>function frobincate...</code> we are saying
@@ -136,8 +158,8 @@ to a variable. In fact when we write <code>function frobincate...</code> we are 
 </div>
 </div>
 
-<div id="outline-container-org42c1e9d" class="outline-3">
-<h3 id="org42c1e9d"><span class="section-number-3">1.4.</span> Review: Functions as Data part 2</h3>
+<div id="outline-container-orgcaec1e7" class="outline-3">
+<h3 id="orgcaec1e7"><span class="section-number-3">1.4.</span> Review: Functions as Data part 2</h3>
 <div class="outline-text-3" id="text-1-4">
 <p>
 Normally when we use something like <code>map</code> we pass an <b>anonymous</b> function -
@@ -161,6 +183,17 @@ console.log(<span style="color: #7bc275;">'Switching gears!'</span>)
 </pre>
 </div>
 
+<pre class="example">
+I frobnicated 1
+I frobnicated 2
+I frobnicated 3
+Switching gears!
+I frobnicated 4
+I frobnicated 5
+I frobnicated 6
+</pre>
+
+
 <p>
 This is the &ldquo;how&rdquo; of functional composition. If we can assign a function to a
 variable, that means we can do anything with a function that we can do with a
@@ -172,8 +205,8 @@ takes a function.
 </div>
 </div>
 
-<div id="outline-container-orgfdf02ea" class="outline-3">
-<h3 id="orgfdf02ea"><span class="section-number-3">1.5.</span> Call Sites in JavaScript</h3>
+<div id="outline-container-org1e536a7" class="outline-3">
+<h3 id="org1e536a7"><span class="section-number-3">1.5.</span> Call Sites in JavaScript</h3>
 <div class="outline-text-3" id="text-1-5">
 <p>
 In order to invoke a function called <code>foo</code> we write <code>foo()</code>. The <code>()</code> after a
@@ -202,6 +235,15 @@ foo(
 </pre>
 </div>
 
+<pre class="example">
+foo called
+foo called
+foo called
+foo called
+Error: TypeError: x is not a function
+</pre>
+
+
 <p>
 If you try this on something that isn&rsquo;t a function, you&rsquo;ll see <code>&lt;variable&gt; is
 not a function</code>.
@@ -209,8 +251,8 @@ not a function</code>.
 </div>
 </div>
 
-<div id="outline-container-orgf9516b5" class="outline-3">
-<h3 id="orgf9516b5"><span class="section-number-3">1.6.</span> Writing our own Higher Order Function: Map</h3>
+<div id="outline-container-org0588f33" class="outline-3">
+<h3 id="org0588f33"><span class="section-number-3">1.6.</span> Writing our own Higher Order Function: Map</h3>
 <div class="outline-text-3" id="text-1-6">
 <p>
 Let&rsquo;s make our own simple higher order function. One of the utilities of higher
@@ -246,6 +288,12 @@ console.log(map(uppercase, [<span style="color: #7bc275;">'a'</span>, <span styl
 </pre>
 </div>
 
+<pre class="example">
+[ 2, 3, 4 ]
+[ 'A', 'B', 'C' ]
+</pre>
+
+
 <p>
 Here <code>f</code> is the function being passed, which is just any function. So long as it
 obeys the arity (number of arguments) and returns something, it works.
@@ -253,8 +301,8 @@ obeys the arity (number of arguments) and returns something, it works.
 </div>
 </div>
 
-<div id="outline-container-orge9fbd6f" class="outline-3">
-<h3 id="orge9fbd6f"><span class="section-number-3">1.7.</span> Writing our own Higher Order Function: changeFirstLetter</h3>
+<div id="outline-container-org48c8ced" class="outline-3">
+<h3 id="org48c8ced"><span class="section-number-3">1.7.</span> Writing our own Higher Order Function: changeFirstLetter</h3>
 <div class="outline-text-3" id="text-1-7">
 <div class="org-src-container">
 <pre class="src src-js"><span style="color: #51afef;">function</span> <span style="color: #5cEfFF;">uppercase</span>(<span style="color: #DFDFDF;">s</span>) {
@@ -268,7 +316,8 @@ obeys the arity (number of arguments) and returns something, it works.
 <span style="color: #51afef;">function</span> <span style="color: #5cEfFF;">changeFirstLetter</span>(<span style="color: #DFDFDF;">s</span>, <span style="color: #DFDFDF;">f</span>) {
   <span style="color: #51afef;">const</span> <span style="color: #DFDFDF;">words</span> = s.split(<span style="color: #7bc275;">' '</span>) <span style="color: #62686E;">// </span><span style="color: #62686E;">Split words.</span>
   <span style="color: #51afef;">const</span> <span style="color: #DFDFDF;">newWords</span> = words.map(<span style="color: #51afef;">function</span>(<span style="color: #DFDFDF;">w</span>) {
-    <span style="color: #51afef;">return</span> f(w[<span style="color: #e69055; font-weight: bold;">0</span>]) + w.slice(<span style="color: #e69055; font-weight: bold;">1</span>)
+    <span style="color: #51afef;">const</span> <span style="color: #DFDFDF;">firstLetter</span> = w[<span style="color: #e69055; font-weight: bold;">0</span>]
+    <span style="color: #51afef;">return</span> f(firstLetter) + w.slice(<span style="color: #e69055; font-weight: bold;">1</span>)
   })
   <span style="color: #51afef;">return</span> newWords.join(<span style="color: #7bc275;">' '</span>) <span style="color: #62686E;">// </span><span style="color: #62686E;">Put the words back into a sentence.</span>
 }
@@ -282,6 +331,13 @@ console.log(changeFirstLetter(<span style="color: #7bc275;">'I am a proper sente
 </pre>
 </div>
 
+<pre class="example">
+I Am Too Lazy To Capitalize.
+cAPSLOCK iS cRUSE cONTROL fOR aWESOME
+J bm b qroper tentence bctually.
+</pre>
+
+
 <p>
 The beauty of this is <code>changeFirstLetter</code> doesn&rsquo;t need to know about what kind
 of changes could be made to the first letter. That has been <span class="underline">delegated</span> to the
@@ -289,8 +345,9 @@ function argument <code>f</code>.
 </p>
 </div>
 </div>
-<div id="outline-container-org2fe657c" class="outline-3">
-<h3 id="org2fe657c"><span class="section-number-3">1.8.</span> Simplifying Promises</h3>
+
+<div id="outline-container-org3b9e7eb" class="outline-3">
+<h3 id="org3b9e7eb"><span class="section-number-3">1.8.</span> Simplifying Promises</h3>
 <div class="outline-text-3" id="text-1-8">
 <p>
 Promises are tricky topics in JavaScript that many engineers struggle with.
@@ -335,11 +392,15 @@ composition easier to understand.
 accountTotal(<span style="color: #7bc275;">'foo.json'</span>).then(amount =&gt; console.log(amount))
 </pre>
 </div>
+
+<pre class="example">
+10002
+</pre>
 </div>
 </div>
 
-<div id="outline-container-orgdbf327f" class="outline-3">
-<h3 id="orgdbf327f"><span class="section-number-3">1.9.</span> Currying to Change Arity</h3>
+<div id="outline-container-org1f937e8" class="outline-3">
+<h3 id="org1f937e8"><span class="section-number-3">1.9.</span> Currying to Change Arity</h3>
 <div class="outline-text-3" id="text-1-9">
 <p>
 When doing function composition, you can use a technique called &ldquo;currying&rdquo; to
@@ -371,11 +432,20 @@ console.log([<span style="color: #e69055; font-weight: bold;">1</span>, <span st
 console.log([<span style="color: #e69055; font-weight: bold;">1</span>, <span style="color: #e69055; font-weight: bold;">2</span>, <span style="color: #e69055; font-weight: bold;">3</span>].map(add(<span style="color: #e69055; font-weight: bold;">1</span>)))
 </pre>
 </div>
+
+<pre class="example">
+3
+10
+1
+2
+[ 2, 3, 4 ]
+[ 2, 3, 4 ]
+</pre>
 </div>
 </div>
 
-<div id="outline-container-org5066f3d" class="outline-3">
-<h3 id="org5066f3d"><span class="section-number-3">1.10.</span> Conclusions</h3>
+<div id="outline-container-org8856296" class="outline-3">
+<h3 id="org8856296"><span class="section-number-3">1.10.</span> Conclusions</h3>
 <div class="outline-text-3" id="text-1-10">
 <p>
 Function composition is a topic with a great deal of depth to it, but in an
