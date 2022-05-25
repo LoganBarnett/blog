@@ -103,7 +103,8 @@ Joined DevOps team to help with in-house infrastructure applications and tools.
    consolidate a wide spread of tech employed. One example is consolidating all
    of our Jenkins build agents into the Cloud Swarm - a flexible pool of
    Dockerized Jenkins agents.
-3. Brought perspective to the team who don't have to consume their tools the way
+3. Maintained and automated much of the Nomad (scheduling) infrastructure.
+4. Brought perspective to the team who don't have to consume their tools the way
    the engineering teams have to.
 *** Assessment
 :PROPERTIES:
