@@ -40,18 +40,18 @@ the noun-like things.
 Our endpoint for cats will simply be =/cats=.
 
 #+begin_src js
-  app.get('/cats', (req, res) => {
-    res.send([
-      'Chester',
-      'Foof',
-      'Garfield',
-      'Hobbes',
-      'Puss',
-      'Tom',
-      'Tony',
-      'Whiskers',
-    ])
-  })
+app.get('/cats', (req, res) => {
+  res.send([
+    'Chester',
+    'Foof',
+    'Garfield',
+    'Hobbes',
+    'Puss',
+    'Tom',
+    'Tony',
+    'Whiskers',
+  ])
+})
 #+end_src
 
 Doing a =GET= on =/cats= will provide a JSON list of cat names back. These are
@@ -107,14 +107,14 @@ Whoa, it's like the _exact_ same set of strings we passed to =res.send=! Spooky.
 
 #+begin_src json
 [
-"Chester",
-"Mr. Druthersworth",
-"Garfield",
-"Hobbes",
-"Puss",
-"Tom",
-"Tony",
-"Whiskers"
+  "Chester",
+  "Mr. Druthersworth",
+  "Garfield",
+  "Hobbes",
+  "Puss",
+  "Tom",
+  "Tony",
+  "Whiskers"
 ]
 #+end_src
 
