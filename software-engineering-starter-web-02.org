@@ -57,10 +57,10 @@ a real web browser.
   I personally have moved to a place where I value the use of vaguer names
   rather more specific ones, and I'm okay with many reasonable abbreviations. I
   have other means of making my variables make more sense to me. You'll find
-  you're own way, and probably change it several times as you become more
+  your own way, and probably change it several times as you become more
   experienced.
 
-** announcing the html
+** announcing the HTML
    :PROPERTIES:
    :CUSTOM_ID: responding-with-html--announcing-the-html
    :END:
@@ -223,4 +223,4 @@ a real web browser.
   :END:
 
   After we get the homework test passing we can move onto the next thing, which
-  will be making our server use dynamic data.
+  will be making our server [[./software-engineering-starter-web-03.org][use dynamic data]].

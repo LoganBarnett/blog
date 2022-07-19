@@ -7,63 +7,63 @@ parent: software-engineering-starter-web.org
 ---
 
 <p>
-As a continuation of <a href="./software-engineering-starter-web.html">Starter Web App</a>, we'll be making our server respond with
+As a continuation of <a href="./software-engineering-starter-web.html">Starter Web App</a>, we&rsquo;ll be making our server respond with
 some well formatted HTML. We want this so we can also test our web server with
 a real web browser.
 </p>
 
-<div id="outline-container-orgc8ea458" class="outline-2">
-<h2 id="why"><span class="section-number-2">1</span> why?</h2>
+<div id="outline-container-why" class="outline-2">
+<h2 id="why"><span class="section-number-2">1.</span> why?</h2>
 <div class="outline-text-2" id="text-why">
 <p>
 If your server is already running, you can visit it in your browser by
-navigating to <a href="http://localhost:3000">http://localhost:3000</a>. You will see the "ohai" we added earlier
-in a very flat, ugly "page". It's not actually a page, but instead how the
+navigating to <a href="http://localhost:3000">http://localhost:3000</a>. You will see the &ldquo;ohai&rdquo; we added earlier
+in a very flat, ugly &ldquo;page&rdquo;. It&rsquo;s not actually a page, but instead how the
 browser displays plain text content. We want to give back some actual HTML so
 we can make a pretty page with meaningful content.
 </p>
 </div>
 </div>
 
-<div id="outline-container-orgfb3b0c9" class="outline-2">
-<h2 id="responding-with-html"><span class="section-number-2">2</span> responding with html</h2>
+<div id="outline-container-responding-with-html" class="outline-2">
+<h2 id="responding-with-html"><span class="section-number-2">2.</span> responding with html</h2>
 <div class="outline-text-2" id="text-responding-with-html">
 <p>
-Right now we're sending plain text over the wire with this expression:
+Right now we&rsquo;re sending plain text over the wire with this expression:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-js">res.send<span style="color: #4f97d7;">(</span><span style="color: #2d9574;">'ohai'</span><span style="color: #4f97d7;">)</span>
+<pre class="src src-js">    res.send<span style="color: #51afef;">(</span><span style="color: #7bc275;">'ohai'</span><span style="color: #51afef;">)</span>
 </pre>
 </div>
 </div>
 
-<div id="outline-container-org25183eb" class="outline-3">
-<h3 id="responding-with-html--variable-names"><span class="section-number-3">2.1</span> variable names</h3>
+<div id="outline-container-responding-with-html--variable-names" class="outline-3">
+<h3 id="responding-with-html--variable-names"><span class="section-number-3">2.1.</span> variable names</h3>
 <div class="outline-text-3" id="text-responding-with-html--variable-names">
 <p>
 <code>res</code> is short for <code>response</code>. This a common convention in Express examples.
-In programming we can name our variables whatever we want. It's both a
+In programming we can name our variables whatever we want. It&rsquo;s both a
 blessing and a curse. We want our variable names to be both meaningful and
 descriptive, but also terse enough that we can quickly understand what the
-purpose of the variable is and move on. Since we're writing a web server that
-is loaded full of handling requests and responses, we've chosen to abbreviate
+purpose of the variable is and move on. Since we&rsquo;re writing a web server that
+is loaded full of handling requests and responses, we&rsquo;ve chosen to abbreviate
 the name. Naming variables is sort of an art form, and not everyone agrees on
 all of the methods employed at naming them.
 </p>
 
 <p>
 I personally have moved to a place where I value the use of vaguer names
-rather more specific ones, and I'm okay with many reasonable abbreviations. I
-have other means of making my variables make more sense to me. You'll find
-you're own way, and probably change it several times as you become more
+rather more specific ones, and I&rsquo;m okay with many reasonable abbreviations. I
+have other means of making my variables make more sense to me. You&rsquo;ll find
+your own way, and probably change it several times as you become more
 experienced.
 </p>
 </div>
 </div>
 
-<div id="outline-container-orgade1b9f" class="outline-3">
-<h3 id="responding-with-html--announcing-the-html"><span class="section-number-3">2.2</span> announcing the html</h3>
+<div id="outline-container-responding-with-html--announcing-the-html" class="outline-3">
+<h3 id="responding-with-html--announcing-the-html"><span class="section-number-3">2.2.</span> announcing the HTML</h3>
 <div class="outline-text-3" id="text-responding-with-html--announcing-the-html">
 <p>
 Both requests and responses have additional meta-data attached to them that
@@ -74,8 +74,8 @@ headers, or just headers for short. A header looks like this:
 </p>
 
 <pre class="example">
-Header-Name: header-value
-Other-Header-Name: other-header-value
+   Header-Name: header-value
+   Other-Header-Name: other-header-value
 </pre>
 
 <p>
@@ -83,15 +83,15 @@ Additional headers are separated by line breaks, as shown above.
 </p>
 
 <p>
-Here, we're going to announce that we're sending HTML. We do this by setting
+Here, we&rsquo;re going to announce that we&rsquo;re sending HTML. We do this by setting
 the <code>Content-Type</code> header to <code>text/html</code>. This is a special value that we
-call a MIME type, which we can get into later. I checked Express's API docs
-for how to set headers, and this is what we need to do to indicate we're
+call a MIME type, which we can get into later. I checked Express&rsquo;s API docs
+for how to set headers, and this is what we need to do to indicate we&rsquo;re
 sending HTML back:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-js">res.set<span style="color: #4f97d7;">(</span><span style="color: #2d9574;">'Content-Type'</span>, <span style="color: #2d9574;">'text/html'</span><span style="color: #4f97d7;">)</span>
+<pre class="src src-js">   res.set<span style="color: #51afef;">(</span><span style="color: #7bc275;">'Content-Type'</span>, <span style="color: #7bc275;">'text/html'</span><span style="color: #51afef;">)</span>
 </pre>
 </div>
 
@@ -102,32 +102,32 @@ code now looks like this inside of your request handler:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-js">res.set<span style="color: #4f97d7;">(</span><span style="color: #2d9574;">'Content-Type'</span>, <span style="color: #2d9574;">'text/html'</span><span style="color: #4f97d7;">)</span>
-res.send<span style="color: #4f97d7;">(</span><span style="color: #2d9574;">'ohai'</span><span style="color: #4f97d7;">)</span>
+<pre class="src src-js">   res.set<span style="color: #51afef;">(</span><span style="color: #7bc275;">'Content-Type'</span>, <span style="color: #7bc275;">'text/html'</span><span style="color: #51afef;">)</span>
+   res.send<span style="color: #51afef;">(</span><span style="color: #7bc275;">'ohai'</span><span style="color: #51afef;">)</span>
 </pre>
 </div>
 
 <p>
-But we're not actually sending HTML yet. Let's change that now, and add a
+But we&rsquo;re not actually sending HTML yet. Let&rsquo;s change that now, and add a
 little more flavor to our site.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-js">   res.set<span style="color: #4f97d7;">(</span><span style="color: #2d9574;">'Content-Type'</span>, <span style="color: #2d9574;">'text/html'</span><span style="color: #4f97d7;">)</span>
-   res.send<span style="color: #4f97d7;">(</span><span style="color: #2d9574;">'\</span>
-<span style="color: #2d9574;">&lt;html&gt;\</span>
-<span style="color: #2d9574;">  &lt;body&gt;\</span>
-<span style="color: #2d9574;">    Welcome to the official site for &lt;em&gt;justified&lt;/em&gt;\</span>
-<span style="color: #2d9574;">    &lt;strong&gt;cat hatred&lt;/strong&gt;.\</span>
-<span style="color: #2d9574;">  &lt;/body&gt;\</span>
-<span style="color: #2d9574;">&lt;/html&gt;'</span><span style="color: #4f97d7;">)</span>
+<pre class="src src-js">        res.set<span style="color: #51afef;">(</span><span style="color: #7bc275;">'Content-Type'</span>, <span style="color: #7bc275;">'text/html'</span><span style="color: #51afef;">)</span>
+        res.send<span style="color: #51afef;">(</span><span style="color: #7bc275;">'\</span>
+<span style="color: #7bc275;">     &lt;html&gt;\</span>
+<span style="color: #7bc275;">       &lt;body&gt;\</span>
+<span style="color: #7bc275;">         Welcome to the official site for &lt;em&gt;justified&lt;/em&gt;\</span>
+<span style="color: #7bc275;">         &lt;strong&gt;cat hatred&lt;/strong&gt;.\</span>
+<span style="color: #7bc275;">       &lt;/body&gt;\</span>
+<span style="color: #7bc275;">     &lt;/html&gt;'</span><span style="color: #51afef;">)</span>
 </pre>
 </div>
 
 <p>
-Once you've added these changes, save the file and restart the server. Use
-control-c to kill the server when you're in the terminal tab that has the
-server running. Once that's done, you can start the server back up with <code>node
+Once you&rsquo;ve added these changes, save the file and restart the server. Use
+control-c to kill the server when you&rsquo;re in the terminal tab that has the
+server running. Once that&rsquo;s done, you can start the server back up with <code>node
    server.js</code>.
 </p>
 
@@ -138,44 +138,44 @@ something like this:
 </p>
 
 
-<div class="figure">
+<div id="org1bf785a" class="figure">
 <p><img src="./cat-hatred-html-01.png" alt="cat-hatred-html-01.png" />
 </p>
 </div>
 </div>
 </div>
 
-<div id="outline-container-org1fdcf20" class="outline-3">
-<h3 id="responding-with-html--curl-again"><span class="section-number-3">2.3</span> curl again</h3>
+<div id="outline-container-responding-with-html--curl-again" class="outline-3">
+<h3 id="responding-with-html--curl-again"><span class="section-number-3">2.3.</span> curl again</h3>
 <div class="outline-text-3" id="text-responding-with-html--curl-again">
 <p>
-Let's try this again with our prior tool, <code>curl</code>.
+Let&rsquo;s try this again with our prior tool, <code>curl</code>.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-shell">curl http://localhost:3000
+<pre class="src src-shell">   <span style="color: #FCCE7B;">curl</span> http://localhost:3000
 </pre>
 </div>
 
 <p>
-You'll see something like what we typed in on the JavaScript side:
+You&rsquo;ll see something like what we typed in on the JavaScript side:
 </p>
 
 <pre class="example">
-&lt;html&gt;       &lt;body&gt;         Welcome to the official site for &lt;em&gt;justified&lt;/em&gt;         &lt;strong&gt;cat hatred&lt;/strong&gt;.       &lt;/body&gt;     &lt;/html&gt;
+     &lt;html&gt;       &lt;body&gt;         Welcome to the official site for &lt;em&gt;justified&lt;/em&gt;         &lt;strong&gt;cat hatred&lt;/strong&gt;.       &lt;/body&gt;     &lt;/html&gt;
 </pre>
 
 <p>
 Well this is kind of hard to read. Imagine if we curled a real webpage with
 lots of stuff on it! There would be HTML everywhere, and it would be hard for
-us to see what's going on quickly. Let's add the capability to support
+us to see what&rsquo;s going on quickly. Let&rsquo;s add the capability to support
 multiple content types.
 </p>
 </div>
 </div>
 
-<div id="outline-container-org8d9d927" class="outline-3">
-<h3 id="responding-with-html--the-accept-header"><span class="section-number-3">2.4</span> the accept header</h3>
+<div id="outline-container-responding-with-html--the-accept-header" class="outline-3">
+<h3 id="responding-with-html--the-accept-header"><span class="section-number-3">2.4.</span> the accept header</h3>
 <div class="outline-text-3" id="text-responding-with-html--the-accept-header">
 <p>
 When your web browser sends a request to a server, it will generally ask for
@@ -183,49 +183,49 @@ HTML. It does that with an <code>Accept</code> <span class="underline">request</
 </p>
 
 <pre class="example">
-Accept: text/html
+   Accept: text/html
 </pre>
 
 <p>
 In Express, we get to see the request the client sent to us. We can ask it
 for the accept header and make a decision based on that. The real <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept"><code>Accept</code>
 header</a> can actually take a lot more than just a single MIME type. Express
-provides a helper for letting us ask if a particular type we're interested in
+provides a helper for letting us ask if a particular type we&rsquo;re interested in
 is supported by what the browser sent, and that is a function called
 <a href="https://expressjs.com/en/api.html#req.accepts"><code>accepts</code></a> and it lives on the request object. We can ask if the request sent
-prefers <code>text/html</code> like this code that won't put in just yet:
+prefers <code>text/html</code> like this code that won&rsquo;t put in just yet:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-js">req.accepts<span style="color: #4f97d7;">(</span><span style="color: #2d9574;">'text/html'</span><span style="color: #4f97d7;">)</span>
+<pre class="src src-js">   req.accepts<span style="color: #51afef;">(</span><span style="color: #7bc275;">'text/html'</span><span style="color: #51afef;">)</span>
 </pre>
 </div>
 
 <p>
 We want to check if the client wants <code>text/html</code> and respond with actual
-HTML, otherwise we want to respond with plain text (<code>text/plain</code>). We'll
+HTML, otherwise we want to respond with plain text (<code>text/plain</code>). We&rsquo;ll
 update the message to match. The <code>text/plain</code> response should look like:
 </p>
 
 <pre class="example">
-Welcome to the official site for justified cat hatred.
+   Welcome to the official site for justified cat hatred.
 </pre>
 </div>
 </div>
 
-<div id="outline-container-org363aaed" class="outline-3">
-<h3 id="responding-with-html--homework"><span class="section-number-3">2.5</span> homework</h3>
+<div id="outline-container-responding-with-html--homework" class="outline-3">
+<h3 id="responding-with-html--homework"><span class="section-number-3">2.5.</span> homework</h3>
 <div class="outline-text-3" id="text-responding-with-html--homework">
 <p>
-Instead of telling you what the code is here, I'm going to have you <span class="underline">figure
-it out yourself</span>. You've already done <code>if</code> statements in the past, so you
-have some basic logic flow. Now you're going to put it to work alongside the
+Instead of telling you what the code is here, I&rsquo;m going to have you <span class="underline">figure
+it out yourself</span>. You&rsquo;ve already done <code>if</code> statements in the past, so you
+have some basic logic flow. Now you&rsquo;re going to put it to work alongside the
 examples you have so far.
 </p>
 
 <p>
-To know if you got the homework here correct, I have a test I've created. Run
-this test, and it will tell you if you've satisfied the requirements we're
+To know if you got the homework here correct, I have a test I&rsquo;ve created. Run
+this test, and it will tell you if you&rsquo;ve satisfied the requirements we&rsquo;re
 looking for.
 </p>
 
@@ -233,64 +233,64 @@ looking for.
 You will need to install <code>pup</code> via <code>brew</code> in order to ensure that this script
 works. Copy the code block below and create a new file in your directory
 called <code>accept-test.sh</code>. <code>pup</code> processes HTML from the command line, and in
-this case is being used to ensure a uniform format of the HTML that's easy to
+this case is being used to ensure a uniform format of the HTML that&rsquo;s easy to
 compare.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-shell"><span style="color: #2aa1ae; background-color: #292e34;">#</span><span style="color: #2aa1ae; background-color: #292e34;">! /usr/bin/</span><span style="color: #4f97d7; font-weight: bold;">env</span><span style="color: #2aa1ae; background-color: #292e34;"> bash</span>
-<span style="color: #7590db;">htmlResult</span>=<span style="color: #fa8072;">`curl -H 'Accept: text/html' 'http://localhost:3000' | pup`</span>
-<span style="color: #7590db;">textResult</span>=<span style="color: #fa8072;">`curl -H 'Accept: text/plain' 'http://localhost:3000'`</span>
+<pre class="src src-shell"><span style="color: #62686E;">#</span><span style="color: #62686E;">! /usr/bin/</span><span style="color: #51afef;">env</span><span style="color: #62686E;"> bash</span>
+<span style="color: #DFDFDF;">htmlResult</span>=<span style="color: #C57BDB; font-weight: bold;">`</span><span style="color: #C57BDB; font-weight: bold;">curl</span><span style="color: #C57BDB; font-weight: bold;"> -H 'Accept: text/html' 'http://localhost:3000' | pup`</span>
+<span style="color: #DFDFDF;">textResult</span>=<span style="color: #C57BDB; font-weight: bold;">`</span><span style="color: #C57BDB; font-weight: bold;">curl</span><span style="color: #C57BDB; font-weight: bold;"> -H 'Accept: text/plain' 'http://localhost:3000'`</span>
 
-<span style="color: #7590db;">htmlValid</span>=false
-<span style="color: #7590db;">textValid</span>=false
+<span style="color: #DFDFDF;">htmlValid</span>=false
+<span style="color: #DFDFDF;">textValid</span>=false
 
-<span style="color: #7590db;">correctHtml</span>=$<span style="color: #4f97d7;">(</span><span style="color: #fa8072;">cat</span> &lt;&lt;EOF
-<span style="color: #ffff00; font-weight: bold;">&lt;html&gt;</span>
-<span style="color: #ffff00; font-weight: bold;"> &lt;head&gt;</span>
-<span style="color: #ffff00; font-weight: bold;"> &lt;/head&gt;</span>
-<span style="color: #ffff00; font-weight: bold;"> &lt;body&gt;</span>
-<span style="color: #ffff00; font-weight: bold;">  Welcome to the official site for</span>
-<span style="color: #ffff00; font-weight: bold;">  &lt;em&gt;</span>
-<span style="color: #ffff00; font-weight: bold;">   justified</span>
-<span style="color: #ffff00; font-weight: bold;">  &lt;/em&gt;</span>
-<span style="color: #ffff00; font-weight: bold;">  &lt;strong&gt;</span>
-<span style="color: #ffff00; font-weight: bold;">   cat hatred</span>
-<span style="color: #ffff00; font-weight: bold;">  &lt;/strong&gt;</span>
-<span style="color: #ffff00; font-weight: bold;">  .</span>
-<span style="color: #ffff00; font-weight: bold;"> &lt;/body&gt;</span>
-<span style="color: #ffff00; font-weight: bold;">&lt;/html&gt;</span>
+<span style="color: #DFDFDF;">correctHtml</span>=$<span style="color: #51afef;">(</span><span style="color: #C57BDB; font-weight: bold;">cat &lt;&lt;EOF</span>
+<span style="color: #7bc275;">&lt;html&gt;</span>
+<span style="color: #7bc275;"> &lt;head&gt;</span>
+<span style="color: #7bc275;"> &lt;/head&gt;</span>
+<span style="color: #7bc275;"> &lt;body&gt;</span>
+<span style="color: #7bc275;">  Welcome to the official site for</span>
+<span style="color: #7bc275;">  &lt;em&gt;</span>
+<span style="color: #7bc275;">   justified</span>
+<span style="color: #7bc275;">  &lt;/em&gt;</span>
+<span style="color: #7bc275;">  &lt;strong&gt;</span>
+<span style="color: #7bc275;">   </span><span style="color: #7bc275;">cat</span><span style="color: #7bc275;"> hatred</span>
+<span style="color: #7bc275;">  &lt;/strong&gt;</span>
+<span style="color: #7bc275;">  .</span>
+<span style="color: #7bc275;"> &lt;/body&gt;</span>
+<span style="color: #7bc275;">&lt;/html&gt;</span>
 
-<span style="color: #ffff00; font-weight: bold;">EOF</span>
-<span style="color: #4f97d7;">)</span>
-<span style="color: #4f97d7; font-weight: bold;">if</span> <span style="color: #4f97d7;">[</span> <span style="color: #2d9574;">"$htmlResult"</span> = <span style="color: #2d9574;">"$correctHtml"</span> <span style="color: #4f97d7;">]</span>; <span style="color: #4f97d7; font-weight: bold;">then</span>
-    <span style="color: #7590db;">htmlValid</span>=true
-<span style="color: #4f97d7; font-weight: bold;">else</span>
-    <span style="color: #4f97d7;">echo</span> <span style="color: #2d9574;">"HTML result was '$htmlResult' but we were expecting '$correctHtml'"</span>
-<span style="color: #4f97d7; font-weight: bold;">fi</span>
+<span style="color: #7bc275;">EOF</span>
+<span style="color: #51afef;">)</span>
+<span style="color: #51afef;">if</span> <span style="color: #51afef;">[</span> <span style="color: #7bc275;">"</span><span style="color: #a991f1;">$</span><span style="color: #DFDFDF;">htmlResult</span><span style="color: #7bc275;">"</span> = <span style="color: #7bc275;">"</span><span style="color: #a991f1;">$</span><span style="color: #DFDFDF;">correctHtml</span><span style="color: #7bc275;">"</span> <span style="color: #51afef;">]</span>; <span style="color: #51afef;">then</span>
+    <span style="color: #DFDFDF;">htmlValid</span>=true
+<span style="color: #51afef;">else</span>
+    <span style="color: #FCCE7B;">echo</span> <span style="color: #7bc275;">"HTML result was '</span><span style="color: #a991f1;">$</span><span style="color: #DFDFDF;">htmlResult</span><span style="color: #7bc275;">' but we were expecting '</span><span style="color: #a991f1;">$</span><span style="color: #DFDFDF;">correctHtml</span><span style="color: #7bc275;">'"</span>
+<span style="color: #51afef;">fi</span>
 
-<span style="color: #7590db;">correctText</span>=<span style="color: #2d9574;">'Welcome to the official site for justified cat hatred.'</span>
-<span style="color: #4f97d7; font-weight: bold;">if</span> <span style="color: #4f97d7;">[</span> <span style="color: #2d9574;">"$textResult"</span> = <span style="color: #2d9574;">"$correctText"</span> <span style="color: #4f97d7;">]</span>; <span style="color: #4f97d7; font-weight: bold;">then</span>
-    <span style="color: #7590db;">textValid</span>=true
-<span style="color: #4f97d7; font-weight: bold;">else</span>
-    <span style="color: #4f97d7;">echo</span> <span style="color: #2d9574;">"Text result was '$textResult' but we were expecting '$correctText'"</span>
-<span style="color: #4f97d7; font-weight: bold;">fi</span>
+<span style="color: #DFDFDF;">correctText</span>=<span style="color: #7bc275;">'Welcome to the official site for justified </span><span style="color: #7bc275;">cat</span><span style="color: #7bc275;"> hatred.'</span>
+<span style="color: #51afef;">if</span> <span style="color: #51afef;">[</span> <span style="color: #7bc275;">"</span><span style="color: #a991f1;">$</span><span style="color: #DFDFDF;">textResult</span><span style="color: #7bc275;">"</span> = <span style="color: #7bc275;">"</span><span style="color: #a991f1;">$</span><span style="color: #DFDFDF;">correctText</span><span style="color: #7bc275;">"</span> <span style="color: #51afef;">]</span>; <span style="color: #51afef;">then</span>
+    <span style="color: #DFDFDF;">textValid</span>=true
+<span style="color: #51afef;">else</span>
+    <span style="color: #FCCE7B;">echo</span> <span style="color: #7bc275;">"Text result was '</span><span style="color: #a991f1;">$</span><span style="color: #DFDFDF;">textResult</span><span style="color: #7bc275;">' but we were expecting '</span><span style="color: #a991f1;">$</span><span style="color: #DFDFDF;">correctText</span><span style="color: #7bc275;">'"</span>
+<span style="color: #51afef;">fi</span>
 
-<span style="color: #4f97d7; font-weight: bold;">if</span> <span style="color: #4f97d7;">[</span><span style="color: #bc6ec5;">[</span> <span style="color: #2d9574;">"$htmlValid"</span> = true &amp;&amp; <span style="color: #2d9574;">"$textValid"</span> = true <span style="color: #bc6ec5;">]</span><span style="color: #4f97d7;">]</span>; <span style="color: #4f97d7; font-weight: bold;">then</span>
-    <span style="color: #4f97d7;">echo</span> <span style="color: #2d9574;">"The test passed and the output is what's expected\!"</span>
-<span style="color: #4f97d7; font-weight: bold;">else</span>
-    <span style="color: #4f97d7;">echo</span> <span style="color: #2d9574;">"The test failed. See error(s) above."</span>
-    <span style="color: #4f97d7; font-weight: bold;">exit</span> <span style="color: #a45bad;">1</span>
-<span style="color: #4f97d7; font-weight: bold;">fi</span>
+<span style="color: #51afef;">if</span> <span style="color: #51afef;">[</span><span style="color: #C57BDB;">[</span> <span style="color: #7bc275;">"</span><span style="color: #a991f1;">$</span><span style="color: #DFDFDF;">htmlValid</span><span style="color: #7bc275;">"</span> = true &amp;&amp; <span style="color: #7bc275;">"</span><span style="color: #a991f1;">$</span><span style="color: #DFDFDF;">textValid</span><span style="color: #7bc275;">"</span> = true <span style="color: #C57BDB;">]</span><span style="color: #51afef;">]</span>; <span style="color: #51afef;">then</span>
+    <span style="color: #FCCE7B;">echo</span> <span style="color: #7bc275;">"The test passed and the output is what's expected\!"</span>
+<span style="color: #51afef;">else</span>
+    <span style="color: #FCCE7B;">echo</span> <span style="color: #7bc275;">"The test failed. See error(s) above."</span>
+    <span style="color: #51afef;">exit</span> <span style="color: #e69055; font-weight: bold;">1</span>
+<span style="color: #51afef;">fi</span>
 </pre>
 </div>
 
 <p>
-Once you've copied the file, run this to make it executable:
+Once you&rsquo;ve copied the file, run this to make it executable:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-shell">chmod +x accept-test.sh
+<pre class="src src-shell">   <span style="color: #FCCE7B;">chmod</span> +x accept-test.sh
 </pre>
 </div>
 
@@ -299,28 +299,28 @@ To run the test, use:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-shell">./accept-test.sh
+<pre class="src src-shell">   ./accept-test.sh
 </pre>
 </div>
 </div>
 
-<div id="outline-container-org85f43cf" class="outline-4">
-<h4 id="responding-with-html--homework--tips"><span class="section-number-4">2.5.1</span> tips</h4>
+<div id="outline-container-responding-with-html--homework--tips" class="outline-4">
+<h4 id="responding-with-html--homework--tips"><span class="section-number-4">2.5.1.</span> tips</h4>
 <div class="outline-text-4" id="text-responding-with-html--homework--tips">
 <p>
-Don't forget to restart the server every time you save your changes!
+Don&rsquo;t forget to restart the server every time you save your changes!
 </p>
 </div>
 </div>
 </div>
 </div>
 
-<div id="outline-container-org016713e" class="outline-2">
-<h2 id="the-next-thing"><span class="section-number-2">3</span> the next thing</h2>
+<div id="outline-container-the-next-thing" class="outline-2">
+<h2 id="the-next-thing"><span class="section-number-2">3.</span> the next thing</h2>
 <div class="outline-text-2" id="text-the-next-thing">
 <p>
 After we get the homework test passing we can move onto the next thing, which
-will be making our server use dynamic data.
+will be making our server <a href="./software-engineering-starter-web-03.html">use dynamic data</a>.
 </p>
 </div>
 </div>
