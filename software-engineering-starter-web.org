@@ -21,10 +21,10 @@ together your first web application using this buzzword list: HTML, CSS,
 Node.js, Express.js, bash (or just a shell), yarn, git, Homebrew, and maybe some
 other stuff I forgot to include.
 
-+ [[./software-engineering-stater-web-01.org][part 1 - getting set up with your local environment, and a tiny server]]
-+ [[./software-engineering-stater-web-02.org][part 2 - using curl, mime types, and fulfilling an automated test]]
-+ [[./software-engineering-stater-web-03.org][part 3 - working with data]]
-+ [[./software-engineering-stater-web-04.org][part 4 - backing it all up with git]]
++ [[./software-engineering-starter-web-01.org][part 1 - getting set up with your local environment, and a tiny server]]
++ [[./software-engineering-starter-web-02.org][part 2 - using curl, mime types, and fulfilling an automated test]]
++ [[./software-engineering-starter-web-03.org][part 3 - working with data]]
++ [[./software-engineering-starter-web-04.org][part 4 - backing it all up with git]]
 
 While this isn't complete, I'll expand upon it anytime I get a chance to help
 someone pick up the trade. Don't worry if it seems like a lot! Fairly consistent
