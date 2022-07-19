@@ -199,3 +199,8 @@ Whoa, it's like the _exact_ same set of strings we passed to =res.send=! Spooky.
   help.
 
   #+include: "./software-engineering-starter-web-03-end.js" src js
+* moving on
+
+The next part is [[./software-engineering-starter-web-04.org][learning about git]] so you can have both a backup, a log of
+changes, and a standard means of sharing your code while also viewing code
+others have shared as well.
