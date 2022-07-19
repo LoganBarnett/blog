@@ -37,9 +37,9 @@ a real web browser.
 
   Right now we're sending plain text over the wire with this expression:
 
-  #+begin_src js
-    res.send('ohai')
-  #+end_src
+#+begin_src js
+res.send('ohai')
+#+end_src
 
 ** variable names
    :PROPERTIES:
@@ -71,10 +71,10 @@ a real web browser.
    the data you prefer. This meta data is expressed by something called HTTP
    headers, or just headers for short. A header looks like this:
 
-   #+begin_src
-   Header-Name: header-value
-   Other-Header-Name: other-header-value
-   #+end_src
+#+begin_src
+Header-Name: header-value
+Other-Header-Name: other-header-value
+#+end_src
 
    Additional headers are separated by line breaks, as shown above.
 
@@ -84,32 +84,32 @@ a real web browser.
    for how to set headers, and this is what we need to do to indicate we're
    sending HTML back:
 
-   #+begin_src js
-   res.set('Content-Type', 'text/html')
-   #+end_src
+#+begin_src js
+res.set('Content-Type', 'text/html')
+#+end_src
 
    This needs to come _before_ we send the response body. Response headers must
    always come first. Afterwards the response body is included. Make sure your
    code now looks like this inside of your request handler:
 
-   #+begin_src js
-   res.set('Content-Type', 'text/html')
-   res.send('ohai')
-   #+end_src
+#+begin_src js
+res.set('Content-Type', 'text/html')
+res.send('ohai')
+#+end_src
 
    But we're not actually sending HTML yet. Let's change that now, and add a
    little more flavor to our site.
 
-   #+begin_src js
-        res.set('Content-Type', 'text/html')
-        res.send('\
-     <html>\
-       <body>\
-         Welcome to the official site for <em>justified</em>\
-         <strong>cat hatred</strong>.\
-       </body>\
-     </html>')
-   #+end_src
+#+begin_src js
+    res.set('Content-Type', 'text/html')
+    res.send('\
+  <html>\
+    <body>\
+      Welcome to the official site for <em>justified</em>\
+      <strong>cat hatred</strong>.\
+    </body>\
+  </html>')
+#+end_src
 
    Once you've added these changes, save the file and restart the server. Use
    control-c to kill the server when you're in the terminal tab that has the
@@ -129,15 +129,15 @@ a real web browser.
 
    Let's try this again with our prior tool, =curl=.
 
-   #+begin_src shell
-   curl http://localhost:3000
-   #+end_src
+#+begin_src shell
+curl http://localhost:3000
+#+end_src
 
    You'll see something like what we typed in on the JavaScript side:
 
-   #+begin_src
-     <html>       <body>         Welcome to the official site for <em>justified</em>         <strong>cat hatred</strong>.       </body>     </html>
-   #+end_src
+#+begin_src
+  <html>       <body>         Welcome to the official site for <em>justified</em>         <strong>cat hatred</strong>.       </body>     </html>
+#+end_src
 
    Well this is kind of hard to read. Imagine if we curled a real webpage with
    lots of stuff on it! There would be HTML everywhere, and it would be hard for
@@ -152,9 +152,9 @@ a real web browser.
    When your web browser sends a request to a server, it will generally ask for
    HTML. It does that with an =Accept= _request_ header that looks like this:
 
-   #+begin_src
-   Accept: text/html
-   #+end_src
+#+begin_src
+Accept: text/html
+#+end_src
 
    In Express, we get to see the request the client sent to us. We can ask it
    for the accept header and make a decision based on that. The real [[https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept][=Accept=
@@ -164,17 +164,17 @@ a real web browser.
    [[https://expressjs.com/en/api.html#req.accepts][=accepts=]] and it lives on the request object. We can ask if the request sent
    prefers =text/html= like this code that won't put in just yet:
 
-   #+begin_src js
-   req.accepts('text/html')
-   #+end_src
+#+begin_src js
+req.accepts('text/html')
+#+end_src
 
    We want to check if the client wants =text/html= and respond with actual
    HTML, otherwise we want to respond with plain text (=text/plain=). We'll
    update the message to match. The =text/plain= response should look like:
 
-   #+begin_src
-   Welcome to the official site for justified cat hatred.
-   #+end_src
+#+begin_src
+Welcome to the official site for justified cat hatred.
+#+end_src
 
 ** homework
    :PROPERTIES:
@@ -200,15 +200,15 @@ a real web browser.
 
    Once you've copied the file, run this to make it executable:
 
-   #+begin_src shell
-   chmod +x accept-test.sh
-   #+end_src
+#+begin_src shell
+chmod +x accept-test.sh
+#+end_src
 
    To run the test, use:
 
-   #+begin_src shell
-   ./accept-test.sh
-   #+end_src
+#+begin_src shell
+./accept-test.sh
+#+end_src
 
 *** tips
     :PROPERTIES:

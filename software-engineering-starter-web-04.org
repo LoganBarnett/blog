@@ -97,9 +97,9 @@ which can carry over significantly to the commercial world.
   If you're on MacOS, you might have =git= installed already. That's okay but
   let's make sure we're on the latest version with this:
 
-  #+begin_src shell
-  $ brew install git
-  #+end_src
+#+begin_src shell
+$ brew install git
+#+end_src
 
   While waiting for that to install, let's go over some =git= trivia. =git= was
   a tool born of necessity as part of working on the Linux kernel. Torvalds
@@ -128,17 +128,17 @@ which can carry over significantly to the commercial world.
   From working on our prior =cat-hatred= directory, we already have a code base
   ready to become a repository.
 
-  #+begin_src shell
-  $ cd ~/dev/cat-hatred
-  #+end_src
+#+begin_src shell
+$ cd ~/dev/cat-hatred
+#+end_src
 
   From here, we can do our initialization command.
 
-  #+begin_src shell
-  $ git init
+#+begin_src shell
+$ git init
 
-  Initialized empty Git repository in /Users/me/dev/cat-hatred/.git/
-  #+end_src
+Initialized empty Git repository in /Users/me/dev/cat-hatred/.git/
+#+end_src
 
   That's it for making the repo! Kind of.
 
@@ -177,9 +177,9 @@ which can carry over significantly to the commercial world.
    We can create our =.gitignore= file and add =node_modules= to it in one
    stroke:
 
-   #+begin_src shell
-   $ echo "node_modules" > .gitignore
-   #+end_src
+#+begin_src shell
+$ echo "node_modules" > .gitignore
+#+end_src
 
 ** editor specific files
    :PROPERTIES:
@@ -198,9 +198,9 @@ which can carry over significantly to the commercial world.
 
    With =git= you can add a global ignore file like so:
 
-   #+begin_src shell
-   $ git config --global core.excludesfile '~/.gitignore'
-   #+end_src
+#+begin_src shell
+$ git config --global core.excludesfile '~/.gitignore'
+#+end_src
 
    Find out what your editor's temporary and hidden files are and add them to
    this global git ignore file. If you change editors later, simply add to the
@@ -222,25 +222,25 @@ which can carry over significantly to the commercial world.
   First, we can look to see what files are available with the =git status=
   command.
 
-  #+begin_src shell
-  $ git status
+#+begin_src shell
+$ git status
 
-  On branch master
+On branch master
 
-  No commits yet
+No commits yet
 
-  Untracked files:
-    (use "git add <file>..." to include in what will be committed)
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
 
-    accept-test.sh
-    .gitignore
-    package.json
-    server.js
-    yarn.lock
+  accept-test.sh
+  .gitignore
+  package.json
+  server.js
+  yarn.lock
 
-  nothing added to commit but untracked files present (use "git add" to track)
+nothing added to commit but untracked files present (use "git add" to track)
 
-  #+end_src
+#+end_src
 
   Your version may be more colorful than my post's, and that's okay. Generally
   untracked and modified files are displayed in red. Files that are "staged" for
@@ -260,29 +260,29 @@ which can carry over significantly to the commercial world.
   Once you've made sure that's all correct, we'll add these files just one at a
   time to get used to the flow:
 
-  #+begin_src shell
-  $ git add accept-test.sh .gitignore package.json server.js yarn.lock
-  #+end_src
+#+begin_src shell
+$ git add accept-test.sh .gitignore package.json server.js yarn.lock
+#+end_src
 
   And now when you do =git status= again, you should see these are ready to
   commit:
 
-  #+begin_src shell
-  $ git status
+#+begin_src shell
+$ git status
 
-  On branch master
+On branch master
 
-  No commits yet
+No commits yet
 
-  Changes to be committed:
-    (use "git rm --cached <file>..." to unstage)
+Changes to be committed:
+  (use "git rm --cached <file>..." to unstage)
 
-    new file:   .gitignore
-    new file:   accept-test.sh
-    new file:   package.json
-    new file:   server.js
-    new file:   yarn.lock
-  #+end_src
+  new file:   .gitignore
+  new file:   accept-test.sh
+  new file:   package.json
+  new file:   server.js
+  new file:   yarn.lock
+#+end_src
 
   All of the files will be green! And it describes that they are ready to be
   committed. Let's commit them!
@@ -301,17 +301,17 @@ which can carry over significantly to the commercial world.
   editors, we're going to use the =-m= flag to specify the commit message for
   today.
 
-  #+begin_src shell
-  $ git commit -m "initial commit"
+#+begin_src shell
+$ git commit -m "initial commit"
 
-    [master (root-commit) 8aed320] initial commit
-    5 files changed, 380 insertions(+)
-    create mode 100644 .gitignore
-    create mode 100755 accept-test.sh
-    create mode 100644 package.json
-    create mode 100644 server.js
-    create mode 100644 yarn.lock
-  #+end_src
+  [master (root-commit) 8aed320] initial commit
+  5 files changed, 380 insertions(+)
+  create mode 100644 .gitignore
+  create mode 100755 accept-test.sh
+  create mode 100644 package.json
+  create mode 100644 server.js
+  create mode 100644 yarn.lock
+#+end_src
 
   The exact commit hash (=8aed320=) and insertions may differ for you and that's
   okay. Although the files listed should be the same. That's our first commit!
@@ -366,26 +366,26 @@ which can carry over significantly to the commercial world.
     "origin", which is kind of a default "remote" (we'll dive into that more
     later).
 
-    #+begin_src shell
-    $ git remote add origin git@github.com:LoganBarnett/cat-hatred.git
-    #+end_src
+#+begin_src shell
+$ git remote add origin git@github.com:LoganBarnett/cat-hatred.git
+#+end_src
 
     That's what my command looks like - don't forget that yours should be using
     your username so it will be different than mine!
 
     Once that's done, we can do our first push with this command:
 
-    #+begin_src shell
-    $ git push
+#+begin_src shell
+$ git push
 
-    Counting objects: 7, done.
-    Delta compression using up to 4 threads.
-    Compressing objects: 100% (6/6), done.
-    Writing objects: 100% (7/7), 4.26 KiB | 2.13 MiB/s, done.
-    Total 7 (delta 0), reused 0 (delta 0)
-    To github.com:LoganBarnett/cat-hatred.git
-    * [new branch]      master -> master
-    #+end_src
+Counting objects: 7, done.
+Delta compression using up to 4 threads.
+Compressing objects: 100% (6/6), done.
+Writing objects: 100% (7/7), 4.26 KiB | 2.13 MiB/s, done.
+Total 7 (delta 0), reused 0 (delta 0)
+To github.com:LoganBarnett/cat-hatred.git
+ * [new branch]      master -> master
+#+end_src
 
     Assuming everything went without a hitch, you'll see some output like that.
     It will take a couple of seconds typically, as now you're reaching over a

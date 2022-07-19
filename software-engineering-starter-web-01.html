@@ -11,12 +11,12 @@ The purpose here is to go over some basic web stuff and get a server up and
 running, with maybe a web interface.
 </p>
 
-<div id="outline-container-org18022b1" class="outline-2">
-<h2 id="legend"><span class="section-number-2">1</span> legend</h2>
+<div id="outline-container-legend" class="outline-2">
+<h2 id="legend"><span class="section-number-2">1.</span> legend</h2>
 <div class="outline-text-2" id="text-legend">
 </div>
-<div id="outline-container-org9ff5e3d" class="outline-3">
-<h3 id="legend--terminal-commands"><span class="section-number-3">1.1</span> terminal commands</h3>
+<div id="outline-container-legend--terminal-commands" class="outline-3">
+<h3 id="legend--terminal-commands"><span class="section-number-3">1.1.</span> terminal commands</h3>
 <div class="outline-text-3" id="text-legend--terminal-commands">
 <p>
 A source block with a <code>$</code> in front generally means this is a command you
@@ -29,7 +29,7 @@ want elevated permissions should be treated with greater scrutiny.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-shell">$ ls -al
+<pre class="src src-shell">$ <span style="color: #FCCE7B;">ls</span> -al
 </pre>
 </div>
 
@@ -37,7 +37,7 @@ want elevated permissions should be treated with greater scrutiny.
 This means copy <code>ls -al</code> and paste it into your terminal (on MacOS,
 <code>Terminal.app</code> works just fine for this). Then press enter. You should see
 some output from the command, or a lack of error. Sometimes seeing it do
-nothing is okay. Once the command is complete, you'll see the prompt displayed
+nothing is okay. Once the command is complete, you&rsquo;ll see the prompt displayed
 again (usually ending with <code>$</code>) which means the shell is ready for the next
 command.
 </p>
@@ -49,9 +49,9 @@ command the same way you would as <code>$</code>, and NOT <code>#</code> (root).
 </p>
 
 <p>
-Sometimes you'll see what seems to be both <code>$</code> and not <code>$</code> in the same block.
+Sometimes you&rsquo;ll see what seems to be both <code>$</code> and not <code>$</code> in the same block.
 Generally this means that the <code>$</code> is the command you run, and the text that
-follows that isn't preceded by a <code>$</code> is the <span class="underline">output</span> of the command(s).
+follows that isn&rsquo;t preceded by a <code>$</code> is the <span class="underline">output</span> of the command(s).
 </p>
 
 <p>
@@ -59,26 +59,26 @@ For example:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-shell">$ ls
+<pre class="src src-shell">$ <span style="color: #FCCE7B;">ls</span>
 foo bar baz
 </pre>
 </div>
 
 <p>
-Here we're running <code>ls</code> and, as a contrived example, we're seeing it print
+Here we&rsquo;re running <code>ls</code> and, as a contrived example, we&rsquo;re seeing it print
 <code>foo bar baz</code> as its output.
 </p>
 </div>
 </div>
 
-<div id="outline-container-org1e1ef76" class="outline-3">
-<h3 id="legend--shell"><span class="section-number-3">1.2</span> shell</h3>
+<div id="outline-container-legend--shell" class="outline-3">
+<h3 id="legend--shell"><span class="section-number-3">1.2.</span> shell</h3>
 <div class="outline-text-3" id="text-legend--shell">
 <p>
 A terminal is a window that runs a shell. A shell is a program that lets you
 input commands and you can see the results. A <span class="underline">good</span> shell can provide lots
 of assistance in putting together commands, and has a means of composition of
-those commands. Composition is something we'll get more into later. The
+those commands. Composition is something we&rsquo;ll get more into later. The
 commands themselves are too many to enumerate, and learning them is a place
 where you can spend indefinite amounts of time mastering. Focus on learning
 parts of the shell only a little bit at a time.
@@ -87,31 +87,31 @@ parts of the shell only a little bit at a time.
 </div>
 </div>
 
-<div id="outline-container-orgb2f36e7" class="outline-2">
-<h2 id="tools"><span class="section-number-2">2</span> tools</h2>
+<div id="outline-container-tools" class="outline-2">
+<h2 id="tools"><span class="section-number-2">2.</span> tools</h2>
 <div class="outline-text-2" id="text-tools">
 <p>
-We'll need some tools installed to ease this along.
+We&rsquo;ll need some tools installed to ease this along.
 </p>
 </div>
-<div id="outline-container-orge3b49a4" class="outline-3">
-<h3 id="tools--system-software"><span class="section-number-3">2.1</span> system software</h3>
+<div id="outline-container-tools--system-software" class="outline-3">
+<h3 id="tools--system-software"><span class="section-number-3">2.1.</span> system software</h3>
 <div class="outline-text-3" id="text-tools--system-software">
 </div>
-<div id="outline-container-org7938e45" class="outline-4">
-<h4 id="tools--system-software--homebrew"><span class="section-number-4">2.1.1</span> homebrew</h4>
+<div id="outline-container-tools--system-software--homebrew" class="outline-4">
+<h4 id="tools--system-software--homebrew"><span class="section-number-4">2.1.1.</span> homebrew</h4>
 <div class="outline-text-4" id="text-tools--system-software--homebrew">
 <p>
 <a href="https://brew.sh">Homebrew</a> is needed to install some basic stuff. Follow the link and follow
-it's instructions. See the <a href="#legend--shell">shell</a> and <a href="#legend--terminal-commands">terminal commands</a> section for learning
+it&rsquo;s instructions. See the <a href="#legend--shell">shell</a> and <a href="#legend--terminal-commands">terminal commands</a> section for learning
 how to install Homebrew.
 </p>
 
 <p>
-Once you have that, we'll want to install Homebrew's <code>cask</code> system, which
+Once you have that, we&rsquo;ll want to install Homebrew&rsquo;s <code>cask</code> system, which
 allows us to install apps (which can be considered to be a little different
-from commands and utilities). We'll want to use cask later in your system
-setup, so let's install it now:
+from commands and utilities). We&rsquo;ll want to use cask later in your system
+setup, so let&rsquo;s install it now:
 </p>
 
 <div class="org-src-container">
@@ -121,12 +121,12 @@ setup, so let's install it now:
 </div>
 </div>
 
-<div id="outline-container-orgabbae61" class="outline-4">
-<h4 id="tools--system-software--node.js"><span class="section-number-4">2.1.2</span> Node.js</h4>
+<div id="outline-container-tools--system-software--node.js" class="outline-4">
+<h4 id="tools--system-software--node.js"><span class="section-number-4">2.1.2.</span> Node.js</h4>
 <div class="outline-text-4" id="text-tools--system-software--node.js">
 <p>
 Once Homebrew is installed, we can install a recent version of Node.JS, which
-we'll need for running a server. The version we install isn't terribly
+we&rsquo;ll need for running a server. The version we install isn&rsquo;t terribly
 important right now. Run this command to install Node:
 </p>
 
@@ -137,11 +137,11 @@ important right now. Run this command to install Node:
 </div>
 </div>
 
-<div id="outline-container-orgcdca9a8" class="outline-4">
-<h4 id="tools--system-software--yarn"><span class="section-number-4">2.1.3</span> yarn</h4>
+<div id="outline-container-tools--system-software--yarn" class="outline-4">
+<h4 id="tools--system-software--yarn"><span class="section-number-4">2.1.3.</span> yarn</h4>
 <div class="outline-text-4" id="text-tools--system-software--yarn">
 <p>
-<code>yarn</code> is a replacement for <code>npm</code>. You don't need to know <code>npm</code> but
+<code>yarn</code> is a replacement for <code>npm</code>. You don&rsquo;t need to know <code>npm</code> but
 understand there is a lot of legacy projects out there with their install
 instructions using <code>npm</code>. For the most part, any place you see <code>npm</code> you can
 substitute with <code>yarn</code> and the command will work fine. One notable exception
@@ -160,34 +160,34 @@ Install <code>yarn</code> with Homebrew using this command:
 </div>
 </div>
 
-<div id="outline-container-orga336258" class="outline-4">
-<h4 id="tools--system-software--git"><span class="section-number-4">2.1.4</span> git</h4>
+<div id="outline-container-tools--system-software--git" class="outline-4">
+<h4 id="tools--system-software--git"><span class="section-number-4">2.1.4.</span> git</h4>
 <div class="outline-text-4" id="text-tools--system-software--git">
 <p>
-<code>git</code> is a version control system. It's a vital tool for software
+<code>git</code> is a version control system. It&rsquo;s a vital tool for software
 development as it performs incremental backups of your source code. It
 provides a rich history (provided you leave messages for yourself) and
 allows you to easily share your code with others.
 </p>
 
 <p>
-I don't recall if MacOS has a version pre-installed, but I do know that with
-Homebrew we can ensure we're using it and also be on the latest version:
+I don&rsquo;t recall if MacOS has a version pre-installed, but I do know that with
+Homebrew we can ensure we&rsquo;re using it and also be on the latest version:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-shell">brew install git
+<pre class="src src-shell">brew install <span style="color: #FCCE7B;">git</span>
 </pre>
 </div>
 </div>
 </div>
 </div>
 
-<div id="outline-container-orgd96f2de" class="outline-3">
-<h3 id="tools--editor"><span class="section-number-3">2.2</span> editor</h3>
+<div id="outline-container-tools--editor" class="outline-3">
+<h3 id="tools--editor"><span class="section-number-3">2.2.</span> editor</h3>
 <div class="outline-text-3" id="text-tools--editor">
 <p>
-<a href="https://atom.io">Atom</a> is a plenty good starter editor. It's basic. It's a pretty Notepad with
+<a href="https://atom.io">Atom</a> is a plenty good starter editor. It&rsquo;s basic. It&rsquo;s a pretty Notepad with
 plugins and indentation. For now, this is fine.
 </p>
 
@@ -203,75 +203,75 @@ You can install Atom via homebrew as well!
 <p>
 Once this is done, you can run Atom from your terminal using the <code>atom</code>
 command, or run it as an application from the <code>/Applications</code> directory. You
-can also open Spotlight by pressing Command-Space and typing "atom" without
+can also open Spotlight by pressing Command-Space and typing &ldquo;atom&rdquo; without
 the quotes.
 </p>
 </div>
 </div>
 </div>
-<div id="outline-container-org8eb23cc" class="outline-2">
-<h2 id="your-development-directory"><span class="section-number-2">3</span> your development directory</h2>
+<div id="outline-container-your-development-directory" class="outline-2">
+<h2 id="your-development-directory"><span class="section-number-2">3.</span> your development directory</h2>
 <div class="outline-text-2" id="text-your-development-directory">
 <p>
 Your development directory is a place where you can throw all of your software
 projects. It seems like everyone has their own convention and no two are
-alike. You can't really get this wrong, but generally you might be typing it a
-bit so keeping it short and sweet is nice. For this doc we're going to use
+alike. You can&rsquo;t really get this wrong, but generally you might be typing it a
+bit so keeping it short and sweet is nice. For this doc we&rsquo;re going to use
 <code>dev</code> but really you can use anything you like so long as you can remember it
 easily.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-shell">mkdir dev
+<pre class="src src-shell"><span style="color: #FCCE7B;">mkdir</span> dev
 </pre>
 </div>
 
 <p>
-<code>mkdir</code> creates the <code>dev</code> directory. Now we'll enter the directory. <code>mkdir</code> is
+<code>mkdir</code> creates the <code>dev</code> directory. Now we&rsquo;ll enter the directory. <code>mkdir</code> is
 a program that will only print something if something goes wrong, so if it
-looks like nothing happened, that's okay. No news is good news.
+looks like nothing happened, that&rsquo;s okay. No news is good news.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-shell"><span style="color: #4f97d7;">cd</span> dev
+<pre class="src src-shell"><span style="color: #FCCE7B;">cd</span> dev
 </pre>
 </div>
 
 <p>
-After running this, you should see <code>dev</code> in your shell's prompt.
+After running this, you should see <code>dev</code> in your shell&rsquo;s prompt.
 </p>
 </div>
 </div>
-<div id="outline-container-orgaf6f373" class="outline-2">
-<h2 id="take-a-break"><span class="section-number-2">4</span> take a break</h2>
+<div id="outline-container-take-a-break" class="outline-2">
+<h2 id="take-a-break"><span class="section-number-2">4.</span> take a break</h2>
 <div class="outline-text-2" id="text-take-a-break">
 <p>
-Good job! Let's take a minute to look around and not see a screen for a few
+Good job! Let&rsquo;s take a minute to look around and not see a screen for a few
 minutes.
 </p>
 </div>
 </div>
 
-<div id="outline-container-org732d6b4" class="outline-2">
-<h2 id="setting-up-your-project"><span class="section-number-2">5</span> setting up your project</h2>
+<div id="outline-container-setting-up-your-project" class="outline-2">
+<h2 id="setting-up-your-project"><span class="section-number-2">5.</span> setting up your project</h2>
 <div class="outline-text-2" id="text-setting-up-your-project">
 <p>
-Let's make sure your terminal is in your development directory.
+Let&rsquo;s make sure your terminal is in your development directory.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-shell">$ pwd
+<pre class="src src-shell">$ <span style="color: #FCCE7B;">pwd</span>
 /Users/logan/dev
 </pre>
 </div>
 
 <p>
-Let's make a directory for our project. This project will be about expressing
+Let&rsquo;s make a directory for our project. This project will be about expressing
 our deep hatred of cats. Cats killed my parents, okay?
 </p>
 
 <div class="org-src-container">
-<pre class="src src-shell">mkdir cat-hate
+<pre class="src src-shell"><span style="color: #FCCE7B;">mkdir</span> cat-hate
 </pre>
 </div>
 
@@ -280,12 +280,12 @@ And enter the directory:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-shell"><span style="color: #4f97d7;">cd</span> cat-hate
+<pre class="src src-shell"><span style="color: #FCCE7B;">cd</span> cat-hate
 </pre>
 </div>
 
 <p>
-Now let's let <code>yarn</code> initialize our project:
+Now let&rsquo;s let <code>yarn</code> initialize our project:
 </p>
 
 <div class="org-src-container">
@@ -294,21 +294,21 @@ Now let's let <code>yarn</code> initialize our project:
 </div>
 
 <p>
-It will prompt you with some questions. If you don't know a good answer, or
+It will prompt you with some questions. If you don&rsquo;t know a good answer, or
 are fine with its guess, you can use the default (which is the value in the
 parenthesis <code>()</code>). Enter default values by pressing enter.
 </p>
 
 <p>
-Let's also get <code>git</code> initialized.
+Let&rsquo;s also get <code>git</code> initialized.
 </p>
 <div class="org-src-container">
-<pre class="src src-shell">git init
+<pre class="src src-shell"><span style="color: #FCCE7B;">git</span> init
 </pre>
 </div>
 
 <p>
-We'll be running a Node server using a library called <code>express</code>. We can use
+We&rsquo;ll be running a Node server using a library called <code>express</code>. We can use
 <code>yarn</code> to install it.
 </p>
 
@@ -319,13 +319,13 @@ We'll be running a Node server using a library called <code>express</code>. We c
 </div>
 </div>
 
-<div id="outline-container-orgafa91a0" class="outline-2">
-<h2 id="creating-your-first-node-app"><span class="section-number-2">6</span> creating your first node app</h2>
+<div id="outline-container-creating-your-first-node-app" class="outline-2">
+<h2 id="creating-your-first-node-app"><span class="section-number-2">6.</span> creating your first node app</h2>
 <div class="outline-text-2" id="text-creating-your-first-node-app">
 <p>
-Now we're going to open our editor. We can open it with a file (or even a
-blank file that doesn't exist yet) by giving the <code>atom</code> command an argument.
-The argument is the name of the file we want to open or create. Let's name it
+Now we&rsquo;re going to open our editor. We can open it with a file (or even a
+blank file that doesn&rsquo;t exist yet) by giving the <code>atom</code> command an argument.
+The argument is the name of the file we want to open or create. Let&rsquo;s name it
 <code>server.js</code>.
 </p>
 
@@ -343,40 +343,40 @@ Put this into your editor:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-js" id="org6040d8f"><span style="color: #4f97d7; font-weight: bold;">const</span> <span style="color: #7590db;">express</span> = require<span style="color: #4f97d7;">(</span><span style="color: #2d9574;">'express'</span><span style="color: #4f97d7;">)</span>
+<pre class="src src-js" id="org1be37e0"><span style="color: #51afef;">const</span> <span style="color: #DFDFDF;">express</span> = require<span style="color: #51afef;">(</span><span style="color: #7bc275;">'express'</span><span style="color: #51afef;">)</span>
 </pre>
 </div>
 
 <p>
-<code>express</code> is a function that produces an "application" in their terms. Let's
+<code>express</code> is a function that produces an &ldquo;application&rdquo; in their terms. Let&rsquo;s
 create that now.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-js" id="orgd97e941"><span style="color: #4f97d7; font-weight: bold;">const</span> <span style="color: #7590db;">app</span> = express<span style="color: #4f97d7;">()</span>
+<pre class="src src-js" id="org9f99fee"><span style="color: #51afef;">const</span> <span style="color: #DFDFDF;">app</span> = express<span style="color: #51afef;">()</span>
 </pre>
 </div>
 
 <p>
-Now we'll construct an endpoint by listening to <code>GET</code> requests. We'll just
+Now we&rsquo;ll construct an endpoint by listening to <code>GET</code> requests. We&rsquo;ll just
 listen to ones directed at the root of our webapp for now.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-js" id="org3aef043">app.get<span style="color: #4f97d7;">(</span><span style="color: #2d9574;">'/'</span>, <span style="color: #bc6ec5;">(</span>req, res<span style="color: #bc6ec5;">)</span> =&gt; <span style="color: #bc6ec5;">{</span>
-  res.send<span style="color: #2d9574;">(</span><span style="color: #2d9574;">'ohai'</span><span style="color: #2d9574;">)</span>
-<span style="color: #bc6ec5;">}</span><span style="color: #4f97d7;">)</span>
+<pre class="src src-js" id="orga2ee0ba">app.get<span style="color: #51afef;">(</span><span style="color: #7bc275;">'/'</span>, <span style="color: #C57BDB;">(</span>req, res<span style="color: #C57BDB;">)</span> =&gt; <span style="color: #C57BDB;">{</span>
+  res.send<span style="color: #7bc275;">(</span><span style="color: #7bc275;">'ohai'</span><span style="color: #7bc275;">)</span>
+<span style="color: #C57BDB;">}</span><span style="color: #51afef;">)</span>
 </pre>
 </div>
 
 <p>
-There's a lot going on there, even for a very simple response handler. We'll
-go over that in a bit, but let's get it so we can run the server first, and
+There&rsquo;s a lot going on there, even for a very simple response handler. We&rsquo;ll
+go over that in a bit, but let&rsquo;s get it so we can run the server first, and
 then test that it works.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-js" id="orgfc3bd1f">app.listen<span style="color: #4f97d7;">(</span><span style="color: #a45bad;">3000</span>, <span style="color: #bc6ec5;">()</span> =&gt; console.log<span style="color: #bc6ec5;">(</span><span style="color: #2d9574;">'Example app listening on port 3000!'</span><span style="color: #bc6ec5;">)</span><span style="color: #4f97d7;">)</span>
+<pre class="src src-js" id="orgb5d2e34">app.listen<span style="color: #51afef;">(</span><span style="color: #e69055; font-weight: bold;">3000</span>, <span style="color: #C57BDB;">()</span> =&gt; console.log<span style="color: #C57BDB;">(</span><span style="color: #7bc275;">'Example app listening on port 3000!'</span><span style="color: #C57BDB;">)</span><span style="color: #51afef;">)</span>
 </pre>
 </div>
 
@@ -385,53 +385,53 @@ Okay, so all together this is what it should look like:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-js"><span style="color: #4f97d7; font-weight: bold;">const</span> <span style="color: #7590db;">express</span> = require<span style="color: #4f97d7;">(</span><span style="color: #2d9574;">'express'</span><span style="color: #4f97d7;">)</span>
+<pre class="src src-js"><span style="color: #51afef;">const</span> <span style="color: #DFDFDF;">express</span> = require<span style="color: #51afef;">(</span><span style="color: #7bc275;">'express'</span><span style="color: #51afef;">)</span>
 
-<span style="color: #4f97d7; font-weight: bold;">const</span> <span style="color: #7590db;">app</span> = express<span style="color: #4f97d7;">()</span>
+<span style="color: #51afef;">const</span> <span style="color: #DFDFDF;">app</span> = express<span style="color: #51afef;">()</span>
 
-app.get<span style="color: #4f97d7;">(</span><span style="color: #2d9574;">'/'</span>, <span style="color: #bc6ec5;">(</span>req, res<span style="color: #bc6ec5;">)</span> =&gt; <span style="color: #bc6ec5;">{</span>
-  res.send<span style="color: #2d9574;">(</span><span style="color: #2d9574;">'ohai'</span><span style="color: #2d9574;">)</span>
-<span style="color: #bc6ec5;">}</span><span style="color: #4f97d7;">)</span>
+app.get<span style="color: #51afef;">(</span><span style="color: #7bc275;">'/'</span>, <span style="color: #C57BDB;">(</span>req, res<span style="color: #C57BDB;">)</span> =&gt; <span style="color: #C57BDB;">{</span>
+  res.send<span style="color: #7bc275;">(</span><span style="color: #7bc275;">'ohai'</span><span style="color: #7bc275;">)</span>
+<span style="color: #C57BDB;">}</span><span style="color: #51afef;">)</span>
 
-app.listen<span style="color: #4f97d7;">(</span><span style="color: #a45bad;">3000</span>, <span style="color: #bc6ec5;">()</span> =&gt; console.log<span style="color: #bc6ec5;">(</span><span style="color: #2d9574;">'Example app listening on port 3000!'</span><span style="color: #bc6ec5;">)</span><span style="color: #4f97d7;">)</span>
+app.listen<span style="color: #51afef;">(</span><span style="color: #e69055; font-weight: bold;">3000</span>, <span style="color: #C57BDB;">()</span> =&gt; console.log<span style="color: #C57BDB;">(</span><span style="color: #7bc275;">'Example app listening on port 3000!'</span><span style="color: #C57BDB;">)</span><span style="color: #51afef;">)</span>
 </pre>
 </div>
 
 <p>
-Let's run the app:
+Let&rsquo;s run the app:
 </p>
 
 <div class="org-src-container">
 <pre class="src src-shell">$ node server.js
-Example app listening on port <span style="color: #a45bad;">3000!</span>
+Example app listening on port 3000!
 </pre>
 </div>
 
 <p>
-Now let's make a new tab in your terminal (Command-T on MacOS). You might have
+Now let&rsquo;s make a new tab in your terminal (Command-T on MacOS). You might have
 to <code>cd</code> back to your project directory:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-shell"><span style="color: #4f97d7;">cd</span> ~/dev/cat-hate
+<pre class="src src-shell"><span style="color: #FCCE7B;">cd</span> ~/dev/cat-hate
 </pre>
 </div>
 
 <p>
-Now we'll test that it works with <code>curl</code>, a powerful tool for using and
+Now we&rsquo;ll test that it works with <code>curl</code>, a powerful tool for using and
 debugging HTTP requests.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-shell">$ curl http://localhost:3000
+<pre class="src src-shell">$ <span style="color: #FCCE7B;">curl</span> http://localhost:3000
 ohai
 </pre>
 </div>
 </div>
 </div>
 
-<div id="outline-container-org346388c" class="outline-2">
-<h2 id="what-the-hell-just-happened"><span class="section-number-2">7</span> what the hell just happened?</h2>
+<div id="outline-container-what-the-hell-just-happened" class="outline-2">
+<h2 id="what-the-hell-just-happened"><span class="section-number-2">7.</span> what the hell just happened?</h2>
 <div class="outline-text-2" id="text-what-the-hell-just-happened">
 <p>
 In short, thousands of little assumptions we make in the world of technology
@@ -439,19 +439,19 @@ came together and something actually worked.
 </p>
 
 <p>
-In the long, let's talk about networking.
+In the long, let&rsquo;s talk about networking.
 </p>
 </div>
 
-<div id="outline-container-orge41dcb5" class="outline-3">
-<h3 id="what-the-hell-just-happened--layers"><span class="section-number-3">7.1</span> layers</h3>
+<div id="outline-container-what-the-hell-just-happened--layers" class="outline-3">
+<h3 id="what-the-hell-just-happened--layers"><span class="section-number-3">7.1.</span> layers</h3>
 <div class="outline-text-3" id="text-what-the-hell-just-happened--layers">
 <p>
-Networked architecture exists as a series of abstract layers. We've heard so
+Networked architecture exists as a series of abstract layers. We&rsquo;ve heard so
 much about how computers are all about 1s and 0s but we need to derive
-meaning from those. Usually in the world of computing, we aren't thinking
-about those individual bits. Instead we're thinking in "abstract" terms. For
-our purposes, abstract means we've moved to a conceptual place where we can
+meaning from those. Usually in the world of computing, we aren&rsquo;t thinking
+about those individual bits. Instead we&rsquo;re thinking in &ldquo;abstract&rdquo; terms. For
+our purposes, abstract means we&rsquo;ve moved to a conceptual place where we can
 focus on only the things that matter about our topic. As we move between
 layers we can think about just the areas of focus for that layer, because we
 can assume other layers have done their jobs. This is a mental tool we use
@@ -462,24 +462,24 @@ engineering (and perhaps other forms of engineering as well).
 </p>
 
 <p>
-Here we'll go over the various network layers. You don't need to memorize
+Here we&rsquo;ll go over the various network layers. You don&rsquo;t need to memorize
 them, but knowing they are there is helpful. These are presented in order.
 </p>
 </div>
 
-<div id="outline-container-org05aa38e" class="outline-4">
-<h4 id="what-the-hell-just-happened--layers--physical-layer"><span class="section-number-4">7.1.1</span> physical layer</h4>
+<div id="outline-container-what-the-hell-just-happened--layers--physical-layer" class="outline-4">
+<h4 id="what-the-hell-just-happened--layers--physical-layer"><span class="section-number-4">7.1.1.</span> physical layer</h4>
 <div class="outline-text-4" id="text-what-the-hell-just-happened--layers--physical-layer">
 <p>
 This is the medium in which the communication happens. This could be radio
 waves, a fucking wire, or even study hall notes. Barbed wire was used to
-demo Ethernet, so I'm told.
+demo Ethernet, so I&rsquo;m told.
 </p>
 </div>
 </div>
 
-<div id="outline-container-org89deb18" class="outline-4">
-<h4 id="what-the-hell-just-happened--layers--data-link-layer"><span class="section-number-4">7.1.2</span> data link layer</h4>
+<div id="outline-container-what-the-hell-just-happened--layers--data-link-layer" class="outline-4">
+<h4 id="what-the-hell-just-happened--layers--data-link-layer"><span class="section-number-4">7.1.2.</span> data link layer</h4>
 <div class="outline-text-4" id="text-what-the-hell-just-happened--layers--data-link-layer">
 <p>
 This layer groups up data into chunks called frames or packets. Ethernet
@@ -490,34 +490,34 @@ specifications also exist on this as well. The data link layer is where your
 </div>
 </div>
 
-<div id="outline-container-orgc237419" class="outline-4">
-<h4 id="what-the-hell-just-happened--layers--network-layer"><span class="section-number-4">7.1.3</span> network layer</h4>
+<div id="outline-container-what-the-hell-just-happened--layers--network-layer" class="outline-4">
+<h4 id="what-the-hell-just-happened--layers--network-layer"><span class="section-number-4">7.1.3.</span> network layer</h4>
 <div class="outline-text-4" id="text-what-the-hell-just-happened--layers--network-layer">
 <p>
-Hey wait, aren't we talking about networks already? Confusing! Well this
+Hey wait, aren&rsquo;t we talking about networks already? Confusing! Well this
 specifically refers to routing of network traffic over multiple devices.
 This is how information from your computer travels over your wifi, goes
 through your router, and then goes out to the Internet. Most often the
-network layer you'll be working with is <code>IP</code> (just <code>IP</code>) but there are
+network layer you&rsquo;ll be working with is <code>IP</code> (just <code>IP</code>) but there are
 others.
 </p>
 </div>
 </div>
 
-<div id="outline-container-orgbc3c668" class="outline-4">
-<h4 id="what-the-hell-just-happened--layers--transport-layer"><span class="section-number-4">7.1.4</span> transport layer</h4>
+<div id="outline-container-what-the-hell-just-happened--layers--transport-layer" class="outline-4">
+<h4 id="what-the-hell-just-happened--layers--transport-layer"><span class="section-number-4">7.1.4.</span> transport layer</h4>
 <div class="outline-text-4" id="text-what-the-hell-just-happened--layers--transport-layer">
 <p>
 This is primarily a layer about checking for errors and retransmission of
 lost data. <code>TCP</code> and <code>UDP</code> are transport layers. Sometimes you hear <code>TCP</code>
-referred to as <code>TCP/IP</code> but that's mostly referring to how they typically go
+referred to as <code>TCP/IP</code> but that&rsquo;s mostly referring to how they typically go
 together.
 </p>
 </div>
 </div>
 
-<div id="outline-container-org8feabb9" class="outline-4">
-<h4 id="what-the-hell-just-happened--layers--session-layer"><span class="section-number-4">7.1.5</span> session layer</h4>
+<div id="outline-container-what-the-hell-just-happened--layers--session-layer" class="outline-4">
+<h4 id="what-the-hell-just-happened--layers--session-layer"><span class="section-number-4">7.1.5.</span> session layer</h4>
 <div class="outline-text-4" id="text-what-the-hell-just-happened--layers--session-layer">
 <p>
 This layer is about handshakes and establishing persistent connections. It
@@ -527,8 +527,8 @@ both span across this and the transport layer.
 </div>
 </div>
 
-<div id="outline-container-org5e0c2f4" class="outline-4">
-<h4 id="what-the-hell-just-happened--layers--presentation-layer"><span class="section-number-4">7.1.6</span> presentation layer</h4>
+<div id="outline-container-what-the-hell-just-happened--layers--presentation-layer" class="outline-4">
+<h4 id="what-the-hell-just-happened--layers--presentation-layer"><span class="section-number-4">7.1.6.</span> presentation layer</h4>
 <div class="outline-text-4" id="text-what-the-hell-just-happened--layers--presentation-layer">
 <p>
 This is primarily about encryption but could be anything that converts data
@@ -537,25 +537,25 @@ from one form to another. Encryption is generally handled at the OS level.
 </div>
 </div>
 
-<div id="outline-container-orgee5d928" class="outline-4">
-<h4 id="what-the-hell-just-happened--layers--application-layer"><span class="section-number-4">7.1.7</span> application layer</h4>
+<div id="outline-container-what-the-hell-just-happened--layers--application-layer" class="outline-4">
+<h4 id="what-the-hell-just-happened--layers--application-layer"><span class="section-number-4">7.1.7.</span> application layer</h4>
 <div class="outline-text-4" id="text-what-the-hell-just-happened--layers--application-layer">
 <p>
-These aren't applications themselves, but means to communicate with
+These aren&rsquo;t applications themselves, but means to communicate with
 applications. How do you talk to a specific application on your computer? If
 I run a server on my computer, will it be the only one? No. You can run lots
-and lots of servers, and you're probably running lots of them right now
+and lots of servers, and you&rsquo;re probably running lots of them right now
 without realizing it. In the world of <code>TCP</code> and <code>UDP</code>, applications are
-denoted by something called a "port". Some of them are reserved for specific
-kinds of applications, but there's not necessarily a strict enforcement
+denoted by something called a &ldquo;port&rdquo;. Some of them are reserved for specific
+kinds of applications, but there&rsquo;s not necessarily a strict enforcement
 there.
 </p>
 </div>
 </div>
 </div>
 
-<div id="outline-container-org6c8e3aa" class="outline-3">
-<h3 id="what-the-hell-just-happened--the-request-and-response-model"><span class="section-number-3">7.2</span> the request and response model</h3>
+<div id="outline-container-what-the-hell-just-happened--the-request-and-response-model" class="outline-3">
+<h3 id="what-the-hell-just-happened--the-request-and-response-model"><span class="section-number-3">7.2.</span> the request and response model</h3>
 <div class="outline-text-3" id="text-what-the-hell-just-happened--the-request-and-response-model">
 <p>
 HTTP (Hyper Text Transfer Proctocol) is an <a href="#what-the-hell-just-happened--layers--application-layer">application layer</a> protocol that we
@@ -566,20 +566,20 @@ kind of response.
 </p>
 </div>
 
-<div id="outline-container-org49e6a17" class="outline-4">
-<h4 id="what-the-hell-just-happened--the-request-and-response-model--how-web-pages-work-in-http"><span class="section-number-4">7.2.1</span> how web pages work in http</h4>
+<div id="outline-container-what-the-hell-just-happened--the-request-and-response-model--how-web-pages-work-in-http" class="outline-4">
+<h4 id="what-the-hell-just-happened--the-request-and-response-model--how-web-pages-work-in-http"><span class="section-number-4">7.2.1.</span> how web pages work in http</h4>
 <div class="outline-text-4" id="text-what-the-hell-just-happened--the-request-and-response-model--how-web-pages-work-in-http">
 <p>
 When you go to a site like <a href="http://google.com">http://google.com</a>, your browser sends a <code>GET</code>
-request to Google. There's some additional meta data your browser will send
+request to Google. There&rsquo;s some additional meta data your browser will send
 along as well, such as saying automatically that you prefer US English, and
-that it wants HTML. Google's servers see this request, and the server
+that it wants HTML. Google&rsquo;s servers see this request, and the server
 decides it will send you back a web page (in HTML) for the response. It will
 also ensure the web page is in US English.
 </p>
 
 <p>
-Your browser will see that Google's homepage has <code>link</code> tags to CSS files,
+Your browser will see that Google&rsquo;s homepage has <code>link</code> tags to CSS files,
 so it will send additional requests to download those. If there are <code>script</code>
 tags that have <code>src</code> attributes, it will also send requests for those. The
 Google web servers will dutifully respond with the requested CSS and
@@ -587,9 +587,8 @@ JavaScript files in kind.
 </p>
 
 
-<div class="figure">
-<p><object type="image/svg+xml" data="request-response-html-example-01.svg" class="org-svg">
-Sorry, your browser does not support SVG.</object>
+<div id="orgf4b8665" class="figure">
+<p><img src="request-response-html-example-01.svg" alt="request-response-html-example-01.svg" class="org-svg" />
 </p>
 </div>
 
@@ -600,15 +599,15 @@ something like visiting <a href="http://google.com">http://google.com</a>.
 </div>
 </div>
 
-<div id="outline-container-org691bcc8" class="outline-4">
-<h4 id="what-the-hell-just-happened--the-request-and-response-model--what-about-curl"><span class="section-number-4">7.2.2</span> what about curl?</h4>
+<div id="outline-container-what-the-hell-just-happened--the-request-and-response-model--what-about-curl" class="outline-4">
+<h4 id="what-the-hell-just-happened--the-request-and-response-model--what-about-curl"><span class="section-number-4">7.2.2.</span> what about curl?</h4>
 <div class="outline-text-4" id="text-what-the-hell-just-happened--the-request-and-response-model--what-about-curl">
 <p>
 <code>curl</code> is our command line HTTP tool. We can send requests with it like it
-was a browser, and we can get the response back. We can give <code>curl</code> "flags"
-that tell it to give us more information about what it's sending and what it
+was a browser, and we can get the response back. We can give <code>curl</code> &ldquo;flags&rdquo;
+that tell it to give us more information about what it&rsquo;s sending and what it
 receives. In the instructions above, we tested our server using <code>curl</code>
-because it doesn't tend to complicate things like the browser can easily do.
+because it doesn&rsquo;t tend to complicate things like the browser can easily do.
 We can use <code>curl</code> to automate communication to any web server as well, and
 since everyone has <code>curl</code> or can get it somehow, we can send <code>curl</code> commands
 (as text) to anyone else and they can run it and verify our results. This is
@@ -620,11 +619,11 @@ produce the same results across machines.
 </div>
 </div>
 
-<div id="outline-container-org90f13f9" class="outline-2">
-<h2 id="next-up"><span class="section-number-2">8</span> next up</h2>
+<div id="outline-container-next-up" class="outline-2">
+<h2 id="next-up"><span class="section-number-2">8.</span> next up</h2>
 <div class="outline-text-2" id="text-next-up">
 <p>
-For our next trick, we'll send some <a href="./software-engineering-starter-web-02.html">nice HTML</a>.
+For our next trick, we&rsquo;ll send some <a href="./software-engineering-starter-web-02.html">nice HTML</a>.
 </p>
 </div>
 </div>

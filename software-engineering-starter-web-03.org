@@ -105,18 +105,18 @@ Whoa, it's like the _exact_ same set of strings we passed to =res.send=! Spooky.
    JSON directly into JavaScript and it will parse just fine. Not all JavaScript
    works as JSON though.
 
-   #+begin_src json
-   [
-    "Chester",
-    "Mr. Druthersworth",
-    "Garfield",
-    "Hobbes",
-    "Puss",
-    "Tom",
-    "Tony",
-    "Whiskers"
-   ]
-   #+end_src
+#+begin_src json
+[
+"Chester",
+"Mr. Druthersworth",
+"Garfield",
+"Hobbes",
+"Puss",
+"Tom",
+"Tony",
+"Whiskers"
+]
+#+end_src
 
    Wow, this looks like the _exact_ same thing our =curl= output has, except
    broken into multiple lines! That's because it is. The line breaks are not of
@@ -162,9 +162,9 @@ Whoa, it's like the _exact_ same set of strings we passed to =res.send=! Spooky.
 
    The general code for sending a 500 looks like this:
 
-   #+begin_src js
-     res.send(500, 'Could not load cat data!')
-   #+end_src
+#+begin_src js
+res.send(500, 'Could not load cat data!')
+#+end_src
 
 ** parsing
    :PROPERTIES:

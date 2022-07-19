@@ -13,7 +13,7 @@ parent: software-engineering-starter-web.org
 #+email:    logustus@gmail.com
 #+date:     <2018-06-13 Wed>
 #+language: en
-#+tags:     tutorials software web
+#+tags:     tutorial software web
 #+auto_id:  t
 
 The purpose here is to go over some basic web stuff and get a server up and
@@ -35,9 +35,9 @@ running, with maybe a web interface.
   such as the =root= user or as a =sudoer= using =sudo=. Generally commands that
   want elevated permissions should be treated with greater scrutiny.
 
-  #+begin_src shell
-  $ ls -al
-  #+end_src
+#+begin_src shell
+$ ls -al
+#+end_src
 
   This means copy =ls -al= and paste it into your terminal (on MacOS,
   =Terminal.app= works just fine for this). Then press enter. You should see
@@ -56,10 +56,10 @@ running, with maybe a web interface.
 
   For example:
 
-  #+begin_src shell
-  $ ls
-  foo bar baz
-  #+end_src
+#+begin_src shell
+$ ls
+foo bar baz
+#+end_src
 
   Here we're running =ls= and, as a contrived example, we're seeing it print
   =foo bar baz= as its output.
@@ -99,9 +99,9 @@ running, with maybe a web interface.
    from commands and utilities). We'll want to use cask later in your system
    setup, so let's install it now:
 
-   #+begin_src shell
-   brew tap caskroom/cask
-   #+end_src
+#+begin_src shell
+brew tap caskroom/cask
+#+end_src
 
 *** Node.js
     :PROPERTIES:
@@ -111,9 +111,9 @@ running, with maybe a web interface.
     we'll need for running a server. The version we install isn't terribly
     important right now. Run this command to install Node:
 
-    #+begin_src shell
-    brew install node
-    #+end_src
+#+begin_src shell
+brew install node
+#+end_src
 
 *** yarn
     :PROPERTIES:
@@ -128,9 +128,9 @@ running, with maybe a web interface.
     A package named =foo= would be installed with =yarn add foo=.
 
     Install =yarn= with Homebrew using this command:
-    #+begin_src shell
-    $ brew install yarn
-    #+end_src
+#+begin_src shell
+$ brew install yarn
+#+end_src
 
 *** git
     :PROPERTIES:
@@ -144,9 +144,9 @@ running, with maybe a web interface.
     I don't recall if MacOS has a version pre-installed, but I do know that with
     Homebrew we can ensure we're using it and also be on the latest version:
 
-    #+begin_src shell
-    brew install git
-    #+end_src
+#+begin_src shell
+brew install git
+#+end_src
 
 ** editor
    :PROPERTIES:
@@ -157,9 +157,9 @@ running, with maybe a web interface.
 
    You can install Atom via homebrew as well!
 
-   #+begin_src shell
-   brew cask install atom
-   #+end_src
+#+begin_src shell
+brew cask install atom
+#+end_src
 
    Once this is done, you can run Atom from your terminal using the =atom=
    command, or run it as an application from the =/Applications= directory. You
@@ -176,17 +176,17 @@ running, with maybe a web interface.
   =dev= but really you can use anything you like so long as you can remember it
   easily.
 
-  #+begin_src shell
-  mkdir dev
-  #+end_src
+#+begin_src shell
+mkdir dev
+#+end_src
 
   =mkdir= creates the =dev= directory. Now we'll enter the directory. =mkdir= is
   a program that will only print something if something goes wrong, so if it
   looks like nothing happened, that's okay. No news is good news.
 
-  #+begin_src shell
-  cd dev
-  #+end_src
+#+begin_src shell
+cd dev
+#+end_src
 
   After running this, you should see =dev= in your shell's prompt.
 * take a break
@@ -202,45 +202,45 @@ running, with maybe a web interface.
   :END:
   Let's make sure your terminal is in your development directory.
 
-  #+begin_src shell
-  $ pwd
-  /Users/logan/dev
-  #+end_src
+#+begin_src shell
+$ pwd
+/Users/logan/dev
+#+end_src
 
   Let's make a directory for our project. This project will be about expressing
   our deep hatred of cats. Cats killed my parents, okay?
 
-  #+begin_src shell
-  mkdir cat-hate
-  #+end_src
+#+begin_src shell
+mkdir cat-hate
+#+end_src
 
   And enter the directory:
 
-  #+begin_src shell
-  cd cat-hate
-  #+end_src
+#+begin_src shell
+cd cat-hate
+#+end_src
 
   Now let's let =yarn= initialize our project:
 
-  #+begin_src shell
-  yarn init
-  #+end_src
+#+begin_src shell
+yarn init
+#+end_src
 
   It will prompt you with some questions. If you don't know a good answer, or
   are fine with its guess, you can use the default (which is the value in the
   parenthesis =()=). Enter default values by pressing enter.
 
   Let's also get =git= initialized.
-  #+begin_src shell
-  git init
-  #+end_src
+#+begin_src shell
+git init
+#+end_src
 
   We'll be running a Node server using a library called =express=. We can use
   =yarn= to install it.
 
-  #+begin_src shell
-  yarn add express
-  #+end_src
+#+begin_src shell
+yarn add express
+#+end_src
 
 * creating your first node app
   :PROPERTIES:
@@ -252,79 +252,79 @@ running, with maybe a web interface.
   The argument is the name of the file we want to open or create. Let's name it
   =server.js=.
 
-  #+begin_src shell
-  atom server.js
-  #+end_src
+#+begin_src shell
+atom server.js
+#+end_src
 
   We need to pull in =express=. In Node, we do that using =require=.
 
   Put this into your editor:
 
-  #+name: express-require
-  #+begin_src js
-  const express = require('express')
-  #+end_src
+#+name: express-require
+#+begin_src js
+const express = require('express')
+#+end_src
 
   =express= is a function that produces an "application" in their terms. Let's
   create that now.
 
-  #+name: express-create-app
-  #+begin_src js
-  const app = express()
-  #+end_src
+#+name: express-create-app
+#+begin_src js
+const app = express()
+#+end_src
 
   Now we'll construct an endpoint by listening to =GET= requests. We'll just
   listen to ones directed at the root of our webapp for now.
 
-  #+name: express-get-handler
-  #+begin_src js
-  app.get('/', (req, res) => {
-    res.send('ohai')
-  })
-  #+end_src
+#+name: express-get-handler
+#+begin_src js
+app.get('/', (req, res) => {
+  res.send('ohai')
+})
+#+end_src
 
   There's a lot going on there, even for a very simple response handler. We'll
   go over that in a bit, but let's get it so we can run the server first, and
   then test that it works.
 
-  #+name: express-listen
-  #+begin_src js
-  app.listen(3000, () => console.log('Example app listening on port 3000!'))
-  #+end_src
+#+name: express-listen
+#+begin_src js
+app.listen(3000, () => console.log('Example app listening on port 3000!'))
+#+end_src
 
   Okay, so all together this is what it should look like:
 
-  #+begin_src js :noweb yes
-  <<express-require>>
+#+begin_src js :noweb yes
+<<express-require>>
 
-  <<express-create-app>>
+<<express-create-app>>
 
-  <<express-get-handler>>
+<<express-get-handler>>
 
-  <<express-listen>>
-  #+end_src
+<<express-listen>>
+#+end_src
 
   Let's run the app:
 
-  #+begin_src shell
-  $ node server.js
-  Example app listening on port 3000!
-  #+end_src
+#+begin_src shell
+$ node server.js
+Example app listening on port 3000!
+#+end_src
 
   Now let's make a new tab in your terminal (Command-T on MacOS). You might have
   to =cd= back to your project directory:
 
-  #+begin_src shell
-  cd ~/dev/cat-hate
-  #+end_src
+#+begin_src shell
+cd ~/dev/cat-hate
+#+end_src
 
   Now we'll test that it works with =curl=, a powerful tool for using and
   debugging HTTP requests.
 
-  #+begin_src shell
-  $ curl http://localhost:3000
-  ohai
-  #+end_src
+#+begin_src shell
+$ curl http://localhost:3000
+ohai
+#+end_src
 
 * what the hell just happened?
   :PROPERTIES:
@@ -454,16 +454,16 @@ running, with maybe a web interface.
     Google web servers will dutifully respond with the requested CSS and
     JavaScript files in kind.
 
-    #+begin_src plantuml :file request-response-html-example-01.svg
-    User -> Browser: Go to http://google.com
-    Browser -> "Google Server": Send request to\nGoogle servers
-    "Google Server" --> Browser: Send response\nwith HTML page
-    Browser -> "Google Server": Send request for\nCSS/JavaScript files
-    "Google Server" --> Browser: Send responses\nfor files requested
-    Browser --> User: Show pretty webpage\nto user
-    #+end_src
+#+begin_src plantuml :file request-response-html-example-01.svg
+User -> Browser: Go to http://google.com
+Browser -> "Google Server": Send request to\nGoogle servers
+"Google Server" --> Browser: Send response\nwith HTML page
+Browser -> "Google Server": Send request for\nCSS/JavaScript files
+"Google Server" --> Browser: Send responses\nfor files requested
+Browser --> User: Show pretty webpage\nto user
+#+end_src
 
-    #+RESULTS:
+  #+RESULTS:
     [[file:request-response-html-example-01.svg]]
 
     This is a _sequence_ diagram that shows the communication process of doing
