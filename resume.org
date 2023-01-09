@@ -82,16 +82,20 @@ road to well maintained and understood software.
 :PROPERTIES:
 :CUSTOM_ID: job-experience
 :END:
-** NWEA (2016-current)
+** Principal Instructor at Alchemy Code Lab (2022-current)
 :PROPERTIES:
-:CUSTOM_ID: job-experience--nwea-2016-current
+:CUSTOM_ID: job-experience--principal-instructor-at-alchemy-code-lab-2022-current
+:END:
+** NWEA (2016-2022)
+:PROPERTIES:
+:CUSTOM_ID: job-experience--nwea-2016-2022
 :END:
 At NWEA I have worked at several teams (typical for the org) and formed many
 cross team connections. I was primarily hired for JavaScript and Angular.js
 experience but dipped into many other disciplines.
 *** DevOps
 :PROPERTIES:
-:CUSTOM_ID: job-experience--nwea-2016-current--devops
+:CUSTOM_ID: job-experience--nwea-2016-2022--devops
 :END:
 Joined DevOps team to help with in-house infrastructure applications and tools.
 1. Assumed stewardship over all of our in-house applications which controlled
@@ -108,12 +112,12 @@ Joined DevOps team to help with in-house infrastructure applications and tools.
    the engineering teams have to.
 *** Assessment
 :PROPERTIES:
-:CUSTOM_ID: job-experience--nwea-2016-current--assessment
+:CUSTOM_ID: job-experience--nwea-2016-2022--assessment
 :END:
 Senior engineer spearheading new proctor interface.
 **** Summative Proctor UI
 :PROPERTIES:
-:CUSTOM_ID: job-experience--nwea-2016-current--assessment--summative-proctor-ui
+:CUSTOM_ID: job-experience--nwea-2016-2022--assessment--summative-proctor-ui
 :END:
 Built a React-Redux user interface for proctoring (running) student tests.
 + Powerful tests :: The UI used algebraic data types with Flow instead of
@@ -131,7 +135,7 @@ Built a React-Redux user interface for proctoring (running) student tests.
   shared projects such as the style guide.
 ***** JavaScript technologies employed :nodejs:
 :PROPERTIES:
-:CUSTOM_ID: job-experience--nwea-2016-current--assessment--summative-proctor-ui--javascript-technologies-employed
+:CUSTOM_ID: job-experience--nwea-2016-2022--assessment--summative-proctor-ui--javascript-technologies-employed
 :END:
 + Helped with Webpack setup on the style guide.
 + Setup CSS Modules in the style guide, and educated on their usage.
@@ -140,22 +144,22 @@ Built a React-Redux user interface for proctoring (running) student tests.
 
 *** Item Experience
 :PROPERTIES:
-:CUSTOM_ID: job-experience--nwea-2016-current--item-experience
+:CUSTOM_ID: job-experience--nwea-2016-2022--item-experience
 :END:
 Senior Engineer providing JavaScript expertise.
 **** Build and deployment :sre:
 :PROPERTIES:
-:CUSTOM_ID: job-experience--nwea-2016-current--item-experience--build-and-deployment
+:CUSTOM_ID: job-experience--nwea-2016-2022--item-experience--build-and-deployment
 :END:
 Streamlined a manual build and deploy process.
 **** Babel :nodejs:
 :PROPERTIES:
-:CUSTOM_ID: job-experience--nwea-2016-current--item-experience--babel
+:CUSTOM_ID: job-experience--nwea-2016-2022--item-experience--babel
 :END:
 Implemented Babel transformations for a critical backend Node.js service.
 *** OECD
 :PROPERTIES:
-:CUSTOM_ID: job-experience--nwea-2016-current--oecd
+:CUSTOM_ID: job-experience--nwea-2016-2022--oecd
 :END:
 Senior Engineer serving as Angular and Javascript expertise needed by the team.
 1. Migrated the administration portion of the project onto Webpack.
@@ -170,7 +174,7 @@ Senior Engineer serving as Angular and Javascript expertise needed by the team.
 
 *** UX/UI organizational needs
 :PROPERTIES:
-:CUSTOM_ID: job-experience--nwea-2016-current--ux/ui-organizational-needs
+:CUSTOM_ID: job-experience--nwea-2016-2022--ux/ui-organizational-needs
 :END:
 Ongoing company assistance and work on shared projects such as the style
 guide.
