@@ -48,6 +48,12 @@ console.log(average([0, 1, -1]))
 console.log(average([2,2,2,2,2,1]))
 #+end_src
 
+#+RESULTS:
+: 2
+: 1
+: 0
+: 1.8333333333333333
+
 ** Composed: Average
 
 Using function composition we can create =average= a little differently.
@@ -116,7 +122,7 @@ meaning the function has no name. But what if we pass it a function with a name?
 
 #+begin_src js :results output :exports both
 // Here, the body of frobnicate is written out as an anonymous function.
-[1, 2, 3].map(function(x) {
+[1, 2, 3].map((x) => {
   console.log('I frobnicated ' + x.toString())
 })
 
@@ -161,7 +167,17 @@ try {
 } catch (e) {
   console.log('Error: ' + e)
 }
+
+const y = {}
+y.foo()
 #+end_src
+
+#+RESULTS:
+: foo called
+: foo called
+: foo called
+: foo called
+: Error: TypeError: x is not a function
 
 If you try this on something that isn't a function, you'll see =<variable> is
 not a function=.
@@ -195,6 +211,10 @@ function uppercase(s) {
 console.log(map(uppercase, ['a', 'b', 'c']))
 #+end_src
 
+#+RESULTS:
+: [ 2, 3, 4 ]
+: [ 'A', 'B', 'C' ]
+
 Here =f= is the function being passed, which is just any function. So long as it
 obeys the arity (number of arguments) and returns something, it works.
 
@@ -225,6 +245,11 @@ console.log(changeFirstLetter('I am a proper sentence actually.', function(c) {
   return String.fromCharCode(c.charCodeAt(0) + 1)
 }))
 #+end_src
+
+#+RESULTS:
+: I Am Too Lazy To Capitalize.
+: cAPSLOCK iS cRUSE cONTROL fOR aWESOME
+: J bm b qroper tentence bctually.
 
 The beauty of this is =changeFirstLetter= doesn't need to know about what kind
 of changes could be made to the first letter. That has been _delegated_ to the
@@ -280,6 +305,7 @@ provide different function arity (argument count). A function is said to be
 "curried" if it takes one argument and returns another function.
 
 #+begin_src js :results output :exports both
+function add(x, y) { return x + y; }
 function add(x) {
   // This function just immediately returns a function.
   return function(y) {
