@@ -1,0 +1,633 @@
+
+<div id="outline-container-introduction" class="outline-2">
+<h2 id="introduction"><span class="section-number-2">1.</span> Introduction</h2>
+<div class="outline-text-2" id="text-introduction">
+<p>
+Writing good commit messages may not be totally essential to the software
+development process but it is essential to one&rsquo;s own sanity. &ldquo;Self-documenting&rdquo;
+code only explains the <b>what</b>, not the <b>why</b>. Even then, what should go into a
+commit message?
+</p>
+</div>
+</div>
+
+<div id="outline-container-commits-in-git" class="outline-2">
+<h2 id="commits-in-git"><span class="section-number-2">2.</span> Commits in Git</h2>
+<div class="outline-text-2" id="text-commits-in-git">
+<p>
+<code>git</code> imposes a small amount of rules about a commit message. A commit message
+must include a &ldquo;title&rdquo;. Commit messages can include bodies, but the bodies are
+optional.
+</p>
+</div>
+
+<div id="outline-container-commits-in-git--small-commits" class="outline-3">
+<h3 id="commits-in-git--small-commits"><span class="section-number-3">2.1.</span> Small Commits</h3>
+<div class="outline-text-3" id="text-commits-in-git--small-commits">
+<p>
+Anytime you do <code>git commit -m 'add stuffs'</code>, you are simply populating the
+commit title (<code>add stuffs</code>) and the body is left empty. These are good for
+quick-and-dirty commits, but it&rsquo;s hard to put much useful information in there.
+For the record: I still make commits like these. Generally I do them as quick
+commits to save my work for the day or perhaps for trivial alterations on
+repositories where no real tracking is done.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-different-kinds-of-commits" class="outline-2">
+<h2 id="different-kinds-of-commits"><span class="section-number-2">3.</span> Different Kinds of Commits</h2>
+<div class="outline-text-2" id="text-different-kinds-of-commits">
+</div>
+<div id="outline-container-different-kinds-of-commits--trivial-commits" class="outline-3">
+<h3 id="different-kinds-of-commits--trivial-commits"><span class="section-number-3">3.1.</span> Trivial Commits</h3>
+<div class="outline-text-3" id="text-different-kinds-of-commits--trivial-commits">
+<p>
+Sometimes there really just isn&rsquo;t a lot of meaningfulness to add to a commit.
+For example, <a href="https://github.com/LoganBarnett/dotfiles">https://github.com/LoganBarnett/dotfiles</a> is my dotfiles repo, and
+many of the commits are like this one: <a href="https://github.com/LoganBarnett/dotfiles/commit/121f854023fb070d51cb6705ddff69f3574fbd8f">121f85</a>.
+</p>
+
+<blockquote>
+<p>
+add English to English
+</p>
+</blockquote>
+
+<p>
+And the diff is:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-diff"><span style="color: #5cEfFF;">diff --git a/ispell*english b/ispell*english</span>
+<span style="color: #5cEfFF;">index 892ebf0..4da5d7e 100644</span>
+<span style="color: #5cEfFF;">--- </span><span style="color: #51afef;">a/ispell_english</span>
+<span style="color: #5cEfFF;">+++ </span><span style="color: #51afef;">b/ispell_english</span>
+<span style="color: #a991f1;">@@ -157,6 +157,7 @@</span><span style="color: #5cEfFF;"> flavorful</span>
+<span style="color: #a4aab6;"> flirty</span>
+<span style="color: #a4aab6;"> fontification</span>
+<span style="color: #a4aab6;"> fontified</span>
+<span style="color: #22aa22; background-color: #2a2e38;">+</span><span style="color: #7bc275; background-color: #2a2e38;">foundational</span>
+<span style="color: #a4aab6;"> FreeBSD</span>
+<span style="color: #a4aab6;"> freestanding</span>
+ furred
+</pre>
+</div>
+
+<p>
+Riveting.
+</p>
+
+<p>
+Not really a strong need for a lengthy commit message. I added &ldquo;foundational&rdquo; to
+my English dictionary. There really doesn&rsquo;t need to be much explanation here.
+</p>
+</div>
+</div>
+
+<div id="outline-container-different-kinds-of-commits--deployment-commits" class="outline-3">
+<h3 id="different-kinds-of-commits--deployment-commits"><span class="section-number-3">3.2.</span> Deployment Commits</h3>
+<div class="outline-text-3" id="text-different-kinds-of-commits--deployment-commits">
+<p>
+It&rsquo;s a rite of passage to undergo the terrible feeling of having to commit to
+observe your changes. Some nastiness in the build/CI system only seems to
+manifest there, and the only way that system runs or picks up changes is by
+detecting new commits, or can only see committed code. An idealist would tell
+you that you should do everything you can to run locally. They aren&rsquo;t wrong.
+Sometimes this means you would need to stand up your own Jenkins system locally,
+and configure it just like the operations team did in their hosted environment,
+except yours needs to run locally. Other times you&rsquo;re using something like
+GitHub Actions, and there&rsquo;s recourse here. GitHub Enterprise exists for people
+with high values of <code>$MONEY</code> and if you&rsquo;re working as a simple software engineer
+you might get paid well, but not enough for this.
+</p>
+
+<p>
+Here&rsquo;s some examples of people obviously flailing that I&rsquo;ve observed over the
+years, self included:
+</p>
+
+
+<div id="org382f83d" class="figure">
+<p><img src="./assets/ie-works-commits-01.png" alt="ie-works-commits-01.png" />
+</p>
+</div>
+
+<p>
+Internet Explorer. Such fun!
+</p>
+
+
+<div id="org9799825" class="figure">
+<p><img src="./assets/just-work-commit-message.png" alt="just-work-commit-message.png" />
+</p>
+</div>
+
+<p>
+Just work, indeed.
+</p>
+
+<p>
+Or witness my own suffering:
+</p>
+
+
+<div id="org35d5d5d" class="figure">
+<p><img src="./assets/logan-commits-to-fix-ci-01.png" alt="logan-commits-to-fix-ci-01.png" />
+</p>
+</div>
+
+<p>
+When you get into this kind of loop, it is healthy to question whether it really
+is necessary. Change, commit, push, watch results is a very slow way to go about
+your work. Sometimes it&rsquo;s the most reasonable thing to do, but it&rsquo;s healthy to
+stop and ask if it really is. This also pollutes the commit history. Is it
+really harmful? No, not in a direct sense. But when folks go spelunking through
+the history later in desperate search of context, this will be what they have to
+filter through.
+</p>
+</div>
+</div>
+
+<div id="outline-container-different-kinds-of-commits--healthy-commits" class="outline-3">
+<h3 id="different-kinds-of-commits--healthy-commits"><span class="section-number-3">3.3.</span> Healthy Commits</h3>
+<div class="outline-text-3" id="text-different-kinds-of-commits--healthy-commits">
+<p>
+Now we have all of the unhealthy commits out of the way, let&rsquo;s focus on what
+healthy commits look like.
+</p>
+
+<p>
+Commits are there to give context to changes in a historical sense. They should
+tell the reader <b>why</b> the change is being made. The code itself shows you a bit
+of the <b>what</b> and the <b>how</b>, but doesn&rsquo;t record how you got there exactly. That
+can be really helpful when debugging later. Remember: One of your debugging
+tools is to simply remove code or roll back changes until you see a change in
+behavior.
+</p>
+
+<p>
+I hold <a href="https://github.com/nyyManni/ejira/pull/35/commits/f2863c63a45a1c6b0d1fe4b786648b9291322523">this commit</a> to be of high example.
+</p>
+
+<p>
+Splayed out:
+</p>
+
+<pre class="example" id="org2d6b40b">
+provide overrides for JQL to sync tickets
+
+This provides the ability to override the JQL used in ejira-update-jql.
+From #20 there is a need to synchronize only the user's involved
+tickets.
+
+The original behavior should be unchanged. @osktyn has generously
+provided a JQL statement to use. This is provided as
+`ejira-jql-my-unresolved-fn`, which can be set via the variable
+`ejira-update-jql-unresolved-fn`. An additional
+`ejira-update-jql-resolved-fn` is also provided but doesn't need to be
+overridden for the purposes of #20 - it just seemed appropriate given
+this change.
+
+Any stylistic changes are unintentional. Please nitpick away :)
+
+Thanks for making an awesome project!
+
+Closes #20
+</pre>
+
+<p>
+Let&rsquo;s break down what went into this.
+</p>
+</div>
+
+<div id="outline-container-different-kinds-of-commits--healthy-commits--destined-for-reviewers" class="outline-4">
+<h4 id="different-kinds-of-commits--healthy-commits--destined-for-reviewers"><span class="section-number-4">3.3.1.</span> Destined for Reviewers</h4>
+<div class="outline-text-4" id="text-different-kinds-of-commits--healthy-commits--destined-for-reviewers">
+<p>
+This is all gearing up to eventually land in a pull request description. In
+fact, pull requests will populate the title and description using your commits!
+There&rsquo;s so much informational overlap between the two, we might as well just
+toss it into the commit and allow the review system (GitHub, GitLab, BitBucket,
+etc) to handle the rest.
+</p>
+
+<p>
+In that way, you&rsquo;ll see that your audience is both a reviewer who will allow the
+change to go in, and a future generation of engineers (which could include you,
+once you forget everything you did - and you absolutely will). The information
+the two audiences need is virtually the same. Reviewers need to understand how
+it works and why it&rsquo;s happening so they can allow the changes in. Debuggers need
+context for why the changes were made in the first place, and what was attempted
+to be solved in doing so.
+</p>
+</div>
+</div>
+
+<div id="outline-container-different-kinds-of-commits--healthy-commits--commit-title" class="outline-4">
+<h4 id="different-kinds-of-commits--healthy-commits--commit-title"><span class="section-number-4">3.3.2.</span> Commit Title</h4>
+<div class="outline-text-4" id="text-different-kinds-of-commits--healthy-commits--commit-title">
+<p>
+First, I have the succinct title:
+</p>
+
+<pre class="example" id="org01cbb89">
+provide overrides for JQL to sync tickets
+</pre>
+
+<p>
+I like to keep my commits in the present, imperative tense. This isn&rsquo;t strictly
+needed, but tends to help keep the message short and succinct. Consider &ldquo;adds
+foo behavior&rdquo; over &ldquo;will add foo behavior&rdquo; or &ldquo;added foo behavior&rdquo;. It might not
+seem like much, but it adds up quickly. You want to keep your title around 72
+characters or so. I think this trend started from the Linux kernel documentation
+which has:
+</p>
+
+<blockquote>
+<p>
+For these reasons, the &ldquo;summary&rdquo; must be no more than 70-75
+characters, and it must describe both what the patch changes, as well
+as why the patch might be necessary.  It is challenging to be both
+succinct and descriptive, but that is what a well-written summary
+should do.
+</p>
+</blockquote>
+
+<p>
+I reject the &ldquo;why&rdquo; listed in this. Save that for the body. When I&rsquo;m looking at
+big lists of commits, I need you to tell me what changed, and I&rsquo;ll dig into the
+why if I&rsquo;m curious.
+</p>
+
+<p>
+You&rsquo;ll also note that the title isn&rsquo;t fully capitalized/punctuated. This is for
+brevity, and the fact that it&rsquo;s restricted one line helps with any possible
+misinterpretation.
+</p>
+</div>
+</div>
+
+<div id="outline-container-different-kinds-of-commits--healthy-commits--a-blank-line" class="outline-4">
+<h4 id="different-kinds-of-commits--healthy-commits--a-blank-line"><span class="section-number-4">3.3.3.</span> A Blank Line</h4>
+<div class="outline-text-4" id="text-different-kinds-of-commits--healthy-commits--a-blank-line">
+<p>
+Yup. Git demands you have a blank line between the title and what comes next:
+the body.
+</p>
+
+<pre class="example" id="orga864036">
+add a foo
+
+This adds a foo because we really need one more foo.
+</pre>
+
+<p>
+Note the line separating them.
+</p>
+
+<p>
+Fortunately editors will typically colorize the line in some nasty red color if
+you happen to forget this.
+</p>
+</div>
+</div>
+
+<div id="outline-container-different-kinds-of-commits--healthy-commits--the-body" class="outline-4">
+<h4 id="different-kinds-of-commits--healthy-commits--the-body"><span class="section-number-4">3.3.4.</span> The Body</h4>
+<div class="outline-text-4" id="text-different-kinds-of-commits--healthy-commits--the-body">
+<p>
+This is your chance to justify your changes and add any context the reviewer or
+future generations might need.
+</p>
+
+<p>
+Here&rsquo;s the body again from my earlier example:
+</p>
+
+<pre class="example" id="orgc9de7fe">
+This provides the ability to override the JQL used in ejira-update-jql.
+From #20 there is a need to synchronize only the user's involved
+tickets.
+
+The original behavior should be unchanged. @osktyn has generously
+provided a JQL statement to use. This is provided as
+`ejira-jql-my-unresolved-fn`, which can be set via the variable
+`ejira-update-jql-unresolved-fn`. An additional
+`ejira-update-jql-resolved-fn` is also provided but doesn't need to be
+overridden for the purposes of #20 - it just seemed appropriate given
+this change.
+
+Any stylistic changes are unintentional. Please nitpick away :)
+
+Thanks for making an awesome project!
+
+Closes #20
+</pre>
+
+<p>
+My rough structure is as follows:
+</p>
+
+<ol class="org-ol">
+<li>Mentions the ticket number that prompted this work and how this change relates
+to it.</li>
+<li>Add additional context for the reviewer and explains how the changes come
+together.</li>
+<li>Lets the reviewer know I&rsquo;m a foreigner to the project and am happy to
+accommodate formatting changes. Largely this is optional, but polite since
+this change is against an open source project where we are all strangers to
+each other.</li>
+<li>Some thanks - I do this at the end of my first communications for most open
+source projects. Open source burn out is real, and just giving some thanks
+can help reduce. It also helps correct any misinterpreted tone that was lost
+in reading my earlier text.</li>
+</ol>
+</div>
+
+<div id="outline-container-different-kinds-of-commits--healthy-commits--the-body--reference-and-summarize-relevant-ticket" class="outline-5">
+<h5 id="different-kinds-of-commits--healthy-commits--the-body--reference-and-summarize-relevant-ticket"><span class="section-number-5">3.3.4.1.</span> Reference and Summarize Relevant Ticket</h5>
+<div class="outline-text-5" id="text-different-kinds-of-commits--healthy-commits--the-body--reference-and-summarize-relevant-ticket">
+<p>
+Whether you&rsquo;re using something connected to Jira, GitHub itself, or some other
+review system, you can link to an issue or ticket (same thing) in the system
+using a specially formatted identifier (part of the ticket&rsquo;s number itself).
+</p>
+
+<p>
+In later days, I started using this format:
+</p>
+
+<pre class="example" id="orgd390dfd">
+Address SE-12345 - File paths with spaces cause the deployment to fail.
+</pre>
+
+<p>
+This includes the ticket number (<code>SE-12345</code>), what this change does in regards
+to that ticket (&ldquo;addresses&rdquo; the ticket), and a quick summary of what that ticket
+is about (file paths with spaces cause the deployment to fail). This saves the
+reader from having to dig into the ticket unless they want to. The review system
+will automatically link to that ticket, so it&rsquo;s handy. But also, organizations
+shift in tech stack over time. This particular commit mentions a Jira formatted
+number, but what if Jira is down? What if this commit is being looked at some
+five years later when the organization decided to do away with Jira? At the very
+least, we have some minimal context that will outlive such systems.
+</p>
+
+<p>
+Including the ticket number is also required for SOC2 compliance, or at least as
+it manifests from security gurus at large. All work must be tracked back to a
+work item (ticket, issue, etc).
+</p>
+</div>
+</div>
+
+<div id="outline-container-different-kinds-of-commits--healthy-commits--the-body--describe-the-changes" class="outline-5">
+<h5 id="different-kinds-of-commits--healthy-commits--the-body--describe-the-changes"><span class="section-number-5">3.3.4.2.</span> Describe the Changes</h5>
+<div class="outline-text-5" id="text-different-kinds-of-commits--healthy-commits--the-body--describe-the-changes">
+<p>
+This is more free-form prose where you have your chance to explain an approach
+you made, or why you decided <b>not</b> to pursue more obvious solutions. Sometimes
+this will be minimal. You&rsquo;re adding yet another button, and more buttons will be
+coming. Generally though, your changes will be coming in as &ldquo;unit&rdquo; of work. So
+it&rsquo;s not just an added button, but the functionality that comes with it. You
+could explain what the new feature does in a short summary. For example: &ldquo;This
+new UI allows users to add their favorite pets to their posts. This is tagged in
+the database and a webhook has been added so third party applications can notify
+pets of these mentions.&rdquo; This kind of message speaks so much more than just a
+bunch of changes in a file.
+</p>
+</div>
+</div>
+
+<div id="outline-container-different-kinds-of-commits--healthy-commits--the-body--additional-context" class="outline-5">
+<h5 id="different-kinds-of-commits--healthy-commits--the-body--additional-context"><span class="section-number-5">3.3.4.3.</span> Additional Context</h5>
+<div class="outline-text-5" id="text-different-kinds-of-commits--healthy-commits--the-body--additional-context">
+<p>
+It&rsquo;s legitimate to throw in some extra things. For example:
+</p>
+<ol class="org-ol">
+<li>I&rsquo;m not familiar to this code base, so please let me know if there&rsquo;s anything
+I can do to better contribute.</li>
+<li>I tested against servers X and Y because I could not reproduce this locally.</li>
+<li>On a fresh clone I was unable to get the tests running locally, but they seem
+unrelated to my changes and no additional tests failed as part of these
+changes.</li>
+<li>This should not be merged until (link) is also complete.</li>
+<li>This is the third time we&rsquo;ve fixed this problem this week. Perhaps after this
+is resolved we can look into the issue together?</li>
+</ol>
+
+<p>
+Some of this is more discourse in nature and definitely on the softer side of
+communication.
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-different-kinds-of-commits--healthy-commits--what-about-all-of-my-small-commits" class="outline-4">
+<h4 id="different-kinds-of-commits--healthy-commits--what-about-all-of-my-small-commits"><span class="section-number-4">3.3.5.</span> What About All of My Small Commits?</h4>
+<div class="outline-text-4" id="text-different-kinds-of-commits--healthy-commits--what-about-all-of-my-small-commits">
+<p>
+Generally you&rsquo;ll be working off a feature branch of some kind. Make all of the
+small, less verbose commits all you like. Once you get done though, you should
+squash your commits into the smallest number as is reasonable. These squashed
+commits can then include your verbose form of documentation.
+</p>
+
+<p>
+Rebasing is a topic unto itself. I&rsquo;ve met some folks getting closer to
+retirement who are vehemently against rebasing. To them I say: How are they
+going to know? I can rebase my private branches all day, or take a branch with
+my daily commits and create a new branch with the rebased commit(s). By the time
+it reaches a pull request, no one is the wiser.
+</p>
+</div>
+</div>
+
+<div id="outline-container-different-kinds-of-commits--healthy-commits--i-don't-want-to-type-this-much" class="outline-4">
+<h4 id="different-kinds-of-commits--healthy-commits--i-don't-want-to-type-this-much"><span class="section-number-4">3.3.6.</span> I Don&rsquo;t Want to Type This Much</h4>
+<div class="outline-text-4" id="text-different-kinds-of-commits--healthy-commits--i-don't-want-to-type-this-much">
+<p>
+This is a lot to type! But it&rsquo;s better to have this. <code>git blame</code> becomes your
+friend, as done <code>git log</code>. Debugging is a puzzle where the rules change like
+Calvinball and oftentimes are done under tremendous pressure (production is
+down). Any clues you can give yourself or others will be greatly appreciated
+later.
+</p>
+
+<p>
+It can be hard to keep this up, or to push yourself to write that little extra
+bit. But aside from a little bit of time (time yourself, it really isn&rsquo;t that
+much), what does it cost you to leave fresh information out?
+</p>
+</div>
+</div>
+
+<div id="outline-container-different-kinds-of-commits--healthy-commits--punctuation-grammar-etc" class="outline-4">
+<h4 id="different-kinds-of-commits--healthy-commits--punctuation-grammar-etc"><span class="section-number-4">3.3.7.</span> Punctuation, Grammar, Etc</h4>
+<div class="outline-text-4" id="text-different-kinds-of-commits--healthy-commits--punctuation-grammar-etc">
+<p>
+Please use proper grammar and punctuation. Nobody is expecting perfect language
+in these commit messages, but you&rsquo;d be surprised on how easy it can be for an
+innocuous sentence missing punctuation to look like the last line was deleted.
+I&rsquo;ve literally run into this before.
+</p>
+
+<p>
+Consider:
+</p>
+
+<pre class="example" id="org9b0e8e2">
+make sure the invoice notification email is formatted and sent before
+</pre>
+
+<p>
+Before&#x2026; what exactly? It&rsquo;s almost like the author was murdered mid sentence,
+with their last, dying act to commit and push whatever they had.
+</p>
+
+<p>
+Let&rsquo;s try this again:
+</p>
+
+<pre class="example" id="org4ea4a54">
+Make sure the invoice notification email is formatted and sent before.
+</pre>
+
+<p>
+Okay the sentence ends a little weirdly. We don&rsquo;t want to be grammar police but
+at the same time at least we understand the intent better here. We&rsquo;re not left
+guessing.
+</p>
+
+<p>
+We can do one better and just get a <span class="underline">little</span> more specific.
+</p>
+
+<pre class="example" id="org52c9e0a">
+Make sure the invoice notification email is formatted and sent before anything
+else.
+</pre>
+</div>
+</div>
+
+<div id="outline-container-different-kinds-of-commits--healthy-commits--wrap-to-80" class="outline-4">
+<h4 id="different-kinds-of-commits--healthy-commits--wrap-to-80"><span class="section-number-4">3.3.8.</span> Wrap to 80</h4>
+<div class="outline-text-4" id="text-different-kinds-of-commits--healthy-commits--wrap-to-80">
+<p>
+This advice is more for foreign repositories than one you are familiar with.
+</p>
+
+<p>
+How many columns to wrap to, and whether or not you should wrap at all is
+something that folks go to nerd war over. I&rsquo;ve not been at a workplace where
+there was total agreement here. One side wins, and the other shrugs and has to
+make due.
+</p>
+
+<p>
+If you&rsquo;re on the 80 column side, congrats! Your side won when it comes to commit
+bodies. Part of the reason you want this is because when you run <code>git log</code> from
+the command line, that log message eating up the full width of your monitor is
+going to be difficult to read.
+</p>
+
+<p>
+Generally you&rsquo;re going to find your text editor already aligns with this for
+commit messages, and so there&rsquo;s nothing to really do here.
+</p>
+
+<p>
+You might wonder how you wrap the first line. You don&rsquo;t! The summary line can
+only ever be one line. Keep it short!
+</p>
+</div>
+</div>
+
+<div id="outline-container-different-kinds-of-commits--healthy-commits--follow-the-contributing-document" class="outline-4">
+<h4 id="different-kinds-of-commits--healthy-commits--follow-the-contributing-document"><span class="section-number-4">3.3.9.</span> Follow the Contributing Document</h4>
+<div class="outline-text-4" id="text-different-kinds-of-commits--healthy-commits--follow-the-contributing-document">
+<p>
+Oftentimes repositories have a <code>CONTRIBUTING</code> file (extension can vary or be
+nonexistent). This file will outline what is expected of you to contribute
+changes of any kind. This includes how to author commits, pull requests, etc. It
+can vary quite a bit between projects, so make sure to check it. Some of the
+things they ask may be in direct counter to what I&rsquo;ve mentioned above. In those
+cases, I recommend you acquiesce to their demands. Nobody is compelled to accept
+your changes, and anything you can do to play by their rules will make it easier
+to have your changes accepted.
+</p>
+
+<p>
+Oftentimes, I find these oppressive. I see a lot of projects adopting
+<a href="https://www.conventionalcommits.org/">Conventional Commits</a> or something similar. I love me some CI, but I hate me some
+Semantic Versioning. Conventional Commits takes a bit to read through, and it is
+very rigid about what goes into the commit and how to do it.
+</p>
+
+
+<div id="org920720d" class="figure">
+<p><img src="./assets/semver-workaround-broken-twitter-01.png" alt="semver-workaround-broken-twitter-01.png" />
+</p>
+</div>
+
+<p>
+What I dislike about Conventional Commits primarily is that it gets wrapped up
+in taxonomy of tickets. Is this a bug? Is it a feature? What should I use if my
+feature cleverly fixes a bug? Will this change break something?
+</p>
+
+<p>
+Your intention will never have any impact over behavior. Claim &ldquo;this shouldn&rsquo;t
+break anything&rdquo;, and you almost invite disaster. Seriously - go ask your
+favorite QA member about this. They&rsquo;ll laugh at you.  They laughed at me :(
+Virtually any change is a change in behavior, and changes in behavior break
+<b>something</b>.
+</p>
+
+
+<div id="org14c74e9" class="figure">
+<p><img src="./assets/xkcd-every-change-breaks-01.png" alt="xkcd-every-change-breaks-01.png" />
+</p>
+</div>
+
+<p>
+My favorite patch version break was with Node v10 (I&rsquo;ll find the exact
+version later). This patch version has 80 commits behind it, and made an
+&ldquo;innocent&rdquo; change which subtly broke the networking stack. My only recourse was
+to lock the Node version to an exact version until we could clear investigation
+time from the org (spoiler: it never really got fixed).
+</p>
+
+<p>
+I&rsquo;ve contributed to work projects where ticket numbers had to be in the title.
+I&rsquo;m not sure how I feel about this. On one hand, you can glance through tickets
+quickly (though <code>git log | grep -C12 &lt;ticket-number&gt;</code> will do that too). On the
+other hand, it eats away at previous space for communicating your changes in
+summarized form.
+</p>
+
+<p>
+As weird as these might be, it&rsquo;s best to follow them. Over time, the ceremony
+will melt away into habit and you&rsquo;ll barely notice it. It&rsquo;s something to
+consider though, if you run your own project: How many hoops do you want your
+contributers to jump through in order to correct a typo? The more requirements
+your <code>CONTRIBUTING</code> document outlines, the fewer contributions you can expect.
+</p>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-closing-thoughts" class="outline-2">
+<h2 id="closing-thoughts"><span class="section-number-2">4.</span> Closing Thoughts</h2>
+<div class="outline-text-2" id="text-closing-thoughts">
+<p>
+Commits are the captain&rsquo;s log of repositories. When the ship goes down, and all
+you have are logs to comb through to find what went wrong, do you want good logs
+or incomplete ones?
+</p>
+</div>
+</div>
