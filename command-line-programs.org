@@ -14,7 +14,11 @@ program.
 The quick list:
 
 1. Provide usage information.
-2. Provide
+2. Output parse-able output to =stdout=.
+3. Output logging to =stderr=.
+4. Have a =--help= that describes basic usage and general purpose.
+5. Use exit code 0 for expected results, and positive, non-zero exit codes for
+   unexpected results.
 
 * Disclaimer
 
