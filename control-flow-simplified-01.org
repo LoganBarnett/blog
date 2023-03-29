@@ -1,0 +1,239 @@
+#+title:     Control Flow Simplified Part 1
+#+author:    Logan Barnett-Hoy
+#+email:     logustus@gmail.com
+#+date:      <2022-02-22 Tue>
+#+language:  en
+#+file_tags:
+#+tags:      tutorial software functional-programming
+
+* Introduction
+
+This is still a draft. I intend to show off a few different languages and have
+it viewable via a spiffy dropdown or something. I have not yet had the chance to
+test all of the code.
+
+This is a series on simplifying control flow in software engineering. It's a
+very tactical-level view, and it uses some functional programming techniques to
+illustrate this.
+
+Control flow is simply the flow of execution within a program in respect to its
+source code. These are generally statements like =if=, =else=, =switch=
+=return=, and even =throw=.
+
+Functional programming is a +way of life+ paradigm that promotes great
+abstractions and quarantined effects. Don't worry if that doesn't make sense
+yet.
+
+* Motivation for Control Flow
+
+We need control flow in order to make sure we execute certain instructions at
+one point while also not executing other instructions. Control flow describes a
+general suite of mechanisms available to a language to achieve this. "If one set
+of things is true, do this set of steps. Otherwise, do this other set of steps".
+
+Here we have an example of doing this in Ruby.
+
+#+begin_src ruby :results code :exports code
+if condition
+  step1a
+  step2a
+else
+  step1b
+  step2b
+  step3c
+end
+#+end_src
+
+If =condition= evaluates as =true=, we execute =step1a= and =step2a= in that
+order. If =condition= evaluates as =false=, we execute =step1b=, then =step2b=,
+and then step =step3b=.
+
+There are other mechanisms for control flow. In this document, some basic
+familiarity with the language's control flow statements is expected.
+
+* Why Imperative Control Flow is Inherently Flawed
+
+Generally, control flow in a language is a big part of the language for
+_imperative_ languages. An imperative programming language is simply a language
+in which instructions are executed in a rigidly defined order. Variables are
+declared at certain times, and set during other times. Imperative languages
+don't define what happens as much as _how_ it happens. It's an exercise for the
+software engineer to determine the _what_. Imperative languages include both
+procedural languages as well as object oriented languages.
+
+We'll cover how imperative languages can abandon the standard notion of control
+flow in favor of a simpler paradigm. For now, we'll cover why this is flawed.
+
+This example borrows heavily from [[https://vimeo.com/113707214][Scott Wlaschin's talk on Railway Oriented
+Programming]]. It's worth the hour-long watch, but not required for this tutorial.
+
+Take a simple operation we want to author. We want to update a user's email in
+our database. This is the simplest form we can use:
+
+#+begin_src ruby :results code :exports code
+def user_email_update(db, user, email)
+  db.update('UPDATE users SET email = ? WHERE user.id = ?', email, user.id)
+end
+#+end_src
+
+This uses some contrived SQL. =db= represents our connection to the database.
+=user= represents the user record we have loaded into memory, and =email= is the
+new email address we want to use.
+
+It's a relatively simple use case. For other parts of the program, such as what
+calls this function, we don't really care. One of the basic tenets of software
+engineering is that we must model our problems in a space small enough for us to
+reason about them. Here, we needn't worry about the size of the application or
+any of its other bits. We just have to update the user's email and nothing else.
+
+** Control Flow Ruination
+
+Our original code block is easy to reason about, but it's incomplete. Consider
+that the email could be an improper email address. Before we do the update, we
+must check to see if the email is valid. If it is valid, we can proceed with the
+update. If it is invalid, we have to produce an error the application can use to
+provide feedback to whatever provided the email in the first place.
+
+#+begin_src ruby :results code :exports code
+# For our purposes, we're not going to go into what this is. Just imagine it is
+# correct.
+EMAIL_REGEX = ''
+
+class InvalidUserEmailError < Error
+  attr_reader :email
+
+  def initialize(email)
+    @email = email
+  end
+
+  def message
+    "Email #{self.email} is invalid."
+  end
+end
+
+def user_email_update(db, user, email)
+  if EMAIL_REGEX ~= email
+    db.update('UPDATE users SET email = ? WHERE user.id = ?', email, user.id)
+  else
+    raise InvalidUserEmailError.new(email)
+  end
+end
+#+end_src
+
+This has more than doubled the original size of our code, but all-in-all this
+isn't very complicated. It's primarily boilerplate, so we can hand wave off some
+of the complexity here.
+
+Now let's make this function more robust and cover another scenario that isn't
+ideal: What happens when the database connection has a problem? We have to catch
+the database exception error, and add some context to it with our own error.
+
+Maybe you don't do this often in your day-to-day software engineering, but
+consider this: If we see a database error when we call =user_email_update=, do
+we know for certain _which_ database error it is? Why does a consumer of
+=user_email_update= need to have the knowledge of the type of database used, and
+the kinds of errors it produces? Instead of pushing these responsibilities upon
+the consumer, we can wrap those errors here. Then if we change database
+libraries, or database systems, or whatever we do, we can still produce the same
+errors and they carry the same meanings. This is how we enforce a good API
+contract between us (the producer) and the consumer.
+
+But it does complicate things more.
+
+#+begin_src ruby :results code :exports code
+# For our purposes, we're not going to go into what this is. Just imagine it is
+# correct.
+EMAIL_REGEX = ''
+
+class InvalidUserEmailError < Error
+  attr_reader :email
+
+  def initialize(email)
+    @email = email
+  end
+
+  def message
+    "Email #{self.email} is invalid."
+  end
+end
+
+class UserDatabaseError < Error; end
+
+def user_email_update(db, user, email)
+  if EMAIL_REGEX ~= email
+    begin
+      db.update('UPDATE users SET email = ? WHERE user.id = ?', email, user.id)
+    rescue DatabaseConnectionError => e
+      raise UserDatabaseError.new(e)
+    end
+  else
+    raise InvalidUserEmailError.new(email)
+  end
+end
+#+end_src
+
+These examples might seem contrived, but these are the kinds of things we wind
+up doing as matter of course for our day to day software engineering lives. Our
+very nice code we started with is unrecognizable, and more importantly: Far more
+complicated.
+
+** Dropping Control Flow For Sanity
+
+We can drop the =if= and =try= control flow functionality to achieve a newer
+kind of code clarity. Note that we can still use =if= and =try= but the space in
+which they are employed is so small as to have trivial impact. The problem isn't
+necessarily that =if= and =try= are fundamentally broken, but that our usage of
+it in a large, branching function causes unnecessary cognitive burden.
+
+#+begin_src ruby  :results code :exports code
+require 'monad-oxide'
+
+def user_email_update(db, user, email)
+  MonadOxide.ok(email)
+    .and_then(->(email) {
+      EMAIL_REGEX ~= email
+        ? MonadOxide.ok(email)
+        : MonadOxide.err(InvalidUserEmailError.new(email))
+    })
+    .and_then(->(email) {
+      db.update('UPDATE users SET email = ? WHERE user.id = ?', email, user.id)
+        # TODO: Show long hand, and then show how to shorten it thusly.
+        .map_err(&UserDatabaseError.new)
+    })
+end
+#+end_src
+
+The advantage here is that this is essentially branch-less. The only thing that
+can happen with =and_then= is that it either executes because the prior result
+was an =ok=, or it falls through because it was an =err=.
+
+We can arbitrarily add more and more of these and we still maintain a sort of
+pipeline.
+
+The chains become even more beneficial once we break individual elements of the
+chain into individual functions.
+
+#+begin_src ruby  :results code :exports code
+require 'monad-oxide'
+
+def validate_email(email)
+  EMAIL_REGEX ~= email
+  ? MonadOxide.ok(email.strip())
+  : MonadOxide.err(InvalidUserEmailError.new(email))
+end
+
+def update_email_db(db, user, email)
+  db.update('UPDATE users SET email = ? WHERE user.id = ?', email, user.id)
+    # TODO: Show long hand, and then show how to shorten it thusly.
+    .map_err(&UserDatabaseError.new)
+end
+
+def user_email_update(db, user, email)
+  validate_email(email)
+    .and_then(->(valid_email) update_email_db(db, user, valid_email))
+end
+#+end_src
+
+Here, all three functions are easy to reason about. You can't really screw these
+up because of how simple they are. Yet error handling is built in from the start
+without branching occurring in any meaningful way.

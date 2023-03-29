@@ -1,0 +1,303 @@
+
+<div id="outline-container-orgb3b9594" class="outline-2">
+<h2 id="orgb3b9594"><span class="section-number-2">1.</span> Introduction</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+This is still a draft. I intend to show off a few different languages and have
+it viewable via a spiffy dropdown or something. I have not yet had the chance to
+test all of the code.
+</p>
+
+<p>
+This is a series on simplifying control flow in software engineering. It&rsquo;s a
+very tactical-level view, and it uses some functional programming techniques to
+illustrate this.
+</p>
+
+<p>
+Control flow is simply the flow of execution within a program in respect to its
+source code. These are generally statements like <code>if</code>, <code>else</code>, <code>switch</code>
+<code>return</code>, and even <code>throw</code>.
+</p>
+
+<p>
+Functional programming is a <del>way of life</del> paradigm that promotes great
+abstractions and quarantined effects. Don&rsquo;t worry if that doesn&rsquo;t make sense
+yet.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org3057dee" class="outline-2">
+<h2 id="org3057dee"><span class="section-number-2">2.</span> Motivation for Control Flow</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+We need control flow in order to make sure we execute certain instructions at
+one point while also not executing other instructions. Control flow describes a
+general suite of mechanisms available to a language to achieve this. &ldquo;If one set
+of things is true, do this set of steps. Otherwise, do this other set of steps&rdquo;.
+</p>
+
+<p>
+Here we have an example of doing this in Ruby.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-ruby"><span style="color: #51afef;">if</span> condition
+  step1a
+  step2a
+<span style="color: #51afef;">else</span>
+  step1b
+  step2b
+  step3c
+<span style="color: #51afef;">end</span>
+</pre>
+</div>
+
+<p>
+If <code>condition</code> evaluates as <code>true</code>, we execute <code>step1a</code> and <code>step2a</code> in that
+order. If <code>condition</code> evaluates as <code>false</code>, we execute <code>step1b</code>, then <code>step2b</code>,
+and then step <code>step3b</code>.
+</p>
+
+<p>
+There are other mechanisms for control flow. In this document, some basic
+familiarity with the language&rsquo;s control flow statements is expected.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org918ae23" class="outline-2">
+<h2 id="org918ae23"><span class="section-number-2">3.</span> Why Imperative Control Flow is Inherently Flawed</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+Generally, control flow in a language is a big part of the language for
+<span class="underline">imperative</span> languages. An imperative programming language is simply a language
+in which instructions are executed in a rigidly defined order. Variables are
+declared at certain times, and set during other times. Imperative languages
+don&rsquo;t define what happens as much as <span class="underline">how</span> it happens. It&rsquo;s an exercise for the
+software engineer to determine the <span class="underline">what</span>. Imperative languages include both
+procedural languages as well as object oriented languages.
+</p>
+
+<p>
+We&rsquo;ll cover how imperative languages can abandon the standard notion of control
+flow in favor of a simpler paradigm. For now, we&rsquo;ll cover why this is flawed.
+</p>
+
+<p>
+This example borrows heavily from <a href="https://vimeo.com/113707214">Scott Wlaschin&rsquo;s talk on Railway Oriented
+Programming</a>. It&rsquo;s worth the hour-long watch, but not required for this tutorial.
+</p>
+
+<p>
+Take a simple operation we want to author. We want to update a user&rsquo;s email in
+our database. This is the simplest form we can use:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-ruby"><span style="color: #51afef;">def</span> <span style="color: #5cEfFF;">user_email_update</span><span style="color: #51afef;">(</span>db, user, email<span style="color: #51afef;">)</span>
+  db.update<span style="color: #51afef;">(</span><span style="color: #7bc275;">'UPDATE users SET email = ? WHERE user.id = ?'</span>, email, user.id<span style="color: #51afef;">)</span>
+<span style="color: #51afef;">end</span>
+</pre>
+</div>
+
+<p>
+This uses some contrived SQL. <code>db</code> represents our connection to the database.
+<code>user</code> represents the user record we have loaded into memory, and <code>email</code> is the
+new email address we want to use.
+</p>
+
+<p>
+It&rsquo;s a relatively simple use case. For other parts of the program, such as what
+calls this function, we don&rsquo;t really care. One of the basic tenets of software
+engineering is that we must model our problems in a space small enough for us to
+reason about them. Here, we needn&rsquo;t worry about the size of the application or
+any of its other bits. We just have to update the user&rsquo;s email and nothing else.
+</p>
+</div>
+
+<div id="outline-container-orgb8dddb8" class="outline-3">
+<h3 id="orgb8dddb8"><span class="section-number-3">3.1.</span> Control Flow Ruination</h3>
+<div class="outline-text-3" id="text-3-1">
+<p>
+Our original code block is easy to reason about, but it&rsquo;s incomplete. Consider
+that the email could be an improper email address. Before we do the update, we
+must check to see if the email is valid. If it is valid, we can proceed with the
+update. If it is invalid, we have to produce an error the application can use to
+provide feedback to whatever provided the email in the first place.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-ruby"><span style="color: #62686E;"># </span><span style="color: #62686E;">For our purposes, we're not going to go into what this is. Just imagine it is</span>
+<span style="color: #62686E;"># </span><span style="color: #62686E;">correct.</span>
+<span style="color: #FCCE7B;">EMAIL_REGEX</span> = <span style="color: #7bc275;">''</span>
+
+<span style="color: #51afef;">class</span> <span style="color: #FCCE7B;">InvalidUserEmailError</span> &lt; <span style="color: #FCCE7B;">Error</span>
+  <span style="color: #C57BDB;">attr_reader</span> <span style="color: #a991f1;">:email</span>
+
+  <span style="color: #51afef;">def</span> <span style="color: #5cEfFF;">initialize</span><span style="color: #51afef;">(</span>email<span style="color: #51afef;">)</span>
+    <span style="color: #dcafe9;">@email</span> = email
+  <span style="color: #51afef;">end</span>
+
+  <span style="color: #51afef;">def</span> <span style="color: #5cEfFF;">message</span>
+    <span style="color: #7bc275;">"Email </span><span style="color: #dcafe9;">#{self.email}</span><span style="color: #7bc275;"> is invalid."</span>
+  <span style="color: #51afef;">end</span>
+<span style="color: #51afef;">end</span>
+
+<span style="color: #51afef;">def</span> <span style="color: #5cEfFF;">user_email_update</span><span style="color: #51afef;">(</span>db, user, email<span style="color: #51afef;">)</span>
+  <span style="color: #51afef;">if</span> <span style="color: #FCCE7B;">EMAIL_REGEX</span> ~= email
+    db.update<span style="color: #51afef;">(</span><span style="color: #7bc275;">'UPDATE users SET email = ? WHERE user.id = ?'</span>, email, user.id<span style="color: #51afef;">)</span>
+  <span style="color: #51afef;">else</span>
+    <span style="color: #C57BDB;">raise</span> <span style="color: #FCCE7B;">InvalidUserEmailError</span>.new<span style="color: #51afef;">(</span>email<span style="color: #51afef;">)</span>
+  <span style="color: #51afef;">end</span>
+<span style="color: #51afef;">end</span>
+</pre>
+</div>
+
+<p>
+This has more than doubled the original size of our code, but all-in-all this
+isn&rsquo;t very complicated. It&rsquo;s primarily boilerplate, so we can hand wave off some
+of the complexity here.
+</p>
+
+<p>
+Now let&rsquo;s make this function more robust and cover another scenario that isn&rsquo;t
+ideal: What happens when the database connection has a problem? We have to catch
+the database exception error, and add some context to it with our own error.
+</p>
+
+<p>
+Maybe you don&rsquo;t do this often in your day-to-day software engineering, but
+consider this: If we see a database error when we call <code>user_email_update</code>, do
+we know for certain <span class="underline">which</span> database error it is? Why does a consumer of
+<code>user_email_update</code> need to have the knowledge of the type of database used, and
+the kinds of errors it produces? Instead of pushing these responsibilities upon
+the consumer, we can wrap those errors here. Then if we change database
+libraries, or database systems, or whatever we do, we can still produce the same
+errors and they carry the same meanings. This is how we enforce a good API
+contract between us (the producer) and the consumer.
+</p>
+
+<p>
+But it does complicate things more.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-ruby"><span style="color: #62686E;"># </span><span style="color: #62686E;">For our purposes, we're not going to go into what this is. Just imagine it is</span>
+<span style="color: #62686E;"># </span><span style="color: #62686E;">correct.</span>
+<span style="color: #FCCE7B;">EMAIL_REGEX</span> = <span style="color: #7bc275;">''</span>
+
+<span style="color: #51afef;">class</span> <span style="color: #FCCE7B;">InvalidUserEmailError</span> &lt; <span style="color: #FCCE7B;">Error</span>
+  <span style="color: #C57BDB;">attr_reader</span> <span style="color: #a991f1;">:email</span>
+
+  <span style="color: #51afef;">def</span> <span style="color: #5cEfFF;">initialize</span><span style="color: #51afef;">(</span>email<span style="color: #51afef;">)</span>
+    <span style="color: #dcafe9;">@email</span> = email
+  <span style="color: #51afef;">end</span>
+
+  <span style="color: #51afef;">def</span> <span style="color: #5cEfFF;">message</span>
+    <span style="color: #7bc275;">"Email </span><span style="color: #dcafe9;">#{self.email}</span><span style="color: #7bc275;"> is invalid."</span>
+  <span style="color: #51afef;">end</span>
+<span style="color: #51afef;">end</span>
+
+<span style="color: #51afef;">class</span> <span style="color: #FCCE7B;">UserDatabaseError</span> &lt; <span style="color: #FCCE7B;">Error</span>; <span style="color: #51afef;">end</span>
+
+<span style="color: #51afef;">def</span> <span style="color: #5cEfFF;">user_email_update</span><span style="color: #51afef;">(</span>db, user, email<span style="color: #51afef;">)</span>
+  <span style="color: #51afef;">if</span> <span style="color: #FCCE7B;">EMAIL_REGEX</span> ~= email
+    <span style="color: #51afef;">begin</span>
+      db.update<span style="color: #51afef;">(</span><span style="color: #7bc275;">'UPDATE users SET email = ? WHERE user.id = ?'</span>, email, user.id<span style="color: #51afef;">)</span>
+    <span style="color: #51afef;">rescue</span> <span style="color: #FCCE7B;">DatabaseConnectionError</span> =&gt; e
+      <span style="color: #C57BDB;">raise</span> <span style="color: #FCCE7B;">UserDatabaseError</span>.new<span style="color: #51afef;">(</span>e<span style="color: #51afef;">)</span>
+    <span style="color: #51afef;">end</span>
+  <span style="color: #51afef;">else</span>
+    <span style="color: #C57BDB;">raise</span> <span style="color: #FCCE7B;">InvalidUserEmailError</span>.new<span style="color: #51afef;">(</span>email<span style="color: #51afef;">)</span>
+  <span style="color: #51afef;">end</span>
+<span style="color: #51afef;">end</span>
+</pre>
+</div>
+
+<p>
+These examples might seem contrived, but these are the kinds of things we wind
+up doing as matter of course for our day to day software engineering lives. Our
+very nice code we started with is unrecognizable, and more importantly: Far more
+complicated.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org180706a" class="outline-3">
+<h3 id="org180706a"><span class="section-number-3">3.2.</span> Dropping Control Flow For Sanity</h3>
+<div class="outline-text-3" id="text-3-2">
+<p>
+We can drop the <code>if</code> and <code>try</code> control flow functionality to achieve a newer
+kind of code clarity. Note that we can still use <code>if</code> and <code>try</code> but the space in
+which they are employed is so small as to have trivial impact. The problem isn&rsquo;t
+necessarily that <code>if</code> and <code>try</code> are fundamentally broken, but that our usage of
+it in a large, branching function causes unnecessary cognitive burden.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-ruby"><span style="color: #C57BDB;">require</span> <span style="color: #7bc275;">'monad-oxide'</span>
+
+<span style="color: #51afef;">def</span> <span style="color: #5cEfFF;">user_email_update</span><span style="color: #51afef;">(</span>db, user, email<span style="color: #51afef;">)</span>
+  <span style="color: #FCCE7B;">MonadOxide</span>.ok<span style="color: #51afef;">(</span>email<span style="color: #51afef;">)</span>
+    .and_then<span style="color: #51afef;">(</span>-&gt;<span style="color: #C57BDB;">(</span>email<span style="color: #C57BDB;">)</span> <span style="color: #C57BDB;">{</span>
+      <span style="color: #FCCE7B;">EMAIL_REGEX</span> ~= email
+        ? <span style="color: #FCCE7B;">MonadOxide</span>.ok<span style="color: #7bc275;">(</span>email<span style="color: #7bc275;">)</span>
+        : <span style="color: #FCCE7B;">MonadOxide</span>.err<span style="color: #7bc275;">(</span><span style="color: #FCCE7B;">InvalidUserEmailError</span>.new<span style="color: #a991f1;">(</span>email<span style="color: #a991f1;">)</span><span style="color: #7bc275;">)</span>
+    <span style="color: #C57BDB;">}</span><span style="color: #51afef;">)</span>
+    .and_then<span style="color: #51afef;">(</span>-&gt;<span style="color: #C57BDB;">(</span>email<span style="color: #C57BDB;">)</span> <span style="color: #C57BDB;">{</span>
+      db.update<span style="color: #7bc275;">(</span><span style="color: #7bc275;">'UPDATE users SET email = ? WHERE user.id = ?'</span>, email, user.id<span style="color: #7bc275;">)</span>
+        <span style="color: #62686E;"># </span><span style="color: #FCCE7B; font-weight: bold;">TODO:</span><span style="color: #62686E;"> Show long hand, and then show how to shorten it thusly.</span>
+        .map_err<span style="color: #7bc275;">(</span>&amp;<span style="color: #FCCE7B;">UserDatabaseError</span>.new<span style="color: #7bc275;">)</span>
+    <span style="color: #C57BDB;">}</span><span style="color: #51afef;">)</span>
+<span style="color: #51afef;">end</span>
+</pre>
+</div>
+
+<p>
+The advantage here is that this is essentially branch-less. The only thing that
+can happen with <code>and_then</code> is that it either executes because the prior result
+was an <code>ok</code>, or it falls through because it was an <code>err</code>.
+</p>
+
+<p>
+We can arbitrarily add more and more of these and we still maintain a sort of
+pipeline.
+</p>
+
+<p>
+The chains become even more beneficial once we break individual elements of the
+chain into individual functions.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-ruby"><span style="color: #C57BDB;">require</span> <span style="color: #7bc275;">'monad-oxide'</span>
+
+<span style="color: #51afef;">def</span> <span style="color: #5cEfFF;">validate_email</span><span style="color: #51afef;">(</span>email<span style="color: #51afef;">)</span>
+  <span style="color: #FCCE7B;">EMAIL_REGEX</span> ~= email
+  ? <span style="color: #FCCE7B;">MonadOxide</span>.ok<span style="color: #51afef;">(</span>email.strip<span style="color: #C57BDB;">()</span><span style="color: #51afef;">)</span>
+  : <span style="color: #FCCE7B;">MonadOxide</span>.err<span style="color: #51afef;">(</span><span style="color: #FCCE7B;">InvalidUserEmailError</span>.new<span style="color: #C57BDB;">(</span>email<span style="color: #C57BDB;">)</span><span style="color: #51afef;">)</span>
+<span style="color: #51afef;">end</span>
+
+<span style="color: #51afef;">def</span> <span style="color: #5cEfFF;">update_email_db</span><span style="color: #51afef;">(</span>db, user, email<span style="color: #51afef;">)</span>
+  db.update<span style="color: #51afef;">(</span><span style="color: #7bc275;">'UPDATE users SET email = ? WHERE user.id = ?'</span>, email, user.id<span style="color: #51afef;">)</span>
+    <span style="color: #62686E;"># </span><span style="color: #FCCE7B; font-weight: bold;">TODO:</span><span style="color: #62686E;"> Show long hand, and then show how to shorten it thusly.</span>
+    .map_err<span style="color: #51afef;">(</span>&amp;<span style="color: #FCCE7B;">UserDatabaseError</span>.new<span style="color: #51afef;">)</span>
+<span style="color: #51afef;">end</span>
+
+<span style="color: #51afef;">def</span> <span style="color: #5cEfFF;">user_email_update</span><span style="color: #51afef;">(</span>db, user, email<span style="color: #51afef;">)</span>
+  validate_email<span style="color: #51afef;">(</span>email<span style="color: #51afef;">)</span>
+    .and_then<span style="color: #51afef;">(</span>-&gt;<span style="color: #C57BDB;">(</span>valid_email<span style="color: #C57BDB;">)</span> update_email_db<span style="color: #C57BDB;">(</span>db, user, valid_email<span style="color: #C57BDB;">)</span><span style="color: #51afef;">)</span>
+<span style="color: #51afef;">end</span>
+</pre>
+</div>
+
+<p>
+Here, all three functions are easy to reason about. You can&rsquo;t really screw these
+up because of how simple they are. Yet error handling is built in from the start
+without branching occurring in any meaningful way.
+</p>
+</div>
+</div>
+</div>
