@@ -1,3 +1,21 @@
+# Before adding things like .DS_Store, ignores for your editors, etc, consider
+# instead to use a global git ignore. This keeps the ignores here clean, and
+# specific to this project - not your text editor, OS, or other tooling.
+#
+# Attempts to ignore files specific to your configuration will be rejected.
+#
+# Please justify all ignore entries with comments.
+
+# Ignore Jekyll generated files.
 _site
 .sass-cache
 vendor/bundle
+
+# Ignore generated PDF files.
+*-resume-*.pdf
+
+# Ignore generated LaTeX files.
+*.tex
+
+# Ignore generated Markdown files.
+*.md
