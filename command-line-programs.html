@@ -1,0 +1,197 @@
+
+<div id="outline-container-orgaaea9b7" class="outline-2">
+<h2 id="orgaaea9b7"><span class="section-number-2">1.</span> Introduction</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+This is to provide a detailed checklist on what makes for a good command line
+program.
+</p>
+
+<p>
+The quick list:
+</p>
+
+<ol class="org-ol">
+<li>Provide usage information.</li>
+<li>Output parse-able output to <code>stdout</code>.</li>
+<li>Output logging to <code>stderr</code>.</li>
+<li>Have a <code>--help</code> that describes basic usage and general purpose.</li>
+<li>Use exit code 0 for expected results, and positive, non-zero exit codes for
+unexpected results.</li>
+</ol>
+</div>
+</div>
+
+<div id="outline-container-org5123815" class="outline-2">
+<h2 id="org5123815"><span class="section-number-2">2.</span> Disclaimer</h2>
+</div>
+
+<div id="outline-container-org3346539" class="outline-2">
+<h2 id="org3346539"><span class="section-number-2">3.</span> Help and Usage</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+Providing a help/usage information for your program is a must-have. Even
+simplistic programs should provide a brief description of what they do and any
+arguments they expect. The <span class="underline">program</span> must provide this information, not your
+code (though that has incredible merit as well).
+</p>
+
+<p>
+When a program isn&rsquo;t provided the information it needs, the <b>minimal</b> operation
+is to display the usage information and quit with a non-zero exit code.
+</p>
+
+<p>
+The usage information itself describes the arguments available, order (if
+applicable), required arguments vs. optional, and if the argument can be
+repeated (such as file names).
+</p>
+
+<p>
+IEEE has a <a href="https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap12.html">Utility Conventions</a> document that covers a standard formatting
+convention to use. Most programs I&rsquo;ve seen use this convention, and there&rsquo;s not
+really a great reason to abandon it. Many command line argument libraries
+provide this usage information automatically, but the onus is always on the
+program maintainer to provide documentation as to the purpose of the arguments
+themselves.
+</p>
+
+<p>
+Some programs can be very complicated and so require lots of explanations,
+examples, warnings, etc. This is where a <a href="https://liw.fi/manpages/">manual page</a> (or &ldquo;man page&rdquo;) comes in
+handy. I wouldn&rsquo;t worry too much about the ancient <code>troff</code> format. <a href="https://pandoc.org/">Pandoc</a>
+supports <a href="https://www.gnu.org/software/groff/groff.html">groff</a> (GNU&rsquo;s <code>troff</code>) and therefore can convert Markdown and Org-mode
+documents to man pages. Though I would check to make sure the output is rendered
+in a canonical fashion: There might be things in <code>troff</code> that a format like
+Markdown doesn&rsquo;t represent well like glossary definitions, for example.
+</p>
+
+<p>
+Your bare minimum can include the script name (which can typically be determined
+automatically), and any arguments you need.
+</p>
+
+<p>
+Here&rsquo;s an example of a bash script with zero arguments. You can use <code>$0</code> to
+refer to the script itself, and subsequent numbers refer to the ordered
+arguments. So <code>$1</code> is the first argument after the script name.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #62686E;">#</span><span style="color: #62686E;">!/usr/bin/</span><span style="color: #51afef;">env</span><span style="color: #62686E;"> bash</span>
+
+<span style="color: #51afef;">if</span> <span style="color: #51afef;">[</span><span style="color: #C57BDB;">[</span> $<span style="color: #e69055; font-weight: bold;">1</span> == <span style="color: #7bc275;">'--help'</span> || $<span style="color: #e69055; font-weight: bold;">1</span> == <span style="color: #7bc275;">'-h'</span> <span style="color: #C57BDB;">]</span><span style="color: #51afef;">]</span>; <span style="color: #51afef;">then</span>
+  <span style="color: #FCCE7B;">echo</span> <span style="color: #7bc275;">"usage: </span><span style="color: #a991f1;">$</span><span style="color: #dcafe9;">0</span>
+
+<span style="color: #7bc275;">Frobnicates anything needing frobnication.</span>
+<span style="color: #7bc275;">"</span>
+  <span style="color: #51afef;">exit</span> <span style="color: #e69055; font-weight: bold;">0</span>
+<span style="color: #51afef;">fi</span>
+
+<span style="color: #62686E;"># </span><span style="color: #62686E;">The rest of the script goes below.</span>
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org660c6e4" class="outline-2">
+<h2 id="org660c6e4"><span class="section-number-2">4.</span> Logging and Output</h2>
+<div class="outline-text-2" id="text-4">
+<p>
+Typically a lot of command line programs are rather silent - they don&rsquo;t output
+much. It&rsquo;s totally fine though to sprinkle logging throughout your program - in
+fact, for all but the most trivial programs I encourage this! But be sure to
+provide a distinction between <b>logging</b> and <b>output</b>.
+</p>
+</div>
+
+<div id="outline-container-orgf29ccc0" class="outline-3">
+<h3 id="orgf29ccc0"><span class="section-number-3">4.1.</span> Logging and Log Levels</h3>
+<div class="outline-text-3" id="text-4-1">
+<p>
+Logging is the program printing out diagnostic or progress information to the
+user. &ldquo;Found file X&rdquo;, &ldquo;Calling server with $URL&rdquo;, and &ldquo;Server rejected our call
+with message&#x2026;&rdquo; are all great things to have in your logs. Logs should always
+go to <code>stderr</code> (standard error). Different languages tend to use different names
+for this. Ruby&rsquo;s writing to <code>stderr</code> is called <code>warn</code> and Node.JS uses
+<code>console.error</code>. That said, it&rsquo;s recommended to use a logger with log levels.
+This way you can distinguish apart messages for errors, general information,
+warnings, debugging statements, and so on. Most loggers can be configured to
+point at a particular destination. One of those can be whatever your languages
+uses for <code>stderr</code>, which is covered in your language&rsquo;s documentation. Logging
+always goes to <code>stderr</code> so that other programs (usually shells) can use program
+output without having to be aware of any kind of logging. We&rsquo;ll cover this more
+in <a href="#orgfd57314">4.2</a>.
+</p>
+
+<p>
+Additionally for logging, this sort of information can be provided via
+arguments. I&rsquo;ve seen <code>--debug</code>, <code>--verbose</code>, <code>--info</code> and other flags like this.
+I don&rsquo;t prefer them because they are both subjective. I&rsquo;ve seen a suite of
+programs inconsistently use <code>--debug</code> and <code>--verbose</code> for the same thing, for
+example. Additionally, if both <code>--debug</code> and <code>--info</code> arrive as a result of some
+automation gone wonky, what happens there? Does it log <code>--debug</code>? <code>--info</code>? Does
+your documentation state which one wins? Or do you put in login into the
+argument handling to make sure these are exclusive arguments? I really like how
+<code>ssh</code> handles it: There is a single short-hand <code>-v</code> argument for verbosity. You
+can dial up the verbosity with additional &ldquo;v&rdquo;s. So <code>-vvv</code> is the 3rd level of
+verbosity.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgfd57314" class="outline-3">
+<h3 id="orgfd57314"><span class="section-number-3">4.2.</span> Output</h3>
+<div class="outline-text-3" id="text-4-2">
+<p>
+Output should always be printed to <code>stdout</code> (apart from logging, which goes to
+<code>stderr</code>). This allows other programs (such as shells) to easily work with
+output. For example, <code>curl</code> uses this pattern to much obviousness:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #FCCE7B;">curl</span> -v https://google.com &gt; /dev/null
+</pre>
+</div>
+
+<p>
+Here, you can see all of the verbose information that curl prints - headers in
+both the request and response, as well as the SSL handshake. We could redirect
+that to a saved file.
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org3b0f37f" class="outline-2">
+<h2 id="org3b0f37f"><span class="section-number-2">5.</span> Exit Codes</h2>
+<div class="outline-text-2" id="text-5">
+<p>
+Exit codes are unsigned 8 bit numbers (0-255). 0 is interpreted as success.
+Everything else is a failure. These are used to not only detect failures in a
+series of programs, but also determine what kind of failure.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">nosuchcommand <span style="color: #62686E;"># </span><span style="color: #62686E;">Run a fake command to create a failure.</span>
+</pre>
+</div>
+
+<p>
+By default, shells will keep running commands regardless of failure. This can
+have poor consequences.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">create-report-now-please my-report.rpt <span style="color: #62686E;"># </span><span style="color: #62686E;">Fake command. Will fail.</span>
+<span style="color: #62686E;"># </span><span style="color: #62686E;">my-report.rpt was never created by the time we get here. Since there are no</span>
+<span style="color: #62686E;"># </span><span style="color: #62686E;">reports, this publish-all-reports command could omit any errors since there</span>
+<span style="color: #62686E;"># </span><span style="color: #62686E;">are no reports found to publish, or perhaps it found some reports, but just</span>
+<span style="color: #62686E;"># </span><span style="color: #62686E;">not "my-report.rpt".</span>
+publish-all-reports
+</pre>
+</div>
+</div>
+</div>
