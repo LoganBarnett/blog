@@ -82,9 +82,15 @@ road to well maintained and understood software.
 :PROPERTIES:
 :CUSTOM_ID: job-experience
 :END:
-** Principal Instructor at Alchemy Code Lab (2022-current)
+** NWEA (2023-current)
 :PROPERTIES:
-:CUSTOM_ID: job-experience--principal-instructor-at-alchemy-code-lab-2022-current
+:CUSTOM_ID: job-experience--nwea-2023-current
+:END:
+Alchemy had to close its doors. I'd left NWEA better than I'd found it, and they
+were happy to have me back. I resumed work at DevOps.
+** Principal Instructor at Alchemy Code Lab (2022-2023)
+:PROPERTIES:
+:CUSTOM_ID: job-experience--principal-instructor-at-alchemy-code-lab-2022-2023
 :END:
 ** NWEA (2016-2022)
 :PROPERTIES:
