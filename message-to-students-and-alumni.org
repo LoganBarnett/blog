@@ -1,0 +1,134 @@
+#+title:     A Message to Students and Alumni
+#+author:    Logan Barnett-Hoy
+#+email:     logustus@gmail.com
+#+date:      <2023-03-31 Fri>
+#+language:  en
+#+file_tags:
+#+tags:
+
+As a fresh college graduate I was eager to jump right into the workforce just
+like y'all are now. I hit up all the online sources, sent lots of applications
+out, and tried to present myself as the perfect candidate for each hand picked
+position I thought I could ace. I had a wall of opportunities (WoO) for short
+where I pinned all of my in-flight applications. It didn't take long before
+bills became due. I had a job via my college, so upon graduation I was without
+any kind of work. I wound up following a lot of my classmates to scrub radar
+parts at around $10/hr or something lower.
+
+It took a year before something finally nibbled at UHaul. The manager there
+needed someone to take over a completely parked project that had no active
+engineers on it. The manager really didn't know how to evaluate my abilities or
+anything. He literally said "think you can do this?" And turned his laptop
+around. It had a bunch of HTML templates. I'd never seen it before. But I
+remember thinking "I see a for loop inside of HTML, I bet I can figure this
+out", and so I said "yes". That was my technical interview. The manager needed
+someone, and I seemed like I could do it.
+
+That was my first and last cold call job I'd gotten. One job in my career was
+facilitated via a recruiter (who aren't relevant here since they don't tend to
+invest time in unproven talent).
+
+You're probably tired of hearing that networking is what gets you jobs. I would
+be. You don't have a network. You're like a wizard looking for magic jobs but
+all you know are muggles. It's rough. And you must fix it. Ruthie has told you
+about doing coffee chats. I second that. I'll add to it (for PDX locals) that
+you need to get on calagator, find an event you think you might remotely like,
+and commit to going. Lots of people who are shy or even socially inept go to
+these things. I speak both as an observer and as a attendee of these things.
+
+I was really into the idea of game development. I attended IGDA meetings
+religiously. I learned of a coworker at UHaul from another department was a
+kindred spirit. The people I met there enriched me, but also landed me three
+jobs directly, and a fourth indirectly. Only one of those jobs actually had
+anything to do with game development. Such is the odd flow of life.
+
+If this feels like schmoozing or otherwise is a greasy thing to do, you need to
+revisit that. The basic things people are trying to figure out from a candidate
+are whether or not the candidate can do the job, but also if you're an asshole
+to work with (often disguised as "culturally compatible", "googliness", etc).
+Folks from your network answer one of the two questions: they can say you're a
+culture fit. They might even be able to speak to your ability. Having an awful
+coworker is a terrible fate, and the world at large goes to extreme measures to
+avoid it.
+
+I'm not the most social person. Over a 1:1, ask me about "PI planning" some time
+and I'll have some stories. When I go to these gatherings, I bring my laptop
+with me and hack on something. The PDX Angular meetup has photographic evidence
+of me doing this. Is it the fast road to networking? Maybe not. But people will
+curiously ask you what you're doing. It becomes an ice breaker.
+
+Places are still hiring. They need people of all skill levels. Believe me, I
+have tasks I can't give to experienced team members because they are above it,
+but the less experienced members gobble it up. And all of these workplaces are
+behind, have mounting tech debt, or can't move onto better things because it
+takes all of their effort just to keep the machinery running.
+
+My workplace will be hiring soon after the merger it's in the middle of
+finishes. But I can't find places for the 60 or so of you that I know. And
+before you play that card, you're all equally special to me :)
+
+All that to say that there's jobs out there, and you've been told the statistics
+are that a vast majority of jobs are not acquired through online postings. Sure,
+you're always going to find the exception to the rule. Everyone has some story
+about how they got the job which differs from the standing advice. The real
+reason is that the stars aligned perfectly - opportunity met determination and
+skill and a job placement was born. That's how _all_ of them work. You need to
+enhance your serendipity, and the best way to do that is spend more time around
+(employed) wizards, even possibly at expense of social time with your favorite
+muggles. At least until your foot is in the door.
+
+This is the edited post to get under LinkedIn's 3000 character limit. Some of it
+is actually better.
+#+begin_quote
+This is directed at my prior students, recent graduates, etc. but if you've made
+it to the other side, especially those of you with established careers, please
+weigh in.
+
+As a fresh college graduate I was eager to jump right into the workforce just
+like y'all are now. I hit up all the online sources, sent lots of applications
+out, and tried to present myself as the perfect candidate for each hand picked
+position I thought I could ace. I had a wall of opportunities (WoO) for short
+where I pinned all of my in-flight applications. Bills became due. I had a job
+via my college, so upon graduation I was without any kind of work. I wound up
+following a lot of my classmates to scrub radar parts at around $10/hr or
+something lower.
+
+It took a year before something finally nibbled at UHaul. The manager didn't
+have means to evaluate my abilities. He literally said "think you can do this?"
+and turned his laptop around. It had a bunch of HTML templates. I'd never seen
+it before. But I remember thinking "I see a for loop inside of HTML, I bet I can
+figure this out", and so I said "yes". That was my technical interview.
+
+That was my first and last cold call job I'd gotten.
+
+You're probably tired of hearing that networking is what gets you jobs. I would
+be. You don't have a network. You're like a wizard looking for magic jobs but
+all you know are muggles. It's rough. And you must fix it. Ruthie has told you
+about doing coffee chats. I second that. I'll add to it (for PDX locals) that
+you need to get on calagator, find an event you think you might remotely like,
+and commit to going. Lots of people who are shy or even socially inept go to
+these things. I speak both as an observer and as a attendee of these things.
+
+I attended IGDA meetings religiously. The people I met there enriched me, but
+also landed me three jobs directly, and a fourth indirectly.
+
+If this feels like schmoozing, you need to revisit that. You need a job, and the
+schmoozers are beating you to it.
+
+Not social? Bring a laptop and hack on a project. That's what I do.
+
+Places are still hiring. They need people of all skill levels. Believe me, I
+have tasks I can't give to experienced team members because they are above it,
+but the less experienced members gobble it up. All of these workplaces are
+behind, have mounting tech debt, or are barely holding on with current staff.
+
+There's jobs out there, and you've been told the statistics are that a vast
+majority of jobs are not acquired through online postings. Sure, you're always
+going to find the exception to the rule. Everyone has a story about how they got
+the job which differs from the standing advice. The real reason is that the
+stars aligned perfectly and a job placement was born. That's how _all_ of them
+work. You need to enhance your serendipity, and the best way to do that is spend
+more time around (employed) wizards, even possibly at expense of social time
+with your favorite muggles. At least until your foot is in the door.
+
+#+end_quote
