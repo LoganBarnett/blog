@@ -1296,6 +1296,12 @@ to refuse shelter to any of the goodly races during this 30 day period.
 
      Discovery of a Quvitol member, in the best of circumstances, is exile.
      Though the reactions can often get the Quvitol member killed.
+** magic items
+:PROPERTIES:
+:CUSTOM_ID: dirshum--magic-items
+:END:
+
+#+include: "../../notes/dm.org::#campaigns--era-of-eras--wand-of-woe--economy--magic-items" :only-contents t
 
 ** map
    :PROPERTIES:
