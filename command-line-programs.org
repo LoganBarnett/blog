@@ -80,6 +80,17 @@ much. It's totally fine though to sprinkle logging throughout your program - in
 fact, for all but the most trivial programs I encourage this! But be sure to
 provide a distinction between *logging* and *output*.
 
+The [[https://en.wikipedia.org/wiki/Unix_philosophy][Unix philosopy]] has a lot of useful tidbits in it, but of particular note is
+this item:
+
+#+begin_quote
+Expect the output of every program to become the input to another, as yet
+unknown, program. Don't clutter output with extraneous information. Avoid
+stringently columnar or binary input formats. Don't insist on interactive input.
+#+end_quote
+
+This flows into very practical advice for logging and your program output.
+
 ** Logging and Log Levels
 
 Logging is the program printing out diagnostic or progress information to the
@@ -114,9 +125,88 @@ Output should always be printed to =stdout= (apart from logging, which goes to
 =stderr=). This allows other programs (such as shells) to easily work with
 output. For example, =curl= uses this pattern to much obviousness:
 
-#+begin_src shell :results output drawer
-curl -v https://google.com > /dev/null
-#+end_src
+ #+begin_src shell :results output drawer scalar
+ echo '* foo'
+ #+end_src
+
+ #+RESULTS:
+ :results:
+ * foo
+ :end:
+
+
+ #+begin_src shell :results output drawer
+ curl -k --verbose --silent https://google.com > /dev/null
+ #+end_src
+
+ #+RESULTS:
+ :results:
+ *   Trying 172.217.165.142:443...
+ * Connected to google.com (172.217.165.142) port 443
+ * ALPN: curl offers h2,http/1.1
+ } [5 bytes data]
+ * TLSv1.3 (OUT), TLS handshake, Client hello (1):
+ } [512 bytes data]
+ * TLSv1.3 (IN), TLS handshake, Server hello (2):
+ { [122 bytes data]
+ * TLSv1.3 (IN), TLS handshake, Encrypted Extensions (8):
+ { [15 bytes data]
+ * TLSv1.3 (IN), TLS handshake, Certificate (11):
+ { [6486 bytes data]
+ * TLSv1.3 (IN), TLS handshake, CERT verify (15):
+ { [79 bytes data]
+ * TLSv1.3 (IN), TLS handshake, Finished (20):
+ { [52 bytes data]
+ * TLSv1.3 (OUT), TLS change cipher, Change cipher spec (1):
+ } [1 bytes data]
+ * TLSv1.3 (OUT), TLS handshake, Finished (20):
+ } [52 bytes data]
+ * SSL connection using TLSv1.3 / TLS_AES_256_GCM_SHA384
+ * ALPN: server accepted h2
+ * Server certificate:
+ *  subject: CN=*.google.com
+ *  start date: Oct 16 08:02:35 2023 GMT
+ *  expire date: Jan  8 08:02:34 2024 GMT
+ *  issuer: C=US; O=Google Trust Services LLC; CN=GTS CA 1C3
+ *  SSL certificate verify result: unable to get local issuer certificate (20), continuing anyway.
+ } [5 bytes data]
+ * using HTTP/2
+ * [HTTP/2] [1] OPENED stream for https://google.com/
+ * [HTTP/2] [1] [:method: GET]
+ * [HTTP/2] [1] [:scheme: https]
+ * [HTTP/2] [1] [:authority: google.com]
+ * [HTTP/2] [1] [:path: /]
+ * [HTTP/2] [1] [user-agent: curl/8.4.0]
+ * [HTTP/2] [1] [accept: */*]
+ } [5 bytes data]
+ > GET / HTTP/2
+ > Host: google.com
+ > User-Agent: curl/8.4.0
+ > Accept: */*
+ > 
+ { [5 bytes data]
+ * TLSv1.3 (IN), TLS handshake, Newsession Ticket (4):
+ { [282 bytes data]
+ * TLSv1.3 (IN), TLS handshake, Newsession Ticket (4):
+ { [282 bytes data]
+ * old SSL session ID is stale, removing
+ { [5 bytes data]
+ < HTTP/2 301 
+ < location: https://www.google.com/
+ < content-type: text/html; charset=UTF-8
+ < content-security-policy-report-only: object-src 'none';base-uri 'self';script-src 'nonce--OE5YCTTXd0EHjveIPRvtg' 'strict-dynamic' 'report-sample' 'unsafe-eval' 'unsafe-inline' https: http:;report-uri https://csp.withgoogle.com/csp/gws/other-hp
+ < date: Thu, 16 Nov 2023 02:27:21 GMT
+ < expires: Sat, 16 Dec 2023 02:27:21 GMT
+ < cache-control: public, max-age=2592000
+ < server: gws
+ < content-length: 220
+ < x-xss-protection: 0
+ < x-frame-options: SAMEORIGIN
+ < alt-svc: h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+ < 
+ { [220 bytes data]
+ * Connection #0 to host google.com left intact
+ :end:
 
 Here, you can see all of the verbose information that curl prints - headers in
 both the request and response, as well as the SSL handshake. We could redirect
