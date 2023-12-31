@@ -1,0 +1,171 @@
+#+title:     Perfectionism in Software Engineering
+#+author:    Logan Barnett
+#+email:     logustus@gmail.com
+#+date:      <2021-02-24 Wed>
+#+language:  en
+#+file_tags:
+#+tags:
+
+* Why should you read this?
+
+I'm a software engineer by trade.  I write software, scripts, and do loads of
+automation.  I like using technology to solve problems, and I have a low
+tolerance for pain.  At time of writing I've been doing software engineering for
+17 years now.  That's 17 years of making mistakes, and making an honest attempt
+at learning from those mistakes.  I like to think that's given me some
+perspective, and part of that perspective is that I can easily be wrong, or not
+quite right, or maybe I learned a lesson from some painful experience but it was
+the wrong one.  I don't have all the answers - really this is just me processing
+some of my own difficulties, and publishing the thought process in a somewhat
+structured form.
+
+* Perfectionism: A problem?
+
+"Perfect is the enemy of good", is the old saying.  I think there's some merit
+to this statement, but like any quip it's ripe for abuse.  If we generally
+consider perfectionism to be bad, we need to have a good definition of what that
+is first.  Otherwise it becomes the Nazi punching problem, where you can punch
+anyone you want so long as you can find a way to relate them to Nazis.
+
+The best, real world definition I've seen of perfectionism is simply something
+absent of any flaws.  The world of engineering can be thought of as the
+intersection of science and economy - we apply science using real world
+restrictions (that's where economy comes in).  Much of engineering is about
+analyzing the trade-offs of potential paths, and selecting a path whose negative
+aspects are minimal in our context, and our positive aspects are maximal.  It's
+imperfect, and can be difficult to precisely quantize.  Therefore we need to be
+okay with things having flaws, with having imperfections.  To do that we must
+accept that we learn as we go, and we improve using the hindsight we collect.
+
+A term I hear a lot, and reject wholly, is "over-engineering".  This is a
+catch-all term for when someone thinks a job is too much.  Oftentimes is this
+slung about by folks not maintaining the software.  I'm not claiming
+over-engineering doesn't exist, but instead saying I think we need some other
+mechanism to describe the problems we observe.  I am a huge fan of Rick Hickey's
+Simple Made Easy talk, where he describes what makes something simple vs.
+complex vs.  easy vs.  hard, in abstract senses that are not specific to any
+technology.  My main takeaway from that is that we should favor what is simple,
+but not necessarily easy.  Easy creates complexity, and complexity is what leads
+to expensive rewrites.
+
+* The model of files
+
+Consider the model of POSIX systems: Everything is a file.  Typically we think
+of files as being inert blobs of binary data, possibly indecipherable without
+the assistance of some program.  Sometimes this is more or less the case, but in
+POSIX, files are entities that can be written to or read from.  That's it! And
+so, on any POSIX system you will see a =/dev= directory, which hosts all of the
+devices for the system.  Devices could include storage disks, serial ports,
+CPUs, etc, but also software concepts such as processes.  Reading from and
+writing to these files has special meaning in a sense - from the hardware's
+perspective this means reading from a serial port is a different operation from
+reading from =/dev/stdin=, but that doesn't matter (and that's the beauty of
+it).  The hardware operations are abstracted away, and you simply have this
+"file" thing that you can write to or read from.  When our noun of our language
+is "file" and our verbs are simply "read" and "write", we have a very simply
+language! Through composition of reading and writing to files, a powerful
+computing architecture emerges from that.  One where you can potentially talk to
+any device, and that device talks to you.  If you provide a device, you simply
+translate what it means to be written to or be read from.  This is the core of
+what they mean in any introductory course of computers where the describe the
+computer as some device that takes an input and produces an output (IO).
+
+Was this system developed as some minimum viable product (MVP)? Did someone chop
+it into sprints, and work on two week increments of collected items? Of course
+not.  Thought was put into it.  This required thinking, diagrams, writing
+documentation, and mulling over it.  This is the reason we chose to be software
+engineers.  Maybe some people really like the day to day of backlog grooming
+sessions, and stressing to either meet arbitrary Scrum deadlines or haggling
+abstract estimates high enough to keep themselves from looking bad.
+
+POSIX was the product of software engineering.  By today's standards, this
+system is "over-engineered".  But remember: You've seen over-engineering before.
+You've seen someone take a simple problem and concoct a complex solution for it.
+"POSIX isn't over-engineering!" folks will likely say.  But whose Agile systems
+would've allowed for the creation of such a thing, without hindsight in advance?
+Will the system you build still be in use 50 years from now? 10? 5? 1?
+
+You need time to think about and model your problem.  If this time cannot be
+taken then you will forever remain in the cycle of write-and-rewrite.  With no
+model of your system, it's just guesswork.  Guesswork doesn't allow you to throw
+a large dart at Pluto and have it arrive within 70 seconds of its intended
+timing, years later.
+
+* Perpetuating problems
+
+So what if you're already in the guesswork phase? For one reason or another you
+inherited a mess, perhaps one of your own making, or someone else's - it doesn't
+matter.  You face a problem: Virtually anything you do will perpetuate _some_
+problem within the mess.  There are simply too many things to consider.  You
+become paralyzed with what to do.  If you clean as you go, every seemingly
+simple task becomes a yak shaving event, where the task you find yourself at is
+so distant from your original goal that the connection cannot be understood
+without a lengthy explanation.
+
+This is the point where your technical debt has caused a cognitive collapse.
+Generally, this is where people reach for a re-write, or some other event that
+amounts tot he same thing: Throw away the inheritance and start over.  "This
+time will be different" myself and others have said.  It's never different.
+Rewrites are to be avoided because it's running away from our problem.  You're
+just going to accrete more technical debt that eventually causes another
+collapse, and next time you won't get a re-write.  You will have spent enormous
+political capital saying "I must disappear for months, and then I will come back
+with a new version of the software that is not nearly as battle tested, and
+won't even have feature parity- meanwhile the existing software will be
+neglected".  Nobody cuts that check twice.
+
+Is that to say you can't jump to some new technology? Of course not, but
+generally speaking in the world of software you can have separate software
+coexist.  A spiffy new web server can delegate calls to the original server, for
+requests it cannot yet fulfill itself.  Piece by piece, the old service is
+replaced with the new one, and none are the wiser to what's going on.  A series
+of utilities written in language X can be replaced, one at a time, with
+utilities written in language Y.  The best part of this approach is generally
+this doesn't require sign-off from the non-technical side of your organization.
+
+So you're stuck with the current system, and while you might have the new system
+slowly pushing out the old system, you still need to make decisions about how
+much you bite off.  Imagine a house in serious disrepair.  The occupants carry
+batteries and flash lights, because the electrical is bad in every way it can
+be.  The wiring is faulty, breakers are broken, some sockets deliver to much
+voltage and destroy anything plugged into them.  When you arrive, the occupants
+shout at you "I can't see! It is too dark!".  Of course they can't - they are
+using flash lights and so they can't see well.  You start by trying to turn on
+the lights, and it doesn't work.  You examine the light bulb - it is burnt out.
+You replace the light bulb and flip the switch, but the light does not turn on.
+You break out electrical tools, and observe that the light bulb isn't receiving
+current at all.  You examine to switch and find it to be faulty.  You replace
+the switch.  When you deliver power, there is a bang, and the new light bulb is
+immediately destroyed.  The light bulb being broken was a problem.  The light
+switch being faulty was a problem.  The core issue though is that the electrical
+system is systemically broken.  Does this sound familiar? In this analogy, a
+re-write is like saying "This is beyond repair - I'm going to go build another
+house from scratch".  We never asked the question "How did it get like this in
+the first place?", which means we're almost certainly going to make it happen in
+the next house.  Meanwhile, the occupants still have a hard time seeing.
+
+Keeping with this analogy - we should ask ourselves: At what point would it be
+reasonable to drag in a very large flash light, so the occupants can see?
+Pulling in a new flash light contributes to the problem: We have a lot of flash
+lights and they are not adequate for providing light in rooms.  But if we pull
+in big ones, we might be able to squeeze by.  In the meantime we're bogged down
+with constantly refreshing the batteries for the flash lights.
+
+This is a nightmare that every engineer I know has experienced.  We oftentimes
+walk away from these problems after a while (find employment elsewhere, stop
+maintaining the project, quit the career altogether, etc).  How does an engineer
+overcome this?
+
+Some things I have found to mitigate the issue, which seems to work (although
+not complete):
+
+1. Make work tickets when you find problems instead of fixing them on the spot.
+   This keeps you out of deep rabbit holes and yak shaving enterprises.  Beware:
+   This can turn into its own kind of tech debt.  You find yourself wondering if
+   you made a ticket for something already, or you hunt for tickets where you
+   tally up all of the transgressors for a particular issue.  Furthermore, if
+   you never get a chance to return to these tickets, then you're just adding
+   overhead in the form of documented venting.  Therapy has value, but it may be
+   diminished with the overhead that comes with creating and maintaining proper
+   tickets.
+2.
