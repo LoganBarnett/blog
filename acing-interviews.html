@@ -1,0 +1,662 @@
+---
+layout: default
+title: Acing Interviews for Software Engineering Positions
+date: 2022-08-16
+categories: software-engineering
+---
+<div id="outline-container-introduction" class="outline-2">
+<h2 id="introduction"><span class="section-number-2">1.</span> Introduction</h2>
+<div class="outline-text-2" id="text-introduction">
+<p>
+I&rsquo;ve seen a lot of clamor over trying to &ldquo;ace&rdquo; interviews for software
+engineering positions. While interviews can definitely go well and poorly, there
+generally isn&rsquo;t a prescribed &ldquo;right way&rdquo; to do something. In this article, we&rsquo;ll
+cover how interviews are put together, and what they target. We&rsquo;ll identify
+objectively &ldquo;bad&rdquo; interviews, and we&rsquo;ll describe how good interviews work.
+</p>
+</div>
+</div>
+<div id="outline-container-who-puts-together-interviews" class="outline-2">
+<h2 id="who-puts-together-interviews"><span class="section-number-2">2.</span> Who Puts Together Interviews</h2>
+<div class="outline-text-2" id="text-who-puts-together-interviews">
+<p>
+Interviews are generally put together by a team lead. Higher-ups want to give
+teams the agency for teams to do the filtering they want, so they stay out of
+that process. I&rsquo;ve seen some interview processes where higher-ups get involved
+in a &ldquo;meet and greet&rdquo; fashion, so in a sense they retain some kind of veto
+power. &ldquo;Boss is an institution of mistrust&rdquo;. It makes them feel better. Let them
+have it.
+</p>
+
+<p>
+Team leads almost universally share some qualities which impacts how interviews
+are structured and conducted:
+</p>
+</div>
+<div id="outline-container-who-puts-together-interviews--team-leads-are-perpetually-behind" class="outline-3">
+<h3 id="who-puts-together-interviews--team-leads-are-perpetually-behind"><span class="section-number-3">2.1.</span> Team Leads are Perpetually Behind</h3>
+<div class="outline-text-3" id="text-who-puts-together-interviews--team-leads-are-perpetually-behind">
+<p>
+If a team lead isn&rsquo;t fighting to keep down tech debt in their own project, then
+they are inherently allowing that tech debt to run its course through the
+software. Fighting for tech debt usually means either they are spending a lot of
+time helping with tech debt or they are buried in deliverables because they
+spent a lot of time on that tech debt. In either case, the team lead runs around
+like a ferret on amphetamines, trying to quickly resolve what they can before
+moving onto the next thing.
+</p>
+
+<p>
+How this comes out in interviews is that team leads will borrow other interview
+material, or be quick to reuse or adapt some other material. They don&rsquo;t need
+something perfect, they just need something close enough.
+</p>
+</div>
+</div>
+<div id="outline-container-who-puts-together-interviews--team-leads-want-thinkers" class="outline-3">
+<h3 id="who-puts-together-interviews--team-leads-want-thinkers"><span class="section-number-3">2.2.</span> Team Leads Want Thinkers</h3>
+<div class="outline-text-3" id="text-who-puts-together-interviews--team-leads-want-thinkers">
+<p>
+This is fairly universal: Team leads want good thinkers on their teams. I have
+seen managers that want warm bodies - butts in seats which is about as close to
+the archaic measurement of &ldquo;lines of code&rdquo; delivered per day. You aren&rsquo;t a warm
+body, so you&rsquo;ll naturally repel anyone who is looking for them.
+</p>
+
+<p>
+It&rsquo;s a human bias that team leads want someone like themselves: Folks who can
+think through a problem and be able to solve it with some amount of autonomy,
+and arrive at that solution in a way they find tolerable if not agreeable.
+</p>
+
+<p>
+The leads who want thinkers will try to tailor their interviews in ways that
+make you think.  We&rsquo;ll go into what that looks like in a bit.
+</p>
+</div>
+</div>
+<div id="outline-container-who-puts-together-interviews--team-leads-are-tired-of-cleaning-up-messes" class="outline-3">
+<h3 id="who-puts-together-interviews--team-leads-are-tired-of-cleaning-up-messes"><span class="section-number-3">2.3.</span> Team Leads are Tired of Cleaning up Messes</h3>
+<div class="outline-text-3" id="text-who-puts-together-interviews--team-leads-are-tired-of-cleaning-up-messes">
+<p>
+Every team lead is running around frantically trying to put out fires, meet
+deadlines, and keep the software from imploding on itself like a neutron star
+that&rsquo;s growing just a little too heavy.
+</p>
+
+<p>
+Cleaning up messes that didn&rsquo;t need to be there in the first place is one of the
+constant slights a team lead must endure, and they will use whatever agency they
+have to minimize that. In an interview context that means filtering out people
+who leave messes to clean up later, innocently believing that they are doing the
+right thing.
+</p>
+
+<p>
+I find everyone wants &ldquo;quality code&rdquo; (or more accurately but not stated as such:
+quality work). As an industry we struggle to agree on these things sometimes.
+That&rsquo;s okay. The interviewer wants to make sure you&rsquo;re a good fit for them just
+as you&rsquo;re (hopefully) trying to make sure they&rsquo;re a good fit for you.
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-the-goals-of-interview-challenges" class="outline-2">
+<h2 id="the-goals-of-interview-challenges"><span class="section-number-2">3.</span> The Goals of Interview Challenges</h2>
+<div class="outline-text-2" id="text-the-goals-of-interview-challenges">
+<p>
+By &ldquo;challenges&rdquo;, I mean programming exercises, questions, etc. They might not
+all be asking for emissions of code per se, but these are any sort of prompts
+which are looking to tease out technical aptitude.
+</p>
+</div>
+<div id="outline-container-the-goals-of-interview-challenges--does-the-résumé-match" class="outline-3">
+<h3 id="the-goals-of-interview-challenges--does-the-résumé-match"><span class="section-number-3">3.1.</span> Does the Résumé Match</h3>
+<div class="outline-text-3" id="text-the-goals-of-interview-challenges--does-the-résumé-match">
+<p>
+A lot of résumés will have &ldquo;proficiency with &lt;tool&gt;&rdquo; and similar statements.
+Similarly, there might be experience implied from various accomplishments on the
+résumé. Interviewers generally have an idea that we&rsquo;re all required to put these
+buzzword lists on our résumés so we can survive past the initial screens
+conducted by the uninitiated. The lead said &ldquo;I need people with some JavaScript
+experience&rdquo;, and résumés stating &ldquo;I did some JS a while ago, and while I&rsquo;m
+confident I can get back into it quickly, I honestly haven&rsquo;t had a lot of recent
+practice with it&rdquo; get culled by screeners. Sadly, it&rsquo;s also because some folks
+really have inflated ideas of what &ldquo;proficient&rdquo; really means for a tool, and it
+will differ greatly from what the interviewer considers proficient.
+</p>
+
+<p>
+So an interview may be designed to tease out proficiency in things you already
+said or demonstrated you are proficient in. Sometimes this means some simple
+tasks. Things where it might seem like there&rsquo;s a trick question laying in the
+thick somewhere. And, to be fair, there might be. But regardless, this is going
+to be a part of the challenges. Do you know some of the jargon, pitfalls,
+hardships, or subtleties of the topic? They&rsquo;ll be gunning for that. I wouldn&rsquo;t
+worry about this too much. It doesn&rsquo;t hurt to remind the interviewer that you&rsquo;re
+30 seconds of Googling to figuring out some of those silly API related questions
+that are right out of technical documentation.  I&rsquo;ve literally said in an
+interview &ldquo;I don&rsquo;t know how to do that readily, but I know it can be done and I
+could look up it up a minute.  That said, I would want to see some good
+justification of why we&rsquo;d be doing &lt;hacky thing&gt;.&rdquo;  The interview wrapped up
+right then and there and I got a job offer as a Angular.JS guru.
+</p>
+
+<p>
+I&rsquo;ve definitely encountered individuals who have made some steep claims of being
+&ldquo;familiar&rdquo; with various technologies, but clearly don&rsquo;t know how to use them.
+A recent example was being &ldquo;very familiar&rdquo; with Docker, but not knowing how
+simple shell scripts work - which is an underlying necessity of all but the most
+trivial usage of Docker. It&rsquo;s okay to not know things, but when you encounter
+someone like this in the workplace, you end up doing a lot of their job for
+them. It&rsquo;s best to know up front if you&rsquo;re signing up for this kind of work, or
+signing your team up for it.  I want to stress this again though: It&rsquo;s really
+okay to not know things.
+</p>
+
+<p>
+As an interviewer I ideally want to find the boundaries of your knowledge on the
+topic.  Do you have passing familiarity?  Have you used this tool in anger yet?
+What sort of pitfalls have you encountered and how did you overcome them?  What
+would you do differently if you had to do it again?  But also there will be
+targeted questions.  For a coding challenge I had to conduct using coinage, I
+frequently asked why used floating point numbers for money.  I never really got
+an answer.  Okay fair - as someone working in web that probably doesn&rsquo;t come up
+much, but I&rsquo;d hope senior level interviewees could tell me <span class="underline">something</span> about it.
+If you&rsquo;re making database skins at the senior level, you should have a decent
+idea of how to handle money safely.  The one interviewee I had that <span class="underline">didn&rsquo;t</span> use
+floating point numbers got asked why he didn&rsquo;t use them - ha! There&rsquo;s no escape,
+you see.
+</p>
+</div>
+</div>
+<div id="outline-container-the-goals-of-interview-challenges--how-does-the-interviewee-solve-problems" class="outline-3">
+<h3 id="the-goals-of-interview-challenges--how-does-the-interviewee-solve-problems"><span class="section-number-3">3.2.</span> How Does the Interviewee Solve Problems</h3>
+<div class="outline-text-3" id="text-the-goals-of-interview-challenges--how-does-the-interviewee-solve-problems">
+<p>
+One of my favorite examples of this kind of goal is an incredibly thoughtful yet
+non-technical thought experiment:
+</p>
+
+<blockquote>
+<p>
+You drop a bowling ball from the surface of the ocean. How long does it take to
+reach the bottom?
+</p>
+</blockquote>
+
+<p>
+That&rsquo;s really all you get for info. Yes, you&rsquo;re expected to ask questions about
+this to gain more information. Is this comprehensive? Hardly. But it gets you
+thinking about what exactly governs a bowling ball sinking into a massive body
+of water. There&rsquo;s absolutely a wrong answer to this, and it&rsquo;s &ldquo;3 hours, did I
+get it right?&rdquo; - which I guess is an answer actually given once. The exercise is
+designed to tease apart your approach to the problem. How did you break it down?
+What did you give consideration to? What questions did you ask?
+</p>
+
+<p>
+Most of the time, you&rsquo;ll get one of these challenges but it will be wrapped in
+some kind of contrived problem. FizzBuzz is a common challenge, but there are
+many like it. Interviewers will try to put together one you&rsquo;ve never encountered
+before and guard it closely. Out of respect, I&rsquo;m not posting some of the good
+ones I know on such a public place. The whole point is to <span class="underline">make you struggle</span>.
+If you know the answer, then there&rsquo;s no thinking done: It&rsquo;s just recollection.
+If you don&rsquo;t know the answer, then you have to go into the process of breaking
+down the problem and providing a solution.
+</p>
+
+<p>
+The &ldquo;how&rdquo; of this process is far more important than the fact that <span class="underline">you actually
+got it done</span>.  Sure, completing the challenge is a data point, but it&rsquo;s one
+among many. As an interviewer I have suggested we move forward with candidates
+who have failed to complete the challenge in time, and suggested we passed on
+candidates who completed the challenge successfully.  Without having direct
+recollection of these events, I can tell you right now what happened: The
+candidate I recommended got tied up on some silly thing that we always encounter
+in the real workplace (it was actually the floating point thing I mentioned
+earlier), and would&rsquo;ve eventually figured it out if given another hour or two.
+We spoke about how the program would continue to develop and they gave great
+answers.  Plus the process they&rsquo;d already invested showed good thinking and
+breaking down of the problem.  The candidate I passed on pretty much sat there
+silently and just typed stuff until it worked.  They &ldquo;aced&rdquo; the interview.  But
+I learned nothing of them in the process, and so I passed on them. I expect
+other interviewers to conduct themselves similarly.
+</p>
+</div>
+</div>
+<div id="outline-container-the-goals-of-interview-challenges--huge-bonus-points-for-quality-work" class="outline-3">
+<h3 id="the-goals-of-interview-challenges--huge-bonus-points-for-quality-work"><span class="section-number-3">3.3.</span> Huge Bonus Points for Quality Work</h3>
+<div class="outline-text-3" id="text-the-goals-of-interview-challenges--huge-bonus-points-for-quality-work">
+<p>
+I&rsquo;ve seen people write tests in their interview challenges - at least for the
+ones where they had an editor and some time to work on the problem. I haven&rsquo;t
+typically done these in mine because time is at too much of a premium.
+Interviewers will ask at the end of the challenge what you&rsquo;d have done
+differently. This is your chance to talk about the things you&rsquo;d imagine going
+into a real application. So even if you didn&rsquo;t do quality work up front, or had
+some part of the code where things got messy because you were moving fast in a
+high pressure interview environment, you&rsquo;re still able to show where your values
+are. If anything, I think it speaks to a candidate that they know when to do
+quick-n-dirty but still know how to do it &ldquo;well&rdquo; when the pace is more relaxed.
+If your interview challenge has a bunch of tests with no backing implementation
+by the end of the time allotment, that would be a poor showing to me.  I know
+other interviewers are totally fine with that though.  I don&rsquo;t think I&rsquo;d pass on
+a candidate strictly for that, to be fair.
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-interviewing-is-messy-and-highly-inaccurate" class="outline-2">
+<h2 id="interviewing-is-messy-and-highly-inaccurate"><span class="section-number-2">4.</span> Interviewing is Messy and Highly Inaccurate</h2>
+<div class="outline-text-2" id="text-interviewing-is-messy-and-highly-inaccurate">
+<p>
+Interviewers know that the real value an employee delivers on the job can take
+weeks to truly manifest in some palpable way. Even conducting an 8 hour
+interview (as unethical as that is) is won&rsquo;t get answers that speak to your
+qualities as a software engineer.
+</p>
+
+<p>
+Because answers can be shared (some folks will put their submissions on github,
+and others find it and plagiarize or use it to prep), this process is never
+going to be non-subjective. There&rsquo;s been attempts at standardized interviewing
+(I&rsquo;ll dig up some links at some point, but email me if you have some of your
+own), but I haven&rsquo;t seen these stick yet.
+</p>
+
+<p>
+I think if we could, we would love something equivalent to blind auditions in
+the music industry. It&rsquo;s well documented how this process helps with diversity
+and focuses getting the quality people you need. But we don&rsquo;t have that. Whoever
+is able to one day solve that problem will become a big name in the industry
+(think LinkedIn, Twitter, Google, Github, etc).
+</p>
+</div>
+</div>
+<div id="outline-container-bad-interviews" class="outline-2">
+<h2 id="bad-interviews"><span class="section-number-2">5.</span> Bad Interviews</h2>
+<div class="outline-text-2" id="text-bad-interviews">
+<p>
+Sometimes you&rsquo;ll wind up in bad interviews. Some folks get put into the position
+of having to conduct interviews without having a good sense of what they need,
+or they don&rsquo;t realize they are filtering for people who are good at
+interviewing. Here&rsquo;s some objectively bad interview practices:
+</p>
+</div>
+<div id="outline-container-bad-interviews--queries-for-tool-knowledge" class="outline-3">
+<h3 id="bad-interviews--queries-for-tool-knowledge"><span class="section-number-3">5.1.</span> Queries for Tool Knowledge</h3>
+<div class="outline-text-3" id="text-bad-interviews--queries-for-tool-knowledge">
+<p>
+Tools come and go. The tool you dearly covet today - what is it? React? Express?
+Perhaps something else? There&rsquo;s a good chance that in 5 years, it&rsquo;ll have joined
+the world of legacy-only usage. Software that still see use today, but whose
+foundational tools few or none are spinning up new projects for. The industry
+has moved on, and these projects are left behind for others to maintain. Lots of
+stuff survives for 5 years, but 10? 15? The longer it goes, the more likely it
+joins that retirement home of tools. There was saying &ldquo;Nobody got fired for
+picking Java&rdquo;. Do you think that still holds true for today?
+</p>
+
+<p>
+Trying to grill a candidate on tool knowledge is a terrible practice for a few
+reasons: Generally these questions can be answered from 30 seconds of Googling.
+Tools might seem like a big struggle when you&rsquo;re new to the industry, but they
+come and go so much. Any interviewer worth their salt is going to want someone
+who is skilled and has the capability to learn. Bonus points if you already know
+the tools.
+</p>
+
+<p>
+There are exceptions: Interviewers will settle for candidates that know a tool
+over having better general skills because they just need to get some work done
+in a particular area. They might need a &ldquo;guru&rdquo; for a particular tool, which they
+expect will distill knowledge about that tool to the rest of the team or help
+them out in a tricky spot they are in. I assume you&rsquo;re reading this because
+you&rsquo;re not really a guru in anything yet - a normal state to be in!
+</p>
+</div>
+</div>
+<div id="outline-container-bad-interviews--trying-to-find-a-clone" class="outline-3">
+<h3 id="bad-interviews--trying-to-find-a-clone"><span class="section-number-3">5.2.</span> Trying to Find a Clone</h3>
+<div class="outline-text-3" id="text-bad-interviews--trying-to-find-a-clone">
+</div>
+</div>
+<div id="outline-container-bad-interviews--assuming-significant-interview-time" class="outline-3">
+<h3 id="bad-interviews--assuming-significant-interview-time"><span class="section-number-3">5.3.</span> Assuming Significant Interview Time</h3>
+<div class="outline-text-3" id="text-bad-interviews--assuming-significant-interview-time">
+</div>
+</div>
+</div>
+<div id="outline-container-how-to-present-your-best" class="outline-2">
+<h2 id="how-to-present-your-best"><span class="section-number-2">6.</span> How to Present Your Best</h2>
+<div class="outline-text-2" id="text-how-to-present-your-best">
+<p>
+Making you a better candidate is beyond the scope of this post.  It&rsquo;s also very
+subjective.  That said, you can present yourself to the interviewer so they get
+an idea as best they can.
+</p>
+</div>
+<div id="outline-container-how-to-present-your-best--talk-through-what-you're-doing-during-challenges" class="outline-3">
+<h3 id="how-to-present-your-best--talk-through-what-you're-doing-during-challenges"><span class="section-number-3">6.1.</span> Talk Through What You&rsquo;re Doing During Challenges</h3>
+<div class="outline-text-3" id="text-how-to-present-your-best--talk-through-what-you're-doing-during-challenges">
+<p>
+This is #1 and for good reason.  Tell me what you&rsquo;re thinking as you do the
+challenge.  It doesn&rsquo;t matter if it sounds stupid.  The interviewer designed
+this specifically for you to stumble with it.  Stumbling is part of the process
+to real problem solving.  Most ideas don&rsquo;t actually gestate very well and that&rsquo;s
+where majority of the cost of problem solving goes.
+</p>
+
+<p>
+Specifically what I want to hear you thinking about is the problem.  I can see
+that you&rsquo;re writing a <code>for</code> loop or declaring a variable, so those aren&rsquo;t
+particularly useful.  Though I&rsquo;d prefer you talk about your <code>for</code> loops if it
+means I get to hear the juicy stuff.  Sometimes talking about programming
+constructs is important.  Why did you pick a <code>for</code> loop instead of using another
+construct like <code>map</code> or <code>reduce</code>?  There could be some good tidbits in there.
+</p>
+
+<p>
+Regarding talking about things: It would even be valid to say something like
+&ldquo;I&rsquo;m using a <code>for</code> loop here because I&rsquo;m familiar enough with older JavaScript
+to do that.  I know there&rsquo;s <code>map</code> but I&rsquo;m skipping it to get through this
+exercise&rdquo;.  This tells me that you value <code>map</code>.  It tells me that you&rsquo;re taking
+shortcuts because it&rsquo;s an interview and you&rsquo;d like to complete it, but you know
+there&rsquo;s better ways to do it.  It tells me you are aware your knowledge of
+JavaScript is old and therefore you&rsquo;ll need to tread slowly for a while until
+you acclimatize to the new stuff.  It even tells me as the interviewer that I
+should be ready to nudge you or help you past some gotchas with modern
+JavaScript.  I don&rsquo;t want to see you struggle with that - in fact we just
+established that you&rsquo;re doing an old style because <span class="underline">you literally just said
+that</span>.  I have the information I need regarding your current-ness.
+</p>
+
+<p>
+If you find yourself seizing up during this process, go desensitize yourself to
+it.  Have a friend or someone of technical skill sit there and listen to you as
+you go through one of the many free code-challenge suites out there.  30 seconds
+without saying anything is too long of silence.
+</p>
+
+<p>
+I&rsquo;m going to go out on a limb here and mention this - I believe, at least by
+American culture, that women are largely discouraged from showing their
+abilities in any sort of public settings.  I wasn&rsquo;t raised as a woman, so it&rsquo;s
+hard for me to point a finger at exactly what the cause is there.  Though
+women have agreed with me that it is a real thing.  If this is you, be aware of
+this bias and work to shake it.  Unfortunately the industry isn&rsquo;t going to
+accommodate you well here, and this is one of those places where you just have
+to do what everyone else does but it&rsquo;s harder.  Desensitizing yourself to it is
+the only thing I can think of.  Alternatively, I&rsquo;ve seen a lot of women thriving
+in positions where their work isn&rsquo;t public - or at least whatever it is they
+directly emit.  Whatever works for you!  Personally, I think the best defense
+against scrutiny for you will always be to just keep putting your stuff out
+there until you&rsquo;ve truly internalized that we&rsquo;re all fumbling around in the
+dark.
+</p>
+</div>
+</div>
+<div id="outline-container-how-to-present-your-best--be-painfully-blunt-about-what-you-don't-know" class="outline-3">
+<h3 id="how-to-present-your-best--be-painfully-blunt-about-what-you-don't-know"><span class="section-number-3">6.2.</span> Be Painfully Blunt About What You Don&rsquo;t Know</h3>
+<div class="outline-text-3" id="text-how-to-present-your-best--be-painfully-blunt-about-what-you-don't-know">
+<p>
+This is kind of related to the dunning kruger effect - which is that experienced
+or &ldquo;wise&rdquo; people tend to express themselves less confidently and the
+inexperienced tend to express themselves very confidently.  You might not be
+experienced yet and that&rsquo;s okay.  But regardless if you get asked something
+about stuff you don&rsquo;t know, you should quickly say you don&rsquo;t know.  Practice it
+with friends or something.
+</p>
+
+<p>
+I have a friend who has risen to much higher places in the career chain with me,
+and he says his interview style is &ldquo;I try to convince them not to hire me&rdquo;,
+which is kind of his odd way of saying he admits his weaknesses and lack of
+knowledge readily.
+</p>
+
+<p>
+You can try to take a guess.  &ldquo;I don&rsquo;t know for sure but if I had to guess&#x2026;&rdquo;
+but do keep in mind this is perilous.  I&rsquo;ve had an interviewee do this once and
+it revealed an extreme level of ignorance on the topic.  It&rsquo;s likely that
+interviewee wasn&rsquo;t going to get the position anyways.  Just be really careful
+about talking about things you literally don&rsquo;t know anything about.  Perhaps a
+better approach would be to ask about it.  Interviewers love to talk about their
+stuff so this isn&rsquo;t a big ask at all.
+</p>
+
+<p>
+But above all else, &ldquo;I don&rsquo;t know&rdquo; is one of your best phrases you can use in an
+interview.
+</p>
+</div>
+</div>
+<div id="outline-container-how-to-present-your-best--ask-the-interviewer-what-they-want-to-see" class="outline-3">
+<h3 id="how-to-present-your-best--ask-the-interviewer-what-they-want-to-see"><span class="section-number-3">6.3.</span> Ask the Interviewer What They Want to See</h3>
+<div class="outline-text-3" id="text-how-to-present-your-best--ask-the-interviewer-what-they-want-to-see">
+<p>
+Here&rsquo;s a few questions you can crib from this post:
+</p>
+
+<blockquote>
+<p>
+Do you want to see tests or feel we have time for them?
+</p>
+</blockquote>
+
+<blockquote>
+<p>
+Would you like me to push this to a git repository?
+</p>
+</blockquote>
+
+<p>
+I&rsquo;ve seen this one:
+</p>
+
+<blockquote>
+<p>
+Can I assume valid input?
+</p>
+</blockquote>
+
+<p>
+Though to be honest I don&rsquo;t like it.  It tells me you have a gated-community
+mindset when it comes to software engineering.  A lot of people are okay with
+this though - just be in mind that it says something about you too.  I just
+don&rsquo;t assume valid input.
+</p>
+</div>
+</div>
+<div id="outline-container-how-to-present-your-best--interview-them-back" class="outline-3">
+<h3 id="how-to-present-your-best--interview-them-back"><span class="section-number-3">6.4.</span> Interview Them Back</h3>
+<div class="outline-text-3" id="text-how-to-present-your-best--interview-them-back">
+<p>
+Interviews go both ways.  I try to keep the interview about 50% of me, and 50%
+of them.
+</p>
+
+<blockquote>
+<p>
+When is the last time you worked a late evening or into a weekend?
+</p>
+</blockquote>
+
+<p>
+I highly value sustainable pace, so this one comes up a lot.  One place I worked
+at where the pace was not sustainable for me was one where I&rsquo;d made the mistake
+of not asking this question.
+</p>
+
+<p>
+Directly engaging with the material, even asking questions as if you have
+already landed the job can be a very powerful thing.  Questions such as these
+can help put you in that place:
+</p>
+
+<blockquote>
+<p>
+What sort of challenges does your team encounter with the
+product/tools/tech/suite?
+</p>
+</blockquote>
+
+<blockquote>
+<p>
+What&rsquo;s a typical day in office look like for a typical team member?
+</p>
+</blockquote>
+
+<blockquote>
+<p>
+Do you have a particular section or set of tasks you would like me to be working
+on?
+</p>
+</blockquote>
+</div>
+</div>
+<div id="outline-container-how-to-present-your-best--put-your-best-foot-forward" class="outline-3">
+<h3 id="how-to-present-your-best--put-your-best-foot-forward"><span class="section-number-3">6.5.</span> Put Your Best Foot Forward</h3>
+<div class="outline-text-3" id="text-how-to-present-your-best--put-your-best-foot-forward">
+<p>
+I know people who dropped F-bombs in interviews and still go the position.
+Getting really informal won&rsquo;t always count against you, but being formal will
+never count against you.  Being informal has a tendency to also stray into the
+unprofessional territory, or even bad enough to be a walking HR time bomb.  I
+don&rsquo;t want coworkers that I need to shield from external or select team
+members - that&rsquo;s <span class="underline">work for me</span>.  Additionally it communicates that if you can&rsquo;t
+act like an adult for a couple of hours then you likely won&rsquo;t act like an adult
+when things get difficult.
+</p>
+
+<p>
+I have worn a suit and tie into an interview and was laughed at about it.  I&rsquo;ve
+done that at a few places, but most of the time I&rsquo;ll make sure I&rsquo;m in some sort
+of collared shirt and pants.  Even if I&rsquo;m meeting virtually, I would wear that
+collar.  I&rsquo;d be more lax about this if they knew I was stepping away from lunch
+at my current job to meet up (informally or for an interview).
+</p>
+
+<p>
+Don&rsquo;t get me wrong - you don&rsquo;t have to be an emotionless robot.  I&rsquo;ve asked my
+interviewers if they were Horde or Alliance (a World of Warcraft reference) -
+and was offered the position.  I forgot what gave me the knowledge that they
+played, but it helped I think.
+</p>
+
+<p>
+Do not stray into politics or religion (unless that religion is Emacs).  Do
+<span class="underline">not</span> joke about the initialism for Bitbucket Cloud.
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-for-entry-level-engineers" class="outline-2">
+<h2 id="for-entry-level-engineers"><span class="section-number-2">7.</span> For Entry Level Engineers</h2>
+<div class="outline-text-2" id="text-for-entry-level-engineers">
+<p>
+You will come off as a steal if you can demonstrate the following:
+</p>
+
+<ol class="org-ol">
+<li>Basic <code>git</code> usage. Commit, push, pull, clone, switch branches, merge (I
+wouldn&rsquo;t stress conflict resolution, but huge points if you can swing it).
+Even outside of the world of database skins, everyone is using <code>git</code> or a
+tool that serves a similar purpose.</li>
+<li>Know the syntax well for one language - preferably the one you studied the
+most for.  This may not match up with the position.  It&rsquo;s worrisome if you
+know 25% of several various languages.  It makes me wonder whether or not you
+really learned how to do software engineering.  To be clear here: The syntax
+is the glyphs and structure of the code.  The keywords like <code>if</code>, <code>else</code>,
+<code>for</code>, <code>while</code>, etc.</li>
+<li>Know how to manipulate basic data structures in your most studied language.
+You should be able to manipulate lists, queues, and stacks.  You don&rsquo;t have
+to be a guru with data structures and algorithms.</li>
+<li>Make sure you can write a program that actually does something.  If you&rsquo;ve
+not done this yet, you really need to.  It will be hard and take a lot of
+time, but it will really help you grow and make sure you &ldquo;get it&rdquo;.</li>
+<li>Be able to write a program that works on the command line.  I&rsquo;ve seen a lot
+of new blood spending a lot of time in the area of the database skin (so
+React, Express, etc) and when asked to write a command line program they fled
+in terror.  There&rsquo;s a <span class="underline">really</span> good chance that an interview won&rsquo;t use
+database skin technology at all, even if that&rsquo;s what you&rsquo;re applying for.  It
+also is so helpful for writing demos, demonstrating some knowledge of the
+command line itself (even if it&rsquo;s very basic), and much documentation and
+examples expect you to be familiar with putting together basic command line
+programs.  I do have a sort of primer on <a href="./command-line-programs.html">command line programs</a> you&rsquo;re free to
+check out - though it covers way more than what I&rsquo;m talking about here.  I&rsquo;m
+talking about the simplest of programs here.</li>
+</ol>
+</div>
+</div>
+<div id="outline-container-aced-it-but-didn't-get-the-job" class="outline-2">
+<h2 id="aced-it-but-didn't-get-the-job"><span class="section-number-2">8.</span> &ldquo;Aced&rdquo; it, but Didn&rsquo;t Get the Job</h2>
+<div class="outline-text-2" id="text-aced-it-but-didn't-get-the-job">
+<p>
+You might do everything well in an interview and still not get the job. It might
+have even gone swimmingly.
+</p>
+</div>
+<div id="outline-container-aced-it-but-didn't-get-the-job--the-interviewer-might-have-been-vetoed" class="outline-3">
+<h3 id="aced-it-but-didn't-get-the-job--the-interviewer-might-have-been-vetoed"><span class="section-number-3">8.1.</span> The Interviewer Might Have Been Vetoed</h3>
+<div class="outline-text-3" id="text-aced-it-but-didn't-get-the-job--the-interviewer-might-have-been-vetoed">
+<p>
+As an interviewer, I&rsquo;ve had candidates I really wanted us to snag because I
+thought they were great. Management didn&rsquo;t take my recommendation (which is
+their prerogative) and passed on the candidate.
+</p>
+
+<p>
+A team member can sometimes also produce a veto. One of the reasons candidates
+meet the entire team is so people get a &ldquo;vibe&rdquo;.  While this interview process
+runs very counter to having a richly diverse set of employees, many places
+practice it to this day. Indeed, it&rsquo;s a common management practice to take many
+steps to make employees feel &ldquo;heard&rdquo;. One way to do that is give them input on
+who is hired. On its base value, it makes a kind of sense: Nobody wants to work
+with an asshole, and if you met a candidate that was later hired and you didn&rsquo;t
+speak up then, then you&rsquo;re just as surprised as everyone else about any
+asshole-ness that is experienced later.
+</p>
+</div>
+</div>
+<div id="outline-container-aced-it-but-didn't-get-the-job--there-might-have-been-a-better-candidate" class="outline-3">
+<h3 id="aced-it-but-didn't-get-the-job--there-might-have-been-a-better-candidate"><span class="section-number-3">8.2.</span> There Might Have Been a Better Candidate</h3>
+<div class="outline-text-3" id="text-aced-it-but-didn't-get-the-job--there-might-have-been-a-better-candidate">
+<p>
+You might&rsquo;ve been a 96% match during your interview and the other person was
+97%. It might&rsquo;ve been decided by something totally out of your control, and in
+fact if you felt like the interview went well, it probably was out of your
+control. You could spend a bunch of time second guessing everything like hiccup
+you had, but that&rsquo;s both counterproductive and probably wrong.
+</p>
+
+<p>
+How hiring typically works is an organization will have approved the budget for
+a particular level of engineer to come on board. They&rsquo;ve already picked the
+salary range and the number of positions they are willing to hire. So in that
+sense for that position it really is a zero sum game. I suppose it&rsquo;s possible
+for &ldquo;opportunity hires&rdquo; to take place, but nobody can cut blank checks so I
+expect this to be virtually non-existent.
+</p>
+
+<p>
+The best thing to do here is just move on, and maybe consider re-applying to
+this place later, or even applying to another position at the same workplace.
+Many places encourage this, though I haven&rsquo;t seen them do much to facilitate it.
+</p>
+
+<p>
+My message to interviewers that encourage re-applying to different positions: If
+you want people to re-apply because you want their talent, be sure to follow up
+with them instead of making them do it! Don&rsquo;t forget that candidates oftentimes
+have other places they&rsquo;ve already applied to and it&rsquo;s usually just as much
+energy to apply again to your workplace as it is to apply to another. You&rsquo;ve
+already turned them down once, so if anything you now require more energy to
+apply to than any other random job. I&rsquo;ve straight up given up on places because
+it placed this kind of onus on me. I wanted a new job in software engineering,
+not a job in applying jobs ;)
+</p>
+</div>
+</div>
+</div>

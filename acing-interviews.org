@@ -1,0 +1,564 @@
+#+BEGIN_EXPORT html
+---
+layout: default
+title: Acing Interviews for Software Engineering Positions
+date: 2022-08-16
+categories: software-engineering
+---
+#+END_EXPORT
+
+#+title:     Acing Interviews for Software Engineering Positions
+#+author:    Logan Barnett-Hoy
+#+email:     logustus@gmail.com
+#+date:      <2022-08-16 Tue>
+#+language:  en
+#+file_tags:
+#+tags:
+#+auto_id:   t
+
+* Introduction
+:PROPERTIES:
+:CUSTOM_ID: introduction
+:END:
+
+I've seen a lot of clamor over trying to "ace" interviews for software
+engineering positions. While interviews can definitely go well and poorly, there
+generally isn't a prescribed "right way" to do something. In this article, we'll
+cover how interviews are put together, and what they target. We'll identify
+objectively "bad" interviews, and we'll describe how good interviews work.
+
+* Who Puts Together Interviews
+:PROPERTIES:
+:CUSTOM_ID: who-puts-together-interviews
+:END:
+
+Interviews are generally put together by a team lead. Higher-ups want to give
+teams the agency for teams to do the filtering they want, so they stay out of
+that process. I've seen some interview processes where higher-ups get involved
+in a "meet and greet" fashion, so in a sense they retain some kind of veto
+power. "Boss is an institution of mistrust". It makes them feel better. Let them
+have it.
+
+Team leads almost universally share some qualities which impacts how interviews
+are structured and conducted:
+
+** Team Leads are Perpetually Behind
+:PROPERTIES:
+:CUSTOM_ID: who-puts-together-interviews--team-leads-are-perpetually-behind
+:END:
+
+If a team lead isn't fighting to keep down tech debt in their own project, then
+they are inherently allowing that tech debt to run its course through the
+software. Fighting for tech debt usually means either they are spending a lot of
+time helping with tech debt or they are buried in deliverables because they
+spent a lot of time on that tech debt. In either case, the team lead runs around
+like a ferret on amphetamines, trying to quickly resolve what they can before
+moving onto the next thing.
+
+How this comes out in interviews is that team leads will borrow other interview
+material, or be quick to reuse or adapt some other material. They don't need
+something perfect, they just need something close enough.
+
+** Team Leads Want Thinkers
+:PROPERTIES:
+:CUSTOM_ID: who-puts-together-interviews--team-leads-want-thinkers
+:END:
+
+This is fairly universal: Team leads want good thinkers on their teams. I have
+seen managers that want warm bodies - butts in seats which is about as close to
+the archaic measurement of "lines of code" delivered per day. You aren't a warm
+body, so you'll naturally repel anyone who is looking for them.
+
+It's a human bias that team leads want someone like themselves: Folks who can
+think through a problem and be able to solve it with some amount of autonomy,
+and arrive at that solution in a way they find tolerable if not agreeable.
+
+The leads who want thinkers will try to tailor their interviews in ways that
+make you think.  We'll go into what that looks like in a bit.
+
+** Team Leads are Tired of Cleaning up Messes
+:PROPERTIES:
+:CUSTOM_ID: who-puts-together-interviews--team-leads-are-tired-of-cleaning-up-messes
+:END:
+
+Every team lead is running around frantically trying to put out fires, meet
+deadlines, and keep the software from imploding on itself like a neutron star
+that's growing just a little too heavy.
+
+Cleaning up messes that didn't need to be there in the first place is one of the
+constant slights a team lead must endure, and they will use whatever agency they
+have to minimize that. In an interview context that means filtering out people
+who leave messes to clean up later, innocently believing that they are doing the
+right thing.
+
+I find everyone wants "quality code" (or more accurately but not stated as such:
+quality work). As an industry we struggle to agree on these things sometimes.
+That's okay. The interviewer wants to make sure you're a good fit for them just
+as you're (hopefully) trying to make sure they're a good fit for you.
+
+
+* The Goals of Interview Challenges
+:PROPERTIES:
+:CUSTOM_ID: the-goals-of-interview-challenges
+:END:
+
+By "challenges", I mean programming exercises, questions, etc. They might not
+all be asking for emissions of code per se, but these are any sort of prompts
+which are looking to tease out technical aptitude.
+
+** Does the Résumé Match
+:PROPERTIES:
+:CUSTOM_ID: the-goals-of-interview-challenges--does-the-résumé-match
+:END:
+
+A lot of résumés will have "proficiency with <tool>" and similar statements.
+Similarly, there might be experience implied from various accomplishments on the
+résumé. Interviewers generally have an idea that we're all required to put these
+buzzword lists on our résumés so we can survive past the initial screens
+conducted by the uninitiated. The lead said "I need people with some JavaScript
+experience", and résumés stating "I did some JS a while ago, and while I'm
+confident I can get back into it quickly, I honestly haven't had a lot of recent
+practice with it" get culled by screeners. Sadly, it's also because some folks
+really have inflated ideas of what "proficient" really means for a tool, and it
+will differ greatly from what the interviewer considers proficient.
+
+So an interview may be designed to tease out proficiency in things you already
+said or demonstrated you are proficient in. Sometimes this means some simple
+tasks. Things where it might seem like there's a trick question laying in the
+thick somewhere. And, to be fair, there might be. But regardless, this is going
+to be a part of the challenges. Do you know some of the jargon, pitfalls,
+hardships, or subtleties of the topic? They'll be gunning for that. I wouldn't
+worry about this too much. It doesn't hurt to remind the interviewer that you're
+30 seconds of Googling to figuring out some of those silly API related questions
+that are right out of technical documentation.  I've literally said in an
+interview "I don't know how to do that readily, but I know it can be done and I
+could look up it up a minute.  That said, I would want to see some good
+justification of why we'd be doing <hacky thing>."  The interview wrapped up
+right then and there and I got a job offer as a Angular.JS guru.
+
+I've definitely encountered individuals who have made some steep claims of being
+"familiar" with various technologies, but clearly don't know how to use them.
+A recent example was being "very familiar" with Docker, but not knowing how
+simple shell scripts work - which is an underlying necessity of all but the most
+trivial usage of Docker. It's okay to not know things, but when you encounter
+someone like this in the workplace, you end up doing a lot of their job for
+them. It's best to know up front if you're signing up for this kind of work, or
+signing your team up for it.  I want to stress this again though: It's really
+okay to not know things.
+
+As an interviewer I ideally want to find the boundaries of your knowledge on the
+topic.  Do you have passing familiarity?  Have you used this tool in anger yet?
+What sort of pitfalls have you encountered and how did you overcome them?  What
+would you do differently if you had to do it again?  But also there will be
+targeted questions.  For a coding challenge I had to conduct using coinage, I
+frequently asked why used floating point numbers for money.  I never really got
+an answer.  Okay fair - as someone working in web that probably doesn't come up
+much, but I'd hope senior level interviewees could tell me _something_ about it.
+If you're making database skins at the senior level, you should have a decent
+idea of how to handle money safely.  The one interviewee I had that _didn't_ use
+floating point numbers got asked why he didn't use them - ha! There's no escape,
+you see.
+
+** How Does the Interviewee Solve Problems
+:PROPERTIES:
+:CUSTOM_ID: the-goals-of-interview-challenges--how-does-the-interviewee-solve-problems
+:END:
+
+One of my favorite examples of this kind of goal is an incredibly thoughtful yet
+non-technical thought experiment:
+
+#+begin_quote
+You drop a bowling ball from the surface of the ocean. How long does it take to
+reach the bottom?
+#+end_quote
+
+That's really all you get for info. Yes, you're expected to ask questions about
+this to gain more information. Is this comprehensive? Hardly. But it gets you
+thinking about what exactly governs a bowling ball sinking into a massive body
+of water. There's absolutely a wrong answer to this, and it's "3 hours, did I
+get it right?" - which I guess is an answer actually given once. The exercise is
+designed to tease apart your approach to the problem. How did you break it down?
+What did you give consideration to? What questions did you ask?
+
+Most of the time, you'll get one of these challenges but it will be wrapped in
+some kind of contrived problem. FizzBuzz is a common challenge, but there are
+many like it. Interviewers will try to put together one you've never encountered
+before and guard it closely. Out of respect, I'm not posting some of the good
+ones I know on such a public place. The whole point is to _make you struggle_.
+If you know the answer, then there's no thinking done: It's just recollection.
+If you don't know the answer, then you have to go into the process of breaking
+down the problem and providing a solution.
+
+The "how" of this process is far more important than the fact that _you actually
+got it done_.  Sure, completing the challenge is a data point, but it's one
+among many. As an interviewer I have suggested we move forward with candidates
+who have failed to complete the challenge in time, and suggested we passed on
+candidates who completed the challenge successfully.  Without having direct
+recollection of these events, I can tell you right now what happened: The
+candidate I recommended got tied up on some silly thing that we always encounter
+in the real workplace (it was actually the floating point thing I mentioned
+earlier), and would've eventually figured it out if given another hour or two.
+We spoke about how the program would continue to develop and they gave great
+answers.  Plus the process they'd already invested showed good thinking and
+breaking down of the problem.  The candidate I passed on pretty much sat there
+silently and just typed stuff until it worked.  They "aced" the interview.  But
+I learned nothing of them in the process, and so I passed on them. I expect
+other interviewers to conduct themselves similarly.
+
+** Huge Bonus Points for Quality Work
+:PROPERTIES:
+:CUSTOM_ID: the-goals-of-interview-challenges--huge-bonus-points-for-quality-work
+:END:
+
+I've seen people write tests in their interview challenges - at least for the
+ones where they had an editor and some time to work on the problem. I haven't
+typically done these in mine because time is at too much of a premium.
+Interviewers will ask at the end of the challenge what you'd have done
+differently. This is your chance to talk about the things you'd imagine going
+into a real application. So even if you didn't do quality work up front, or had
+some part of the code where things got messy because you were moving fast in a
+high pressure interview environment, you're still able to show where your values
+are. If anything, I think it speaks to a candidate that they know when to do
+quick-n-dirty but still know how to do it "well" when the pace is more relaxed.
+If your interview challenge has a bunch of tests with no backing implementation
+by the end of the time allotment, that would be a poor showing to me.  I know
+other interviewers are totally fine with that though.  I don't think I'd pass on
+a candidate strictly for that, to be fair.
+
+* Interviewing is Messy and Highly Inaccurate
+:PROPERTIES:
+:CUSTOM_ID: interviewing-is-messy-and-highly-inaccurate
+:END:
+
+Interviewers know that the real value an employee delivers on the job can take
+weeks to truly manifest in some palpable way. Even conducting an 8 hour
+interview (as unethical as that is) is won't get answers that speak to your
+qualities as a software engineer.
+
+Because answers can be shared (some folks will put their submissions on github,
+and others find it and plagiarize or use it to prep), this process is never
+going to be non-subjective. There's been attempts at standardized interviewing
+(I'll dig up some links at some point, but email me if you have some of your
+own), but I haven't seen these stick yet.
+
+I think if we could, we would love something equivalent to blind auditions in
+the music industry. It's well documented how this process helps with diversity
+and focuses getting the quality people you need. But we don't have that. Whoever
+is able to one day solve that problem will become a big name in the industry
+(think LinkedIn, Twitter, Google, Github, etc).
+
+* Bad Interviews
+:PROPERTIES:
+:CUSTOM_ID: bad-interviews
+:END:
+
+Sometimes you'll wind up in bad interviews. Some folks get put into the position
+of having to conduct interviews without having a good sense of what they need,
+or they don't realize they are filtering for people who are good at
+interviewing. Here's some objectively bad interview practices:
+
+** Queries for Tool Knowledge
+:PROPERTIES:
+:CUSTOM_ID: bad-interviews--queries-for-tool-knowledge
+:END:
+
+Tools come and go. The tool you dearly covet today - what is it? React? Express?
+Perhaps something else? There's a good chance that in 5 years, it'll have joined
+the world of legacy-only usage. Software that still see use today, but whose
+foundational tools few or none are spinning up new projects for. The industry
+has moved on, and these projects are left behind for others to maintain. Lots of
+stuff survives for 5 years, but 10? 15? The longer it goes, the more likely it
+joins that retirement home of tools. There was saying "Nobody got fired for
+picking Java". Do you think that still holds true for today?
+
+Trying to grill a candidate on tool knowledge is a terrible practice for a few
+reasons: Generally these questions can be answered from 30 seconds of Googling.
+Tools might seem like a big struggle when you're new to the industry, but they
+come and go so much. Any interviewer worth their salt is going to want someone
+who is skilled and has the capability to learn. Bonus points if you already know
+the tools.
+
+There are exceptions: Interviewers will settle for candidates that know a tool
+over having better general skills because they just need to get some work done
+in a particular area. They might need a "guru" for a particular tool, which they
+expect will distill knowledge about that tool to the rest of the team or help
+them out in a tricky spot they are in. I assume you're reading this because
+you're not really a guru in anything yet - a normal state to be in!
+
+** Trying to Find a Clone
+:PROPERTIES:
+:CUSTOM_ID: bad-interviews--trying-to-find-a-clone
+:END:
+** Assuming Significant Interview Time
+:PROPERTIES:
+:CUSTOM_ID: bad-interviews--assuming-significant-interview-time
+:END:
+* How to Present Your Best
+:PROPERTIES:
+:CUSTOM_ID: how-to-present-your-best
+:END:
+
+Making you a better candidate is beyond the scope of this post.  It's also very
+subjective.  That said, you can present yourself to the interviewer so they get
+an idea as best they can.
+
+** Talk Through What You're Doing During Challenges
+:PROPERTIES:
+:CUSTOM_ID: how-to-present-your-best--talk-through-what-you're-doing-during-challenges
+:END:
+
+This is #1 and for good reason.  Tell me what you're thinking as you do the
+challenge.  It doesn't matter if it sounds stupid.  The interviewer designed
+this specifically for you to stumble with it.  Stumbling is part of the process
+to real problem solving.  Most ideas don't actually gestate very well and that's
+where majority of the cost of problem solving goes.
+
+Specifically what I want to hear you thinking about is the problem.  I can see
+that you're writing a =for= loop or declaring a variable, so those aren't
+particularly useful.  Though I'd prefer you talk about your =for= loops if it
+means I get to hear the juicy stuff.  Sometimes talking about programming
+constructs is important.  Why did you pick a =for= loop instead of using another
+construct like =map= or =reduce=?  There could be some good tidbits in there.
+
+Regarding talking about things: It would even be valid to say something like
+"I'm using a =for= loop here because I'm familiar enough with older JavaScript
+to do that.  I know there's =map= but I'm skipping it to get through this
+exercise".  This tells me that you value =map=.  It tells me that you're taking
+shortcuts because it's an interview and you'd like to complete it, but you know
+there's better ways to do it.  It tells me you are aware your knowledge of
+JavaScript is old and therefore you'll need to tread slowly for a while until
+you acclimatize to the new stuff.  It even tells me as the interviewer that I
+should be ready to nudge you or help you past some gotchas with modern
+JavaScript.  I don't want to see you struggle with that - in fact we just
+established that you're doing an old style because _you literally just said
+that_.  I have the information I need regarding your current-ness.
+
+If you find yourself seizing up during this process, go desensitize yourself to
+it.  Have a friend or someone of technical skill sit there and listen to you as
+you go through one of the many free code-challenge suites out there.  30 seconds
+without saying anything is too long of silence.
+
+I'm going to go out on a limb here and mention this - I believe, at least by
+American culture, that women are largely discouraged from showing their
+abilities in any sort of public settings.  I wasn't raised as a woman, so it's
+hard for me to point a finger at exactly what the cause is there.  Though
+women have agreed with me that it is a real thing.  If this is you, be aware of
+this bias and work to shake it.  Unfortunately the industry isn't going to
+accommodate you well here, and this is one of those places where you just have
+to do what everyone else does but it's harder.  Desensitizing yourself to it is
+the only thing I can think of.  Alternatively, I've seen a lot of women thriving
+in positions where their work isn't public - or at least whatever it is they
+directly emit.  Whatever works for you!  Personally, I think the best defense
+against scrutiny for you will always be to just keep putting your stuff out
+there until you've truly internalized that we're all fumbling around in the
+dark.
+
+** Be Painfully Blunt About What You Don't Know
+:PROPERTIES:
+:CUSTOM_ID: how-to-present-your-best--be-painfully-blunt-about-what-you-don't-know
+:END:
+
+This is kind of related to the dunning kruger effect - which is that experienced
+or "wise" people tend to express themselves less confidently and the
+inexperienced tend to express themselves very confidently.  You might not be
+experienced yet and that's okay.  But regardless if you get asked something
+about stuff you don't know, you should quickly say you don't know.  Practice it
+with friends or something.
+
+I have a friend who has risen to much higher places in the career chain with me,
+and he says his interview style is "I try to convince them not to hire me",
+which is kind of his odd way of saying he admits his weaknesses and lack of
+knowledge readily.
+
+You can try to take a guess.  "I don't know for sure but if I had to guess..."
+but do keep in mind this is perilous.  I've had an interviewee do this once and
+it revealed an extreme level of ignorance on the topic.  It's likely that
+interviewee wasn't going to get the position anyways.  Just be really careful
+about talking about things you literally don't know anything about.  Perhaps a
+better approach would be to ask about it.  Interviewers love to talk about their
+stuff so this isn't a big ask at all.
+
+But above all else, "I don't know" is one of your best phrases you can use in an
+interview.
+
+** Ask the Interviewer What They Want to See
+:PROPERTIES:
+:CUSTOM_ID: how-to-present-your-best--ask-the-interviewer-what-they-want-to-see
+:END:
+
+Here's a few questions you can crib from this post:
+
+#+begin_quote
+Do you want to see tests or feel we have time for them?
+#+end_quote
+
+#+begin_quote
+Would you like me to push this to a git repository?
+#+end_quote
+
+I've seen this one:
+
+#+begin_quote
+Can I assume valid input?
+#+end_quote
+
+Though to be honest I don't like it.  It tells me you have a gated-community
+mindset when it comes to software engineering.  A lot of people are okay with
+this though - just be in mind that it says something about you too.  I just
+don't assume valid input.
+
+** Interview Them Back
+:PROPERTIES:
+:CUSTOM_ID: how-to-present-your-best--interview-them-back
+:END:
+
+Interviews go both ways.  I try to keep the interview about 50% of me, and 50%
+of them.
+
+#+begin_quote
+When is the last time you worked a late evening or into a weekend?
+#+end_quote
+
+I highly value sustainable pace, so this one comes up a lot.  One place I worked
+at where the pace was not sustainable for me was one where I'd made the mistake
+of not asking this question.
+
+Directly engaging with the material, even asking questions as if you have
+already landed the job can be a very powerful thing.  Questions such as these
+can help put you in that place:
+
+#+begin_quote
+What sort of challenges does your team encounter with the
+product/tools/tech/suite?
+#+end_quote
+
+#+begin_quote
+What's a typical day in office look like for a typical team member?
+#+end_quote
+
+#+begin_quote
+Do you have a particular section or set of tasks you would like me to be working
+on?
+#+end_quote
+
+** Put Your Best Foot Forward
+:PROPERTIES:
+:CUSTOM_ID: how-to-present-your-best--put-your-best-foot-forward
+:END:
+
+I know people who dropped F-bombs in interviews and still go the position.
+Getting really informal won't always count against you, but being formal will
+never count against you.  Being informal has a tendency to also stray into the
+unprofessional territory, or even bad enough to be a walking HR time bomb.  I
+don't want coworkers that I need to shield from external or select team
+members - that's _work for me_.  Additionally it communicates that if you can't
+act like an adult for a couple of hours then you likely won't act like an adult
+when things get difficult.
+
+I have worn a suit and tie into an interview and was laughed at about it.  I've
+done that at a few places, but most of the time I'll make sure I'm in some sort
+of collared shirt and pants.  Even if I'm meeting virtually, I would wear that
+collar.  I'd be more lax about this if they knew I was stepping away from lunch
+at my current job to meet up (informally or for an interview).
+
+Don't get me wrong - you don't have to be an emotionless robot.  I've asked my
+interviewers if they were Horde or Alliance (a World of Warcraft reference) -
+and was offered the position.  I forgot what gave me the knowledge that they
+played, but it helped I think.
+
+Do not stray into politics or religion (unless that religion is Emacs).  Do
+_not_ joke about the initialism for Bitbucket Cloud.
+
+* For Entry Level Engineers
+:PROPERTIES:
+:CUSTOM_ID: for-entry-level-engineers
+:END:
+
+You will come off as a steal if you can demonstrate the following:
+
+1. Basic =git= usage. Commit, push, pull, clone, switch branches, merge (I
+   wouldn't stress conflict resolution, but huge points if you can swing it).
+   Even outside of the world of database skins, everyone is using =git= or a
+   tool that serves a similar purpose.
+2. Know the syntax well for one language - preferably the one you studied the
+   most for.  This may not match up with the position.  It's worrisome if you
+   know 25% of several various languages.  It makes me wonder whether or not you
+   really learned how to do software engineering.  To be clear here: The syntax
+   is the glyphs and structure of the code.  The keywords like =if=, =else=,
+   =for=, =while=, etc.
+3. Know how to manipulate basic data structures in your most studied language.
+   You should be able to manipulate lists, queues, and stacks.  You don't have
+   to be a guru with data structures and algorithms.
+4. Make sure you can write a program that actually does something.  If you've
+   not done this yet, you really need to.  It will be hard and take a lot of
+   time, but it will really help you grow and make sure you "get it".
+5. Be able to write a program that works on the command line.  I've seen a lot
+   of new blood spending a lot of time in the area of the database skin (so
+   React, Express, etc) and when asked to write a command line program they fled
+   in terror.  There's a _really_ good chance that an interview won't use
+   database skin technology at all, even if that's what you're applying for.  It
+   also is so helpful for writing demos, demonstrating some knowledge of the
+   command line itself (even if it's very basic), and much documentation and
+   examples expect you to be familiar with putting together basic command line
+   programs.  I do have a sort of primer on [[file:./command-line-programs.org][command line programs]] you're free to
+   check out - though it covers way more than what I'm talking about here.  I'm
+   talking about the simplest of programs here.
+
+* "Aced" it, but Didn't Get the Job
+:PROPERTIES:
+:CUSTOM_ID: aced-it-but-didn't-get-the-job
+:END:
+
+You might do everything well in an interview and still not get the job. It might
+have even gone swimmingly.
+
+** The Interviewer Might Have Been Vetoed
+:PROPERTIES:
+:CUSTOM_ID: aced-it-but-didn't-get-the-job--the-interviewer-might-have-been-vetoed
+:END:
+
+As an interviewer, I've had candidates I really wanted us to snag because I
+thought they were great. Management didn't take my recommendation (which is
+their prerogative) and passed on the candidate.
+
+A team member can sometimes also produce a veto. One of the reasons candidates
+meet the entire team is so people get a "vibe".  While this interview process
+runs very counter to having a richly diverse set of employees, many places
+practice it to this day. Indeed, it's a common management practice to take many
+steps to make employees feel "heard". One way to do that is give them input on
+who is hired. On its base value, it makes a kind of sense: Nobody wants to work
+with an asshole, and if you met a candidate that was later hired and you didn't
+speak up then, then you're just as surprised as everyone else about any
+asshole-ness that is experienced later.
+
+** There Might Have Been a Better Candidate
+:PROPERTIES:
+:CUSTOM_ID: aced-it-but-didn't-get-the-job--there-might-have-been-a-better-candidate
+:END:
+
+You might've been a 96% match during your interview and the other person was
+97%. It might've been decided by something totally out of your control, and in
+fact if you felt like the interview went well, it probably was out of your
+control. You could spend a bunch of time second guessing everything like hiccup
+you had, but that's both counterproductive and probably wrong.
+
+How hiring typically works is an organization will have approved the budget for
+a particular level of engineer to come on board. They've already picked the
+salary range and the number of positions they are willing to hire. So in that
+sense for that position it really is a zero sum game. I suppose it's possible
+for "opportunity hires" to take place, but nobody can cut blank checks so I
+expect this to be virtually non-existent.
+
+The best thing to do here is just move on, and maybe consider re-applying to
+this place later, or even applying to another position at the same workplace.
+Many places encourage this, though I haven't seen them do much to facilitate it.
+
+My message to interviewers that encourage re-applying to different positions: If
+you want people to re-apply because you want their talent, be sure to follow up
+with them instead of making them do it! Don't forget that candidates oftentimes
+have other places they've already applied to and it's usually just as much
+energy to apply again to your workplace as it is to apply to another. You've
+already turned them down once, so if anything you now require more energy to
+apply to than any other random job. I've straight up given up on places because
+it placed this kind of onus on me. I wanted a new job in software engineering,
+not a job in applying jobs ;)
