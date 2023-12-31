@@ -1,0 +1,414 @@
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#disclaimers-audience-etc">1. Disclaimers, Audience, etc</a>
+<ul>
+<li><a href="#disclaimers-audience-etc--objectiveness">1.1. Objectiveness</a></li>
+<li><a href="#disclaimers-audience-etc--articulation-has-value">1.2. Articulation has Value</a></li>
+<li><a href="#disclaimers-audience-etc--you-do-you">1.3. You do You</a></li>
+<li><a href="#disclaimers-audience-etc--actually-using-windows">1.4. Actually Using Windows</a></li>
+</ul>
+</li>
+<li><a href="#a-history-with-microsoft">2. A History with Microsoft</a></li>
+<li><a href="#technical-considerations">3. Technical Considerations</a>
+<ul>
+<li><a href="#technical-considerations--the-model-of-unix">3.1. The Model of Unix</a></li>
+<li><a href="#technical-considerations--hostility-towards-software-development">3.2. Hostility towards Software Development</a></li>
+</ul>
+</li>
+<li><a href="#career-considerations">4. Career Considerations</a>
+<ul>
+<li><a href="#career-considerations--how-others-view-your-career">4.1. How Others View Your Career</a></li>
+<li><a href="#career-considerations--how-you-treat-your-own-career">4.2. How You Treat Your Own Career</a></li>
+</ul>
+</li>
+<li><a href="#the-positive-encouragement-away">5. The Positive Encouragement Away</a></li>
+<li><a href="#wrapping-up">6. Wrapping Up</a></li>
+</ul>
+</div>
+<p>
+I won&rsquo;t willingly use Windows - not for development work, or any real work if I
+can help it.  I won&rsquo;t work at a workplace that requires its software engineers
+to use Windows.  I actively recommend that people don&rsquo;t work at workplaces that
+require their software engineers use Windows.  I will explain why.
+</p>
+<div id="outline-container-disclaimers-audience-etc" class="outline-2">
+<h2 id="disclaimers-audience-etc"><span class="section-number-2">1.</span> Disclaimers, Audience, etc</h2>
+<div class="outline-text-2" id="text-disclaimers-audience-etc">
+</div>
+<div id="outline-container-disclaimers-audience-etc--objectiveness" class="outline-3">
+<h3 id="disclaimers-audience-etc--objectiveness"><span class="section-number-3">1.1.</span> Objectiveness</h3>
+<div class="outline-text-3" id="text-disclaimers-audience-etc--objectiveness">
+<p>
+This article is going to be a little subjective.  Windows can literally do
+everything I will outline by virtue of being able to run a virtual machine with
+the OS that does the job.  But if we&rsquo;re talking about the virtues of an OS, what
+it readily affords, and what you have to do in order to accomplish certain
+tasks, saying your operating system can run another operating system (they all
+can), isn&rsquo;t really saying anything useful.  At some point a line must be drawn
+on what a thing is good at and bad at, and understand there will be edge cases.
+</p>
+
+<p>
+This is not a hate document towards Microsoft or its Windows operating system.
+I wish to deliver what I believe are articulated and well thought out reasons
+for rejecting Windows.  I will provide more details on why I believe my
+perspective here is more objective or at least more reasoned than a random
+person exclaiming that they hate Windows, but only later.  Know that this is not
+a venting document.
+</p>
+
+<p>
+I have paid my bills with the .Net technology stack, and you can judge for
+yourself the depth or how current that experience is by perusing my <a href="./resume.html">resume</a>.
+</p>
+</div>
+</div>
+<div id="outline-container-disclaimers-audience-etc--articulation-has-value" class="outline-3">
+<h3 id="disclaimers-audience-etc--articulation-has-value"><span class="section-number-3">1.2.</span> Articulation has Value</h3>
+<div class="outline-text-3" id="text-disclaimers-audience-etc--articulation-has-value">
+<p>
+I believe there is great value in being able to articulate oneself.  That is my
+primary motivation for this document: I want a comprehensive and cohesive place
+to organize my thoughts on the topic.  I&rsquo;m sharing it because maybe you&rsquo;ll find
+some points resonate with you, but also sharing requires I meet a certain level
+of cohesiveness.  Weak arguments have no room in public light.
+</p>
+</div>
+</div>
+<div id="outline-container-disclaimers-audience-etc--you-do-you" class="outline-3">
+<h3 id="disclaimers-audience-etc--you-do-you"><span class="section-number-3">1.3.</span> You do You</h3>
+<div class="outline-text-3" id="text-disclaimers-audience-etc--you-do-you">
+<p>
+Keep using Windows.  Keep going to work at places that require Windows.  Do what
+you like, this is not to convince you that you should do something different.  I
+might&rsquo;ve linked you here to convince you, but understand that this isn&rsquo;t a
+general plea to the public that you should stop using Windows.
+</p>
+</div>
+</div>
+<div id="outline-container-disclaimers-audience-etc--actually-using-windows" class="outline-3">
+<h3 id="disclaimers-audience-etc--actually-using-windows"><span class="section-number-3">1.4.</span> Actually Using Windows</h3>
+<div class="outline-text-3" id="text-disclaimers-audience-etc--actually-using-windows">
+<p>
+<del>I <span class="underline">do</span> use Windows, begrudgingly, because one of my vices is playing video
+games.</del>  This has recently changed for me.  Using Steam&rsquo;s Proton integration
+(which itself uses Wine) has really scratched the itch for me.  I used to need
+Windows for games.  No longer.
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-a-history-with-microsoft" class="outline-2">
+<h2 id="a-history-with-microsoft"><span class="section-number-2">2.</span> A History with Microsoft</h2>
+<div class="outline-text-2" id="text-a-history-with-microsoft">
+<p>
+I know Microsoft wants to do better - to embrace open source and get onto a more
+accessible model.  Microsoft highly values the throng of users stuck on older
+versions of the software, and people slow to change.  It&rsquo;s their base, so it
+makes sense for them to do so.
+</p>
+
+<p>
+My wariness comes from a history where I have observed a pattern.
+</p>
+
+<p>
+Microsoft attempts some really interesting and exciting things.  Here&rsquo;s a
+sampling:
+</p>
+
+<ul class="org-ul">
+<li>Using the XBox One, Microsoft made a sincere attempt at creating a successful
+version of the Steambox.  Steam has pushed hard for a Steambox - a Linux based
+gaming platform.  They&rsquo;ve gotten many video games to support &ldquo;Steam Play&rdquo;,
+which is their sticker of approval saying the game runs on Linux, macOS, and
+Windows.  The idea differs from one of exchanging media discs which eventually
+wear out or break, and require book-case like representation in a media room
+for storage.  Instead it favors downloading the game directly onto the
+device&rsquo;s storage, where loading times will be much faster and you needn&rsquo;t
+worry about how someone smudges your precious copy of Halo in the act of
+putting it back in its case.  The distribution model has worked great for
+Steam, though Steam didn&rsquo;t seem to hit the mark very well with the Steambox.</li>
+<li>OData existed before GraphQL.  It was kind of an attempt at standardizing the
+REST &#x2026;protocol? which even today remains to be a kind of zone of
+lawlessness.  REST is generally considered to be a good thing, but it is
+incomplete.  This is why every language has an &ldquo;API&rdquo; for various popular
+RESTful APIs.  We all kind of understand it but we can&rsquo;t easily get away with
+a universal &ldquo;REST consumer&rdquo; because the nature of REST is such a thing cannot
+exist.  OData provided a very standardized means of programmatic discovery for
+a REST API, as well as a standardized query mechanism for getting data.</li>
+<li>The Surface tablet suggested a rise of touch screen laptops and so with their
+shiny new hardware Microsoft set out to embrace this predicted market trend
+with Windows 8&rsquo;s tiles and charms.  This is Windows&rsquo; new way of embracing a
+touch interface, where the interface favors a series of controls on the left
+and right of the screen (where your thumbs would go, if you were grasping a
+large touch-screen laptop).</li>
+<li>The Holo Lens is an augmented reality (AR) headset, providing a wide spectrum
+of view.  Put these glasses on, and the software provides a visual overlay on
+top of what you&rsquo;re seeing in the outside world.  You could potentially see
+your bus approaching your stop even though buildings obstructed your view.
+You could discover points of interest that are normally very difficult to find
+due to the layout of streets and buildings, or even find people in a crowded
+social event.  AR has a lot of potential for many more use cases, and the Holo
+Lens is perhaps the first serious attempt at embracing it.</li>
+<li>.Net came out a while ago, but I&rsquo;m old enough to remember the announcement.
+It had the promise of a much better iteration of Java.  The language would be
+better, and just like Java, it would be cross platform, and many languages
+would compile down to a common byte code.</li>
+<li>Microsoft developed Powershell, a retake on the shells of old.  Shells like
+<code>bash</code> would hold no candle to Powershell, whose model of information was
+&ldquo;objects&rdquo; or perhaps better thought of as records.  This would mean you
+wouldn&rsquo;t need to do text chopping as is done <code>bash</code> to do something like
+select a column of data.  It would be a far improvement over Microsoft&rsquo;s own
+<code>batch</code>.</li>
+</ul>
+
+<p>
+Interesting things, yeah? So here&rsquo;s where <span class="underline">they hurt me</span>, or at least
+demonstrated a pattern that keeps me unwilling to give additional chances:
+</p>
+
+<ul class="org-ul">
+<li>The XBox One backed away from using their online store, very late in the game.
+This was done in response to a Sony Playstation video showing how easy it is
+to loan one game to a friend.  This is an inherent trade-off of the
+download-only model.  It&rsquo;s a bold vision to pursue but Microsoft didn&rsquo;t stick
+their guns.  They went back to the prior disc model, and so console video
+games remain as they have since the advent of old Commodore 64 cartridges: You
+must have some detachable media to play games.  That media is prone to faults
+and losing that media means you&rsquo;ve lost your investment.</li>
+<li>OData allowed arbitrary <code>POST</code> actions for times when REST didn&rsquo;t seem to do
+the trick.  In that way OData became a slave to two masters.  Having software
+try to do more than one thing is often a mortal wound.  That was its death to
+me.  I don&rsquo;t know if it fell into neglect or if these accommodations had
+similar impact on others.  In any case, giants like Netflix who were using
+OData stopped using OData.  Nowadays if you want the promised benefits of
+OData, you reach for GraphQL, which seems to be on the rise based on my wet
+finger raised to the winds.</li>
+<li>Windows 8 really riled some feathers.  The tile stuff didn&rsquo;t make sense to
+non-touch-screen laptops, and not everyone went out an bought a new laptop
+(let alone a touch screen laptop) to jump into the new hotness of Windows 8.
+Windows 8 didn&rsquo;t seem to intelligently understand it was running on a touch
+screen device, and so it really got a lot of backlash.  Windows 8.1 hid the
+tiles as an opt-in feature.  We still see some remnants of it in modern
+iterations of Windows&rsquo; new UIs, but with nobody designing their applications
+with it in mind, it might as well be vestigial.</li>
+<li>The Holo Lens came out of the prototype phase with an incredibly limited field
+of view.  Discovering information by sweeping your vision would be more like
+scanning crowded streets through a keyhole (a bit of an exaggeration, but the
+point stands).</li>
+<li>.Net did fulfill its promise of being cross language, and it did pull people
+over from Visual Basic.  However everyone just uses C#.  Not even Unity could
+get people to use UnityScript for anything serious - today C# and .Net are
+fairly synonymous in terms of usage.  If you&rsquo;re doing things with .Net, you&rsquo;re
+using C# to do it.  C# isn&rsquo;t bad as object oriented languages go, but cross
+language usage is a vestigial feature now.  Perhaps it could be considered a
+net win still: Java has taken strides to support other languages in its byte
+code (mimicry is flattery) and pulling away VB6 programmers into the C# world
+is generally considered to be a good thing.  A more definite disappointment
+was .Net&rsquo;s cross platform support.  Cross platform in this case simply meant
+&ldquo;It runs on all versions of Windows&rdquo; - not exactly what I had in mind.  A
+rogue project called Mono, tied up with the now-dead Novell, made an
+implementation that ran on other platforms.  Over a decade later the
+implementation was eventually subsumed into official .Net land.  But generally
+if you&rsquo;re doing .Net you&rsquo;re doing Windows, with C#.</li>
+<li>Powershell was released as part of the Windows operating system, disabled by
+default, and requiring some complicated and scary operations to run.  This
+immensely hurts Powershell as it means scripting authors can&rsquo;t rely on it
+being enabled.  It increases the barrier to entry to folks who are less risk
+adverse or people who are virtually already system administrators for Windows
+itself.</li>
+</ul>
+
+<p>
+To me all of this points to a horse that oftentimes gets to the finish line
+before any other horse, but seems to always do some kind of face plant right
+before it crosses.  I don&rsquo;t see this as a platform of stability, or one that
+enables me to flourish as someone who want the computer to work for me instead
+of me working for the computer.
+</p>
+</div>
+</div>
+<div id="outline-container-technical-considerations" class="outline-2">
+<h2 id="technical-considerations"><span class="section-number-2">3.</span> Technical Considerations</h2>
+<div class="outline-text-2" id="text-technical-considerations">
+</div>
+<div id="outline-container-technical-considerations--the-model-of-unix" class="outline-3">
+<h3 id="technical-considerations--the-model-of-unix"><span class="section-number-3">3.1.</span> The Model of Unix</h3>
+<div class="outline-text-3" id="text-technical-considerations--the-model-of-unix">
+<p>
+Or POSIX, or Linux, or *nix, or whatever we need to call it.
+</p>
+
+<p>
+A good model is worth its weight in <code>$precious_metal</code>, and has been proven in
+the software industry to make that software keep going for <a href="https://en.wikipedia.org/wiki/Unix#History">half a century or
+more</a>.  One such model in this ecosystem which will be covered is how
+<a href="https://en.wikipedia.org/wiki/Everything_is_a_file">everything is a file</a>.  Let&rsquo;s dive into this for a moment.
+</p>
+
+<p>
+In POSIX, everything is a file.  Generally we think of files as blobs of data,
+and we can use programs to view or manipulate those files.  However the model of
+&ldquo;everything is a file&rdquo; goes deeper than that.  Files in POSIX are better
+described as a named entity in which you can read from and write to - and that&rsquo;s
+about it.  That could map to some location in storage like we traditionally
+think about it, but it also can include hardware (disks, serial ports, network
+ports, even CPUs or displays).
+</p>
+
+<p>
+Files can also be the processes themselves.  Think about the meaning of that: If
+you can write to a file, and a file can be a process, that means you can write
+to a process.  What does that mean? That means I can communicate with a process
+by sending it data through a well-known mechanism (file writing).  I don&rsquo;t need
+some special API to make this happen - it&rsquo;s a notion built into the model of the
+entire operating system.  Every process has a <code>stdin</code> and <code>stdout</code> which are
+inputs and outputs.  We can write to a processes&rsquo; input as well as read from its
+output.  This allows us to compose lots of small programs together to achieve
+powerful effects.  The composition mechanism is well understood and incredibly
+flexible.  It doesn&rsquo;t demand bespoke mechanisms that an unstandardized model
+would bring about.
+</p>
+
+<p>
+Windows has some mechanisms that kind of mimic the composition seen in POSIX.
+These piped redirections will allow you to do some amount of composition, but
+the fact that devices are not also files that you can simply read/write, much of
+it is lost.
+</p>
+
+<p>
+Of course, the file model seen in POSIX isn&rsquo;t the only model it uses.  There are
+others, but I have not observed Windows using these.  Generally developing
+software on Windows requires monolithic software constructs.  APIs rule that
+landscape.  I don&rsquo;t want APIs - they are contrary to composition.
+</p>
+</div>
+</div>
+<div id="outline-container-technical-considerations--hostility-towards-software-development" class="outline-3">
+<h3 id="technical-considerations--hostility-towards-software-development"><span class="section-number-3">3.2.</span> Hostility towards Software Development</h3>
+<div class="outline-text-3" id="text-technical-considerations--hostility-towards-software-development">
+<p>
+Windows is actively hostile to software development, and this is quick and easy
+to prove.  In Windows, the only out-of-box scripting you can do is with <code>cmd</code>,
+and JavaScript you load with Microsoft Edge.  Granted, you can start installing
+things to achieve more.  However, these programs have their limits.  Most parts
+of Windows are governed by DLLs or other programs.  These entities require APIs
+to access.  Compare this to Linux and macOS, where virtually every setting is
+governed by a text file somewhere.
+</p>
+
+<p>
+Since the advent of Powershell, Microsoft has been pushing for more command line
+tools to access things.  This is a mistake (though not exclusively Microsoft&rsquo;s):
+Requiring programs to change things is, once again, introducing bespoke APIs.
+Learning how to edit one program&rsquo;s settings doesn&rsquo;t position you to be any
+better at editing another program&rsquo;s settings.  Whereas learning to manipulate
+text carries over to every other text file.
+</p>
+
+<p>
+Every time you click on something, an automation fairy dies.  The mouse is not
+an easily automated device.  Programs in Windows are generally built with a GUI
+first, which means the ability automate them is an afterthought.  The GUI is a
+curated experience over the data it operates upon - your data.  Without tooling
+to use the programs as you see fit (instead the tooling keeps you in a sort of
+prison), you are unable to compose programs together.  You cannot make one
+program&rsquo;s usefulness easily extend to another&rsquo;s.  Instead the program must
+directly support the functionality you desire.  This keeps you beholden to that
+program&rsquo;s feature support.  This is not how you have software that endures the
+ages, and it hinders your ability automate (thus script), which is a core
+capability of software development.
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-career-considerations" class="outline-2">
+<h2 id="career-considerations"><span class="section-number-2">4.</span> Career Considerations</h2>
+<div class="outline-text-2" id="text-career-considerations">
+</div>
+<div id="outline-container-career-considerations--how-others-view-your-career" class="outline-3">
+<h3 id="career-considerations--how-others-view-your-career"><span class="section-number-3">4.1.</span> How Others View Your Career</h3>
+<div class="outline-text-3" id="text-career-considerations--how-others-view-your-career">
+<p>
+Much in the same way that I have steered away budding software engineers from
+PHP because of the <a href="https://eev.ee/blog/2012/04/09/php-a-fractal-of-bad-design/">systemically broken nature of it</a>, I steer away those same
+engineers from working at Windows based workplaces.  The <a href="#technical-considerations">3</a> builds why I think Windows is individually a bad choice.
+</p>
+
+<p>
+When I interview a candidate and I see you&rsquo;ve been spending time in a Windows
+workplace, it will guide many of my interview questions.  It&rsquo;s a smell or red
+flag, not an automatic deal breaker for me (although it may be for some).  I
+will craft questions that tease out the candidate&rsquo;s ability to automate things,
+and when they automated things, how they went about it.  I want to confirm my
+suspicion: Their muscle for automation has atrophied, or was never there.
+</p>
+
+<p>
+The same can be said for their ability model things - a highly sought after
+skill for a software engineer.  If the candidate can&rsquo;t even appreciate a good
+model such as &ldquo;everything is a file&rdquo;, then that candidate is going to struggle
+with my models which I try to keep in a similar principle.
+</p>
+
+<p>
+Clearly I paint with broad stokes here.  Will I encounter PHP and Windows
+engineers who surprise me? I&rsquo;m sure I will.  However I don&rsquo;t consider the
+numbers to be in their favor for any given engineer to be that person.  With new
+candidates comes a lot of guesswork and extrapolation - a very imperfect
+process.  But I must use <span class="underline">something</span>.
+</p>
+</div>
+</div>
+<div id="outline-container-career-considerations--how-you-treat-your-own-career" class="outline-3">
+<h3 id="career-considerations--how-you-treat-your-own-career"><span class="section-number-3">4.2.</span> How You Treat Your Own Career</h3>
+<div class="outline-text-3" id="text-career-considerations--how-you-treat-your-own-career">
+<p>
+Arguably there are infinite things to learn.  However we have infinite time to
+learn them, and while we shouldn&rsquo;t use that as an excuse to learn things, we
+should use it as an means to decide which things to learn.  Sure, you could
+straddle the Unix and Windows worlds.  But why not learn Lambda Calculus?
+Category Theory? New, shiny languages? <a href="https://aws.amazon.com/">Fad server hosting</a>? Or even just go
+deeper into Unix tools (you&rsquo;ll find the subject blossoms nicely).  For each year
+you spend mastering Windows tech, you could&rsquo;ve also spent mastering some other
+tech.
+</p>
+
+<p>
+Impostor syndrome runs rampant in our industry.  You may think that a Windows
+shop is the only place that will accept you.  I want to stress that the
+interview process is highly arbitrary and lacks a standard.  Biases run
+unchecked in this setting.  Unix based shops aren&rsquo;t turning you down because you
+have failed - the number of reasons in which an applicant is turned down are
+many.  Sometimes another person is seen as a better fit than you.  They might
+not feel like they are capable of handling someone at your experience level (in
+which case you lucked out).  Maybe you didn&rsquo;t fit some norm they have.  &ldquo;They
+are the only ones that would hire me&rdquo; just rings false.
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-the-positive-encouragement-away" class="outline-2">
+<h2 id="the-positive-encouragement-away"><span class="section-number-2">5.</span> The Positive Encouragement Away</h2>
+<div class="outline-text-2" id="text-the-positive-encouragement-away">
+<p>
+While I haven&rsquo;t written it yet, I do plan on adding some articles on other
+operating systems.  While this article is about not embracing Microsoft&rsquo;s
+operating system, there are things it lacks that other operating systems have,
+but aren&rsquo;t an exclusive lacking on Microsoft&rsquo;s side.
+</p>
+</div>
+</div>
+<div id="outline-container-wrapping-up" class="outline-2">
+<h2 id="wrapping-up"><span class="section-number-2">6.</span> Wrapping Up</h2>
+<div class="outline-text-2" id="text-wrapping-up">
+<p>
+More than a paper with statistics and facts, all I have presented is an
+Aristotelian argument.  Perhaps this will help embolden your career decisions,
+or even attack my position.  Feel free to dissect and reference this material
+with my blessing.
+</p>
+</div>
+</div>
