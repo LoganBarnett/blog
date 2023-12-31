@@ -8,7 +8,7 @@ categories: software-engineering
 #+END_EXPORT
 
 #+title:     Consider Not Doing That Rewrite
-#+author:    Logan Barnett-Hoy
+#+author:    Logan Barnett
 #+email:     logustus@gmail.com
 #+date:      <2021-12-08 Wed>
 #+language:  en

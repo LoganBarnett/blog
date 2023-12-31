@@ -1,5 +1,5 @@
 #+title:     Writing Good Commit Messages without the Ceremony
-#+author:    Logan Barnett-Hoy
+#+author:    Logan Barnett
 #+email:     logustus@gmail.com
 #+date:      <2022-08-23 Tue>
 #+language:  en

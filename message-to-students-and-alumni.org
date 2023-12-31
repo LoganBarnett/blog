@@ -1,5 +1,5 @@
 #+title:     A Message to Students and Alumni
-#+author:    Logan Barnett-Hoy
+#+author:    Logan Barnett
 #+email:     logustus@gmail.com
 #+date:      <2023-03-31 Fri>
 #+language:  en

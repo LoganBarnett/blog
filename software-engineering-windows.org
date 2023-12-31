@@ -1,5 +1,5 @@
 #+title:     Why I Won't Use Windows
-#+author:    Logan Barnett-Hoy
+#+author:    Logan Barnett
 #+email:     logustus@gmail.com
 #+date:      <2021-04-14 Wed>
 #+language:  en

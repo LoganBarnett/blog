@@ -1,5 +1,5 @@
 #+title:     Control Flow Simplified Part 1
-#+author:    Logan Barnett-Hoy
+#+author:    Logan Barnett
 #+email:     logustus@gmail.com
 #+date:      <2022-02-22 Tue>
 #+language:  en

@@ -8,7 +8,7 @@ categories: software-engineering
 #+END_EXPORT
 
 #+title:     Promise and map with JavaScript
-#+author:    Logan Barnett-Hoy
+#+author:    Logan Barnett
 #+email:     logustus@gmail.com
 #+date:      <2020-08-01 Sat>
 #+language:  en

@@ -1,5 +1,5 @@
 #+title:     XML Namespaces
-#+author:    Logan Barnett-Hoy
+#+author:    Logan Barnett
 #+email:     logustus@gmail.com
 #+date:      <2021-08-23 Mon>
 #+language:  en

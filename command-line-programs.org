@@ -1,5 +1,5 @@
 #+title:     Checklist for Good Command Line Programs
-#+author:    Logan Barnett-Hoy
+#+author:    Logan Barnett
 #+email:     logustus@gmail.com
 #+date:      <2022-08-29 Mon>
 #+language:  en

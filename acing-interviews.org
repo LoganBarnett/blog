@@ -8,7 +8,7 @@ categories: software-engineering
 #+END_EXPORT
 
 #+title:     Acing Interviews for Software Engineering Positions
-#+author:    Logan Barnett-Hoy
+#+author:    Logan Barnett
 #+email:     logustus@gmail.com
 #+date:      <2022-08-16 Tue>
 #+language:  en

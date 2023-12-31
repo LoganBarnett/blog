@@ -8,7 +8,7 @@ categories: software-engineering
 #+END_EXPORT
 
 #+title:     Function Composition
-#+author:    Logan Barnett-Hoy
+#+author:    Logan Barnett
 #+email:     logustus@gmail.com
 #+date:      <2022-05-11 Wed>
 #+language:  en
