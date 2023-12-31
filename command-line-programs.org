@@ -22,7 +22,32 @@ The quick list:
 
 * Disclaimer
 
+You can always view my [[file:./resume.org][résumé]] here on the blog.  From that you can infer a lot
+about my experience and things I've done.  I don't wish to appeal to authority,
+but having some experience in the field should amount to something.  I deal with
+this stuff on a day to day basis, and from that I've learned some things.  You
+can decide for yourself if it's poorly acquired trauma or wisdom that comes with
+age.
+
+I tend to examine "standards" with high levels of scrutiny, as they can be put
+together by almost anyone with vast quantities of spare time and an unhealthy
+addiction to work.  I hope my work here is placed under similar scrutiny.  Bad
+ideas should perish and good ideas should thrive.  Of course, the real world
+contains a lot of nuance.  I find it best to know what the ideal course is, and
+then deviate as needs dictate.
+
+You will not gain my support by quoting my words as truth.  But use this to be
+inspired to pitch your own arguments and form your own ideas.
+
+In short: I know some things.  I think to think for myself.  So should you,
+including scrutinizing anything I emit.
+
 * Help and Usage
+
+The [[https://agilemanifesto.org][Agile Manifesto]] tells us to favor "working software over comprehensive
+documentation", but I find this akin to waiting until someone falls in a hole
+and dies before you decide to put up a sign that there's a hole where one could
+fall in and die.
 
 Providing a help/usage information for your program is a must-have. Even
 simplistic programs should provide a brief description of what they do and any
