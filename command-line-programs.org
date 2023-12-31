@@ -147,3 +147,16 @@ create-report-now-please my-report.rpt # Fake command. Will fail.
 # not "my-report.rpt".
 publish-all-reports
 #+end_src
+
+** Standard Exit Codes :archive:
+
+I need to vet this before publishing it.
+
+There are some standards for exit codes as well.  The advanced Bash guide covers
+[[https://tldp.org/LDP/abs/html/exitcodes.html][exit codes of reserved meaning in Bash]].  This is not quite the same as a
+standard for which all outcomes could be cataloged.  Instead this gives us some
+predictable outcome.
+
+While I have found many to find this kind of thing archaic.  It's not terribly
+different from how the vaunted HTTP standard works.  [[https://developer.mozilla.org/en-US/docs/Web/HTTP/Status][HTTP codes]] rain [[https://http.cat][cats]] and
+[[https://http.dog][dogs]] from the standard.
