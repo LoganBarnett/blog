@@ -1,0 +1,643 @@
+#+BEGIN_EXPORT html
+---
+layout: default
+title: Data Modeling
+date: 2022-05-21
+categories: software-engineering
+---
+#+END_EXPORT
+
+#+title:     How to Avoid Edge Cases and Crushing Tech Debt
+#+author:    Logan Barnett
+#+email:     logustus@gmail.com
+#+date:      <2022-05-21 Sat>
+#+language:  en
+#+file_tags:
+#+tags:
+
+* Introduction
+
+When writing any kind of real world applications, "edge cases" arise - wrinkles
+placed into your beautiful applications which start off as simple =if=
+statements and later lead to great sources of confusion and kind of a dumping
+ground for all of the organization's wacky needs. This later takes on the form
+of crushing technical debt and you're wondering how your pristine application
+got here, and how you might avoid it on your next one. Fortunately it is
+avoidable through a simple technique called data modeling.
+
+* What's an Edge Case?
+
+First we need to come to an agreement on what an edge case is.  [[https://en.wikipedia.org/wiki/Edge_case][Wikipedia has a
+decent edge case definition]], but let's take our own spin on it:
+
+#+begin_quote
+An edge case requires you to heap code upon your program to address
+unanticipated needs.
+#+end_quote
+
+** Edge Case Example
+Let's try an example. Pretend we're writing a program and we want users to be
+logged in to view everything, but users who aren't logged in will see a limited
+number of things. We represent this with a session, and the session simply
+existing tells us that we are logged in.
+
+#+begin_src javascript :results none
+if(session != null) {
+  showContent()
+} else {
+  showLimitedContent()
+}
+#+end_src
+
+Here I could say that showing content or showing limited content could
+be part of your view template library (React, ERB, etc) or perhaps even your
+server, but that's a very web-centric way of looking at things, and doesn't
+actually matter for the case of the data model. We have some decision making
+based on some known state, and some outcome is produced from that state.
+
+In this case we look to see if there's an existing =session= and use that to
+determine if full or limited content is to be shown. Nothing too special here.
+
+** Scope Creep
+
+Then a requirement comes in to display additional, privileged content for
+administrators.  Some users are marked as administrators. Sometimes we label
+this as "scope creep" - a name given to mean the requirements have expanded the
+capability of the application beyond its original design. While scope creep is a
+real thing, this name is often a pejorative given when blame seems easy for the
+introduction of edge cases.
+
+To represent our new administrator requirement, let's pretend we have a user
+type - the type isn't the definitive way to represent this, but it's a good
+textual way to visualize what it's made of.
+
+#+begin_src javascript :results none
+type User = {
+  isAdministrator: bool,
+  name: string,
+}
+#+end_src
+
+So we have a user. For the sake of argument, let's say a =session= has a =user=.
+
+#+begin_src javascript :results none
+type Session = {
+  user: User,
+}
+#+end_src
+
+We can incorporate these new requirements in our code like so:
+
+#+begin_src javascript :results none
+if(session != null) {
+  if(session.user.isAdministrator) {
+    showPrivilegedContent()
+  } else {
+    showContent()
+  }
+} else {
+  showLimitedContent()
+}
+#+end_src
+
+Now the code becomes more gnarly. You can slice and dice this all you want - use
+=switch= statements, roll conditionals together with your language's =and= and
+=or= operations, and even push some of this logic deeper into these =show=
+functions. It doesn't matter - you will be disappointed in the result. These are
+edge cases in your code.
+
+In a non-trivial (ie. real world) code base, this will be an incredible source
+of bugs, slowed progress, and overall complexity that makes it difficult to
+on-board new engineers.
+
+** Expanding Edge Cases Further
+
+Dead horses are best well-beaten. Let's expand our example a bit further:
+
+We essentially have three different kinds of states:
+
+1. Administrator: =isAdministrator= is =true=.
+2. User: =isAdministrator= is =false=.
+3. Sessionless: =session= is =null=.
+
+Fortunately, these states are fairly mutually exclusive. But what if we add
+another type of logged in user? We could add a Moderator, a user who has some
+elevated privileges and is trusted to help ensure content is safe in the system,
+but they don't have full administrative permissions. How would we represent
+that? Well, we could repeat the pattern we have for =isAdministrator=:
+
+#+begin_src javascript :results none
+type User = {
+  isAdministrator: bool,
+  isModerator: bool,
+  name: string,
+}
+#+end_src
+
+With our new, expanded =User=, we grant the Moderator some permissions by
+expanding our code:
+
+#+begin_src javascript :results none
+if(session != null) {
+  if(session.user.isAdministrator) {
+    showPrivilegedContent()
+  }
+  if(session.user.isModerator) {
+    showPrivilegedContent()
+  }
+  // A normal user is neither of these.
+  if(!session.user.isAdministrator && !session.user.isModerator) {
+    showContent()
+  }
+} else {
+  showLimitedContent()
+}
+#+end_src
+
+Let's unpack what happened here: We added a new type of user. What fell out of
+it is we were _forced_ to make code changes in the application. This might seem
+like an obvious thing in the face of a new requirement, but consider that _every
+place a Moderator could do something, code must be changed_. In a large
+application, this could involve hundreds or thousands of edits. If you are using
+an extensive unit test suite, that's additional branches or conditions of code
+you must test (or neglect, as is what often happens in practice).
+
+Additionally, we have a potential bug evident in our structure. What happens
+when =isAdministrator= is =true= and =isModerator= is also =true=? We will show
+privileged content twice! We could put some checks in our inputs to insure this
+never happens. However there are often means to circumvent this validation -
+data files can be manually written to disk, and databases can have their records
+updated without going through the application. Generally this kind of action
+should be very frowned upon, but in projects where edge cases run rampant, so
+too do unanticipated data injections.
+
+All is not lost though - we have data modeling to help us with this.
+
+* Data Modeling
+
+A given application operates upon data. Even simple programs operate upon data -
+even if the program doesn't seem to view it that way. Modeling that data means
+you're thinking through how that data should represent various scenarios in your
+application.  Whether you go through this exercise or not, _your application has
+a data model_. Having an explicit model is always going to serve you better than
+an implicit one (the one in your head).
+
+** Data Modeling Users
+
+A simple means of modeling data involves capturing behavior and representing it
+_purely as data_ rather than inflicting code constructs upon it. Using our
+logged-in and administrator example above, consider for a moment what we want to
+do with the knowledge that something is an administrator. What sorts of
+behaviors do administrators have? Thinking of many application needs in general,
+this is probably a decent, if generic list:
+
+1. Administrators can view privileged data.
+2. Administrators can perform special operations.
+3. Administrators can perform normal operations, absent of those operations'
+   restrictions.
+
+And then a Moderator:
+
+1. Moderators can view privileged data.
+2. Moderators can perform _some_ special operations.
+3. Moderators can perform normal operations, _sometimes_ absent of those
+   operations' restrictions.
+
+We do have another kind of user here which we didn't capture explicitly. What is
+a user when =isAdminisrator= and =isModerator= are =false=? An ordinary user?
+The specifics don't matter too much, but we can say something about this
+"ordinary" or non-administrator user:
+
+1. Normal users can view more content than non-logged in users.
+2. Normal users may perform some operations, but those operations have
+   restrictions.
+3. Normal users may not perform special operations.
+
+We also have a fourth user type that's a little different than the rest. A user
+that is logged in is still a user. Perhaps not a _registered_ user, but a user
+of our system nonetheless. We can tally these permissions thusly:
+
+1. A sessionless user can view only limited content.
+2. A sessionless user can perform no or very limited operations.
+3. A sessionless user can not perform special operations.
+
+If we wanted to go meta and think about what all of these users have, let's see
+it:
+
+1. A user has a type.
+2. Data is viewed and operated upon differently by different user types.
+3. Some permissions are shared between user types.
+
+The first one is pretty easy. We could create a user type or even =Role=, which
+captures Administrator, Operator, "User" (this is becoming an overloaded term,
+we'll revisit it in this process), and "Not logged in" (which is cumbersome and
+also something we'll revisit). Additionally, a =Role= can represent _any future
+type of user_. No extra code needed! Just add some data. Realistically we may
+need to introduce _some_ code, but it will be very minimal in comparison to our
+example so far.
+
+Let's create a type to represent:
+
+#+begin_src javascript :results none
+type Role = {
+  name: string,
+}
+#+end_src
+
+And then let's add =Role= to =User=, while stripping it of those role-based flags.
+
+#+begin_src javascript :results none
+type User = {
+  name: string,
+  role: Role,
+}
+#+end_src
+
+The =name= on a =Role= will look like =administrator=, =moderator=, and
+=author=. We could call =author= any number of things, like =student=,
+=content-provider=, or even =customer=, all depending on our application. To
+continue expanding our example, let's say a normal, non-privileged user is an
+=author=. They write content, and can view their own content.
+
+And then this would look like:
+
+#+begin_src javascript :results none
+if(session != null) {
+  if(session.user.role.name == 'administrator') {
+    showPrivilegedContent()
+  }
+  if(session.user.role.name == 'moderator') {
+    showPrivilegedContent()
+  }
+  if(session.user.role.name == 'author') {
+    showContent()
+  }
+} else {
+  showLimitedContent()
+}
+#+end_src
+
+This fixes our =isAdministrator= and =isModerator= bug when both are =true=.
+However our code doesn't change much and it's still not very sustainable. We
+could roll up our =moderator= and =administrator= checks into a logical =or= but
+that would be missing the point. We need to decouple a role from a _permission_.
+
+Let's just call it =Permission=. A =Permission= just needs a name for our
+purposes.
+
+#+begin_src javascript :results none
+type Permission = {
+  name: string,
+}
+#+end_src
+
+And then we add that to a role. After all, permissions are granted via roles.
+
+#+begin_src javascript :results none
+type Role = {
+  permissions: Array<Permission>
+  name: string,
+}
+#+end_src
+
+We can capture our current permissions with =view-self-content= and
+=view-priviledge-content=.
+
+Now our code cleans up a bit.
+
+#+begin_src javascript :results none
+if(session != null) {
+  if(session.user.role.permissions.find(c => c.name == 'view-priviledged-content')) {
+    showPrivilegedContent()
+  }
+  if(session.user.role.permissions.find(c => c.name == 'view-self-content')) {
+    showContent()
+  }
+} else {
+  showLimitedContent()
+}
+#+end_src
+
+We still have that pesky session check. But our new data model handles that!
+Instead of calling this user a "not logged in" user, let's call them a "guest".
+It communicates the transient and non-privileged nature of the user. We can
+represent such a user and their role with the following data:
+
+#+begin_src javascript :results none
+const guestRole = {
+  name: 'guest',
+  permissions: [
+    { name: 'view-limited-content' },
+  ],
+}
+const guestUser = {
+  name: 'guest',
+  role: guestRole,
+}
+#+end_src
+
+We then stop checking =session=, and instead we assume we _always_ have a user,
+but some earlier code will check the session and if the session is not present,
+assigns it the guest user.
+
+#+begin_src javascript :results none
+const user = session.user == null ? session.user : guestUser
+if(session.user.role.permissions.find(c => c.name == 'view-priviledged-content')) {
+  showPrivilegedContent()
+}
+if(session.user.role.permissions.find(c => c.name == 'view-self-content')) {
+  showContent()
+}
+if(user.role.permissions.find(c => name == 'view-limited-content')) {
+  showLimitedContent()
+}
+#+end_src
+
+We could get more tricky here, such as assigning a guest a randomly generated
+name or something to otherwise uniquely track them.
+
+One of the cool capabilities of handling users the way we have is, if a uniquely
+tracked guest user registers, we can bring all of their data along for the ride!
+All we do is give them a real name and update their =role=. Sometimes you see
+this on shopping sites, where your cart and shopping history you built up as a
+guest are preserved when you register your user.
+
+So we introduced the notions of a =Role= and a =Permission= to go with our
+existing =User= to create a permission system - and all of it is represented by
+data. If we add a new role, and it also has =view-self-content= as a permission,
+nothing needs to be changed in our code! Neat!
+** Real World Data Modeling
+
+What's seen in [[Data Modeling Users]] is a real world data model that gets used
+quite a bit. Some get even more sophisticated such that a permission points to a
+piece of data - so you can see some data but the data of others not in your
+organization or not otherwise shared with you. These require even more
+sophisticated modeling. If I find a good example, I'll be sure to link it here!
+
+[[https://en.wikipedia.org/wiki/Double-entry_bookkeeping][Double entry bookkeeping]] is a data model that involves keeping a series of
+transactions - debits and credits. The bank can enforce limits on transaction
+size using incredibly complex algorithms but the data model remains the same -
+it's all still debits and credits.
+
+Our beloved [[https://en.wikipedia.org/wiki/Git][Git]] uses patches, commits (which hold patches), and refs (which hold
+commits) to represent so much of the world's code today. It can also track
+changes to any arbitrary text (and sometimes binary) files - it's not just
+limited to source code, because it doesn't know anything about source code!
+Being unaware of source code also means Git doesn't care which language you
+use. A new language does not require new support on Git's account.
+
+** Immutable Data Models - Events
+
+I've seen this called "Event Sourcing". Modeling with events is a powerful
+mechanism. The simplest example of data modeled events is double entry
+bookkeeping. A debit and a credit are no different from one another - that's
+just a positive or negative amount. The event also needs a time in which the
+event occurred.
+
+#+begin_src javascript :results none
+type Entry = {
+  // Ignore why using potentially-floating number is bad for money for a moment.
+  amount: number,
+  createdAt: Date,
+}
+#+end_src
+
+We need a date that corresponds to the event to avoid [[Peril: Insertion Order]].
+Once we have just these two fields in place, we can represent a bank account.
+Potentially more information could be added, such as the source account and
+the destination account.
+
+From there, we can reconstruct the amount on the account at any moment in time.
+We can know if an account dipped into the negative, or see a peak.
+
+That amount is something we call a "projection". It's a handy shortcut for
+representing state in our "current" moment, or whatever moment we deem necessary
+to get to quickly, without having to process a potentially vast amount of
+data. From the projection we can continue to apply new events and our state
+updates will remain correct. For example, you can take your current amount in
+your bank account and apply credits or debits to it, and you simply apply those
+changes to the current amount and you get the new amount. Inversely you can
+apply all of the credits and debits since the beginning of the account to
+achieve the current amount. Current, in this case, is an evolving concept. Let's
+look at a less numeric example that we actually understand in day to day living.
+
+In the United States on 1900, the president was William McKinley. We can
+represent that with a table with the president's name, their relation to
+presidency, and what time it happened.
+
+| President           | Event Date | Event Type        |
+|---------------------+------------+-------------------|
+| William McKinley    |       1897 | becomes-president |
+| William McKinley    |       1901 | leaves-presidency |
+| Theodore Roosevelt  |       1901 | becomes-president |
+| Theodore Roosevelt  |       1909 | leaves-presidency |
+| William Howard Taft |       1909 | becomes-president |
+
+And we can fill this out ad-nausium. From this we could populate it to the
+current time to figure out who the current president is, which is an evolving
+"truth". What is "current" is relative, but these records don't lie. On these
+dates, these changes were made involving the individuals listed. This is
+historic record. Your data model can also be like a historic record.
+
+This is in part because the events are the source of truth, and they are
+immutable. Changes in what we consider to be the "present" state evolve and we
+keep a record of that evolution. It allows us to reconstruct the current state
+at any point. This is helpful because projections could be lost - think of the
+projections like a cache. We might have to clear it due to storage problems, or
+the cache might be sitting on some location that's generally more performant
+than our events. As a web-centric example, the events may reside in a database,
+whereas the projections may be in an in-memory key-value store. This is a
+powerful mechanism that allows the data to decouple accurate and immutable
+representation from what is quick and easy to read from.
+
+Does everything need events? Perhaps not, but many things would benefit from it.
+Consider a huge database with millions of records. You have a layer of customer
+service representatives who must help sort out data entry issues, low-priority
+bugs, or just give the customers a hand with things. Each change made by a
+customer service representative can be recorded as its own event, and we can
+even track who created the event in the first place (such as the customer
+service representative). We could even display these events to other customer
+service representatives to allow for audits, or an erroneous record set could be
+presented to you, the engineer, for debugging purposes. You could walk that data
+forward a step at a time and essentially achieve a time machine needed to debug
+a particular problem.
+
+** LEGO: Using Simple Models to Achieve Complexity
+
+Git uses an incredibly simple model. There are patches, which are additions and
+subtractions from code as specific locations. There are commits, which hold
+patches. There are refs, which hold commits. Literally everything inside Git can
+be represented using those three entities: Patches, commits, and refs. You can
+even model rebases, a topic that is daunting for many novices, using this model.
+In fact, if you do a rebase, you can still get to the prior state of the rebase
+by following refs around.
+
+See [[Example: Kroosade]] for stepping through the process of applying this
+thinking.
+
+** Example: Kroosade :noexport:
+
+I want to design my own Warhammer 40,000 crusade management system. From what
+I've gathered, there's [[https://administratum.goonhammer.com/][Administratum]] and [[https://crusade-manager.net/][Crusade Manager]] already, but I wanted
+to take my own stab at it. Fortunately it also means we can go through a
+modeling exercise with it.
+
+*** Kroosade: The Original Model
+
+The model for Warhammer 40k crusades management is roughly this:
+
++ Model :: A model is an individual entity on the table top, often represented
+  as an actual plastic model (or some other material).
++ Unit :: A unit is a collection of one or more models. Units can have
+  selections within them, based on special rules for each kind of unit.
++ Order of Battle :: This is a collection of _all_ of your units.
++ Army Roster :: Is a collection of units used to play an individual match.
+
+It's important to note that the Order of Battle is a complete tally of all of
+the units. Units in the Order of Battle will appear in the Army Roster in a
+duplicated fashion.
+
+#+begin_src javascript :results none
+type Model = {}
+type Unit = {
+  models: Array<Model>,
+}
+type OrderOfBattle = {
+  units: Array<Unit>,
+}
+type ArmyRoster = {
+  units: Array<Unit>,
+}
+#+end_src
+
+This is an overly simplistic model of course. To represent a little extra
+complexity, let's include a "Power Rating", which is the game's way of measuring
+cost of selection.
+
+#+begin_src javascript :results none
+type Model = {
+  powerRating: number,
+}
+type Unit = {
+  models: Array<Model>,
+  powerRating: number,
+}
+type OrderOfBattle = {
+  units: Array<Unit>,
+  powerRating: number,
+}
+type ArmyRoster = {
+  units: Array<Unit>,
+  powerRating: number,
+}
+#+end_src
+
+We could have the =ArmyRoster= and =OrderOfBattle= have a derived =powerRating=,
+since generally it is. It doesn't matter much but I did want to illustrate that
+we should be able to look at any of these entities and determine the overall
+power rating. In fact, the army roster has a power rating limit, as does the
+order of battle.
+
+*** Kroosade: Composable Model
+
+From [[Kroosade: The Original Model]], we can see that power rating is present or at
+least computable.
+
+#+begin_src javascript :results none
+type Entity = {
+  children: Array<Entity>,
+  choices: Array<Choice>,
+  name: string,
+}
+type Choice = {
+  costs: Array<Cost>,
+  name: string,
+}
+type Cost = {
+  amount: number,
+  type: string,
+}
+#+end_src
+
+Let's test what we can represent here with it.
+
+#+begin_src javascript
+
+const orderOfBattle: Entity = {
+  children: [
+    {
+      name: 'Dire Avengers',
+      children: [
+        {
+          name: 'Dire Avenger Exarch',
+          children: [],
+          choices: [
+            {
+              name: 'Exarch Power: Stand Firm',
+              costs: [
+                {
+                  amount: 1,
+                  type: 'power-rating',
+                },
+                {
+                  amount: 15,
+                  type: 'points',
+                },
+                {
+                  amount: 0,
+                  type: 'command-points',
+                },
+              ],
+            },
+            {
+              name: 'Weapon: Two Shuriken Catapults',
+              cost: [],
+            },
+          ],
+        },
+      ],
+      choices: [
+        {
+          name: '5 Dire Avengers',
+          costs: [
+            {
+              amount: 1,
+              type: 'power-rating',
+            },
+            {
+              amount: 70,
+              type: 'points',
+            },
+            {
+              amount: 0,
+              type: 'command-points',
+            },
+          ]
+        },
+      ],
+    }
+  ],
+  choices: [],
+}
+#+end_src
+
+Zounds! This is really verbose. But it lets us express virtually anything. As I
+was writing this out, I realized I didn't completely structure everything as I'd
+wanted it. But that's okay - I simply nested more entities and got what I wanted
+out of it.
+
+This is great because if the rules change a lot (and they do over the course of
+years), I don't necessarily have to re-write my program.
+
+But what about the things we saw in [[Kroosade: The Original Model]]? We no longer
+have an army roster nor an order of battle. That's okay. We can represent that
+in our UI however we want. We just need to make sure our data model _allows_ for
+what we have here.
+
+A model like this can take a very short amount of time to come up with, but can
+cover many different uses.
+
+* Perils in Data Modeling
+** Peril: Insertion Order
+** Peril: Mutation
+** Peril: Anonymous Edits
