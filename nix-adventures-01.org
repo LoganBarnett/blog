@@ -1,0 +1,1736 @@
+#+title:     Nix Adventures (part 1 of ?)
+#+author:    Logan Barnett
+#+email:     logustus@gmail.com
+#+date:      <2023-12-22 Fri>
+#+language:  en
+#+file_tags:
+#+tags:
+#+auto_id:   t
+#+options:   toc:nil
+
+#+BEGIN_EXPORT html
+---
+categories: nix
+date: 2023-12-22
+layout: default
+title: Nix Adventures (part 1 of ?)
+---
+#+END_EXPORT
+
+* What is this?
+:PROPERTIES:
+:CUSTOM_ID: what-is-this
+:END:
+
+I recently (re?)read some posts from [[https://ianthehenry.com/posts/how-to-learn-nix/][Ian Henry's own adventures with Nix]]. I find
+the series both amusing (because watching someone suffer as I have suffered can
+be amusing if done well), and because it's actually encouraging to see someone
+actually struggling with this.  Nix feels a lot like Rust to me.  In many ways
+it represents the future of computing.  In others, I see a select few people
+with _deep_ understanding of the topic spouting off what is the equivalent of
+total nonsense to me.  I am glad these people are helping, and I am positive
+they are 100% correct in their statements.  I just don't understand any of it.
+There's some knowledge I was supposed to acquire while ~~skimming~~ reading
+through a colossal set of documentation.
+
+Now, before this goes further, I want to make it really clear here:  I fully
+understand and appreciate for most people working on these projects that it's a
+passion project and open source burnout is very real.  Posts like Ian's and now
+mine walk a dangerous line of contributing to that burnout.  I will make immense
+effort to keep my observations tasteful and respectful, while still capturing a
+degree of frustration so that maybe someone will have an experience similar to
+mine as I read Ian's posts.
+
+I tried finding the origin to this, but Google really has been letting me down
+lately.  Likely paraphrased, it goes like this:
+
+#+begin_quote
+There are two kinds of things in the world: Things people complain about, and
+things nobody has heard of.
+#+end_quote
+
+That Nix now has at least two blog series on this topic speaks well of Nix, its
+promise, and its progress.
+* Introduction
+:PROPERTIES:
+:CUSTOM_ID: introduction
+:END:
+
+As is stamped all over this blog, I am Logan Barnett.  I like working with
+computers more than working with humans, and I've been doing it for a while now.
+There are significant gaps in my knowledge and I am comfortable with that.  I
+have a penchant for functional programming, documentation of all kinds, and
+overall I want the computer to work for me, not the other way around.  I have a
+[[file:./resume.org][resume]] if you want to get into more specifics of my technical background.
+
+* Nix Thus Far
+:PROPERTIES:
+:CUSTOM_ID: nix-thus-far
+:END:
+
+I have been using Nix for well over a year at time of writing.  Since then I
+have moved to using Nix with Home-manager, and now some combination of
+Home-manager and Flakes that still puzzles me.  I use it extensively for
+managing my machine's local configuration (historically "dotfiles").  I also use
+it for managing repository dependencies (a generalized version of =tfswitch=,
+=rbenv=, =pyenv=, =nodenv=, etc).  I always have to look up how to make a
+derivation or even the simplest overlay.
+
+I've gotten to the point where installing my settings on a new machine requires
+very little adjusting.  A vast majority of my local software is governed by Nix.
+The only thing I'm truly missing is Homebrew's =cask= functionality, and that's
+mostly because =Alfred.app= refuses to follow symlinks as a design decision (I
+plan to rectify that eventually).
+
+I am getting to the point where I can make my own derivations that simply follow
+build-from-source instructions on a =README=.
+
+* Today's Project: Working on a Raspberry Pi
+:PROPERTIES:
+:CUSTOM_ID: today's-project:-working-on-a-raspberry-pi
+:END:
+
+I have some work I want to do on a Raspberry Pi involving Wireguard.  I have
+some prior experience with Wireguard and also with working on Raspberry Pis.
+I have a complication: I have no displays nor display adapters (mini-HDMI) with
+which I could use to interface with the Pi.  I have no extra keyboard or mouse
+at the moment.  For a system I should be able build an image for, this kind of
+hardware requirement really seems like overkill.
+
+=sshd= is disabled by default on a Raspberry Pi, so I cannot =ssh= to it, even
+if I could find it on a local link (this would take hours because =nmap= is
+pretty slow at this).
+
+So my next best activity is to either build the image in the state I want it in,
+or edit the files on the SD card whose state is setup by a pre-built image.  I
+have a pre-built image already, and I'm on macOS.  Being on macOS prevents me
+from building new Linux images of any kind without a Docker image (which needs a
+VM) or setting up a Linux VM (which needs a VM too, ha!).  My bandwidth is low,
+as is my disk space.  I can solve the disk space issue, but that's a project for
+another day.
+
+In comes a tool called =macfuse=, previously known as =osxfuse=.  They followed the
+rebrand that Apple did, apparently.  I've learned recently that this tool no
+longer requires disabling the SIP on macOS, which I have found to be a
+deal-breaker for my standards.  It's just a user-land kernel extension.  I don't
+know who to thank for that, but I am grateful for it.
+
+* Somehow Write to the Pi SD card
+:PROPERTIES:
+:CUSTOM_ID: somehow-write-to-the-pi-sd-card
+:END:
+
+Whether I have some way to bake an image in the desired state (such as with a
+fixed IP for link-local and =sshd= enabled), or I just edit the SD card directly
+doesn't strictly matter to me.  Because I wanted to keep things "simple", I
+elected to just go for the edits directly on what I believe is an already
+functional SD card, and save the NixOS-on-Pi activity for another day.
+
+** Empower Editing SD Card Files from macOS Directly
+:PROPERTIES:
+:CUSTOM_ID: somehow-write-to-the-pi-sd-card--empower-editing-sd-card-files-from-macos-directly
+:END:
+
+First, getting =macfuse= setup on my system via Nix isn't something directly
+supported.  I had to go into the Nix derivation for =e2fsprogs= and remove the
+guards against running on =darwin=.  Additionally I found =e2fsprogs= doesn't
+even compile.  =setxattr= and =getxattr= can't be assigned to because the
+function signatures don't match.  So I make them match with best guess by adding
+some parameters and declaring a couple of others as unsigned (link will come to
+the commit by the time I publish).  I believe this is because =osxfuse= has some
+differences in the API, or perhaps there are version incompatibilities.  It
+builds after that.  I struggle with =nix-flakes= for a bit but eventually I
+notice that =fuse-ext2= is indeed on my =PATH= - but I'm not certain which of my
+incantations brought it about.  I'm still very new to =nix-flakes= and much of
+it was forced upon me from other things I desired.  I basically jumped in the
+cockpit seat of the =nix-flakes= plane and grabbed the stick, hoping for the
+best.  I haven't collided with the planet Earth yet but there's still time for
+that.
+
+I try to mount my disk with invocations such as these:
+
+#+begin_src shell :results none :exports code
+sudo fuse-ext2 /dev/disk4s1 /Volumes/4s1
+sudo fuse-ext2 /dev/disk4s2 /Volumes/4s2
+#+end_src
+
+Because I don't know which one is which and there are only two partitions for
+=disk4=.
+
+I don't have the exact message or dialog screenshots unfortunately, but this is
+where I find out that I indeed need to disable SIP (System Integrity
+Protection).  This involves rebooting the system into recovery mode, firing up
+the terminal there, and running =csrutil disable=.  =uptime= reports I'm at 70
+days - a lot of days earned via hard won knowledge on battery draining
+activities on my laptop (such as bluetooth).  My pride suffers a blow, but I
+sally forth.  Then I spend about 7 reboots or so trying to get my laptop to
+actually boot into recovery mode.
+
+macOS has changed their reboot key bindings more than they've changed their
+power adapter connections, and that's saying a lot.  Naturally I searched for
+how to do this, and was happy with the holding of =Cmd+R= during the boot-up.
+It doesn't work, which in my experience means the timing is wrong, so I try it
+several more time.  The technical timing is important so I try it more than
+once, which is how we wind up with me going to 7.  The 7th attempt was me
+finding out those instructions were for _Intel_ Macs and I'm on Apple Silicon.
+Right - glad we have that distinguishment.  My mind immediately demands "Why?
+Why make these different?" but answers I can come up with are depressing in a
+very literal way.
+
+I do the =csrutil disable= which prompts me but works anyways.  Knowing I have
+done the nasty successfully and my work here is done, I reboot to go back to my
+normal runtime.  I attempt to mount again with:
+
+#+begin_src shell :results none :exports code
+sudo fuse-ext2 /dev/disk4s2 /Volumes/4s2
+#+end_src
+
+But again am prompted - my Mac tells me it has blocked the kernel extension, and
+I must reboot to bless it.  Great.  Couldn't we have just done that earlier?  Or
+maybe just let me queue up here at least so I don't need to go into a mode where
+I can't call upon my lifelines for help.  Alas, more reboots ahoy.  At least
+this time they give me really vague instructions.  This probably would've
+confused me into doing more reboots and searching, but I've already been here.
+Now that I've blessed this kernel extension from Benjamin (who is that?), I go
+back to try it again.  Still blocked.  The System Settings section tells me
+there's a kernel extension that needs to be blessed - it doesn't give me
+indication that I've blessed anything already.  Ugh.  Why is this such a
+miserable experience?  Again I reboot into recovery mode, bring up the Security
+Utility, and bless the kernel extension.  This time it goes away.  I was
+operating in the suspicion that there might be more than one kernel extension
+involved, and all of them must be blessed individually.
+
+Now I try again.  I have some vague memory that mount processes don't typically
+create the actual mount point directory in Linux, so I assume it's the same
+here.
+
+#+begin_src shell :results none :exports code :cache yes
+sudo mkdir /Volumes/4s2
+sudo fuse-ext2 /dev/disk4s2 /Volumes/4s2
+#+end_src
+
+Nothing happens.  The directory is empty and I have exit code 253 from
+=fuse-ext2= (having your prompt show the last exit code is so incredibly
+useful).  What's 253 mean?  I check the man page - nothing.  From searching on
+other people trying things out, I add a =-o debug= to the invocation.  No
+output, same code. I add =-v= to the front of the from/to arguments.  No change
+in output/code.  I worry this is resulting from my hack earlier to =e2fsprogs=.
+But I would expect to see _something_ here.  There is mention of a
+=/var/log/fuse-ext2_util.log= in some tickets I see, but I don't have that.
+
+I try:
+
+#+begin_src shell :results output :exports both :cache yes
+sudo mount -t fuse-ext2 /dev/disk4s2 /Volumes/4s2
+#+end_src
+
+:RESULTS:
+mount: exec /Library/Filesystems/fuse-ext2.fs/Contents/Resources/mount_fuse-ext2 for /Volumes/4s2: No such file or directory
+mount: /Volumes/4s2 failed with 72
+:END:
+
+The =No such file or directory= portion can't be correct on the latter path -
+=/Volumes/4s2= exists.  I check the =/Library/Filesystems/...= path and it is
+indeed non-existent.  Curious, looking in =/Library/Filesystems= directly shows
+me _something_ of relevance:
+
+#+begin_src shell :results output :exports both
+ls /Library/Filesystems
+#+end_src
+
+#+RESULTS:
+: NetFSPlugins
+: macfuse.fs
+
+So I try this modified =mount=:
+
+#+begin_src shell :results output :exports both :cache yes
+sudo mount -t macfuse.fs /dev/disk4s2 /Volumes/4s2
+#+end_src
+
+:RESULTS:
+macFUSE mount version 4.5.0
+
+This program is not meant to be called directly. The macFUSE library calls it.
+
+Available mount options:
+    -o allow_other         allow access to others besides the user who mounted
+                           the file system
+    -o allow_recursion     allow a mount point that itself resides on a macFUSE
+                           volume (by default, such mounting is disallowed)
+    -o allow_root          allow access to root (can't be used with allow_other)
+    -o auto_xattr          handle extended attributes entirely through ._ files
+    -o blocksize=<size>    specify block size in bytes of "storage"
+    -o daemon_timeout=<s>  timeout in seconds for kernel calls to daemon
+    -o debug               turn on debug information printing
+    -o default_permissions let the kernel handle permission checks locally
+    -o defer_permissions   defer permission checks to file operations themselves
+    -o direct_io           use alternative (direct) path for kernel-user I/O
+    -o extended_security   turn on macOS extended security (ACLs)
+    -o fsid=<fsid>         set the second 32-bit component of the fsid
+    -o fsname=<name>       set the file system's name
+    -o fssubtype=<num>     set the file system's fssubtype identifier
+    -o fstypename=<name>   set the file system's type name
+    -o iosize=<size>       specify maximum I/O size in bytes
+    -o jail_symlinks       contain symbolic links within the mount
+    -o local               mark the volume as "local" (default is "nonlocal")
+    -o negative_vncache    enable vnode name caching of non-existent objects
+    -o sparse              enable support for sparse files
+    -o volname=<name>      set the file system's volume name
+
+Available negative mount options:
+    -o noalerts            disable all graphical alerts (if any) in macFUSE Core
+    -o noappledouble       ignore Apple Double (._) and .DS_Store files entirely
+    -o noapplexattr        ignore all "com.apple.*" extended attributes
+    -o nobrowse            mark the volume as non-browsable by the Finder
+    -o nolocalcaches       meta option equivalent to noreadahead,noubc,novncache
+    -o noreadahead         disable I/O read-ahead behavior for this file system
+    -o nosynconclose       disable sync-on-close behavior (enabled by default)
+    -o nosyncwrites        disable synchronous-writes behavior (dangerous)
+    -o noubc               disable the unified buffer cache for this file system
+    -o novncache           disable the vnode name cache for this file system
+mount: /Volumes/4s2 failed with 64
+:END:
+
+So =mount= is looking less promising.  This appears to be =mount= just spewing
+the usage information of =macfuse= because it is giving =macfuse= an erroneous
+invocation.  Is this intended to ever work?  I found this invocation from other
+lost souls who were experiencing no luck here as well, so it might not mean
+much.
+
+Following some other tickets, I want to just confirm that everything I have is
+in order.  Oftentimes errors come from the user, not the software.  I find =sudo
+diskutil list= gives some good answers.
+
+#+begin_example
+<snip>
+/dev/disk6 (internal, physical):
+   #:                       TYPE NAME                    SIZE       IDENTIFIER
+   0:     FDisk_partition_scheme                        *127.9 GB   disk6
+   1:                 DOS_FAT_32 FIRMWARE                31.5 MB    disk6s1
+   2:                      Linux                         127.8 GB   disk6s2
+#+end_example
+
+I have been operating with the notion that I was using =disk4=, but between
+reboots and swapping the physical card out to stow my laptop between attempts,
+it must have moved.  Sigh.  Let's do this again.  At least I know with
+confidence that I want to be mounting the "2" partition.
+
+#+begin_src shell :results none
+sudo fuse-ext2 /dev/disk6s2 /Volumes/4s2
+#+end_src
+
+I didn't rename the directory to a matching =6s2= because I just want to _try_
+something.  Results are promising and with a delay:
+
+#+begin_example
+Mounting /dev/disk6s2 Read-Only.
+Use 'force' or 'rw+' options to enable Read-Write mode
+#+end_example
+
+And then:
+
+#+begin_src shell :results output :exports code :cache yes
+ls /Volumes/4s2
+#+end_src
+
+#+RESULTS[260f8515aac0e18dbcc8dc13599b92ea170b93ee]:
+#+begin_example
+bin
+boot
+dev
+etc
+home
+lost+found
+mnt
+nix
+proc
+root
+run
+srv
+sys
+tmp
+usr
+var
+#+end_example
+
+Wow something worked!  I'm going to treat myself.
+
+Now let's clean up the directory name, and make it read+write.
+
+#+begin_src shell :results none :exports code
+sudo umount /Volumes/4s2
+sudo mv /Volumes/{4,6}s2
+sudo fuse-ext2 -o rw+ /dev/disk6s2 /Volumes/4s2
+#+end_src
+
+Actually just trying to scroll through some shell history wound up making the
+machine unusable, and it eventually necessitated a reboot.  I've lost any
+home-made directories under =/Volume= and so I can just make them the way I want
+them.  I am a little worried that maybe my hacks I made to =g2fsprogs= have
+introduced some critical instability to my kernel, but I fail to see how the
+=xattrs= stuff would have anything to do with my shell history.  Perhaps it's
+due to some =zsh= magic?
+
+The commands again, and note that now we're back to =disk4=:
+
+#+begin_src shell :results none :exports code
+sudo mkdir /Volumes/picard
+sudo fuse-ext2 -o rw+ /dev/disk4s2 /Volumes/picard
+#+end_src
+
+And that worked!  Now to make edits to the card.
+
+** Making Edits to the SD Card
+:PROPERTIES:
+:CUSTOM_ID: somehow-write-to-the-pi-sd-card--making-edits-to-the-sd-card
+:END:
+
+*** =sshd=
+:PROPERTIES:
+:CUSTOM_ID: somehow-write-to-the-pi-sd-card--making-edits-to-the-sd-card--=sshd=
+:END:
+
+I need to "enable" =sshd=, assuming it comes installed.  If it does not come
+installed, this will have been a very wasteful effort.
+
+Searching on this topic, I find [[https://www.raspberrypi.com/news/raspberry-pi-bullseye-update-april-2022/][an article]] with this:
+
+#+begin_quote
+There are also mechanisms to preconfigure an image without using Imager. To set
+up a user on first boot and bypass the wizard completely, create a file called
+userconf or userconf.txt in the boot partition of the SD card; this is the part
+of the SD card which can be seen when it is mounted in a Windows or MacOS
+computer.
+#+end_quote
+
+This section doesn't detail how to enable =sshd=, but the original post that
+lead me to this article has some additional instructions:
+
+#+begin_quote
+The empty 'ssh' (or ssh.txt) file should act as a toggle (turn SSH on, and it
+will stay on unless you explicitly disable it later). If that's not how it's
+working for you, then something else that was done to the system has messed that
+up.
+#+end_quote
+
+Right.  So I didn't need to do any of the prior section at all?  Let's look and
+be sure.  I happen to recall that the default name of the SD card is =FIRMWARE=
+for whatever reason.
+
+Okay, I'm going to try really hard not to swear off computers forever.
+
+#+begin_src shell :results output
+touch /Volumes/FIRMWARE/ssh
+echo "$USER:$(echo 'lolno' | openssl passwd -stdin)" > /Volumes/FIRMWARE/userconf
+#+end_src
+
+The instructions use a =-6= argument, but that doesn't work for my =openssl=:
+
+#+begin_src shell :results output :cache yes :exports both
+openssl version
+#+end_src
+
+#+RESULTS[fd79c183d922dc546b2e5c0472485a433c65ca97]:
+: LibreSSL 3.3.6
+
+Which I believe is the stock version running on my MacBook, based on:
+
+#+begin_src shell :results output :cache yes :exports both
+which openssl
+#+end_src
+
+#+RESULTS[dd1abf4838ce8ea7276cd82f3e78e268f7cec79e]:
+: /usr/bin/openssl
+
+Otherwise it would be a deep path under =/nix=.
+
+A quick check of the files shows they are there and in the desired state:
+
+#+begin_src shell :results output :exports both :cache yes
+ls /Volumes/FIRMWARE/ssh
+cat /Volumes/FIRMWARE/userconf
+#+end_src
+
+#+RESULTS[745fc503a9afa80c6d3f6fb251a8e1c43610236f]:
+: /Volumes/FIRMWARE/ssh
+: logan:oKYG/fePTExgs
+
+I have no worries about the password here - it will be changed before this
+device connects to anything outside of my laptop.
+
+Okay let's give it a go.  I eject the mounts (=picard= needs a =sudo umount
+/Volumes/picard= but works without a hitch).
+
+An import caveat: I found from [[https://gijs-de-jong.nl/posts/how-raspberry-pi-enbales-ssh-when-boot-ssh-file-is-present/][How the Raspberry Pi enables SSH when
+/boot/ssh.txt is present]] that these files are removed on boot - so we only get
+one shot, and if it fails we have to run it again.  This is one of the benefits
+of blogging as I do this - the command history is at my fingertips.
+
+The files are listed the [[https://www.raspberrypi.com/documentation/computers/configuration.html#the-boot-folder][configuration boot section documentation]].
+
+** Connecting to the Pi (USB-C fail)
+:PROPERTIES:
+:CUSTOM_ID: somehow-write-to-the-pi-sd-card--connecting-to-the-pi-usb-c-fail
+:END:
+
+I did forget about networking, which isn't covered in the boot section linked
+above.  I had worked on this earlier but the =169.254.0.0/16= address space is
+way too large to =nmap= over.  Instead I read in the boot section there's an
+"OTG" (On The Go) USB setting that is enabled by default in =config.txt= (at
+least in my case, being it's a Pi 4B).  I don't want to just plug it in and find
+out, and I actually did try =raspberrypi.local= earlier, I thought, and that
+didn't work.  I found a =ping= in my history to it in fact, so I know this was
+attempted and failed.  There may be something else involved.  This [[https://raspberrypi.stackexchange.com/a/100727][answer]]
+specifically talks about macOS and OTG.  It does mention to use Bonjour to find
+the Pi, which apparently it advertises on.
+
+The command link invocation is provided in this [[https://apple.stackexchange.com/a/362741][answer]]:
+
+#+begin_src shell :results output :cache yes :exports both
+dns-sd -Gv4v6 raspberrypi.local
+#+end_src
+
+That doesn't work.  I do recall some chatter in the OTG+MacBook answer that
+talked about some problems with OTG and certain cables.  It links to an article
+about an [[https://hackaday.com/2019/07/16/exploring-the-raspberry-pi-4-usb-c-issue-in-depth/][issue with USB-C on the Pi]] that is probably causing me problems.
+Essentially it means that the Pi isn't powered properly if the USB-C cable is
+"e-marked" (meaning it can identify/query additional features).
+
+So how do I know if the Pi got sufficient power or not?  I can check the SD card
+to see if the configuration files were removed on-boot.
+
+#+begin_src shell :results output :exports both :cache yes
+ls /Volumes/FIRMWARE | grep ssh
+ls /Volumes/FIRMWARE | grep userconf
+#+end_src
+
+#+RESULTS[b9b1f6084d57e738ed509800291ecaff1db68bca]:
+: ssh
+: userconf
+
+Sure enough, they are both present.  So the Pi didn't boot properly.  I did have
+a solid red light, with an occasionally blinking green light.  I don't know what
+that means yet, but perhaps I should learn.  I have read it is programmable and
+may have changed over time, so I don't want to go too far down that path.  In
+any case, we didn't make it.  For what it's worth, the Pi was connected for a
+solid 5-10 minutes.
+
+I only glanced at the USB-C diagrams in the article linked prior.  I also
+skimmed through parts of the article itself.  I would need a specifically bad
+USB-C cable - it would need to transmit data but not be "e-marked".  I suspect
+that would be hard to find.
+
+I did learn somewhat recently that USB cables (even USB-C) sometimes are
+hard-wired to actually be a true "charging cable" in that all they do is provide
+power, and all of the data pins are grounded or shared.  That's not part of the
+spec, and it explains why a lot of people get cables that "work" but sometimes
+don't (via reviews or one's own personal experience).  It's a real shame we
+don't have standard, human-readable markings for these differences.  This [[https://www.youtube.com/watch?v=AD5aAd8Oy84][video]]
+was really enlightening on the topic, and also shows off some fascinating
+circuitry in the thunderbolt cables which share the USB-C form factor.
+
+So I need to plug this in via a battery or wall outlet, and I need to run an
+Ethernet cable between the Pi and my laptop.  I do have the equipment on hand
+for all of this.
+
+** Imaging the Pi Correctly
+:PROPERTIES:
+:CUSTOM_ID: somehow-write-to-the-pi-sd-card--imaging-the-pi-correctly
+:END:
+
+I have blinking Ethernet lights.  The Pi has a solid red light, and the green
+light is doing a dot-dot kind of pattern, repeatedly.
+
+I've done a little looking into for the light patterns. The Pi 4B uses a new
+set of patterns.  However my 2 pattern (two of anything but nothing else)
+doesn't show up on the list.  Checking my command history from earlier, I can
+see that I'm using a NixOS image.  Perhaps that is related.  I got that from
+this [[https://nix.dev/tutorials/nixos/installing-nixos-on-a-raspberry-pi.html][instruction]] available on the official NixOS documentation.  It does assume
+a 4B model, but might be demanding more RAM than what I gave the Pi.  My
+purchase order for the Pi shows it as 2 GB, but the documentation says it should
+be 4GB.  I don't know how hard that limitation is.  Also, and perhaps most
+critically, this cannot work because it doesn't use the Pi's normal
+configuration.  Okay now I think we're onto something.  I did want to do this
+via NixOS but I think I might be best off saving that for another day.  This
+post has gotten enormous from all of the research and attempts already.  I've
+also noticed the documentation tails behind the current NixOS image version.
+Ugh.  I just need to do this myself - later.
+
+* Abandon Nix and Just Get it Done :private:
+:PROPERTIES:
+:CUSTOM_ID: abandon-nix-and-just-get-it-done
+:END:
+
+As much as I wanted this to be something about Nix, it turned into a series of
+other hardships.  NixOS introduced other, undocumented complications to the
+process.  I still lack the ability to manage the Pi's packages, let alone via
+the "Nix way".
+
+I used:
+
+#+begin_src shell :results none :exports code
+wget https://downloads.raspberrypi.com/raspios_arm64/images/raspios_arm64-2023-12-06/2023-12-05-raspios-bookworm-arm64.img.xz\?_gl\=1\*qvoa7r\*_ga\*MjYzMjA4NTA3LjE3MDMyMzk1Nzc.\*_ga_22FD70LWDS\*MTcwMzMzMTYzMi4yLjAuMTcwMzMzMTYzMi4wLjAuMA..
+mv \
+  '2023-12-05-raspios-bookworm-arm64.img.xz?_gl=1*qvoa7r*_ga*MjYzMjA4NTA3LjE3MDMyMzk1Nzc.*_ga_22FD70LWDS*MTcwMzMzMTYzMi4yLjAuMTcwMzMzMTYzMi4wLjAuMA..' \
+  2023-12-05-raspios-bookworm-arm64.img.xz
+unxz 2023-12-05-raspios-bookworm-arm64.img.xz
+#+end_src
+
+Oh oh, I did get to use Nix a little!  I had to install the =xz= package to get
+=unxz=.
+
+And then flashed the card with:
+
+#+begin_src shell :results none :exports code
+sudo dd if=2023-12-05-raspios-bookworm-arm64.img of=/dev/disk4 bs=1M status=progress conv=fsync
+#+end_src
+* Building the Image
+:PROPERTIES:
+:CUSTOM_ID: building-the-image
+:END:
+
+Okay, let's build our own NixOS image for the Pi.
+
+** Prior Art
+:PROPERTIES:
+:CUSTOM_ID: building-the-image--prior-art
+:END:
+
+I came across [[https://discourse.nixos.org/t/headless-raspberry-pi-setup/17664/7][Headless Raspberry Pi on NixOS Discourse]] and user Sweenu states
+they have a working version of NixOS being deployed to a Raspberry Pi.  The
+source is all posted to [[https://github.com/sweenu/nixfiles]].  From some brief
+research, it does use a tool called [[https://github.com/divnix/digga][digga]] that states that it is no longer
+recommended for use, which is expanded upon in [[https://github.com/divnix/digga/issues/503][issue#503]] for the repository.  In
+essence, =digga= seems to have some customization / scaling difficulties because
+it focused on ergonomics first.  There isn't any real alternatives recommended
+that are purpose built for what =digga= does (which, to be honest, I'm not
+entirely sure _what_ it does).  I'd prefer to keep my research to shiny new
+things to a minimum, so I hope I can adlib what should be already working for
+someone else, but to fit my needs.  Primarily I want image generation that gives
+me a working NixOS based Raspberry Pi image, but also have it configured in such
+a way that I don't have to re-flash the SD card every time I want to make a
+change.  In other words, I want to be able to build an image but also be able to
+manage the host configuration via a standard Nix configuration.
+
+In the Discourse, Sweenu states the Pi can be updated thusly:
+
+#+begin_src shell :results none :exports code
+nix flake update
+deploy ".#grunfeld"
+#+end_src
+
+Where =grunfeld= is the name of the Raspberry Pi.
+
+In the repository's README, it states the image can be created and copied like
+so:
+
+#+begin_src shell :results none
+nixos-generate --flake '.#grunfeld' --format sd-aarch64 --system aarch64-linux
+unzstd -d {the output path from the command above} -o nixos-sd-image.img
+sudo dd if=nixos-sd-image.img of=/dev/sda bs=64K status=progress
+#+end_src
+
+This is all very promising.  I've done some copying/adlibing of the repository
+in my =proton-nix= repository, which I plan on using to declare my local network
+configuration.  I do have some security concerns about open sourcing it,
+especially because both public and private keys seem to be present in the
+repository (even if the private keys are encrypted at rest).  I would like a way
+to share this, without the private bits hanging out for all to see.  This has
+been something I've looked into before with Nix and =nix-flakes= in particular
+because =flakes= really wants everything to be self contained, lest it be marked
+as "impure".  From reading Ian's blog I mentioned earlier, it does seem like one
+can reference a file using a git repository link.  If =flakes= is happy with
+this, then I think I could be very happy with it as well.
+
+But first, we need a detour.  I don't have a means of actually using =NixOS=
+because I'm on macOS.  As I understand, this does require work with a container
+or VM.
+
+** Doing Real Nix Things on macOS
+:PROPERTIES:
+:CUSTOM_ID: building-the-image--doing-real-nix-things-on-macos
+:END:
+
+On this current MacBook, I've successfully avoided running Docker.  I've come to
+liken Docker to bloatware (whether that's fair or not).  On my home network,
+I've had a degree of success with Podman.  However there's hitches with it, as
+there always is.  I also have a very small amount of space available on my
+MacBook, and =containerd= containers aren't known for their small size - unless
+they use Alpine, I guess.  Either way it will need an entire VM to work -
+because macOS doesn't have cgroups et. al.  There appears to be some promising
+work done to [[https://earthly.dev/blog/macos-native-containers/][make containers work on macOS]] but it's way too immature (as of
+[2023-12-24 Sun]) for the kind of work we're doing here.
+
+My detour needs an additional detour: I have to clean up some space.  I
+presently have < 30GB free and I would love to be running with closer to 100GB
+to feel like I can quickly iterate on things without constantly needing to do a
+=nix gc= or =docker system prune --force=, and also thereby increasing my build
+iteration times significantly (those caches are present for good reason).
+
+Begin space cleaning montage!
+
+Alright I've deleted a bunch of things I had no business keeping, and things I
+probably won't remember that I deleted later.  [[https://dev.yorhel.nl/ncdu][ncdu]] was instrumental there!
+
+In a vacuum I'd prefer =podman= to avoid my perceived bloatware of Docker
+proper.  I don't recall any current perils, and there does appear to be some
+support for running =podman= on =aarch64-darwin= (my specific setup), so let's
+give it a shot.
+
+I did find [[https://github.com/NixOS/nixpkgs/issues/169118][nixpkgs#169118]] which outlines some issues with =podman= on macOS, but
+they seem to be resolved and nobody feels confident enough to declare it done.
+This [[https://github.com/skogsbrus/os/commit/2b10be2d1a48727470a72f9e7b1f307d327adee3][commit]] that refers to the ticket just installs =qemu= and =podman= together
+(but with no direct relationship - I don't know how that's supposed to work).
+=qemu= is a significant part of working with the VM, I've gathered.
+
+I found [[https://notes.abhinavsarkar.net/2022/just-nix-podman-combo][Just, Nix Shell And Podman Are A Killer Combo]] and learned that Just is a
+thing.  The post has some great incantations in it that I was happy to leverage
+into this =with-podman.sh= script:
+
+#+begin_src shell :results none :exports code
+#!/usr/bin/env bash
+set -euo pipefail
+container_name="nix-run"
+script="$@"
+
+podman machine init --cpus 12 --memory 8192 --disk-size 50 \
+      --volume $HOME:$HOME || true
+podman machine start || true
+podman container ls -a | grep $container_name > /dev/null || \
+        podman create -t --name $container_name -w /workdir \
+            -v $PWD:/workdir nixos/nix
+container_id=$(podman start $container_name)
+echo "$container_id"
+podman exec $container_id $script
+podman stop $container_name || true
+podman machine stop
+#+end_src
+
+Which basically sets up the Podman VM, starts the container =nixos/nix=
+container (named =nix-run=), executes the script (whatever I pass in for args),
+and then cleans it all up.  It's very expensive but it's also something I can
+use thoughtlessly and I really like that.
+
+Here's an example run:
+
+#+begin_src shell :results none
+@ ./with-podman.sh ls -al
+Error: podman-machine-default: VM already exists
+Error: cannot start VM podman-machine-default: VM already running or starting
+a34354199be6cca047309f9d29ecefeeb1c4521d776536cc6305bad8380874b6
+nix-run
+total 12
+drwxr-xr-x 11 root nobody  352 Dec 24 13:17 .
+dr-xr-xr-x  1 root root     77 Dec 24 13:26 ..
+drwxr-xr-x 10 root nobody  320 Dec 24 13:23 .git
+-rw-r--r--  1 root nobody  283 Dec 22 00:50 README.org
+-rw-r--r--  1 root nobody 3809 Dec 24 00:29 flake.nix
+drwxr-xr-x  3 root nobody   96 Dec 24 00:30 hosts
+drwxr-xr-x  4 root nobody  128 Dec 24 00:40 modules
+drwxr-xr-x  3 root nobody   96 Dec 24 00:42 pkgs
+drwxr-xr-x  3 root nobody   96 Dec 24 00:52 profiles
+drwxr-xr-x  4 root nobody  128 Dec 24 00:41 shell
+-rwxr-xr-x  1 root nobody  529 Dec 24 13:26 with-podman.sh
+nix-run
+Waiting for VM to exit...
+Machine "podman-machine-default" stopped successfully
+
+~/dev/proton-nix logan@scandium 0 [22:27:20] 75s
+$
+#+end_src
+
+Note it took 75 seconds to run on my system just to do =ls= but it works without
+me doing anything fancy, I'm running =NixOS=, and the repository I'm working in
+is properly volume mounted.  I'm not really worried about speed here, especially
+because these invocations I'm about to do will generate disk images - an already
+lengthy affair I expect to take on the order of minutes.  Perhaps I will find
+short cuts to speed up iteration as I experience pain with building the image
+improperly, but I want to reserve my grease until the wheels begin to squeak.
+
+A couple of asides:
+
+1. I looked at =Just= since this is my first exposure to it.  From some quick
+   reading around, it seems to be a marginally better =make=.  =make= is
+   portable, standard, and yes it has aged but I believe it has aged moderately
+   well.  I would not drop portability and familiarity (due to it being fairly
+   standard) just for a marginal improvement.  Plus, if the file starts to get
+   too squirrelly, I'd rather just break out the complex bits into standalone
+   scripts.  If I really could wave a wand and have anything I wanted in terms
+   of love to =make=, it would be to give me something like =rake -T= where I
+   can simply print all of the tasks available to me.  Reading the code is _not_
+   documentation, even if it is a =Makefile=.
+2. I tend to go down the rabbit hole on a lot of these ventures, but I'm not
+   posting all of it as I go.  Indeed, I just closed a tab pointing to
+   =r/programminganimememes=, which was serving as nothing other than pure
+   distraction.  I'd followed link to it from the same article linked above.
+
+Now that I have a real Nix system available to me, I need to try to run my
+paired down repository from =sweenu= and see if I can build an image from it.
+
+** Building the NixOS Pi image
+:PROPERTIES:
+:CUSTOM_ID: building-the-image--building-the-nixos-pi-image
+:END:
+
+*** Trying to Make it Work with =digga=
+:PROPERTIES:
+:CUSTOM_ID: building-the-image--building-the-nixos-pi-image--trying-to-make-it-work-with-=digga=
+:END:
+From =sweenu='s earlier invocations, I have adapted it to be:
+
+#+begin_src shell :results none :exports code
+./with-podman.sh "
+nixos-generate --flake '.#iron' --format sd-aarch64 --system aarch64-linux;
+"
+#+end_src
+
+Which outputs:
+
+#+begin_example
+Error: crun: executable file `nixos-generate` not found in $PATH: No such file or directory: OCI runtime attempted to invoke a command that was not found
+Error: read unixpacket @->/proc/self/fd/13/attach: read: connection reset by peer
+#+end_example
+
+I hope that =unixpacket= error is just some weirdness with error handling - an
+error of an error.  I'll test again with =ls -al=... and the results are the
+same successful results I had before.  I even tried with ="ls -al"= to make sure
+there isn't some weird quoting issues, but there isn't - all is well.
+
+I tried a nix invocation I know to work:
+
+#+begin_src shell :results none :exports code
+./with-podman.sh nix-channel --list
+#+end_src
+
+And I get:
+
+#+begin_example
+nixpkgs https://nixos.org/channels/nixpkgs-unstable
+#+end_example
+
+Which is a very reasonable/expected output.  So some nix tools are available,
+but why can't it find =nixos-genereate=?  This is literally my first time using
+any command prefixed with =nixos=, so I'm assuming that this command _actually
+exists under normal circumstances_ and that might be too heavy an assumption.
+Some searching reveals... nothing?  Not at all what I expected.  I expected
+_something_, but just not on my path for whatever reason.  I double check and
+realize I'm searching for =nix-generate= instead of =nixos-generate=, whoops.
+
+=nixos-genereate= is supplied by [[https://github.com/nix-community/nixos-generators][nixos-generators]] and it requires installation -
+it's no something that ships with =nixos=.
+
+#+begin_src shell :results none :exports code
+./with-podman.sh "
+nix run github:nix-community/nixos-generators -- \
+  --flake '.#iron' --format sd-aarch64 --system aarch64-linux;
+"
+#+end_src
+
+And I get:
+
+#+begin_example
+error: experimental Nix feature 'nix-command' is disabled; add '--extra-experimental-features nix-command' to enable it
+#+end_example
+
+Ah.  I've seen these before.  This just makes our invocation a little more
+tricky with:
+
+#+begin_src shell :results none :exports code
+./with-podman.sh "
+nix --extra-experimental-features nix-command \
+  run github:nix-community/nixos-generators -- \
+    --flake '.#iron' --format sd-aarch64 --system aarch64-linux;
+"
+#+end_src
+
+The complexity and nesting here is starting to make me a little nervous.  Prior
++trauma+ experience tells me that I will soon be running into shell quoting
+issues.
+
+Now I see:
+
+#+begin_example
+error: experimental Nix feature 'flakes' is disabled; add '--extra-experimental-features flakes' to enable it
+#+end_example
+
+Sigh.  Nix, you couldn't have told me about _both_ of them at once?
+Furthermore, it would've told me the proper thing to do for enabling multiple
+experimental features at once.  So I wing it:
+
+#+begin_src shell :results none :exports code
+./with-podman.sh "
+nix \
+  --extra-experimental-features nix-command \
+  --extra-experimental-features flakes \
+  run github:nix-community/nixos-generators -- \
+    --flake '.#iron' --format sd-aarch64 --system aarch64-linux;
+"
+#+end_src
+
+I see a lot of stuff going on with the nix store - a sign of progress!
+
+But we end with:
+
+#+begin_example
+warning: Ignoring setting 'auto-allocate-uids' because experimental feature 'auto-allocate-uids' is not enabled
+warning: Ignoring setting 'impure-env' because experimental feature 'configurable-impure-env' is not enabled
+building '/nix/store/531cw9n4lxqx3w830ijackc5xffgz27k-nixos-generate.drv'...
+/nix/store/7nkr6ysd859f6pwsn0k32qr8w368rmcz-nixos-generate/bin/.nixos-generate-wrapped: line 72: awk: command not found
+#+end_example
+
+You'd think =nixos-generators= would just include =awk=.  Maybe I can submit a
+PR...?  Let's cook a new invocation:
+
+#+begin_src shell :results none :exports code
+./with-podman.sh "
+nix \
+  --extra-experimental-features nix-command \
+  --extra-experimental-features flakes \
+  run awk github:nix-community/nixos-generators -- \
+    --flake '.#iron' --format sd-aarch64 --system aarch64-linux;
+"
+#+end_src
+
+I get:
+
+#+begin_example
+error: cannot find flake 'flake:awk' in the flake registries
+#+end_example
+
+It should be noted the =pkg1 pkg2...= notation I used is taken from the
+explanation in this [[https://discourse.nixos.org/t/difference-between-nix-shell-and-nix-run/2951][Discourse about nix shell vs nix run]] but the help/man page
+for =nix run= gives no indication that this can be done.  If anything it
+indicates that this _cannot_ be done because the invocation demands
+=installable= as a single argument and other arguments have flags.
+
+More reading in that same Discourse shows that =nix run= might not be suitable
+for this, or is otherwise a work in progress.  Okay fine.  I find some
+suggestions on =nix shell= that do what I want in the same Discourse once again.
+Let's try it out.
+
+Actually I try several things out, and eventually land on:
+
+#+begin_src shell :results none :exports code
+./with-podman.sh "
+nix \
+  --extra-experimental-features nix-command \
+  --extra-experimental-features flakes \
+  shell awk github:nix-community/nixos-generators -- \
+    --flake '.#iron' --format sd-aarch64 --system aarch64-linux;
+"
+#+end_src
+
+I ran into:
+
+#+begin_example
+path '/workdir/--flake' does not contain a 'flake.nix', searching up
+error: getting status of '/workdir/--flake': No such file or directory
+#+end_example
+
+So I just remove =--flake= and use:
+
+#+begin_src shell :results none :exports code
+./with-podman.sh "
+nix \
+  --extra-experimental-features nix-command \
+  --extra-experimental-features flakes \
+  run 'nixpkgs#awk' github:LoganBarnett/nixos-generators#with-awk -- \
+    --flake '.#iron' --format sd-aarch64 --system aarch64-linux;
+"
+#+end_src
+
+To get:
+
+#+begin_example
+
+#+end_example
+
+#+begin_src shell :results none :exports code
+./with-podman.sh "
+nix \
+  --extra-experimental-features nix-command \
+  --extra-experimental-features flakes \
+  shell \
+      -c \
+         "'"'"nixos-generate \
+                             --flake '.#iron' \
+                             --format sd-aarch64 \
+                             --system aarch64-linux \
+         "'"'"
+"
+#+end_src
+
+Ugh I really went off the tracks trying things out.  I have an incantation that
+finally exercises the bits I want, but the actual nix code is busted somehow.  I
+suspect the version of =digga= that =sweenu= uses and my own differ.  I need to
+look into some more things.  I wonder if I can just use =nixos-generate= by
+itself, without all of this extra stuff?  My other two paths are to either pin
+my repo to the same version that =sweenu= has in the =flake.lock= or follow
+another example (https://github.com/divnix/digga/pull/501 for a working(?) one).
+
+#+begin_src shell :results none :exports code
+./with-podman.sh " \
+ls -al . ;
+nix \
+  --extra-experimental-features nix-command \
+  --extra-experimental-features flakes \
+  build '.#iron' \
+"
+#+end_src
+
+This invocation helps a lot, and keeps it so I don't need to keep running
+directly on the VM while still working out silly issues.
+
+#+begin_src shell :results none :exports code
+nix flake check --show-trace
+#+end_src
+
+This is the point where I just tried a bunch of different things.  Many a straw
+were grasped.  I tried following obscure error messages.  The sight of broken
+"magic" is not new to me, and this section of stuff really felt like it.  So I
+abandoned =digga= entirely.
+
+
+*** Just Use =nix-generators=
+:PROPERTIES:
+:CUSTOM_ID: building-the-image--building-the-nixos-pi-image--just-use-=nix-generators=
+:END:
+
+Now I have the following configuration:
+
+The =flake.nix=:
+
+#+begin_src nix :results none
+{
+  description = ''iron.proton imaging and configuration.
+iron.proton is a cross-region routing device.
+'';
+  inputs = {
+    nixpkgs.url = "nixpkgs/nixos-unstable";
+    nixos-generators = {
+      url = "github:nix-community/nixos-generators";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+  };
+  outputs = { self, nixpkgs, nixos-generators, ... }: {
+    packages.aarch64-linux = {
+      iron = nixos-generators.nixosGenerate {
+        format = "sd-aarch64";
+        modules = [
+          ./iron-configuration.nix
+        ];
+        system = "aarch64-linux";
+      };
+    };
+  };
+}
+#+end_src
+
+The linked =iron-configuration.nix= is this:
+
+#+begin_src nix :results none :exports code
+# This is the NixOS configuration for iron.proton.  It is drawn from the example
+# here:
+# https://github.com/Misterio77/nix-starter-configs/blob/main/minimal/nixos/configuration.nix
+{
+  inputs,
+  lib,
+  config,
+  pkgs,
+  ...
+}: {
+  imports = [
+    ./hardware-configuration.nix
+  ];
+
+  nixpkgs = {
+    overlays = [
+    ];
+    config = {
+      allowUnfree = true;
+    };
+  };
+  nix.nixPath = ["/etc/nix/path"];
+  environment.etc =
+    lib.mapAttrs'
+    (name: value: {
+      name = "nix/path/${name}";
+      value.source = value.flake;
+    })
+    config.nix.registry;
+  nix.settings = {
+    experimental-features = "nix-command flakes";
+    auto-optimise-store = true;
+  };
+  networking.hostName = "iron";
+  # TODO: This is just an example, be sure to use whatever bootloader you prefer
+  # I guess grub or whatever is used implicitly somewhere?  Keeping this (which
+  # comes from the example verbatim) results in:
+  #   The option `system.build.installBootLoader' is defined multiple times
+  #   while it's expected to be unique.
+  # boot.loader.systemd-boot.enable = true;
+  users.users = {
+    logan = {
+      # TODO: You can set an initial password for your user.
+      # If you do, you can skip setting a root password by passing
+      # '--no-root-passwd' to nixos-install.
+      # Be sure to change it (using passwd) after rebooting!
+      initialPassword = "correcthorsebatterystaple";
+      isNormalUser = true;
+      openssh.authorizedKeys.keys = [
+        "my public key"
+      ];
+      extraGroups = ["wheel"];
+    };
+  };
+  services.openssh = {
+    enable = true;
+    settings = {
+      # Forbid root login through SSH.
+      PermitRootLogin = "no";
+      # Use keys only. Remove if you want to SSH using password (not
+      # recommended).
+      PasswordAuthentication = false;
+    };
+  };
+  system.stateVersion = "23.05";
+}
+#+end_src
+
+And then =hardware-configuration.nix= is this:
+
+#+begin_src nix :results none :exports code :exports code
+{
+  fileSystems."/" = {
+    # Must match what sd-image expects exactly.  This is found by trying to run
+    # anything and then encountering an error.
+    device = "/dev/disk/by-label/NIXOS_SD";
+    fsType = "ext4";
+  };
+  nixpkgs.hostPlatform = "aarch64-linux";
+}
+#+end_src
+
+If you're comparing from the [[https://github.com/Misterio77/nix-starter-configs/blob/main/minimal/nixos/configuration.nix][example]] mentioned in the comments, this does
+without the =nix.registry= setting because that was causing problems.  I also
+removed the boot loader declaration, because that seems to be implicit or
+configured in some other way that is not obvious to me.
+
+The error for the boot loader is this:
+
+#+begin_example
+error: The option `system.build.installBootLoader' is defined multiple times while it's expected to be unique.
+       Only one bootloader can be enabled at a time. This requirement has not
+       been checked until NixOS 22.05. Earlier versions defaulted to the last
+       definition. Change your configuration to enable only one bootloader.
+#+end_example
+
+Unfortunately I don't have an error capture for =nix.registry=.
+
+The =nix.registry= error:
+
+#+begin_example
+error:
+       … while calling the 'derivationStrict' builtin
+
+         at /derivation-internal.nix:9:12:
+
+            8|
+            9|   strict = derivationStrict drvAttrs;
+             |            ^
+           10|
+
+       … while evaluating derivation 'nixos-sd-image-24.05.20231222.6df37dc-aarch64-linux.img'
+         whose name attribute is located at /nix/store/55ql4j8d47xjvfa8xggjddgfwny4n9j7-source/pkgs/stdenv/generic/make-derivation.nix:348:7
+
+       … while evaluating attribute 'buildCommand' of derivation 'nixos-sd-image-24.05.20231222.6df37dc-aarch64-linux.img'
+
+         at /nix/store/55ql4j8d47xjvfa8xggjddgfwny4n9j7-source/nixos/modules/installer/sd-card/sd-image.nix:182:7:
+
+          181|
+          182|       buildCommand = ''
+             |       ^
+          183|         mkdir -p $out/nix-support $out/sd-image
+
+       (stack trace truncated; use '--show-trace' to show the full trace)
+
+       error: attribute 'inputs' missing
+
+       at /nix/store/55ql4j8d47xjvfa8xggjddgfwny4n9j7-source/lib/modules.nix:508:28:
+
+          507|         builtins.addErrorContext (context name)
+          508|           (args.${name} or config._module.args.${name})
+             |                            ^
+          509|       ) (lib.functionArgs f);
+#+end_example
+
+Divining the fix was mostly a guess, but based on:
+1. The =inputs= missing.  The =nix.registry= line has =inputs= in there.
+2. The =nix.registry= line has a comment saying "To make nix3 commands
+   consistent with your flake" and this looks like speculative future-proofing
+   to me.  The future is likely now, and the speculation proven false.
+3. I have =inputs= very clearly in the flake.  Everything else looks "tidy".
+
+Okay so this all generates an image by running:
+
+#+begin_src shell :results output :exports code
+./with-podman.sh " \
+nix \
+  --extra-experimental-features nix-command \
+  --extra-experimental-features flakes \
+  build '.#iron' \
+"
+#+end_src
+
+I get no meaningful output, but no news is good news in the Unix world.  I see
+that my local directory gets an =result= file.  It's a symlink.
+
+#+begin_example
+result -> /nix/store/dv21jmin4aqq4m0zvlbfbw2d6c1d47sr-nixos-sd-image-24.05.20231222.6df37dc-aarch64-linux.img
+#+end_example
+
+*** Extracting the Image
+:PROPERTIES:
+:CUSTOM_ID: building-the-image--building-the-nixos-pi-image--extracting-the-image
+:END:
+
+I quickly discovered that the symlink is orphaned.
+
+#+begin_src shell :results output :dir ~/dev/proton-nix
+ls -al $(readlink result) 2>&1
+#+end_src
+
+#+RESULTS:
+: ls: cannot access '/nix/store/dv21jmin4aqq4m0zvlbfbw2d6c1d47sr-nixos-sd-image-24.05.20231222.6df37dc-aarch64-linux.img': No such file or directory
+
+I bet there is some =containerd= trickery going on here.  Here's what I think
+is happening:
+
+1. I know from my script in =with-podman.sh=, the container is volume-mounting
+   =$HOME=.  It is _not_ volume mounting =/nix=.
+2. The file is actually written to =/nix= in the container.  This is
+   inaccessible to me once the container is shut down.
+3. The symlink emitted isn't translated to whatever temporary file that podman
+   is actually writing to.
+4. Thus I am left with a dead symlink.
+
+I think the way we can fix this is to copy the image and then remove symlink (to
+keep things clean, it's not strictly necessary).
+
+#+begin_src shell :results output :exports code
+./with-podman.sh " \
+nix \
+  --extra-experimental-features nix-command \
+  --extra-experimental-features flakes \
+  build '.#iron'
+cp \$(readlink result) /workdir/nixos-pi.img
+rm result
+"
+#+end_src
+
+This doesn't work because the symlink points a directory, and not the image file
+itself.  I did some digging and found I can do this:
+
+#+begin_src shell :results output :exports code
+./with-podman.sh " \
+nix \
+  --extra-experimental-features nix-command \
+  --extra-experimental-features flakes \
+  build '.#iron'
+cp \$(readlink result)/sd-image/* /workdir/nixos-pi.img.zst
+rm result
+"
+#+end_src
+
+Note the added =.zst=.  Also there is another directory adjacent to =sd-image=
+called =nix-support=.  I'll take a look at that as I do more runs.
+
+I do need to add the ability to decompress this image in preparation for =dd=.
+Let's yank our earlier invocation and place it in this command chain.  If I
+wanted to muck around with the container image itself, I could use
+the =unzstd= invocation to specify an output directory, which means we avoid a
+=cp= of the entire image.  I don't want to muck around with the container image
+as much as I can though.
+
+#+begin_src shell :results output :exports code
+./with-podman.sh " \
+nix \
+  --extra-experimental-features nix-command \
+  --extra-experimental-features flakes \
+  build '.#iron'
+ls -al \$(readlink result)/nix-support
+cp \$(readlink result)/sd-image/* /workdir/nixos-pi-sd-image.img.zst
+rm result
+"
+unzstd -d nixos-pi-sd-image.img.zst -o nixos-pi-sd-image.img
+#+end_src
+
+One of the things I really like about this journaled approach to exploration is
+that it slows me down enough to ask questions that make me avoid pitfalls.  As I
+am writing, I am thinking "How do I know the result from =unzstd= is _actually_
+a valid image without having to push it through =dd= and then slotting the card
+into the Pi?
+
+Some quick searching reveals I can use =hdiutil imageinfo <file>= to get this
+information.
+
+Let's see if it tells us that it is _not_ looking at a valid image:
+
+#+begin_src shell :results output :cache yes :exports both :dir ~/dev/proton-nix
+hdiutil imageinfo nixos-pi-sd-image.img.zst 2>&1
+echo $?
+#+end_src
+
+#+RESULTS[c2f871774dc277bbf643abbb2aa9adf647ef2f4c]:
+: hdiutil: imageinfo failed - image not recognized
+: 1
+
+Excellent!  And the positive case?
+
+#+begin_src shell :results output :cache yes :exports both :dir ~/dev/proton-nix
+hdiutil imageinfo nixos-pi-sd-image.img 2>&1
+echo $?
+#+end_src
+
+#+RESULTS[577dc412637ee3baa71b1c19d62ece333576c986]:
+#+begin_example
+Class Name: CRawDiskImage
+Size Information:
+	Total Bytes: 2829352960
+	Compressed Ratio: 1
+	Sector Count: 5526080
+	Total Non-Empty Bytes: 2829352960
+	Compressed Bytes: 2829352960
+	Total Empty Bytes: 0
+Checksum Type: none
+Format: UDRW
+partitions:
+	partition-scheme: fdisk
+	block-size: 512
+	partitions:
+		0:
+			partition-name: Master Boot Record
+			partition-start: 0
+			partition-synthesized: true
+			partition-length: 1
+			partition-hint: MBR
+			boot-code: 0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000004E6978210000
+		1:
+			partition-name:
+			partition-start: 1
+			partition-synthesized: true
+			partition-length: 16383
+			partition-hint: Apple_Free
+		2:
+			partition-start: 16384
+			partition-number: 1
+			partition-length: 61440
+			partition-hint: DOS_FAT_32
+			partition-filesystems:
+				FAT16: FIRMWARE
+		3:
+			partition-start: 77824
+			partition-number: 2
+			partition-length: 5448256
+			partition-hint: Linux_Ext2FS
+	burnable: false
+Format Description: raw read/write
+Checksum Value:
+Properties:
+	Encrypted: false
+	Kernel Compatible: true
+	Checksummed: false
+	Software License Agreement: false
+	Partitioned: false
+	Compressed: no
+Segments:
+	0: /Users/logan/dev/proton-nix/nixos-pi-sd-image.img
+Backing Store Information:
+	URL: file:///Users/logan/dev/proton-nix/nixos-pi-sd-image.img
+	Name: nixos-pi-sd-image.img
+	Class Name: CBSDBackingStore
+Resize limits (per hdiutil resize -limits):
+5526080	5526080	181452016
+0
+#+end_example
+
+Wonderful!
+
+We can incorporate that into our eventual script we'll be creating, just to
+check on things.
+
+#+begin_src shell :results output :exports code
+./with-podman.sh " \
+nix \
+  --extra-experimental-features nix-command \
+  --extra-experimental-features flakes \
+  build '.#iron'
+ls -al \$(readlink result)/nix-support
+cp \$(readlink result)/sd-image/* /workdir/nixos-pi-sd-image.img.zst
+rm result
+"
+unzstd -d nixos-pi-sd-image.img.zst -o nixos-pi-sd-image.img
+rm nixos-pi-sd-image.img.zst
+hdiutil imageinfo nixos-pi-sd-image.img
+#+end_src
+
+And then we can incorporate the =dd= invocation into it:
+
+#+begin_src shell :results output :exports code
+./with-podman.sh " \
+nix \
+  --extra-experimental-features nix-command \
+  --extra-experimental-features flakes \
+  build '.#iron'
+ls -al \$(readlink result)/nix-support
+cp \$(readlink result)/sd-image/* /workdir/nixos-pi-sd-image.img.zst
+rm result
+"
+unzstd -d nixos-pi-sd-image.img.zst -o nixos-pi-sd-image.img
+rm nixos-pi-sd-image.img.zst
+hdiutil imageinfo nixos-pi-sd-image.img
+sudo dd if=nixos-pi-sd-image.img of=/dev/disk4 bs=1M status=progress conv=fsync
+#+end_src
+
+Let's not run that yet, because just blindly doing =dd= on things under =/dev=
+is inherently dangerous.  Is there a way we can query for a detachable disk?
+
+There is for macOS, but it's not portable.  I have seen some mention that
+=lsusb= works for non-USB storage devices (and by extension, =cyme= would as
+well), but I have not observed that on my system.  Still, learning of =cyme= is
+useful and it's been added to my toolbox for later.
+
+This is what I came up with:
+
+#+begin_src shell :results output :cache yes
+system_profiler SPStorageDataType -json \
+  | jq -r \
+      '.SPStorageDataType.[]
+        | select(.physical_drive.protocol == "Secure Digital")
+        | .bsd_name' \
+  | sed -E 's/s[0-9]+//'
+#+end_src
+
+#+RESULTS[0f5433952653539623496d78f36c84d213afb02d]:
+: disk4
+
+Note that this might not work if using a USB attached SD card.  This could be
+the case if you're using a docking station setup on your Mac/MacBook, instead of
+preferring the on-board SD card reader.
+
+Okay so now we have the disk, dynamically.  We can just idiotically bail out if
+more than one is found.  We should only find one and only one result.
+
+Ugh.  I really wish we could actually replace Bash with a stronger scripting
+language but with the same level of ubiquitousness.  This is what I was able to
+put together for giving me a one-and-only-one search:
+
+#+begin_src shell :results none :exports code
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+IFS=$'\n'
+result=( $(system_profiler SPStorageDataType -json \
+  | jq -r \
+      '.SPStorageDataType.[]
+        | select(.physical_drive.protocol == "Secure Digital")
+        | .bsd_name' \
+  | sed -E 's/s[0-9]+//'
+) )
+unset IFS
+count="${#result[*]}"
+if [[ $count != 1 ]]; then
+  echo "Error: $result has $count results but we expect exactly 1." 1>&2
+  exit 1
+else
+  echo -n $result
+fi
+#+end_src
+
+I tested with 1 device and 4 devices, and got the results I wanted.
+
+This leaves us with a final script of:
+
+#+begin_src shell :results none :exports code
+#!/usr/bin/env bash
+
+./with-podman.sh " \
+nix \
+  --extra-experimental-features nix-command \
+  --extra-experimental-features flakes \
+  build '.#iron'
+ls -al \$(readlink result)/nix-support
+cp \$(readlink result)/sd-image/* /workdir/nixos-pi-sd-image.img.zst
+rm result
+"
+unzstd -d nixos-pi-sd-image.img.zst -o nixos-pi-sd-image.img
+rm nixos-pi-sd-image.img.zst
+hdiutil imageinfo nixos-pi-sd-image.img
+sudo dd \
+     if=nixos-pi-sd-image.img \
+     of=/dev/$(./sd-card-dev-find.sh) \
+     bs=1M \
+     status=progress \
+     conv=fsync
+#+end_src
+
+I found as part of futzing with this that =SPStorageDataType= only works for
+mounted devices but not available devices.  However I need things to be
+unmounted to use =dd= on them.  This does not make it easy to do ephemeral runs.
+If I wanted to always use =SPStorageDataType=, then I'd need to know _what_ to
+mount, which is what I'm trying to determine in the first place.  Additionally,
+the disk might be totally fresh or using some unknown filesystem - both of which
+would render the device unmountable.  With some checking around from
+=system_profiler -listDataTypes= I found =SPCardReaderDataType= which looks
+promising:
+
+#+begin_src shell :results output :cache yes
+system_profiler SPCardReaderDataType
+#+end_src
+
+#+RESULTS[19c71eb3ef3a2a56e6f5087bdd4b3580460be0ed]:
+#+begin_example
+Card Reader:
+
+    Built in SD Card Reader:
+
+      Vendor ID: 0x17a0
+      Device ID: 0x9755
+      Subsystem Vendor ID: 0x17a0
+      Subsystem ID: 0x9755
+      Revision: 0x0001
+      Link Width: x63
+
+        SDXC Card (Class 10):
+
+          Product Name: SDSN128
+          Manufacturer ID: 0x03
+          Revision: 8.6
+          Serial Number: 2296909372
+          Manufacturing Date: 2023-08
+          Specification Version: 3.0
+          Capacity: 127.87 GB (127,865,454,592 bytes)
+          Removable Media: Yes
+          BSD Name: disk4
+          Partition Map Type: MBR (Master Boot Record)
+          S.M.A.R.T. status: Verified
+          Volumes:
+            bootfs:
+              Capacity: 536.9 MB (536,870,912 bytes)
+              File System: MS-DOS FAT32
+              BSD Name: disk4s1
+              Content: Windows_FAT_32
+              Volume UUID: 0A519004-FDF2-3BDA-9650-613B11B95AFF
+            disk4s2:
+              Capacity: 5.3 GB (5,297,405,952 bytes)
+              BSD Name: disk4s2
+              Content: Linux
+
+#+end_example
+
+And now the JSON form:
+
+
+#+begin_src shell :results output :cache yes
+system_profiler SPCardReaderDataType -json
+#+end_src
+
+#+RESULTS[ecedc82eca39566dcfc2beea315e4a30bf72e5e6]:
+#+begin_example
+{
+  "SPCardReaderDataType" : [
+    {
+      "_items" : [
+        {
+          "_name" : "SDXC Card (Class 10)",
+          "bsd_name" : "disk4",
+          "partition_map_type" : "master_boot_record_partition_map_type",
+          "removable_media" : "yes",
+          "size" : "127.87 GB",
+          "size_in_bytes" : 127865454592,
+          "smart_status" : "Verified",
+          "spcardreader_card_manufacturer-id" : "0x03",
+          "spcardreader_card_manufacturing_date" : "2023-08",
+          "spcardreader_card_productname" : "SDSN128",
+          "spcardreader_card_productrevision" : "8.6",
+          "spcardreader_card_serialnumber" : "2296909372",
+          "spcardreader_card_specversion" : "3.0",
+          "volumes" : [
+            {
+              "_name" : "bootfs",
+              "bsd_name" : "disk4s1",
+              "file_system" : "MS-DOS FAT32",
+              "iocontent" : "Windows_FAT_32",
+              "size" : "536.9 MB",
+              "size_in_bytes" : 536870912,
+              "volume_uuid" : "0A519004-FDF2-3BDA-9650-613B11B95AFF"
+            },
+            {
+              "_name" : "disk4s2",
+              "bsd_name" : "disk4s2",
+              "iocontent" : "Linux",
+              "size" : "5.3 GB",
+              "size_in_bytes" : 5297405952
+            }
+          ]
+        }
+      ],
+      "_name" : "spcardreader",
+      "spcardreader_device-id" : "0x9755",
+      "spcardreader_link-width" : "x63",
+      "spcardreader_revision-id" : "0x0001",
+      "spcardreader_subsystem_vendor-id" : "0x17a0",
+      "spcardreader_subsystem-id" : "0x9755",
+      "spcardreader_vendor-id" : "0x17a0"
+    }
+  ]
+}
+#+end_example
+
+That gives me a =jq= query of:
+
+#+begin_src shell :results output :cache yes
+system_profiler SPCardReaderDataType -json \
+  | jq -r \
+      '.SPCardReaderDataType[]._items[].bsd_name'
+#+end_src
+
+#+RESULTS[5d314c1c2ca22f8f1ad1b585a0b6bf4660495331]:
+: disk4
+
+This leaves me with a final script for =sd-card-dev-find.sh= of:
+
+#+begin_src shell :results none :exports code
+#!/usr/bin/env bash
+##
+# Finds the device file for the attached SD card (eg. /dev/disk4).  It will
+# assume /dev as a relative directory to make consumption easier.
+#
+# This has a non-zero exit code if more than one disk is found, or no disks are
+# found.
+##
+
+set -euo pipefail
+
+while true; do
+  case "${1:-}" in
+    -h | --help)
+      cat <<EOH
+Usage: $0
+
+Finds the device file for the attached SD card (eg. /dev/disk4).  It will
+assume /dev as a relative directory to make consumption easier.
+EOH
+      exit
+      ;;
+    * ) break ;;
+  esac
+done
+
+IFS=$'\n'
+result=$(
+  system_profiler SPCardReaderDataType -json \
+    | jq -r \
+      '.SPCardReaderDataType[]._items[].bsd_name'
+)
+array=( $result )
+unset IFS
+count="${#array[*]}"
+if [[ $count != 1 ]]; then
+  echo "Error: Query result '$result' has $count results but we expect exactly \
+1." 1>&2
+  exit 1
+else
+  echo -n $result
+fi
+#+end_src
+
+Which also includes =-h= / =--help= and a comment describing how it works.  It
+might seem obvious, and it is, but that's because it's fresh.  I've made life
+easier for future-me.
+
+Here's the same treatment for =image-create.sh=:
+
+#+begin_src shell :results none :exports code
+#!/usr/bin/env bash
+##
+# Creates a bootable Raspberry Pi image with NixOS.  This image should contain
+# the entirety of the configuration, sans password updates (until I can get
+# secret management going).
+#
+# The image file name is printed upon success.
+##
+
+set -euo pipefail
+
+while true; do
+  case "${1:-}" in
+    -h | --help)
+      cat <<EOH
+Usage: $0
+
+Creates a bootable Raspberry Pi image with NixOS.  This image should contain
+the entirety of the configuration, sans password updates (until I can get
+secret management going).
+
+The image file name is printed upon success.
+EOH
+      exit
+      ;;
+    * ) break ;;
+  esac
+done
+
+image_name='nixos-pi-sd-image.img'
+./with-podman.sh " \
+nix \
+  --extra-experimental-features nix-command \
+  --extra-experimental-features flakes \
+  build '.#iron'
+ls -al \$(readlink result)/nix-support
+cp \$(readlink result)/sd-image/* /workdir/$image_name.zst
+rm result
+"
+unzstd \
+  --force \
+  --decompress $image_name.zst \
+  -o $image_name
+rm --force $image_name.zst
+hdiutil imageinfo $image_name
+
+echo 'Image built successfully.' 1>&2
+# Print the name used so we can use it elsewhere, and scripts needn't be tightly
+# coupled.
+echo $image_name
+#+end_src
+
+And I further broke things apart, such that =image-deploy.sh= actually installs
+it.  I have done this because building the image is its own ordeal, and
+something I might want to test separately.  Note that =image-create.sh= prints
+the file name of the image so =image-deploy.sh= can use it, and doesn't need to
+have intimate knowledge of the file name.  I have one place I can change the
+image file name (or parameterize it), and nothing else needs to be updated.
+** No Joy on Boot
+:PROPERTIES:
+:CUSTOM_ID: building-the-image--no-joy-on-boot
+:END:
+
+The Pi seems to "boot", but results in the double-green flashes I had before I
+went down the NixOS image approach.  I happen to have a second Pi with me, and
+have tried it there, as well as a second card with the same image.  I don't feel
+like this has ruled out hardware problems.
+
+My card is from SanDisk, and is the SanDisk Ultra 128GB microSDXC UHS-I Card
+(=SDSQUNC-128G-GN6MA=) variant.  https://elinux.org/RPi_SD_cards indicates that
+this should work.  Many of the recent SanDisk cards are reported as working.
+The Amazon reviews say that they specifically work for Raspberry Pis as well.
+Even though I got them from the same batch (as well as the Pis), I _suspect_
+this is not a hardware issue, but I haven't ruled it out.
+
+I need a display to see if there's some other critical information before I can
+continue.
+
+I did install =f3= utilities to test it (with =f3read= and =f3write=) but I
+haven't taken them for a spin yet.
