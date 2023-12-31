@@ -1,6 +1,5 @@
-
-<div id="outline-container-orgaaea9b7" class="outline-2">
-<h2 id="orgaaea9b7"><span class="section-number-2">1.</span> Introduction</h2>
+<div id="outline-container-org9cdae71" class="outline-2">
+<h2 id="org9cdae71"><span class="section-number-2">1.</span> Introduction</h2>
 <div class="outline-text-2" id="text-1">
 <p>
 This is to provide a detailed checklist on what makes for a good command line
@@ -21,14 +20,48 @@ unexpected results.</li>
 </ol>
 </div>
 </div>
+<div id="outline-container-orgfdb67f5" class="outline-2">
+<h2 id="orgfdb67f5"><span class="section-number-2">2.</span> Disclaimer</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+You can always view my <a href="./resume.html">résumé</a> here on the blog.  From that you can infer a lot
+about my experience and things I&rsquo;ve done.  I don&rsquo;t wish to appeal to authority,
+but having some experience in the field should amount to something.  I deal with
+this stuff on a day to day basis, and from that I&rsquo;ve learned some things.  You
+can decide for yourself if it&rsquo;s poorly acquired trauma or wisdom that comes with
+age.
+</p>
 
-<div id="outline-container-org5123815" class="outline-2">
-<h2 id="org5123815"><span class="section-number-2">2.</span> Disclaimer</h2>
+<p>
+I tend to examine &ldquo;standards&rdquo; with high levels of scrutiny, as they can be put
+together by almost anyone with vast quantities of spare time and an unhealthy
+addiction to work.  I hope my work here is placed under similar scrutiny.  Bad
+ideas should perish and good ideas should thrive.  Of course, the real world
+contains a lot of nuance.  I find it best to know what the ideal course is, and
+then deviate as needs dictate.
+</p>
+
+<p>
+You will not gain my support by quoting my words as truth.  But use this to be
+inspired to pitch your own arguments and form your own ideas.
+</p>
+
+<p>
+In short: I know some things.  I think to think for myself.  So should you,
+including scrutinizing anything I emit.
+</p>
 </div>
-
-<div id="outline-container-org3346539" class="outline-2">
-<h2 id="org3346539"><span class="section-number-2">3.</span> Help and Usage</h2>
+</div>
+<div id="outline-container-org032ef19" class="outline-2">
+<h2 id="org032ef19"><span class="section-number-2">3.</span> Help and Usage</h2>
 <div class="outline-text-2" id="text-3">
+<p>
+The <a href="https://agilemanifesto.org">Agile Manifesto</a> tells us to favor &ldquo;working software over comprehensive
+documentation&rdquo;, but I find this akin to waiting until someone falls in a hole
+and dies before you decide to put up a sign that there&rsquo;s a hole where one could
+fall in and die.
+</p>
+
 <p>
 Providing a help/usage information for your program is a must-have. Even
 simplistic programs should provide a brief description of what they do and any
@@ -93,10 +126,8 @@ arguments. So <code>$1</code> is the first argument after the script name.
 </div>
 </div>
 </div>
-
-
-<div id="outline-container-org660c6e4" class="outline-2">
-<h2 id="org660c6e4"><span class="section-number-2">4.</span> Logging and Output</h2>
+<div id="outline-container-orgbf669ed" class="outline-2">
+<h2 id="orgbf669ed"><span class="section-number-2">4.</span> Logging and Output</h2>
 <div class="outline-text-2" id="text-4">
 <p>
 Typically a lot of command line programs are rather silent - they don&rsquo;t output
@@ -104,10 +135,26 @@ much. It&rsquo;s totally fine though to sprinkle logging throughout your program
 fact, for all but the most trivial programs I encourage this! But be sure to
 provide a distinction between <b>logging</b> and <b>output</b>.
 </p>
-</div>
 
-<div id="outline-container-orgf29ccc0" class="outline-3">
-<h3 id="orgf29ccc0"><span class="section-number-3">4.1.</span> Logging and Log Levels</h3>
+<p>
+The <a href="https://en.wikipedia.org/wiki/Unix_philosophy">Unix philosopy</a> has a lot of useful tidbits in it, but of particular note is
+this item:
+</p>
+
+<blockquote>
+<p>
+Expect the output of every program to become the input to another, as yet
+unknown, program. Don&rsquo;t clutter output with extraneous information. Avoid
+stringently columnar or binary input formats. Don&rsquo;t insist on interactive input.
+</p>
+</blockquote>
+
+<p>
+This flows into very practical advice for logging and your program output.
+</p>
+</div>
+<div id="outline-container-org18b3815" class="outline-3">
+<h3 id="org18b3815"><span class="section-number-3">4.1.</span> Logging and Log Levels</h3>
 <div class="outline-text-3" id="text-4-1">
 <p>
 Logging is the program printing out diagnostic or progress information to the
@@ -122,7 +169,7 @@ point at a particular destination. One of those can be whatever your languages
 uses for <code>stderr</code>, which is covered in your language&rsquo;s documentation. Logging
 always goes to <code>stderr</code> so that other programs (usually shells) can use program
 output without having to be aware of any kind of logging. We&rsquo;ll cover this more
-in <a href="#orgfd57314">4.2</a>.
+in <a href="#orga68ffe1">4.2</a>.
 </p>
 
 <p>
@@ -140,9 +187,8 @@ verbosity.
 </p>
 </div>
 </div>
-
-<div id="outline-container-orgfd57314" class="outline-3">
-<h3 id="orgfd57314"><span class="section-number-3">4.2.</span> Output</h3>
+<div id="outline-container-orga68ffe1" class="outline-3">
+<h3 id="orga68ffe1"><span class="section-number-3">4.2.</span> Output</h3>
 <div class="outline-text-3" id="text-4-2">
 <p>
 Output should always be printed to <code>stdout</code> (apart from logging, which goes to
@@ -151,7 +197,13 @@ output. For example, <code>curl</code> uses this pattern to much obviousness:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-shell"><span style="color: #FCCE7B;">curl</span> -v https://google.com &gt; /dev/null
+<pre class="src src-shell"> <span style="color: #FCCE7B;">echo</span> <span style="color: #7bc275;">'* foo'</span>
+</pre>
+</div>
+
+
+<div class="org-src-container">
+<pre class="src src-shell"> <span style="color: #FCCE7B;">curl</span> -k --verbose --silent https://google.com &gt; /dev/null
 </pre>
 </div>
 
@@ -163,10 +215,8 @@ that to a saved file.
 </div>
 </div>
 </div>
-
-
-<div id="outline-container-org3b0f37f" class="outline-2">
-<h2 id="org3b0f37f"><span class="section-number-2">5.</span> Exit Codes</h2>
+<div id="outline-container-org3ea6e3a" class="outline-2">
+<h2 id="org3ea6e3a"><span class="section-number-2">5.</span> Exit Codes</h2>
 <div class="outline-text-2" id="text-5">
 <p>
 Exit codes are unsigned 8 bit numbers (0-255). 0 is interpreted as success.
@@ -192,6 +242,27 @@ have poor consequences.
 <span style="color: #62686E;"># </span><span style="color: #62686E;">not "my-report.rpt".</span>
 publish-all-reports
 </pre>
+</div>
+</div>
+<div id="outline-container-org78f6a4a" class="outline-3">
+<h3 id="org78f6a4a"><span class="section-number-3">5.1.</span> Standard Exit Codes<span class="tag"><span class="archive">archive</span></span></h3>
+<div class="outline-text-3" id="text-5-1">
+<p>
+I need to vet this before publishing it.
+</p>
+
+<p>
+There are some standards for exit codes as well.  The advanced Bash guide covers
+<a href="https://tldp.org/LDP/abs/html/exitcodes.html">exit codes of reserved meaning in Bash</a>.  This is not quite the same as a
+standard for which all outcomes could be cataloged.  Instead this gives us some
+predictable outcome.
+</p>
+
+<p>
+While I have found many to find this kind of thing archaic.  It&rsquo;s not terribly
+different from how the vaunted HTTP standard works.  <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Status">HTTP codes</a> rain <a href="https://http.cat">cats</a> and
+<a href="https://http.dog">dogs</a> from the standard.
+</p>
 </div>
 </div>
 </div>
