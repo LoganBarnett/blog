@@ -1,0 +1,216 @@
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#xml-namespaces">1. XML Namespaces</a>
+<ul>
+<li><a href="#xml-namespaces--the-skinny">1.1. The Skinny</a></li>
+<li><a href="#xml-namespaces--depth">1.2. Depth</a>
+<ul>
+<li><a href="#xml-namespaces--depth--namespaces">1.2.1. Namespaces</a></li>
+<li><a href="#xml-namespaces--depth--prefixes">1.2.2. Prefixes</a></li>
+<li><a href="#xml-namespaces--depth--default-namespaces">1.2.3. Default Namespaces</a></li>
+<li><a href="#xml-namespaces--depth--querying-an-xml-document-with-namespaces">1.2.4. Querying an XML Document with Namespaces</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+
+---
+categories: xml
+date: 2024-01-01
+layout: default
+title: XML Namespaces
+---
+<div id="outline-container-xml-namespaces" class="outline-2">
+<h2 id="xml-namespaces"><span class="section-number-2">1.</span> XML Namespaces</h2>
+<div class="outline-text-2" id="text-xml-namespaces">
+<p>
+This post covers the importance of namespaces in XML. Anyone doing XML
+transformations or data aggregation from these documents needs to be aware of
+them.  This document assumes familiarity with XML to at least a minor degree.
+</p>
+
+<p>
+I am not claiming this document is complete but it should hopefully serve as a
+quick primer for anyone wanting to wrap their heads around XML namespaces.
+</p>
+</div>
+<div id="outline-container-xml-namespaces--the-skinny" class="outline-3">
+<h3 id="xml-namespaces--the-skinny"><span class="section-number-3">1.1.</span> The Skinny</h3>
+<div class="outline-text-3" id="text-xml-namespaces--the-skinny">
+<p>
+XML Namespaces, simply put, are just URIs. Full stop.
+</p>
+
+<p>
+You can find the spec on namespaces at <a href="https://www.w3.org/TR/xml-names/">https://www.w3.org/TR/xml-names/</a>.
+</p>
+</div>
+</div>
+<div id="outline-container-xml-namespaces--depth" class="outline-3">
+<h3 id="xml-namespaces--depth"><span class="section-number-3">1.2.</span> Depth</h3>
+<div class="outline-text-3" id="text-xml-namespaces--depth">
+</div>
+<div id="outline-container-xml-namespaces--depth--namespaces" class="outline-4">
+<h4 id="xml-namespaces--depth--namespaces"><span class="section-number-4">1.2.1.</span> Namespaces</h4>
+<div class="outline-text-4" id="text-xml-namespaces--depth--namespaces">
+<p>
+URNs can appear which don&rsquo;t look much like <span class="underline">typical</span> URIs, but are URIs
+nonetheless.
+</p>
+
+<p>
+It might be best to think of the namespaces as arbitrary strings.  The important
+takeaway here is that the XML namespace is not the prefix you see in tags and
+attributes.  We&rsquo;ll get into that later in this document.
+</p>
+</div>
+</div>
+<div id="outline-container-xml-namespaces--depth--prefixes" class="outline-4">
+<h4 id="xml-namespaces--depth--prefixes"><span class="section-number-4">1.2.2.</span> Prefixes</h4>
+<div class="outline-text-4" id="text-xml-namespaces--depth--prefixes">
+<p>
+A prefix is an arbitrary identifier used to refer to a namespace.  It is not the
+namespace itself.  Document producers can produce perfectly valid documents
+without agreeing on what prefixes to use, if any (default namespaces remove the
+need for prefixes).
+</p>
+
+<p>
+A prefix is established with the <code>xmlns:[prefix]</code> attribute, where <code>[prefix]</code> is
+the name of the prefix.  The namespace is the value given to the attribute.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-xml" id="orgb520383">&lt;?<span style="color: #51afef;">xml</span> <span style="color: #7e7e87;">version="1.0" encoding="UTF-8" standalone="yes"</span>?&gt;
+&lt;<span style="color: #C57BDB;">i</span>:<span style="color: #5cEfFF;">IntuitResponse</span> <span style="color: #C57BDB;">xmlns</span>:<span style="color: #dcafe9;">i</span>=<span style="color: #7bc275;">"http://schema.intuit.com/finance/v3"</span>
+                <span style="color: #dcafe9;">time</span>=<span style="color: #7bc275;">"2016-10-14T10:48:39.109-07:00"</span>&gt;
+    &lt;<span style="color: #C57BDB;">i</span>:<span style="color: #5cEfFF;">QueryResponse</span> <span style="color: #dcafe9;">startPosition</span>=<span style="color: #7bc275;">"1"</span> <span style="color: #dcafe9;">maxResults</span>=<span style="color: #7bc275;">"79"</span> <span style="color: #dcafe9;">totalCount</span>=<span style="color: #7bc275;">"79"</span>&gt;
+    &lt;/<span style="color: #C57BDB;">i</span>:<span style="color: #5cEfFF;">QueryResponse</span>&gt;
+&lt;/<span style="color: #C57BDB;">i</span>:<span style="color: #5cEfFF;">IntuitResponse</span>&gt;
+</pre>
+</div>
+
+<p>
+In this document, the uses <code>i</code> as the prefix.  The namespace is
+<code>http://schema.intuit.com/finance/v3</code>.  For all of these nodes, the namespace is
+<code>http://schema.intuit.com/finance/v3</code>.
+</p>
+
+<p>
+Another document producer could crank this out as well:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-xml" id="org47970f1">&lt;?<span style="color: #51afef;">xml</span> <span style="color: #7e7e87;">version="1.0" encoding="UTF-8" standalone="yes"</span>?&gt;
+&lt;<span style="color: #C57BDB;">foo</span>:<span style="color: #5cEfFF;">IntuitResponse</span> <span style="color: #C57BDB;">xmlns</span>:<span style="color: #dcafe9;">foo</span>=<span style="color: #7bc275;">"http://schema.intuit.com/finance/v3"</span>
+                <span style="color: #dcafe9;">time</span>=<span style="color: #7bc275;">"2016-10-14T10:48:39.109-07:00"</span>&gt;
+    &lt;<span style="color: #C57BDB;">foo</span>:<span style="color: #5cEfFF;">QueryResponse</span> <span style="color: #dcafe9;">startPosition</span>=<span style="color: #7bc275;">"1"</span> <span style="color: #dcafe9;">maxResults</span>=<span style="color: #7bc275;">"79"</span> <span style="color: #dcafe9;">totalCount</span>=<span style="color: #7bc275;">"79"</span>&gt;
+    &lt;/<span style="color: #C57BDB;">foo</span>:<span style="color: #5cEfFF;">QueryResponse</span>&gt;
+&lt;/<span style="color: #C57BDB;">foo</span>:<span style="color: #5cEfFF;">IntuitResponse</span>&gt;
+</pre>
+</div>
+
+<p>
+These two documents are semantically the same, because the namespaces attached
+to the nodes are the same.  Any sort of transformation or aggregation you do
+with XML data must account for this, or any variation in the prefix will run you
+afoul of XML validators.  Some validators might be less picky in this regard -
+probably because the authors of said validators didn&rsquo;t have a firm grasp on
+namespaces. The problem with ignoring them is that downstream consumers of the
+document will be looking at invalid documents - data will have been removed.
+</p>
+
+<p>
+Another peculiar bit about namespace prefixes is that they are applied to the
+node which contains the attribute, not just the children.
+</p>
+</div>
+</div>
+<div id="outline-container-xml-namespaces--depth--default-namespaces" class="outline-4">
+<h4 id="xml-namespaces--depth--default-namespaces"><span class="section-number-4">1.2.3.</span> Default Namespaces</h4>
+<div class="outline-text-4" id="text-xml-namespaces--depth--default-namespaces">
+<p>
+A default namespace is essentially an implicit namespace.  It is declared with
+the <code>xmlns</code> attribute, and like prefixed namespaces, the value is namespace
+itself (a URI).
+</p>
+
+<div class="org-src-container">
+<pre class="src src-xml" id="org28f74ae">&lt;?<span style="color: #51afef;">xml</span> <span style="color: #7e7e87;">version="1.0" encoding="UTF-8" standalone="yes"</span>?&gt;
+&lt;<span style="color: #5cEfFF;">IntuitResponse</span> <span style="color: #C57BDB;">xmlns</span>=<span style="color: #7bc275;">"http://schema.intuit.com/finance/v3"</span>
+                <span style="color: #dcafe9;">time</span>=<span style="color: #7bc275;">"2016-10-14T10:48:39.109-07:00"</span>&gt;
+    &lt;<span style="color: #5cEfFF;">QueryResponse</span> <span style="color: #dcafe9;">startPosition</span>=<span style="color: #7bc275;">"1"</span> <span style="color: #dcafe9;">maxResults</span>=<span style="color: #7bc275;">"79"</span> <span style="color: #dcafe9;">totalCount</span>=<span style="color: #7bc275;">"79"</span>&gt;
+    &lt;/<span style="color: #5cEfFF;">QueryResponse</span>&gt;
+&lt;/<span style="color: #5cEfFF;">IntuitResponse</span>&gt;
+</pre>
+</div>
+
+<p>
+In this case the <code>xmlns</code> attribute declares the default namespace as
+<code>http://schema.intuit.com/finance/v3</code> and it is applied to the <code>IntuitResponse</code>
+element as well as <code>QueryResponse</code>.  This would descend down the entire document
+hierarchy until another default namespace were declared.  The most immediate
+parent declaration wins when determining a child&rsquo;s namespace.
+</p>
+
+<p>
+It&rsquo;s also noteworthy that this document is semantically the same as those found
+in <a href="#xml-namespaces--depth--prefixes">1.2.2</a>.
+</p>
+</div>
+</div>
+<div id="outline-container-xml-namespaces--depth--querying-an-xml-document-with-namespaces" class="outline-4">
+<h4 id="xml-namespaces--depth--querying-an-xml-document-with-namespaces"><span class="section-number-4">1.2.4.</span> Querying an XML Document with Namespaces</h4>
+<div class="outline-text-4" id="text-xml-namespaces--depth--querying-an-xml-document-with-namespaces">
+<p>
+I have found that tools that use XPath and even other tools will provide a
+mechanism to declare a namespace alias, since queries become unwieldy when the
+full namespace is used.  These aliases look an awful lot like prefixes.
+</p>
+
+<p>
+Here is what the <code>nokogiri</code> Ruby gem looks like when using XPath:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-ruby" id="orgbce2f61"><span style="color: #C57BDB;">puts</span> doc.xpath<span style="color: #51afef;">(</span><span style="color: #7bc275;">'/i:IntuitResponse/i:QueryResponse'</span>,
+                <span style="color: #7bc275;">'i'</span> =&gt; <span style="color: #7bc275;">"http://schema.intuit.com/finance/v3"</span><span style="color: #51afef;">)</span>
+</pre>
+</div>
+
+<p>
+And this will get the <code>QueryResponse</code> contents.
+</p>
+
+<p>
+Similarly, here is a C# API:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-csharp" id="org070ecc5"><span style="color: #FCCE7B;">XmlNamespaceManager</span> <span style="color: #dcafe9;">nsmgr</span> = <span style="color: #51afef;">new</span> <span style="color: #FCCE7B;">XmlNamespaceManager</span><span style="color: #51afef;">(</span>doc.NameTable<span style="color: #51afef;">)</span>;
+nsmgr.<span style="color: #5cEfFF;">AddNamespace</span><span style="color: #51afef;">(</span><span style="color: #7bc275;">"i"</span>, <span style="color: #7bc275;">"http://schema.intuit.com/finance/v3"</span><span style="color: #51afef;">)</span>;
+<span style="color: #FCCE7B;">XmlNodeList</span> <span style="color: #dcafe9;">nodes</span> = el.<span style="color: #5cEfFF;">SelectNodes</span><span style="color: #51afef;">(</span>@<span style="color: #7bc275;">"/i:IntuitResponse/i:QueryResponse"</span>, nsmgr<span style="color: #51afef;">)</span>;
+</pre>
+</div>
+
+<p>
+Tools such as <code>oq</code>, which do not use XPath, have chosen a similar approach:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell" id="orgc7f1492">oq <span style="color: #7bc275;">\</span>
+  --xmlns <span style="color: #7bc275;">\</span>
+  --xml-namespace-alias <span style="color: #7bc275;">'i=http://schema.intuit.com/finance/v3'</span> <span style="color: #7bc275;">\</span>
+  -i xml <span style="color: #7bc275;">\</span>
+  -o xml <span style="color: #7bc275;">\</span>
+  &lt;&lt;&lt; &lt;EOF
+
+EOF
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
