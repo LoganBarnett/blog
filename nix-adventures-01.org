@@ -51,6 +51,7 @@ things nobody has heard of.
 
 That Nix now has at least two blog series on this topic speaks well of Nix, its
 promise, and its progress.
+
 * Introduction
 :PROPERTIES:
 :CUSTOM_ID: introduction
@@ -71,7 +72,7 @@ overall I want the computer to work for me, not the other way around.  I have a
 I have been using Nix for well over a year at time of writing.  Since then I
 have moved to using Nix with Home-manager, and now some combination of
 Home-manager and Flakes that still puzzles me.  I use it extensively for
-managing my machine's local configuration (historically "dotfiles").  I also use
+managing [[https://github.com/LoganBarnett/dotfiles][my machine's local configuration]] (historically "dotfiles").  I also use
 it for managing repository dependencies (a generalized version of =tfswitch=,
 =rbenv=, =pyenv=, =nodenv=, etc).  I always have to look up how to make a
 derivation or even the simplest overlay.
@@ -92,7 +93,7 @@ build-from-source instructions on a =README=.
 
 I have some work I want to do on a Raspberry Pi involving Wireguard.  I have
 some prior experience with Wireguard and also with working on Raspberry Pis.
-I have a complication: I have no displays nor display adapters (mini-HDMI) with
+I have a complication: I have no displays nor display adapters (micro-HDMI) with
 which I could use to interface with the Pi.  I have no extra keyboard or mouse
 at the moment.  For a system I should be able build an image for, this kind of
 hardware requirement really seems like overkill.
@@ -234,7 +235,7 @@ The =No such file or directory= portion can't be correct on the latter path -
 indeed non-existent.  Curious, looking in =/Library/Filesystems= directly shows
 me _something_ of relevance:
 
-#+begin_src shell :results output :exports both
+#+begin_src shell :results output :exports both :cache yes
 ls /Library/Filesystems
 #+end_src
 
@@ -316,7 +317,7 @@ reboots and swapping the physical card out to stow my laptop between attempts,
 it must have moved.  Sigh.  Let's do this again.  At least I know with
 confidence that I want to be mounting the "2" partition.
 
-#+begin_src shell :results none
+#+begin_src shell :results none :exports code
 sudo fuse-ext2 /dev/disk6s2 /Volumes/4s2
 #+end_src
 
@@ -487,7 +488,7 @@ the Pi, which apparently it advertises on.
 
 The command link invocation is provided in this [[https://apple.stackexchange.com/a/362741][answer]]:
 
-#+begin_src shell :results output :cache yes :exports both
+#+begin_src shell :results output :exports code
 dns-sd -Gv4v6 raspberrypi.local
 #+end_src
 
@@ -625,7 +626,7 @@ Where =grunfeld= is the name of the Raspberry Pi.
 In the repository's README, it states the image can be created and copied like
 so:
 
-#+begin_src shell :results none
+#+begin_src shell :results none :exports code
 nixos-generate --flake '.#grunfeld' --format sd-aarch64 --system aarch64-linux
 unzstd -d {the output path from the command above} -o nixos-sd-image.img
 sudo dd if=nixos-sd-image.img of=/dev/sda bs=64K status=progress
@@ -714,7 +715,7 @@ use thoughtlessly and I really like that.
 
 Here's an example run:
 
-#+begin_src shell :results none
+#+begin_example
 @ ./with-podman.sh ls -al
 Error: podman-machine-default: VM already exists
 Error: cannot start VM podman-machine-default: VM already running or starting
@@ -738,7 +739,7 @@ Machine "podman-machine-default" stopped successfully
 
 ~/dev/proton-nix logan@scandium 0 [22:27:20] 75s
 $
-#+end_src
+#+end_example
 
 Note it took 75 seconds to run on my system just to do =ls= but it works without
 me doing anything fancy, I'm running =NixOS=, and the repository I'm working in
@@ -1001,7 +1002,7 @@ Now I have the following configuration:
 
 The =flake.nix=:
 
-#+begin_src nix :results none
+#+begin_src nix :results none :exports code
 {
   description = ''iron.proton imaging and configuration.
 iron.proton is a cross-region routing device.
@@ -1197,7 +1198,7 @@ result -> /nix/store/dv21jmin4aqq4m0zvlbfbw2d6c1d47sr-nixos-sd-image-24.05.20231
 
 I quickly discovered that the symlink is orphaned.
 
-#+begin_src shell :results output :dir ~/dev/proton-nix
+#+begin_src shell :results output :dir ~/dev/proton-nix :cache yes :exports both
 ls -al $(readlink result) 2>&1
 #+end_src
 
@@ -1734,3 +1735,100 @@ continue.
 
 I did install =f3= utilities to test it (with =f3read= and =f3write=) but I
 haven't taken them for a spin yet.
+
+** Back, and Display Ports
+:PROPERTIES:
+:CUSTOM_ID: building-the-image--back-and-display-ports
+:END:
+
+My travels are now complete, and I'm able to inspect things with my home
+network.  A curious thing that came up was the displays ports.  The new
+(circa 2023) Raspberry Pi's come with micro-HDMI connections for display.  I did
+some searching around and found that HDMI actually requires royalties are paid
+(perhaps the Pis are exempt?) at the cost of $0.15 USD or $0.05 (or lower) if
+the HDMI logo is displayed per [[https://en.wikipedia.org/wiki/HDMI#HDMI_fee_structure][Wikipedia's HDMI article]].  The Pi has the logo
+printed on PCB.  The capabilities between HDMI. are on par with each other, from
+what various posts I could find.  Apologists have reported that HDMI is more
+universal, and thus more in line with the goals of the Pi to make cheaply
+accessible computers.  I still had to buy an adapter to connect it to any of my
+displays made in the last 10 years.  Granted, the adapter wasn't terribly
+expensive.  It did halt my work though.  Now I have one, and a display to
+connect it to.  The results were surprising!
+
+** Actually Joy on Boot
+:PROPERTIES:
+:CUSTOM_ID: building-the-image--actually-joy-on-boot
+:END:
+
+I can see the Pi has actually booted up, and it works!  It successfully boots,
+and the flashing green light must just be "activity" that is on some regular
+interval.  The Bluetooth or WiFi radio, perhaps?  Either way, I have a working
+Pi!  Let's see if I can log in.
+
+#+begin_example
+$ ssh iron.proton
+The authenticity of host 'iron.proton (192.168.254.102)' can't be established.
+ED25519 key fingerprint is SHA256:E3b/T0lQiqItcIKbh2n6Wb/sOEV9nFbrVojJXlKmHrQ.
+This key is not known by any other names.
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+Warning: Permanently added 'iron.proton' (ED25519) to the list of known hosts.
+
+[logan@iron:~]$
+#+end_example
+
+Wow!  I'd forgotten I'd added one of my authorized keys to the list.  I have to
+admit, I'm pretty giddy.  I do have a password to update.  A quick =passwd=
+invocation shows the =initialPassword= field is good, but you won't see
+anything interesting here:
+
+#+begin_example
+[logan@iron:~]$ passwd
+Changing password for logan.
+Current password:
+New password:
+Retype new password:
+passwd: password updated successfully
+#+end_example
+
+And then to see if I can use =sudo=:
+
+#+begin_example
+[logan@iron:~]$ sudo ls
+
+We trust you have received the usual lecture from the local System
+Administrator. It usually boils down to these three things:
+
+    #1) Respect the privacy of others.
+    #2) Think before you type.
+    #3) With great power comes great responsibility.
+
+For security reasons, the password you type will not be visible.
+
+[sudo] password for logan:
+
+[logan@iron:~]$
+#+end_example
+
+So this ticks all of my boxes for getting a Pi
+configured on the baseline, but lets go through the list to be sure:
+
++ [X] The Pi has the desired hostname.
++ [X] The Pi has my user.
++ [X] My user can be logged into via SSH.
++ [X] My user is a sudoer.
+
+That's everything!
+
+* Conclusion
+:PROPERTIES:
+:CUSTOM_ID: conclusion
+:END:
+
+I'll wrap this up here.  The next part of this adventure will be to get
+Wireguard configured on the Pi.  That's a bit beyond the scope of what I feel
+safe sharing here.
+
+I have noticed during my searching about that there are
+these =age= secrets that I intend to read up on, though I find it hard to
+believe these secrets are safely shared on public repositories.  Offline brute
+force attacks are highly effective, from what I understand.

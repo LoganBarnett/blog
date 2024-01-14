@@ -1,0 +1,2104 @@
+---
+categories: nix
+date: 2023-12-22
+layout: default
+title: Nix Adventures (part 1 of ?)
+---
+<div id="outline-container-what-is-this" class="outline-2">
+<h2 id="what-is-this"><span class="section-number-2">1.</span> What is this?</h2>
+<div class="outline-text-2" id="text-what-is-this">
+<p>
+I recently (re?)read some posts from <a href="https://ianthehenry.com/posts/how-to-learn-nix/">Ian Henry&rsquo;s own adventures with Nix</a>. I find
+the series both amusing (because watching someone suffer as I have suffered can
+be amusing if done well), and because it&rsquo;s actually encouraging to see someone
+actually struggling with this.  Nix feels a lot like Rust to me.  In many ways
+it represents the future of computing.  In others, I see a select few people
+with <span class="underline">deep</span> understanding of the topic spouting off what is the equivalent of
+total nonsense to me.  I am glad these people are helping, and I am positive
+they are 100% correct in their statements.  I just don&rsquo;t understand any of it.
+There&rsquo;s some knowledge I was supposed to acquire while <code>~skimming~</code> reading
+through a colossal set of documentation.
+</p>
+
+<p>
+Now, before this goes further, I want to make it really clear here:  I fully
+understand and appreciate for most people working on these projects that it&rsquo;s a
+passion project and open source burnout is very real.  Posts like Ian&rsquo;s and now
+mine walk a dangerous line of contributing to that burnout.  I will make immense
+effort to keep my observations tasteful and respectful, while still capturing a
+degree of frustration so that maybe someone will have an experience similar to
+mine as I read Ian&rsquo;s posts.
+</p>
+
+<p>
+I tried finding the origin to this, but Google really has been letting me down
+lately.  Likely paraphrased, it goes like this:
+</p>
+
+<blockquote>
+<p>
+There are two kinds of things in the world: Things people complain about, and
+things nobody has heard of.
+</p>
+</blockquote>
+
+<p>
+That Nix now has at least two blog series on this topic speaks well of Nix, its
+promise, and its progress.
+</p>
+</div>
+</div>
+<div id="outline-container-introduction" class="outline-2">
+<h2 id="introduction"><span class="section-number-2">2.</span> Introduction</h2>
+<div class="outline-text-2" id="text-introduction">
+<p>
+As is stamped all over this blog, I am Logan Barnett.  I like working with
+computers more than working with humans, and I&rsquo;ve been doing it for a while now.
+There are significant gaps in my knowledge and I am comfortable with that.  I
+have a penchant for functional programming, documentation of all kinds, and
+overall I want the computer to work for me, not the other way around.  I have a
+<a href="./resume.html">resume</a> if you want to get into more specifics of my technical background.
+</p>
+</div>
+</div>
+<div id="outline-container-nix-thus-far" class="outline-2">
+<h2 id="nix-thus-far"><span class="section-number-2">3.</span> Nix Thus Far</h2>
+<div class="outline-text-2" id="text-nix-thus-far">
+<p>
+I have been using Nix for well over a year at time of writing.  Since then I
+have moved to using Nix with Home-manager, and now some combination of
+Home-manager and Flakes that still puzzles me.  I use it extensively for
+managing <a href="https://github.com/LoganBarnett/dotfiles">my machine&rsquo;s local configuration</a> (historically &ldquo;dotfiles&rdquo;).  I also use
+it for managing repository dependencies (a generalized version of <code>tfswitch</code>,
+<code>rbenv</code>, <code>pyenv</code>, <code>nodenv</code>, etc).  I always have to look up how to make a
+derivation or even the simplest overlay.
+</p>
+
+<p>
+I&rsquo;ve gotten to the point where installing my settings on a new machine requires
+very little adjusting.  A vast majority of my local software is governed by Nix.
+The only thing I&rsquo;m truly missing is Homebrew&rsquo;s <code>cask</code> functionality, and that&rsquo;s
+mostly because <code>Alfred.app</code> refuses to follow symlinks as a design decision (I
+plan to rectify that eventually).
+</p>
+
+<p>
+I am getting to the point where I can make my own derivations that simply follow
+build-from-source instructions on a <code>README</code>.
+</p>
+</div>
+</div>
+<div id="outline-container-today's-project:-working-on-a-raspberry-pi" class="outline-2">
+<h2 id="today's-project:-working-on-a-raspberry-pi"><span class="section-number-2">4.</span> Today&rsquo;s Project: Working on a Raspberry Pi</h2>
+<div class="outline-text-2" id="text-today's-project:-working-on-a-raspberry-pi">
+<p>
+I have some work I want to do on a Raspberry Pi involving Wireguard.  I have
+some prior experience with Wireguard and also with working on Raspberry Pis.
+I have a complication: I have no displays nor display adapters (micro-HDMI) with
+which I could use to interface with the Pi.  I have no extra keyboard or mouse
+at the moment.  For a system I should be able build an image for, this kind of
+hardware requirement really seems like overkill.
+</p>
+
+<p>
+<code>sshd</code> is disabled by default on a Raspberry Pi, so I cannot <code>ssh</code> to it, even
+if I could find it on a local link (this would take hours because <code>nmap</code> is
+pretty slow at this).
+</p>
+
+<p>
+So my next best activity is to either build the image in the state I want it in,
+or edit the files on the SD card whose state is setup by a pre-built image.  I
+have a pre-built image already, and I&rsquo;m on macOS.  Being on macOS prevents me
+from building new Linux images of any kind without a Docker image (which needs a
+VM) or setting up a Linux VM (which needs a VM too, ha!).  My bandwidth is low,
+as is my disk space.  I can solve the disk space issue, but that&rsquo;s a project for
+another day.
+</p>
+
+<p>
+In comes a tool called <code>macfuse</code>, previously known as <code>osxfuse</code>.  They followed the
+rebrand that Apple did, apparently.  I&rsquo;ve learned recently that this tool no
+longer requires disabling the SIP on macOS, which I have found to be a
+deal-breaker for my standards.  It&rsquo;s just a user-land kernel extension.  I don&rsquo;t
+know who to thank for that, but I am grateful for it.
+</p>
+</div>
+</div>
+<div id="outline-container-somehow-write-to-the-pi-sd-card" class="outline-2">
+<h2 id="somehow-write-to-the-pi-sd-card"><span class="section-number-2">5.</span> Somehow Write to the Pi SD card</h2>
+<div class="outline-text-2" id="text-somehow-write-to-the-pi-sd-card">
+<p>
+Whether I have some way to bake an image in the desired state (such as with a
+fixed IP for link-local and <code>sshd</code> enabled), or I just edit the SD card directly
+doesn&rsquo;t strictly matter to me.  Because I wanted to keep things &ldquo;simple&rdquo;, I
+elected to just go for the edits directly on what I believe is an already
+functional SD card, and save the NixOS-on-Pi activity for another day.
+</p>
+</div>
+<div id="outline-container-somehow-write-to-the-pi-sd-card--empower-editing-sd-card-files-from-macos-directly" class="outline-3">
+<h3 id="somehow-write-to-the-pi-sd-card--empower-editing-sd-card-files-from-macos-directly"><span class="section-number-3">5.1.</span> Empower Editing SD Card Files from macOS Directly</h3>
+<div class="outline-text-3" id="text-somehow-write-to-the-pi-sd-card--empower-editing-sd-card-files-from-macos-directly">
+<p>
+First, getting <code>macfuse</code> setup on my system via Nix isn&rsquo;t something directly
+supported.  I had to go into the Nix derivation for <code>e2fsprogs</code> and remove the
+guards against running on <code>darwin</code>.  Additionally I found <code>e2fsprogs</code> doesn&rsquo;t
+even compile.  <code>setxattr</code> and <code>getxattr</code> can&rsquo;t be assigned to because the
+function signatures don&rsquo;t match.  So I make them match with best guess by adding
+some parameters and declaring a couple of others as unsigned (link will come to
+the commit by the time I publish).  I believe this is because <code>osxfuse</code> has some
+differences in the API, or perhaps there are version incompatibilities.  It
+builds after that.  I struggle with <code>nix-flakes</code> for a bit but eventually I
+notice that <code>fuse-ext2</code> is indeed on my <code>PATH</code> - but I&rsquo;m not certain which of my
+incantations brought it about.  I&rsquo;m still very new to <code>nix-flakes</code> and much of
+it was forced upon me from other things I desired.  I basically jumped in the
+cockpit seat of the <code>nix-flakes</code> plane and grabbed the stick, hoping for the
+best.  I haven&rsquo;t collided with the planet Earth yet but there&rsquo;s still time for
+that.
+</p>
+
+<p>
+I try to mount my disk with invocations such as these:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #FCCE7B;">sudo</span> fuse-ext2 /dev/disk4s1 /Volumes/4s1
+<span style="color: #FCCE7B;">sudo</span> fuse-ext2 /dev/disk4s2 /Volumes/4s2
+</pre>
+</div>
+
+<p>
+Because I don&rsquo;t know which one is which and there are only two partitions for
+<code>disk4</code>.
+</p>
+
+<p>
+I don&rsquo;t have the exact message or dialog screenshots unfortunately, but this is
+where I find out that I indeed need to disable SIP (System Integrity
+Protection).  This involves rebooting the system into recovery mode, firing up
+the terminal there, and running <code>csrutil disable</code>.  <code>uptime</code> reports I&rsquo;m at 70
+days - a lot of days earned via hard won knowledge on battery draining
+activities on my laptop (such as bluetooth).  My pride suffers a blow, but I
+sally forth.  Then I spend about 7 reboots or so trying to get my laptop to
+actually boot into recovery mode.
+</p>
+
+<p>
+macOS has changed their reboot key bindings more than they&rsquo;ve changed their
+power adapter connections, and that&rsquo;s saying a lot.  Naturally I searched for
+how to do this, and was happy with the holding of <code>Cmd+R</code> during the boot-up.
+It doesn&rsquo;t work, which in my experience means the timing is wrong, so I try it
+several more time.  The technical timing is important so I try it more than
+once, which is how we wind up with me going to 7.  The 7th attempt was me
+finding out those instructions were for <span class="underline">Intel</span> Macs and I&rsquo;m on Apple Silicon.
+Right - glad we have that distinguishment.  My mind immediately demands &ldquo;Why?
+Why make these different?&rdquo; but answers I can come up with are depressing in a
+very literal way.
+</p>
+
+<p>
+I do the <code>csrutil disable</code> which prompts me but works anyways.  Knowing I have
+done the nasty successfully and my work here is done, I reboot to go back to my
+normal runtime.  I attempt to mount again with:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #FCCE7B;">sudo</span> fuse-ext2 /dev/disk4s2 /Volumes/4s2
+</pre>
+</div>
+
+<p>
+But again am prompted - my Mac tells me it has blocked the kernel extension, and
+I must reboot to bless it.  Great.  Couldn&rsquo;t we have just done that earlier?  Or
+maybe just let me queue up here at least so I don&rsquo;t need to go into a mode where
+I can&rsquo;t call upon my lifelines for help.  Alas, more reboots ahoy.  At least
+this time they give me really vague instructions.  This probably would&rsquo;ve
+confused me into doing more reboots and searching, but I&rsquo;ve already been here.
+Now that I&rsquo;ve blessed this kernel extension from Benjamin (who is that?), I go
+back to try it again.  Still blocked.  The System Settings section tells me
+there&rsquo;s a kernel extension that needs to be blessed - it doesn&rsquo;t give me
+indication that I&rsquo;ve blessed anything already.  Ugh.  Why is this such a
+miserable experience?  Again I reboot into recovery mode, bring up the Security
+Utility, and bless the kernel extension.  This time it goes away.  I was
+operating in the suspicion that there might be more than one kernel extension
+involved, and all of them must be blessed individually.
+</p>
+
+<p>
+Now I try again.  I have some vague memory that mount processes don&rsquo;t typically
+create the actual mount point directory in Linux, so I assume it&rsquo;s the same
+here.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #FCCE7B;">sudo</span> <span style="color: #FCCE7B;">mkdir</span> /Volumes/4s2
+<span style="color: #FCCE7B;">sudo</span> fuse-ext2 /dev/disk4s2 /Volumes/4s2
+</pre>
+</div>
+
+<p>
+Nothing happens.  The directory is empty and I have exit code 253 from
+<code>fuse-ext2</code> (having your prompt show the last exit code is so incredibly
+useful).  What&rsquo;s 253 mean?  I check the man page - nothing.  From searching on
+other people trying things out, I add a <code>-o debug</code> to the invocation.  No
+output, same code. I add <code>-v</code> to the front of the from/to arguments.  No change
+in output/code.  I worry this is resulting from my hack earlier to <code>e2fsprogs</code>.
+But I would expect to see <span class="underline">something</span> here.  There is mention of a
+<code>/var/log/fuse-ext2_util.log</code> in some tickets I see, but I don&rsquo;t have that.
+</p>
+
+<p>
+I try:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #FCCE7B;">sudo</span> mount -t fuse-ext2 /dev/disk4s2 /Volumes/4s2
+</pre>
+</div>
+
+<p>
+mount: exec /Library/Filesystems/fuse-ext2.fs/Contents/Resources/mount<sub>fuse</sub>-ext2 for /Volumes/4s2: No such file or directory
+mount: /Volumes/4s2 failed with 72
+</p>
+
+<p>
+The <code>No such file or directory</code> portion can&rsquo;t be correct on the latter path -
+<code>/Volumes/4s2</code> exists.  I check the <code>/Library/Filesystems/...</code> path and it is
+indeed non-existent.  Curious, looking in <code>/Library/Filesystems</code> directly shows
+me <span class="underline">something</span> of relevance:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #FCCE7B;">ls</span> /Library/Filesystems
+</pre>
+</div>
+
+<pre class="example">
+NetFSPlugins
+macfuse.fs
+</pre>
+
+
+<p>
+So I try this modified <code>mount</code>:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #FCCE7B;">sudo</span> mount -t macfuse.fs /dev/disk4s2 /Volumes/4s2
+</pre>
+</div>
+
+<p>
+macFUSE mount version 4.5.0
+</p>
+
+<p>
+This program is not meant to be called directly. The macFUSE library calls it.
+</p>
+
+<p>
+Available mount options:
+    -o allow<sub>other</sub>         allow access to others besides the user who mounted
+                           the file system
+    -o allow<sub>recursion</sub>     allow a mount point that itself resides on a macFUSE
+                           volume (by default, such mounting is disallowed)
+    -o allow<sub>root</sub>          allow access to root (can&rsquo;t be used with allow<sub>other</sub>)
+    -o auto<sub>xattr</sub>          handle extended attributes entirely through ._ files
+    -o blocksize=&lt;size&gt;    specify block size in bytes of &ldquo;storage&rdquo;
+    -o daemon<sub>timeout</sub>=&lt;s&gt;  timeout in seconds for kernel calls to daemon
+    -o debug               turn on debug information printing
+    -o default<sub>permissions</sub> let the kernel handle permission checks locally
+    -o defer<sub>permissions</sub>   defer permission checks to file operations themselves
+    -o direct<sub>io</sub>           use alternative (direct) path for kernel-user I/O
+    -o extended<sub>security</sub>   turn on macOS extended security (ACLs)
+    -o fsid=&lt;fsid&gt;         set the second 32-bit component of the fsid
+    -o fsname=&lt;name&gt;       set the file system&rsquo;s name
+    -o fssubtype=&lt;num&gt;     set the file system&rsquo;s fssubtype identifier
+    -o fstypename=&lt;name&gt;   set the file system&rsquo;s type name
+    -o iosize=&lt;size&gt;       specify maximum I/O size in bytes
+    -o jail<sub>symlinks</sub>       contain symbolic links within the mount
+    -o local               mark the volume as &ldquo;local&rdquo; (default is &ldquo;nonlocal&rdquo;)
+    -o negative<sub>vncache</sub>    enable vnode name caching of non-existent objects
+    -o sparse              enable support for sparse files
+    -o volname=&lt;name&gt;      set the file system&rsquo;s volume name
+</p>
+
+<p>
+Available negative mount options:
+    -o noalerts            disable all graphical alerts (if any) in macFUSE Core
+    -o noappledouble       ignore Apple Double (._) and .DS<sub>Store</sub> files entirely
+    -o noapplexattr        ignore all &ldquo;com.apple.*&rdquo; extended attributes
+    -o nobrowse            mark the volume as non-browsable by the Finder
+    -o nolocalcaches       meta option equivalent to noreadahead,noubc,novncache
+    -o noreadahead         disable I/O read-ahead behavior for this file system
+    -o nosynconclose       disable sync-on-close behavior (enabled by default)
+    -o nosyncwrites        disable synchronous-writes behavior (dangerous)
+    -o noubc               disable the unified buffer cache for this file system
+    -o novncache           disable the vnode name cache for this file system
+mount: /Volumes/4s2 failed with 64
+</p>
+
+<p>
+So <code>mount</code> is looking less promising.  This appears to be <code>mount</code> just spewing
+the usage information of <code>macfuse</code> because it is giving <code>macfuse</code> an erroneous
+invocation.  Is this intended to ever work?  I found this invocation from other
+lost souls who were experiencing no luck here as well, so it might not mean
+much.
+</p>
+
+<p>
+Following some other tickets, I want to just confirm that everything I have is
+in order.  Oftentimes errors come from the user, not the software.  I find <code>sudo
+diskutil list</code> gives some good answers.
+</p>
+
+<pre class="example" id="org0b548f1">
+&lt;snip&gt;
+/dev/disk6 (internal, physical):
+   #:                       TYPE NAME                    SIZE       IDENTIFIER
+   0:     FDisk_partition_scheme                        *127.9 GB   disk6
+   1:                 DOS_FAT_32 FIRMWARE                31.5 MB    disk6s1
+   2:                      Linux                         127.8 GB   disk6s2
+</pre>
+
+<p>
+I have been operating with the notion that I was using <code>disk4</code>, but between
+reboots and swapping the physical card out to stow my laptop between attempts,
+it must have moved.  Sigh.  Let&rsquo;s do this again.  At least I know with
+confidence that I want to be mounting the &ldquo;2&rdquo; partition.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #FCCE7B;">sudo</span> fuse-ext2 /dev/disk6s2 /Volumes/4s2
+</pre>
+</div>
+
+<p>
+I didn&rsquo;t rename the directory to a matching <code>6s2</code> because I just want to <span class="underline">try</span>
+something.  Results are promising and with a delay:
+</p>
+
+<pre class="example" id="orgc537c2e">
+Mounting /dev/disk6s2 Read-Only.
+Use 'force' or 'rw+' options to enable Read-Write mode
+</pre>
+
+<p>
+And then:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #FCCE7B;">ls</span> /Volumes/4s2
+</pre>
+</div>
+
+<p>
+Wow something worked!  I&rsquo;m going to treat myself.
+</p>
+
+<p>
+Now let&rsquo;s clean up the directory name, and make it read+write.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #FCCE7B;">sudo</span> umount /Volumes/4s2
+<span style="color: #FCCE7B;">sudo</span> <span style="color: #FCCE7B;">mv</span> /Volumes/<span style="color: #51afef;">{</span>4,6<span style="color: #51afef;">}</span>s2
+<span style="color: #FCCE7B;">sudo</span> fuse-ext2 -o rw+ /dev/disk6s2 /Volumes/4s2
+</pre>
+</div>
+
+<p>
+Actually just trying to scroll through some shell history wound up making the
+machine unusable, and it eventually necessitated a reboot.  I&rsquo;ve lost any
+home-made directories under <code>/Volume</code> and so I can just make them the way I want
+them.  I am a little worried that maybe my hacks I made to <code>g2fsprogs</code> have
+introduced some critical instability to my kernel, but I fail to see how the
+<code>xattrs</code> stuff would have anything to do with my shell history.  Perhaps it&rsquo;s
+due to some <code>zsh</code> magic?
+</p>
+
+<p>
+The commands again, and note that now we&rsquo;re back to <code>disk4</code>:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #FCCE7B;">sudo</span> <span style="color: #FCCE7B;">mkdir</span> /Volumes/picard
+<span style="color: #FCCE7B;">sudo</span> fuse-ext2 -o rw+ /dev/disk4s2 /Volumes/picard
+</pre>
+</div>
+
+<p>
+And that worked!  Now to make edits to the card.
+</p>
+</div>
+</div>
+<div id="outline-container-somehow-write-to-the-pi-sd-card--making-edits-to-the-sd-card" class="outline-3">
+<h3 id="somehow-write-to-the-pi-sd-card--making-edits-to-the-sd-card"><span class="section-number-3">5.2.</span> Making Edits to the SD Card</h3>
+<div class="outline-text-3" id="text-somehow-write-to-the-pi-sd-card--making-edits-to-the-sd-card">
+</div>
+<div id="outline-container-somehow-write-to-the-pi-sd-card--making-edits-to-the-sd-card--=sshd=" class="outline-4">
+<h4 id="somehow-write-to-the-pi-sd-card--making-edits-to-the-sd-card--=sshd="><span class="section-number-4">5.2.1.</span> <code>sshd</code></h4>
+<div class="outline-text-4" id="text-somehow-write-to-the-pi-sd-card--making-edits-to-the-sd-card--=sshd=">
+<p>
+I need to &ldquo;enable&rdquo; <code>sshd</code>, assuming it comes installed.  If it does not come
+installed, this will have been a very wasteful effort.
+</p>
+
+<p>
+Searching on this topic, I find <a href="https://www.raspberrypi.com/news/raspberry-pi-bullseye-update-april-2022/">an article</a> with this:
+</p>
+
+<blockquote>
+<p>
+There are also mechanisms to preconfigure an image without using Imager. To set
+up a user on first boot and bypass the wizard completely, create a file called
+userconf or userconf.txt in the boot partition of the SD card; this is the part
+of the SD card which can be seen when it is mounted in a Windows or MacOS
+computer.
+</p>
+</blockquote>
+
+<p>
+This section doesn&rsquo;t detail how to enable <code>sshd</code>, but the original post that
+lead me to this article has some additional instructions:
+</p>
+
+<blockquote>
+<p>
+The empty &rsquo;ssh&rsquo; (or ssh.txt) file should act as a toggle (turn SSH on, and it
+will stay on unless you explicitly disable it later). If that&rsquo;s not how it&rsquo;s
+working for you, then something else that was done to the system has messed that
+up.
+</p>
+</blockquote>
+
+<p>
+Right.  So I didn&rsquo;t need to do any of the prior section at all?  Let&rsquo;s look and
+be sure.  I happen to recall that the default name of the SD card is <code>FIRMWARE</code>
+for whatever reason.
+</p>
+
+<p>
+Okay, I&rsquo;m going to try really hard not to swear off computers forever.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #FCCE7B;">touch</span> /Volumes/FIRMWARE/ssh
+<span style="color: #FCCE7B;">echo</span> <span style="color: #7bc275;">"</span><span style="color: #a991f1;">$</span><span style="color: #dcafe9;">USER</span><span style="color: #7bc275;">:</span><span style="color: #C57BDB; font-weight: bold;">$(</span><span style="color: #C57BDB; font-weight: bold;">echo</span><span style="color: #C57BDB; font-weight: bold;"> 'lolno' | openssl passwd -stdin)</span><span style="color: #7bc275;">"</span> &gt; /Volumes/FIRMWARE/usercon<span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">f</span>
+</pre>
+</div>
+
+<p>
+The instructions use a <code>-6</code> argument, but that doesn&rsquo;t work for my <code>openssl</code>:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">openssl version
+</pre>
+</div>
+
+<pre class="example">
+LibreSSL 3.3.6
+</pre>
+
+
+<p>
+Which I believe is the stock version running on my MacBook, based on:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #C57BDB;">which</span> openssl
+</pre>
+</div>
+
+<pre class="example">
+/usr/bin/openssl
+</pre>
+
+
+<p>
+Otherwise it would be a deep path under <code>/nix</code>.
+</p>
+
+<p>
+A quick check of the files shows they are there and in the desired state:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #FCCE7B;">ls</span> /Volumes/FIRMWARE/ssh
+<span style="color: #FCCE7B;">cat</span> /Volumes/FIRMWARE/userconf
+</pre>
+</div>
+
+<pre class="example">
+/Volumes/FIRMWARE/ssh
+logan:oKYG/fePTExgs
+</pre>
+
+
+<p>
+I have no worries about the password here - it will be changed before this
+device connects to anything outside of my laptop.
+</p>
+
+<p>
+Okay let&rsquo;s give it a go.  I eject the mounts (<code>picard</code> needs a <code>sudo umount
+/Volumes/picard</code> but works without a hitch).
+</p>
+
+<p>
+An import caveat: I found from <a href="https://gijs-de-jong.nl/posts/how-raspberry-pi-enbales-ssh-when-boot-ssh-file-is-present/">How the Raspberry Pi enables SSH when
+/boot/ssh.txt is present</a> that these files are removed on boot - so we only get
+one shot, and if it fails we have to run it again.  This is one of the benefits
+of blogging as I do this - the command history is at my fingertips.
+</p>
+
+<p>
+The files are listed the <a href="https://www.raspberrypi.com/documentation/computers/configuration.html#the-boot-folder">configuration boot section documentation</a>.
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-somehow-write-to-the-pi-sd-card--connecting-to-the-pi-usb-c-fail" class="outline-3">
+<h3 id="somehow-write-to-the-pi-sd-card--connecting-to-the-pi-usb-c-fail"><span class="section-number-3">5.3.</span> Connecting to the Pi (USB-C fail)</h3>
+<div class="outline-text-3" id="text-somehow-write-to-the-pi-sd-card--connecting-to-the-pi-usb-c-fail">
+<p>
+I did forget about networking, which isn&rsquo;t covered in the boot section linked
+above.  I had worked on this earlier but the <code>169.254.0.0/16</code> address space is
+way too large to <code>nmap</code> over.  Instead I read in the boot section there&rsquo;s an
+&ldquo;OTG&rdquo; (On The Go) USB setting that is enabled by default in <code>config.txt</code> (at
+least in my case, being it&rsquo;s a Pi 4B).  I don&rsquo;t want to just plug it in and find
+out, and I actually did try <code>raspberrypi.local</code> earlier, I thought, and that
+didn&rsquo;t work.  I found a <code>ping</code> in my history to it in fact, so I know this was
+attempted and failed.  There may be something else involved.  This <a href="https://raspberrypi.stackexchange.com/a/100727">answer</a>
+specifically talks about macOS and OTG.  It does mention to use Bonjour to find
+the Pi, which apparently it advertises on.
+</p>
+
+<p>
+The command link invocation is provided in this <a href="https://apple.stackexchange.com/a/362741">answer</a>:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">dns-sd -Gv4v6 raspberrypi.local
+</pre>
+</div>
+
+<p>
+That doesn&rsquo;t work.  I do recall some chatter in the OTG+MacBook answer that
+talked about some problems with OTG and certain cables.  It links to an article
+about an <a href="https://hackaday.com/2019/07/16/exploring-the-raspberry-pi-4-usb-c-issue-in-depth/">issue with USB-C on the Pi</a> that is probably causing me problems.
+Essentially it means that the Pi isn&rsquo;t powered properly if the USB-C cable is
+&ldquo;e-marked&rdquo; (meaning it can identify/query additional features).
+</p>
+
+<p>
+So how do I know if the Pi got sufficient power or not?  I can check the SD card
+to see if the configuration files were removed on-boot.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #FCCE7B;">ls</span> /Volumes/FIRMWARE | <span style="color: #FCCE7B;">grep</span> ssh
+<span style="color: #FCCE7B;">ls</span> /Volumes/FIRMWARE | <span style="color: #FCCE7B;">grep</span> userconf
+</pre>
+</div>
+
+<pre class="example">
+ssh
+userconf
+</pre>
+
+
+<p>
+Sure enough, they are both present.  So the Pi didn&rsquo;t boot properly.  I did have
+a solid red light, with an occasionally blinking green light.  I don&rsquo;t know what
+that means yet, but perhaps I should learn.  I have read it is programmable and
+may have changed over time, so I don&rsquo;t want to go too far down that path.  In
+any case, we didn&rsquo;t make it.  For what it&rsquo;s worth, the Pi was connected for a
+solid 5-10 minutes.
+</p>
+
+<p>
+I only glanced at the USB-C diagrams in the article linked prior.  I also
+skimmed through parts of the article itself.  I would need a specifically bad
+USB-C cable - it would need to transmit data but not be &ldquo;e-marked&rdquo;.  I suspect
+that would be hard to find.
+</p>
+
+<p>
+I did learn somewhat recently that USB cables (even USB-C) sometimes are
+hard-wired to actually be a true &ldquo;charging cable&rdquo; in that all they do is provide
+power, and all of the data pins are grounded or shared.  That&rsquo;s not part of the
+spec, and it explains why a lot of people get cables that &ldquo;work&rdquo; but sometimes
+don&rsquo;t (via reviews or one&rsquo;s own personal experience).  It&rsquo;s a real shame we
+don&rsquo;t have standard, human-readable markings for these differences.  This <a href="https://www.youtube.com/watch?v=AD5aAd8Oy84">video</a>
+was really enlightening on the topic, and also shows off some fascinating
+circuitry in the thunderbolt cables which share the USB-C form factor.
+</p>
+
+<p>
+So I need to plug this in via a battery or wall outlet, and I need to run an
+Ethernet cable between the Pi and my laptop.  I do have the equipment on hand
+for all of this.
+</p>
+</div>
+</div>
+<div id="outline-container-somehow-write-to-the-pi-sd-card--imaging-the-pi-correctly" class="outline-3">
+<h3 id="somehow-write-to-the-pi-sd-card--imaging-the-pi-correctly"><span class="section-number-3">5.4.</span> Imaging the Pi Correctly</h3>
+<div class="outline-text-3" id="text-somehow-write-to-the-pi-sd-card--imaging-the-pi-correctly">
+<p>
+I have blinking Ethernet lights.  The Pi has a solid red light, and the green
+light is doing a dot-dot kind of pattern, repeatedly.
+</p>
+
+<p>
+I&rsquo;ve done a little looking into for the light patterns. The Pi 4B uses a new
+set of patterns.  However my 2 pattern (two of anything but nothing else)
+doesn&rsquo;t show up on the list.  Checking my command history from earlier, I can
+see that I&rsquo;m using a NixOS image.  Perhaps that is related.  I got that from
+this <a href="https://nix.dev/tutorials/nixos/installing-nixos-on-a-raspberry-pi.html">instruction</a> available on the official NixOS documentation.  It does assume
+a 4B model, but might be demanding more RAM than what I gave the Pi.  My
+purchase order for the Pi shows it as 2 GB, but the documentation says it should
+be 4GB.  I don&rsquo;t know how hard that limitation is.  Also, and perhaps most
+critically, this cannot work because it doesn&rsquo;t use the Pi&rsquo;s normal
+configuration.  Okay now I think we&rsquo;re onto something.  I did want to do this
+via NixOS but I think I might be best off saving that for another day.  This
+post has gotten enormous from all of the research and attempts already.  I&rsquo;ve
+also noticed the documentation tails behind the current NixOS image version.
+Ugh.  I just need to do this myself - later.
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-abandon-nix-and-just-get-it-done" class="outline-2">
+<h2 id="abandon-nix-and-just-get-it-done"><span class="section-number-2">6.</span> Abandon Nix and Just Get it Done<span class="tag"><span class="private">private</span></span></h2>
+<div class="outline-text-2" id="text-abandon-nix-and-just-get-it-done">
+<p>
+As much as I wanted this to be something about Nix, it turned into a series of
+other hardships.  NixOS introduced other, undocumented complications to the
+process.  I still lack the ability to manage the Pi&rsquo;s packages, let alone via
+the &ldquo;Nix way&rdquo;.
+</p>
+
+<p>
+I used:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">wget https://downloads.raspberrypi.com/raspios_arm64/images/raspios_arm64-2023-1<span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">2-06/2023-12-05-raspios-bookworm-arm64.img.xz</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">\?</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">_gl</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">\=</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">1</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">\*</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">qvoa7r</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">\*</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">_ga</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">\*</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">MjYzMjA4NTA3LjE3MDMyMzk1Nzc.</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">\*</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">_ga_22FD70LWDS</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">\*</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">MTcwMzMzMTYzMi4yLjAuMTcwMzMzMTYzMi4wLjAuMA..</span>
+<span style="color: #FCCE7B;">mv</span> <span style="color: #7bc275;">\</span>
+  <span style="color: #7bc275;">'2023-12-05-raspios-bookworm-arm64.img.xz?_gl=1*qvoa7r*_ga*MjYzMjA4NTA3LjE3MDM</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">yMzk1Nzc.*_ga_22FD70LWDS*MTcwMzMzMTYzMi4yLjAuMTcwMzMzMTYzMi4wLjAuMA..'</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;"> </span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">\</span>
+  2023-12-05-raspios-bookworm-arm64.img.xz
+unxz 2023-12-05-raspios-bookworm-arm64.img.xz
+</pre>
+</div>
+
+<p>
+Oh oh, I did get to use Nix a little!  I had to install the <code>xz</code> package to get
+<code>unxz</code>.
+</p>
+
+<p>
+And then flashed the card with:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #FCCE7B;">sudo</span> dd <span style="color: #dcafe9;">if</span>=2023-12-05-raspios-bookworm-arm64.img <span style="color: #dcafe9;">of</span>=/dev/disk4 <span style="color: #dcafe9;">bs</span>=1M <span style="color: #dcafe9;">status</span>=prog<span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">ress </span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">conv</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">=fsync</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-building-the-image" class="outline-2">
+<h2 id="building-the-image"><span class="section-number-2">7.</span> Building the Image</h2>
+<div class="outline-text-2" id="text-building-the-image">
+<p>
+Okay, let&rsquo;s build our own NixOS image for the Pi.
+</p>
+</div>
+<div id="outline-container-building-the-image--prior-art" class="outline-3">
+<h3 id="building-the-image--prior-art"><span class="section-number-3">7.1.</span> Prior Art</h3>
+<div class="outline-text-3" id="text-building-the-image--prior-art">
+<p>
+I came across <a href="https://discourse.nixos.org/t/headless-raspberry-pi-setup/17664/7">Headless Raspberry Pi on NixOS Discourse</a> and user Sweenu states
+they have a working version of NixOS being deployed to a Raspberry Pi.  The
+source is all posted to <a href="https://github.com/sweenu/nixfiles">https://github.com/sweenu/nixfiles</a>.  From some brief
+research, it does use a tool called <a href="https://github.com/divnix/digga">digga</a> that states that it is no longer
+recommended for use, which is expanded upon in <a href="https://github.com/divnix/digga/issues/503">issue#503</a> for the repository.  In
+essence, <code>digga</code> seems to have some customization / scaling difficulties because
+it focused on ergonomics first.  There isn&rsquo;t any real alternatives recommended
+that are purpose built for what <code>digga</code> does (which, to be honest, I&rsquo;m not
+entirely sure <span class="underline">what</span> it does).  I&rsquo;d prefer to keep my research to shiny new
+things to a minimum, so I hope I can adlib what should be already working for
+someone else, but to fit my needs.  Primarily I want image generation that gives
+me a working NixOS based Raspberry Pi image, but also have it configured in such
+a way that I don&rsquo;t have to re-flash the SD card every time I want to make a
+change.  In other words, I want to be able to build an image but also be able to
+manage the host configuration via a standard Nix configuration.
+</p>
+
+<p>
+In the Discourse, Sweenu states the Pi can be updated thusly:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">nix flake update
+deploy <span style="color: #7bc275;">".#grunfeld"</span>
+</pre>
+</div>
+
+<p>
+Where <code>grunfeld</code> is the name of the Raspberry Pi.
+</p>
+
+<p>
+In the repository&rsquo;s README, it states the image can be created and copied like
+so:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">nixos-generate --flake <span style="color: #7bc275;">'.#grunfeld'</span> --format sd-aarch64 --system aarch64-linux
+unzstd -d <span style="color: #51afef;">{</span>the output path from the command above<span style="color: #51afef;">}</span> -o nixos-sd-image.img
+<span style="color: #FCCE7B;">sudo</span> dd <span style="color: #dcafe9;">if</span>=nixos-sd-image.img <span style="color: #dcafe9;">of</span>=/dev/sda <span style="color: #dcafe9;">bs</span>=64K <span style="color: #dcafe9;">status</span>=progress
+</pre>
+</div>
+
+<p>
+This is all very promising.  I&rsquo;ve done some copying/adlibing of the repository
+in my <code>proton-nix</code> repository, which I plan on using to declare my local network
+configuration.  I do have some security concerns about open sourcing it,
+especially because both public and private keys seem to be present in the
+repository (even if the private keys are encrypted at rest).  I would like a way
+to share this, without the private bits hanging out for all to see.  This has
+been something I&rsquo;ve looked into before with Nix and <code>nix-flakes</code> in particular
+because <code>flakes</code> really wants everything to be self contained, lest it be marked
+as &ldquo;impure&rdquo;.  From reading Ian&rsquo;s blog I mentioned earlier, it does seem like one
+can reference a file using a git repository link.  If <code>flakes</code> is happy with
+this, then I think I could be very happy with it as well.
+</p>
+
+<p>
+But first, we need a detour.  I don&rsquo;t have a means of actually using <code>NixOS</code>
+because I&rsquo;m on macOS.  As I understand, this does require work with a container
+or VM.
+</p>
+</div>
+</div>
+<div id="outline-container-building-the-image--doing-real-nix-things-on-macos" class="outline-3">
+<h3 id="building-the-image--doing-real-nix-things-on-macos"><span class="section-number-3">7.2.</span> Doing Real Nix Things on macOS</h3>
+<div class="outline-text-3" id="text-building-the-image--doing-real-nix-things-on-macos">
+<p>
+On this current MacBook, I&rsquo;ve successfully avoided running Docker.  I&rsquo;ve come to
+liken Docker to bloatware (whether that&rsquo;s fair or not).  On my home network,
+I&rsquo;ve had a degree of success with Podman.  However there&rsquo;s hitches with it, as
+there always is.  I also have a very small amount of space available on my
+MacBook, and <code>containerd</code> containers aren&rsquo;t known for their small size - unless
+they use Alpine, I guess.  Either way it will need an entire VM to work -
+because macOS doesn&rsquo;t have cgroups et. al.  There appears to be some promising
+work done to <a href="https://earthly.dev/blog/macos-native-containers/">make containers work on macOS</a> but it&rsquo;s way too immature (as of
+<span class="timestamp-wrapper"><span class="timestamp">[2023-12-24 Sun]</span></span>) for the kind of work we&rsquo;re doing here.
+</p>
+
+<p>
+My detour needs an additional detour: I have to clean up some space.  I
+presently have &lt; 30GB free and I would love to be running with closer to 100GB
+to feel like I can quickly iterate on things without constantly needing to do a
+<code>nix gc</code> or <code>docker system prune --force</code>, and also thereby increasing my build
+iteration times significantly (those caches are present for good reason).
+</p>
+
+<p>
+Begin space cleaning montage!
+</p>
+
+<p>
+Alright I&rsquo;ve deleted a bunch of things I had no business keeping, and things I
+probably won&rsquo;t remember that I deleted later.  <a href="https://dev.yorhel.nl/ncdu">ncdu</a> was instrumental there!
+</p>
+
+<p>
+In a vacuum I&rsquo;d prefer <code>podman</code> to avoid my perceived bloatware of Docker
+proper.  I don&rsquo;t recall any current perils, and there does appear to be some
+support for running <code>podman</code> on <code>aarch64-darwin</code> (my specific setup), so let&rsquo;s
+give it a shot.
+</p>
+
+<p>
+I did find <a href="https://github.com/NixOS/nixpkgs/issues/169118">nixpkgs#169118</a> which outlines some issues with <code>podman</code> on macOS, but
+they seem to be resolved and nobody feels confident enough to declare it done.
+This <a href="https://github.com/skogsbrus/os/commit/2b10be2d1a48727470a72f9e7b1f307d327adee3">commit</a> that refers to the ticket just installs <code>qemu</code> and <code>podman</code> together
+(but with no direct relationship - I don&rsquo;t know how that&rsquo;s supposed to work).
+<code>qemu</code> is a significant part of working with the VM, I&rsquo;ve gathered.
+</p>
+
+<p>
+I found <a href="https://notes.abhinavsarkar.net/2022/just-nix-podman-combo">Just, Nix Shell And Podman Are A Killer Combo</a> and learned that Just is a
+thing.  The post has some great incantations in it that I was happy to leverage
+into this <code>with-podman.sh</code> script:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #62686E;">#</span><span style="color: #62686E;">!/usr/bin/</span><span style="color: #51afef;">env</span><span style="color: #62686E;"> bash</span>
+<span style="color: #C57BDB;">set</span> -euo pipefail
+<span style="color: #dcafe9;">container_name</span>=<span style="color: #7bc275;">"nix-run"</span>
+<span style="color: #dcafe9;">script</span>=<span style="color: #7bc275;">"</span><span style="color: #a991f1;">$</span><span style="color: #dcafe9;">@</span><span style="color: #7bc275;">"</span>
+
+podman machine init --cpus <span style="color: #e69055; font-weight: bold;">12</span> --memory <span style="color: #e69055; font-weight: bold;">8192</span> --disk-size <span style="color: #e69055; font-weight: bold;">50</span> <span style="color: #7bc275;">\</span>
+      --volume $<span style="color: #dcafe9;">HOME</span>:$<span style="color: #dcafe9;">HOME</span> || <span style="color: #C57BDB;">true</span>
+podman machine start || <span style="color: #C57BDB;">true</span>
+podman container <span style="color: #FCCE7B;">ls</span> -a | <span style="color: #FCCE7B;">grep</span> $<span style="color: #dcafe9;">container_name</span> &gt; /dev/null || <span style="color: #7bc275;">\</span>
+        podman create -t --name $<span style="color: #dcafe9;">container_name</span> -w /workdir <span style="color: #7bc275;">\</span>
+            -v $<span style="color: #dcafe9;">PWD</span>:/workdir nixos/nix
+<span style="color: #dcafe9;">container_id</span>=$<span style="color: #51afef;">(</span>podman start $<span style="color: #dcafe9;">container_name</span><span style="color: #51afef;">)</span>
+<span style="color: #FCCE7B;">echo</span> <span style="color: #7bc275;">"</span><span style="color: #a991f1;">$</span><span style="color: #dcafe9;">container_id</span><span style="color: #7bc275;">"</span>
+podman exec $<span style="color: #dcafe9;">container_id</span> $<span style="color: #dcafe9;">script</span>
+podman stop $<span style="color: #dcafe9;">container_name</span> || <span style="color: #C57BDB;">true</span>
+podman machine stop
+</pre>
+</div>
+
+<p>
+Which basically sets up the Podman VM, starts the container <code>nixos/nix</code>
+container (named <code>nix-run</code>), executes the script (whatever I pass in for args),
+and then cleans it all up.  It&rsquo;s very expensive but it&rsquo;s also something I can
+use thoughtlessly and I really like that.
+</p>
+
+<p>
+Here&rsquo;s an example run:
+</p>
+
+<pre class="example" id="orgda89382">
+@ ./with-podman.sh ls -al
+Error: podman-machine-default: VM already exists
+Error: cannot start VM podman-machine-default: VM already running or starting
+a34354199be6cca047309f9d29ecefeeb1c4521d776536cc6305bad8380874b6
+nix-run
+total 12
+drwxr-xr-x 11 root nobody  352 Dec 24 13:17 .
+dr-xr-xr-x  1 root root     77 Dec 24 13:26 ..
+drwxr-xr-x 10 root nobody  320 Dec 24 13:23 .git
+-rw-r--r--  1 root nobody  283 Dec 22 00:50 README.org
+-rw-r--r--  1 root nobody 3809 Dec 24 00:29 flake.nix
+drwxr-xr-x  3 root nobody   96 Dec 24 00:30 hosts
+drwxr-xr-x  4 root nobody  128 Dec 24 00:40 modules
+drwxr-xr-x  3 root nobody   96 Dec 24 00:42 pkgs
+drwxr-xr-x  3 root nobody   96 Dec 24 00:52 profiles
+drwxr-xr-x  4 root nobody  128 Dec 24 00:41 shell
+-rwxr-xr-x  1 root nobody  529 Dec 24 13:26 with-podman.sh
+nix-run
+Waiting for VM to exit...
+Machine "podman-machine-default" stopped successfully
+
+~/dev/proton-nix logan@scandium 0 [22:27:20] 75s
+$
+</pre>
+
+<p>
+Note it took 75 seconds to run on my system just to do <code>ls</code> but it works without
+me doing anything fancy, I&rsquo;m running <code>NixOS</code>, and the repository I&rsquo;m working in
+is properly volume mounted.  I&rsquo;m not really worried about speed here, especially
+because these invocations I&rsquo;m about to do will generate disk images - an already
+lengthy affair I expect to take on the order of minutes.  Perhaps I will find
+short cuts to speed up iteration as I experience pain with building the image
+improperly, but I want to reserve my grease until the wheels begin to squeak.
+</p>
+
+<p>
+A couple of asides:
+</p>
+
+<ol class="org-ol">
+<li>I looked at <code>Just</code> since this is my first exposure to it.  From some quick
+reading around, it seems to be a marginally better <code>make</code>.  <code>make</code> is
+portable, standard, and yes it has aged but I believe it has aged moderately
+well.  I would not drop portability and familiarity (due to it being fairly
+standard) just for a marginal improvement.  Plus, if the file starts to get
+too squirrelly, I&rsquo;d rather just break out the complex bits into standalone
+scripts.  If I really could wave a wand and have anything I wanted in terms
+of love to <code>make</code>, it would be to give me something like <code>rake -T</code> where I
+can simply print all of the tasks available to me.  Reading the code is <span class="underline">not</span>
+documentation, even if it is a <code>Makefile</code>.</li>
+<li>I tend to go down the rabbit hole on a lot of these ventures, but I&rsquo;m not
+posting all of it as I go.  Indeed, I just closed a tab pointing to
+<code>r/programminganimememes</code>, which was serving as nothing other than pure
+distraction.  I&rsquo;d followed link to it from the same article linked above.</li>
+</ol>
+
+<p>
+Now that I have a real Nix system available to me, I need to try to run my
+paired down repository from <code>sweenu</code> and see if I can build an image from it.
+</p>
+</div>
+</div>
+<div id="outline-container-building-the-image--building-the-nixos-pi-image" class="outline-3">
+<h3 id="building-the-image--building-the-nixos-pi-image"><span class="section-number-3">7.3.</span> Building the NixOS Pi image</h3>
+<div class="outline-text-3" id="text-building-the-image--building-the-nixos-pi-image">
+</div>
+<div id="outline-container-building-the-image--building-the-nixos-pi-image--trying-to-make-it-work-with-=digga=" class="outline-4">
+<h4 id="building-the-image--building-the-nixos-pi-image--trying-to-make-it-work-with-=digga="><span class="section-number-4">7.3.1.</span> Trying to Make it Work with <code>digga</code></h4>
+<div class="outline-text-4" id="text-building-the-image--building-the-nixos-pi-image--trying-to-make-it-work-with-=digga=">
+<p>
+From <code>sweenu</code>&rsquo;s earlier invocations, I have adapted it to be:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">./with-podman.sh <span style="color: #7bc275;">"</span>
+<span style="color: #7bc275;">nixos-generate --flake '.#iron' --format sd-aarch64 --system aarch64-linux;</span>
+<span style="color: #7bc275;">"</span>
+</pre>
+</div>
+
+<p>
+Which outputs:
+</p>
+
+<pre class="example" id="orgf9746cc">
+Error: crun: executable file `nixos-generate` not found in $PATH: No such file or directory: OCI runtime attempted to invoke a command that was not found
+Error: read unixpacket @-&gt;/proc/self/fd/13/attach: read: connection reset by peer
+</pre>
+
+<p>
+I hope that <code>unixpacket</code> error is just some weirdness with error handling - an
+error of an error.  I&rsquo;ll test again with <code>ls -al</code>&#x2026; and the results are the
+same successful results I had before.  I even tried with <code>"ls -al"</code> to make sure
+there isn&rsquo;t some weird quoting issues, but there isn&rsquo;t - all is well.
+</p>
+
+<p>
+I tried a nix invocation I know to work:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">./with-podman.sh nix-channel --list
+</pre>
+</div>
+
+<p>
+And I get:
+</p>
+
+<pre class="example" id="org3881193">
+nixpkgs https://nixos.org/channels/nixpkgs-unstable
+</pre>
+
+<p>
+Which is a very reasonable/expected output.  So some nix tools are available,
+but why can&rsquo;t it find <code>nixos-genereate</code>?  This is literally my first time using
+any command prefixed with <code>nixos</code>, so I&rsquo;m assuming that this command <span class="underline">actually
+exists under normal circumstances</span> and that might be too heavy an assumption.
+Some searching reveals&#x2026; nothing?  Not at all what I expected.  I expected
+<span class="underline">something</span>, but just not on my path for whatever reason.  I double check and
+realize I&rsquo;m searching for <code>nix-generate</code> instead of <code>nixos-generate</code>, whoops.
+</p>
+
+<p>
+<code>nixos-genereate</code> is supplied by <a href="https://github.com/nix-community/nixos-generators">nixos-generators</a> and it requires installation -
+it&rsquo;s no something that ships with <code>nixos</code>.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">./with-podman.sh <span style="color: #7bc275;">"</span>
+<span style="color: #7bc275;">nix run github:nix-community/nixos-generators -- \</span>
+<span style="color: #7bc275;">  --flake '.#iron' --format sd-aarch64 --system aarch64-linux;</span>
+<span style="color: #7bc275;">"</span>
+</pre>
+</div>
+
+<p>
+And I get:
+</p>
+
+<pre class="example" id="org4c99a7c">
+error: experimental Nix feature 'nix-command' is disabled; add '--extra-experimental-features nix-command' to enable it
+</pre>
+
+<p>
+Ah.  I&rsquo;ve seen these before.  This just makes our invocation a little more
+tricky with:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">./with-podman.sh <span style="color: #7bc275;">"</span>
+<span style="color: #7bc275;">nix --extra-experimental-features nix-command \</span>
+<span style="color: #7bc275;">  run github:nix-community/nixos-generators -- \</span>
+<span style="color: #7bc275;">    --flake '.#iron' --format sd-aarch64 --system aarch64-linux;</span>
+<span style="color: #7bc275;">"</span>
+</pre>
+</div>
+
+<p>
+The complexity and nesting here is starting to make me a little nervous.  Prior
+<del>trauma</del> experience tells me that I will soon be running into shell quoting
+issues.
+</p>
+
+<p>
+Now I see:
+</p>
+
+<pre class="example" id="org911c282">
+error: experimental Nix feature 'flakes' is disabled; add '--extra-experimental-features flakes' to enable it
+</pre>
+
+<p>
+Sigh.  Nix, you couldn&rsquo;t have told me about <span class="underline">both</span> of them at once?
+Furthermore, it would&rsquo;ve told me the proper thing to do for enabling multiple
+experimental features at once.  So I wing it:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">./with-podman.sh <span style="color: #7bc275;">"</span>
+<span style="color: #7bc275;">nix \</span>
+<span style="color: #7bc275;">  --extra-experimental-features nix-command \</span>
+<span style="color: #7bc275;">  --extra-experimental-features flakes \</span>
+<span style="color: #7bc275;">  run github:nix-community/nixos-generators -- \</span>
+<span style="color: #7bc275;">    --flake '.#iron' --format sd-aarch64 --system aarch64-linux;</span>
+<span style="color: #7bc275;">"</span>
+</pre>
+</div>
+
+<p>
+I see a lot of stuff going on with the nix store - a sign of progress!
+</p>
+
+<p>
+But we end with:
+</p>
+
+<pre class="example" id="org43dd4b7">
+warning: Ignoring setting 'auto-allocate-uids' because experimental feature 'auto-allocate-uids' is not enabled
+warning: Ignoring setting 'impure-env' because experimental feature 'configurable-impure-env' is not enabled
+building '/nix/store/531cw9n4lxqx3w830ijackc5xffgz27k-nixos-generate.drv'...
+/nix/store/7nkr6ysd859f6pwsn0k32qr8w368rmcz-nixos-generate/bin/.nixos-generate-wrapped: line 72: awk: command not found
+</pre>
+
+<p>
+You&rsquo;d think <code>nixos-generators</code> would just include <code>awk</code>.  Maybe I can submit a
+PR&#x2026;?  Let&rsquo;s cook a new invocation:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">./with-podman.sh <span style="color: #7bc275;">"</span>
+<span style="color: #7bc275;">nix \</span>
+<span style="color: #7bc275;">  --extra-experimental-features nix-command \</span>
+<span style="color: #7bc275;">  --extra-experimental-features flakes \</span>
+<span style="color: #7bc275;">  run awk github:nix-community/nixos-generators -- \</span>
+<span style="color: #7bc275;">    --flake '.#iron' --format sd-aarch64 --system aarch64-linux;</span>
+<span style="color: #7bc275;">"</span>
+</pre>
+</div>
+
+<p>
+I get:
+</p>
+
+<pre class="example" id="org933af47">
+error: cannot find flake 'flake:awk' in the flake registries
+</pre>
+
+<p>
+It should be noted the <code>pkg1 pkg2...</code> notation I used is taken from the
+explanation in this <a href="https://discourse.nixos.org/t/difference-between-nix-shell-and-nix-run/2951">Discourse about nix shell vs nix run</a> but the help/man page
+for <code>nix run</code> gives no indication that this can be done.  If anything it
+indicates that this <span class="underline">cannot</span> be done because the invocation demands
+<code>installable</code> as a single argument and other arguments have flags.
+</p>
+
+<p>
+More reading in that same Discourse shows that <code>nix run</code> might not be suitable
+for this, or is otherwise a work in progress.  Okay fine.  I find some
+suggestions on <code>nix shell</code> that do what I want in the same Discourse once again.
+Let&rsquo;s try it out.
+</p>
+
+<p>
+Actually I try several things out, and eventually land on:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">./with-podman.sh <span style="color: #7bc275;">"</span>
+<span style="color: #7bc275;">nix \</span>
+<span style="color: #7bc275;">  --extra-experimental-features nix-command \</span>
+<span style="color: #7bc275;">  --extra-experimental-features flakes \</span>
+<span style="color: #7bc275;">  shell awk github:nix-community/nixos-generators -- \</span>
+<span style="color: #7bc275;">    --flake '.#iron' --format sd-aarch64 --system aarch64-linux;</span>
+<span style="color: #7bc275;">"</span>
+</pre>
+</div>
+
+<p>
+I ran into:
+</p>
+
+<pre class="example" id="org47d9df9">
+path '/workdir/--flake' does not contain a 'flake.nix', searching up
+error: getting status of '/workdir/--flake': No such file or directory
+</pre>
+
+<p>
+So I just remove <code>--flake</code> and use:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">./with-podman.sh <span style="color: #7bc275;">"</span>
+<span style="color: #7bc275;">nix \</span>
+<span style="color: #7bc275;">  --extra-experimental-features nix-command \</span>
+<span style="color: #7bc275;">  --extra-experimental-features flakes \</span>
+<span style="color: #7bc275;">  run 'nixpkgs#awk' github:LoganBarnett/nixos-generators#with-awk -- \</span>
+<span style="color: #7bc275;">    --flake '.#iron' --format sd-aarch64 --system aarch64-linux;</span>
+<span style="color: #7bc275;">"</span>
+</pre>
+</div>
+
+<p>
+To get:
+</p>
+
+<pre class="example" id="org736813f">
+
+</pre>
+
+<div class="org-src-container">
+<pre class="src src-shell">./with-podman.sh <span style="color: #7bc275;">"</span>
+<span style="color: #7bc275;">nix \</span>
+<span style="color: #7bc275;">  --extra-experimental-features nix-command \</span>
+<span style="color: #7bc275;">  --extra-experimental-features flakes \</span>
+<span style="color: #7bc275;">  shell \</span>
+<span style="color: #7bc275;">      -c \</span>
+<span style="color: #7bc275;">         "'"'"nixos-generate \</span>
+<span style="color: #7bc275;">                             --flake '.#iron' \</span>
+<span style="color: #7bc275;">                             --format sd-aarch64 \</span>
+<span style="color: #7bc275;">                             --system aarch64-linux \</span>
+<span style="color: #7bc275;">         "'"'"</span>
+<span style="color: #7bc275;">"</span>
+</pre>
+</div>
+
+<p>
+Ugh I really went off the tracks trying things out.  I have an incantation that
+finally exercises the bits I want, but the actual nix code is busted somehow.  I
+suspect the version of <code>digga</code> that <code>sweenu</code> uses and my own differ.  I need to
+look into some more things.  I wonder if I can just use <code>nixos-generate</code> by
+itself, without all of this extra stuff?  My other two paths are to either pin
+my repo to the same version that <code>sweenu</code> has in the <code>flake.lock</code> or follow
+another example (<a href="https://github.com/divnix/digga/pull/501">https://github.com/divnix/digga/pull/501</a> for a working(?) one).
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">./with-podman.sh <span style="color: #7bc275;">" \</span>
+<span style="color: #7bc275;">ls</span><span style="color: #7bc275;"> -al . ;</span>
+<span style="color: #7bc275;">nix \</span>
+<span style="color: #7bc275;">  --extra-experimental-features nix-command \</span>
+<span style="color: #7bc275;">  --extra-experimental-features flakes \</span>
+<span style="color: #7bc275;">  build '.#iron' \</span>
+<span style="color: #7bc275;">"</span>
+</pre>
+</div>
+
+<p>
+This invocation helps a lot, and keeps it so I don&rsquo;t need to keep running
+directly on the VM while still working out silly issues.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">nix flake check --show-trace
+</pre>
+</div>
+
+<p>
+This is the point where I just tried a bunch of different things.  Many a straw
+were grasped.  I tried following obscure error messages.  The sight of broken
+&ldquo;magic&rdquo; is not new to me, and this section of stuff really felt like it.  So I
+abandoned <code>digga</code> entirely.
+</p>
+</div>
+</div>
+<div id="outline-container-building-the-image--building-the-nixos-pi-image--just-use-=nix-generators=" class="outline-4">
+<h4 id="building-the-image--building-the-nixos-pi-image--just-use-=nix-generators="><span class="section-number-4">7.3.2.</span> Just Use <code>nix-generators</code></h4>
+<div class="outline-text-4" id="text-building-the-image--building-the-nixos-pi-image--just-use-=nix-generators=">
+<p>
+Now I have the following configuration:
+</p>
+
+<p>
+The <code>flake.nix</code>:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-nix"><span style="color: #51afef;">{</span>
+  <span style="color: #dcafe9;">description</span> = <span style="color: #7bc275;">''iron.proton imaging and configuration.</span>
+<span style="color: #7bc275;">iron.proton is a cross-region routing device.</span>
+<span style="color: #7bc275;">''</span>;
+  <span style="color: #dcafe9;">inputs</span> = <span style="color: #C57BDB;">{</span>
+    <span style="color: #dcafe9;">nixpkgs.url</span> = <span style="color: #7bc275;">"nixpkgs/nixos-unstable"</span>;
+    <span style="color: #dcafe9;">nixos-generators</span> = <span style="color: #7bc275;">{</span>
+      <span style="color: #dcafe9;">url</span> = <span style="color: #7bc275;">"github:nix-community/nixos-generators"</span>;
+      <span style="color: #dcafe9;">inputs.nixpkgs.follows</span> = <span style="color: #7bc275;">"nixpkgs"</span>;
+    <span style="color: #7bc275;">}</span>;
+  <span style="color: #C57BDB;">}</span>;
+  <span style="color: #dcafe9;">outputs</span> = <span style="color: #C57BDB;">{</span> self, nixpkgs, nixos-generators, ... <span style="color: #C57BDB;">}</span>: <span style="color: #C57BDB;">{</span>
+    <span style="color: #dcafe9;">packages.aarch64-linux</span> = <span style="color: #7bc275;">{</span>
+      <span style="color: #dcafe9;">iron</span> = nixos-generators.nixosGenerate <span style="color: #a991f1;">{</span>
+        <span style="color: #dcafe9;">format</span> = <span style="color: #7bc275;">"sd-aarch64"</span>;
+        <span style="color: #dcafe9;">modules</span> = <span style="color: #51afef;">[</span>
+          <span style="color: #a991f1;">./iron-configuration.nix</span>
+        <span style="color: #51afef;">]</span>;
+        <span style="color: #dcafe9;">system</span> = <span style="color: #7bc275;">"aarch64-linux"</span>;
+      <span style="color: #a991f1;">}</span>;
+    <span style="color: #7bc275;">}</span>;
+  <span style="color: #C57BDB;">}</span>;
+<span style="color: #51afef;">}</span>
+</pre>
+</div>
+
+<p>
+The linked <code>iron-configuration.nix</code> is this:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-nix"><span style="color: #62686E;"># </span><span style="color: #62686E;">This is the NixOS configuration for iron.proton.  It is drawn from the example</span>
+<span style="color: #62686E;"># </span><span style="color: #62686E;">here:</span>
+<span style="color: #62686E;"># </span><span style="color: #62686E;">https://github.com/Misterio77/nix-starter-configs/blob/main/minimal/nixos/conf</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">iguration.nix</span>
+<span style="color: #51afef;">{</span>
+  inputs,
+  lib,
+  config,
+  pkgs,
+  ...
+<span style="color: #51afef;">}</span>: <span style="color: #51afef;">{</span>
+  <span style="color: #dcafe9;">imports</span> = <span style="color: #C57BDB;">[</span>
+    <span style="color: #a991f1;">./hardware-configuration.nix</span>
+  <span style="color: #C57BDB;">]</span>;
+
+  <span style="color: #dcafe9;">nixpkgs</span> = <span style="color: #C57BDB;">{</span>
+    <span style="color: #dcafe9;">overlays</span> = <span style="color: #7bc275;">[</span>
+    <span style="color: #7bc275;">]</span>;
+    <span style="color: #dcafe9;">config</span> = <span style="color: #7bc275;">{</span>
+      <span style="color: #dcafe9;">allowUnfree</span> = <span style="color: #C57BDB;">true</span>;
+    <span style="color: #7bc275;">}</span>;
+  <span style="color: #C57BDB;">}</span>;
+  <span style="color: #dcafe9;">nix.nixPath</span> = <span style="color: #C57BDB;">[</span><span style="color: #7bc275;">"/etc/nix/path"</span><span style="color: #C57BDB;">]</span>;
+  <span style="color: #dcafe9;">environment.etc</span> =
+    lib.mapAttrs'
+    <span style="color: #C57BDB;">(</span>name: value: <span style="color: #7bc275;">{</span>
+      <span style="color: #dcafe9;">name</span> = <span style="color: #7bc275;">"nix/path/</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #a991f1; font-weight: bold;">{</span>name<span style="color: #a991f1; font-weight: bold;">}</span>";
+      <span style="color: #dcafe9;">value.source</span> = value.flake;
+    <span style="color: #7bc275;">}</span><span style="color: #C57BDB;">)</span>
+    config.nix.registry;
+  <span style="color: #dcafe9;">nix.settings</span> = <span style="color: #C57BDB;">{</span>
+    <span style="color: #dcafe9;">experimental-features</span> = <span style="color: #7bc275;">"nix-command flakes"</span>;
+    <span style="color: #dcafe9;">auto-optimise-store</span> = <span style="color: #C57BDB;">true</span>;
+  <span style="color: #C57BDB;">}</span>;
+  <span style="color: #dcafe9;">networking.hostName</span> = <span style="color: #7bc275;">"iron"</span>;
+  <span style="color: #62686E;"># </span><span style="color: #FCCE7B; font-weight: bold;">TODO:</span><span style="color: #62686E;"> This is just an example, be sure to use whatever bootloader you prefer</span>
+  <span style="color: #62686E;"># I guess grub or whatever is used implicitly somewhere?  Keeping this (which</span>
+  <span style="color: #62686E;"># comes from the example verbatim) results in:</span>
+  <span style="color: #62686E;">#   The option `system.build.installBootLoader' is defined multiple times</span>
+  <span style="color: #62686E;">#   while it's expected to be unique.</span>
+  <span style="color: #62686E;"># boot.loader.systemd-boot.enable = true;</span>
+  <span style="color: #dcafe9;">users.users</span> = <span style="color: #C57BDB;">{</span>
+    <span style="color: #dcafe9;">logan</span> = <span style="color: #7bc275;">{</span>
+      <span style="color: #62686E;"># </span><span style="color: #FCCE7B; font-weight: bold;">TODO:</span><span style="color: #62686E;"> You can set an initial password for your user.</span>
+      <span style="color: #62686E;"># If you do, you can skip setting a root password by passing</span>
+      <span style="color: #62686E;"># '--no-root-passwd' to nixos-install.</span>
+      <span style="color: #62686E;"># Be sure to change it (using passwd) after rebooting!</span>
+      <span style="color: #dcafe9;">initialPassword</span> = <span style="color: #7bc275;">"correcthorsebatterystaple"</span>;
+      <span style="color: #dcafe9;">isNormalUser</span> = <span style="color: #C57BDB;">true</span>;
+      <span style="color: #dcafe9;">openssh.authorizedKeys.keys</span> = <span style="color: #a991f1;">[</span>
+        <span style="color: #7bc275;">"my public key"</span>
+      <span style="color: #a991f1;">]</span>;
+      <span style="color: #dcafe9;">extraGroups</span> = <span style="color: #a991f1;">[</span><span style="color: #7bc275;">"wheel"</span><span style="color: #a991f1;">]</span>;
+    <span style="color: #7bc275;">}</span>;
+  <span style="color: #C57BDB;">}</span>;
+  <span style="color: #dcafe9;">services.openssh</span> = <span style="color: #C57BDB;">{</span>
+    <span style="color: #dcafe9;">enable</span> = <span style="color: #C57BDB;">true</span>;
+    <span style="color: #dcafe9;">settings</span> = <span style="color: #7bc275;">{</span>
+      <span style="color: #62686E;"># Forbid root login through SSH.</span>
+      <span style="color: #dcafe9;">PermitRootLogin</span> = <span style="color: #7bc275;">"no"</span>;
+      <span style="color: #62686E;"># Use keys only. Remove if you want to SSH using password (not</span>
+      <span style="color: #62686E;"># recommended).</span>
+      <span style="color: #dcafe9;">PasswordAuthentication</span> = <span style="color: #C57BDB;">false</span>;
+    <span style="color: #7bc275;">}</span>;
+  <span style="color: #C57BDB;">}</span>;
+  <span style="color: #dcafe9;">system.stateVersion</span> = <span style="color: #7bc275;">"23.05"</span>;
+<span style="color: #51afef;">}</span>
+</pre>
+</div>
+
+<p>
+And then <code>hardware-configuration.nix</code> is this:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-nix"><span style="color: #51afef;">{</span>
+  fileSystems.<span style="color: #7bc275;">"/"</span> = <span style="color: #C57BDB;">{</span>
+    <span style="color: #62686E;"># Must match what sd-image expects exactly.  This is found by trying to run</span>
+    <span style="color: #62686E;"># anything and then encountering an error.</span>
+    <span style="color: #dcafe9;">device</span> = <span style="color: #7bc275;">"/dev/disk/by-label/NIXOS_SD"</span>;
+    <span style="color: #dcafe9;">fsType</span> = <span style="color: #7bc275;">"ext4"</span>;
+  <span style="color: #C57BDB;">}</span>;
+  <span style="color: #dcafe9;">nixpkgs.hostPlatform</span> = <span style="color: #7bc275;">"aarch64-linux"</span>;
+<span style="color: #51afef;">}</span>
+</pre>
+</div>
+
+<p>
+If you&rsquo;re comparing from the <a href="https://github.com/Misterio77/nix-starter-configs/blob/main/minimal/nixos/configuration.nix">example</a> mentioned in the comments, this does
+without the <code>nix.registry</code> setting because that was causing problems.  I also
+removed the boot loader declaration, because that seems to be implicit or
+configured in some other way that is not obvious to me.
+</p>
+
+<p>
+The error for the boot loader is this:
+</p>
+
+<pre class="example" id="orgd95f993">
+error: The option `system.build.installBootLoader' is defined multiple times while it's expected to be unique.
+       Only one bootloader can be enabled at a time. This requirement has not
+       been checked until NixOS 22.05. Earlier versions defaulted to the last
+       definition. Change your configuration to enable only one bootloader.
+</pre>
+
+<p>
+Unfortunately I don&rsquo;t have an error capture for <code>nix.registry</code>.
+</p>
+
+<p>
+The <code>nix.registry</code> error:
+</p>
+
+<pre class="example" id="org8735c70">
+error:
+       … while calling the 'derivationStrict' builtin
+
+         at /derivation-internal.nix:9:12:
+
+            8|
+            9|   strict = derivationStrict drvAttrs;
+             |            ^
+           10|
+
+       … while evaluating derivation 'nixos-sd-image-24.05.20231222.6df37dc-aarch64-linux.img'
+         whose name attribute is located at /nix/store/55ql4j8d47xjvfa8xggjddgfwny4n9j7-source/pkgs/stdenv/generic/make-derivation.nix:348:7
+
+       … while evaluating attribute 'buildCommand' of derivation 'nixos-sd-image-24.05.20231222.6df37dc-aarch64-linux.img'
+
+         at /nix/store/55ql4j8d47xjvfa8xggjddgfwny4n9j7-source/nixos/modules/installer/sd-card/sd-image.nix:182:7:
+
+          181|
+          182|       buildCommand = ''
+             |       ^
+          183|         mkdir -p $out/nix-support $out/sd-image
+
+       (stack trace truncated; use '--show-trace' to show the full trace)
+
+       error: attribute 'inputs' missing
+
+       at /nix/store/55ql4j8d47xjvfa8xggjddgfwny4n9j7-source/lib/modules.nix:508:28:
+
+          507|         builtins.addErrorContext (context name)
+          508|           (args.${name} or config._module.args.${name})
+             |                            ^
+          509|       ) (lib.functionArgs f);
+</pre>
+
+<p>
+Divining the fix was mostly a guess, but based on:
+</p>
+<ol class="org-ol">
+<li>The <code>inputs</code> missing.  The <code>nix.registry</code> line has <code>inputs</code> in there.</li>
+<li>The <code>nix.registry</code> line has a comment saying &ldquo;To make nix3 commands
+consistent with your flake&rdquo; and this looks like speculative future-proofing
+to me.  The future is likely now, and the speculation proven false.</li>
+<li>I have <code>inputs</code> very clearly in the flake.  Everything else looks &ldquo;tidy&rdquo;.</li>
+</ol>
+
+<p>
+Okay so this all generates an image by running:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">./with-podman.sh <span style="color: #7bc275;">" \</span>
+<span style="color: #7bc275;">nix \</span>
+<span style="color: #7bc275;">  --extra-experimental-features nix-command \</span>
+<span style="color: #7bc275;">  --extra-experimental-features flakes \</span>
+<span style="color: #7bc275;">  build '.#iron' \</span>
+<span style="color: #7bc275;">"</span>
+</pre>
+</div>
+
+<p>
+I get no meaningful output, but no news is good news in the Unix world.  I see
+that my local directory gets an <code>result</code> file.  It&rsquo;s a symlink.
+</p>
+
+<pre class="example" id="orgbc151d3">
+result -&gt; /nix/store/dv21jmin4aqq4m0zvlbfbw2d6c1d47sr-nixos-sd-image-24.05.20231222.6df37dc-aarch64-linux.img
+</pre>
+</div>
+</div>
+<div id="outline-container-building-the-image--building-the-nixos-pi-image--extracting-the-image" class="outline-4">
+<h4 id="building-the-image--building-the-nixos-pi-image--extracting-the-image"><span class="section-number-4">7.3.3.</span> Extracting the Image</h4>
+<div class="outline-text-4" id="text-building-the-image--building-the-nixos-pi-image--extracting-the-image">
+<p>
+I quickly discovered that the symlink is orphaned.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #FCCE7B;">ls</span> -al $<span style="color: #51afef;">(</span>readlink result<span style="color: #51afef;">)</span> <span style="color: #e69055; font-weight: bold;">2</span>&gt;&amp;<span style="color: #e69055; font-weight: bold;">1</span>
+</pre>
+</div>
+
+<pre class="example" id="org3b0c1db">
+total 2763084
+drwxr-xr-x 20 logan staff        640 Dec 31 08:09 .
+drwxr-xr-x 57 logan staff       1824 Dec 31 09:00 ..
+drwxr-xr-x 13 logan staff        416 Jan 13 17:46 .git
+-rw-r--r--  1 logan staff        394 Dec 31 08:07 .gitignore
+-rw-r--r--  1 logan staff        283 Dec 21 16:50 README.org
+-rw-r--r--  1 logan staff       1569 Dec 24 22:00 flake.lock
+-rw-r--r--  1 logan staff        769 Dec 24 22:13 flake.nix
+-rw-r--r--  1 logan staff        265 Dec 27 16:28 hardware-configuration.nix
+drwxr-xr-x  2 logan staff         64 Dec 31 08:09 hosts
+-rwxr-xr-x  1 logan staff       1185 Dec 29 00:16 image-create.sh
+-rwxr-xr-x  1 logan staff       1135 Dec 29 01:16 image-deploy.sh
+-rw-r--r--  1 logan staff       4153 Dec 27 16:48 iron-configuration.nix
+drwxr-xr-x  2 logan staff         64 Dec 31 08:08 modules
+-r--r--r--  1 logan staff 2829352960 Dec 27 19:17 nixos-pi-sd-image.img
+drwxr-xr-x  2 logan staff         64 Dec 31 08:08 overlays
+drwxr-xr-x  2 logan staff         64 Dec 31 08:08 pkgs
+drwxr-xr-x  2 logan staff         64 Dec 31 08:08 profiles
+-rwxr-xr-x  1 logan staff        883 Dec 28 18:30 sd-card-dev-find.sh
+drwxr-xr-x  2 logan staff         64 Dec 31 08:08 shell
+-rwxr-xr-x  1 logan staff        958 Dec 24 22:09 with-podman.sh
+</pre>
+
+<p>
+I bet there is some <code>containerd</code> trickery going on here.  Here&rsquo;s what I think
+is happening:
+</p>
+
+<ol class="org-ol">
+<li>I know from my script in <code>with-podman.sh</code>, the container is volume-mounting
+<code>$HOME</code>.  It is <span class="underline">not</span> volume mounting <code>/nix</code>.</li>
+<li>The file is actually written to <code>/nix</code> in the container.  This is
+inaccessible to me once the container is shut down.</li>
+<li>The symlink emitted isn&rsquo;t translated to whatever temporary file that podman
+is actually writing to.</li>
+<li>Thus I am left with a dead symlink.</li>
+</ol>
+
+<p>
+I think the way we can fix this is to copy the image and then remove symlink (to
+keep things clean, it&rsquo;s not strictly necessary).
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">./with-podman.sh <span style="color: #7bc275;">" \</span>
+<span style="color: #7bc275;">nix \</span>
+<span style="color: #7bc275;">  --extra-experimental-features nix-command \</span>
+<span style="color: #7bc275;">  --extra-experimental-features flakes \</span>
+<span style="color: #7bc275;">  build '.#iron'</span>
+<span style="color: #7bc275;">cp</span><span style="color: #7bc275;"> \$(readlink result) /workdir/nixos-pi.img</span>
+<span style="color: #7bc275;">rm</span><span style="color: #7bc275;"> result</span>
+<span style="color: #7bc275;">"</span>
+</pre>
+</div>
+
+<p>
+This doesn&rsquo;t work because the symlink points a directory, and not the image file
+itself.  I did some digging and found I can do this:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">./with-podman.sh <span style="color: #7bc275;">" \</span>
+<span style="color: #7bc275;">nix \</span>
+<span style="color: #7bc275;">  --extra-experimental-features nix-command \</span>
+<span style="color: #7bc275;">  --extra-experimental-features flakes \</span>
+<span style="color: #7bc275;">  build '.#iron'</span>
+<span style="color: #7bc275;">cp</span><span style="color: #7bc275;"> \$(readlink result)/sd-image/* /workdir/nixos-pi.img.zst</span>
+<span style="color: #7bc275;">rm</span><span style="color: #7bc275;"> result</span>
+<span style="color: #7bc275;">"</span>
+</pre>
+</div>
+
+<p>
+Note the added <code>.zst</code>.  Also there is another directory adjacent to <code>sd-image</code>
+called <code>nix-support</code>.  I&rsquo;ll take a look at that as I do more runs.
+</p>
+
+<p>
+I do need to add the ability to decompress this image in preparation for <code>dd</code>.
+Let&rsquo;s yank our earlier invocation and place it in this command chain.  If I
+wanted to muck around with the container image itself, I could use
+the <code>unzstd</code> invocation to specify an output directory, which means we avoid a
+<code>cp</code> of the entire image.  I don&rsquo;t want to muck around with the container image
+as much as I can though.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">./with-podman.sh <span style="color: #7bc275;">" \</span>
+<span style="color: #7bc275;">nix \</span>
+<span style="color: #7bc275;">  --extra-experimental-features nix-command \</span>
+<span style="color: #7bc275;">  --extra-experimental-features flakes \</span>
+<span style="color: #7bc275;">  build '.#iron'</span>
+<span style="color: #7bc275;">ls</span><span style="color: #7bc275;"> -al \$(readlink result)/nix-support</span>
+<span style="color: #7bc275;">cp</span><span style="color: #7bc275;"> \$(readlink result)/sd-image/* /workdir/nixos-pi-sd-image.img.zst</span>
+<span style="color: #7bc275;">rm</span><span style="color: #7bc275;"> result</span>
+<span style="color: #7bc275;">"</span>
+unzstd -d nixos-pi-sd-image.img.zst -o nixos-pi-sd-image.img
+</pre>
+</div>
+
+<p>
+One of the things I really like about this journaled approach to exploration is
+that it slows me down enough to ask questions that make me avoid pitfalls.  As I
+am writing, I am thinking &ldquo;How do I know the result from <code>unzstd</code> is <span class="underline">actually</span>
+a valid image without having to push it through <code>dd</code> and then slotting the card
+into the Pi?
+</p>
+
+<p>
+Some quick searching reveals I can use <code>hdiutil imageinfo &lt;file&gt;</code> to get this
+information.
+</p>
+
+<p>
+Let&rsquo;s see if it tells us that it is <span class="underline">not</span> looking at a valid image:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">hdiutil imageinfo nixos-pi-sd-image.img.zst <span style="color: #e69055; font-weight: bold;">2</span>&gt;&amp;<span style="color: #e69055; font-weight: bold;">1</span>
+<span style="color: #FCCE7B;">echo</span> $<span style="color: #dcafe9;">?</span>
+</pre>
+</div>
+
+<pre class="example">
+hdiutil: imageinfo failed - image not recognized
+1
+</pre>
+
+
+<p>
+Excellent!  And the positive case?
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">hdiutil imageinfo nixos-pi-sd-image.img <span style="color: #e69055; font-weight: bold;">2</span>&gt;&amp;<span style="color: #e69055; font-weight: bold;">1</span>
+<span style="color: #FCCE7B;">echo</span> $<span style="color: #dcafe9;">?</span>
+</pre>
+</div>
+
+<pre class="example" id="org8bef161">
+Class Name: CRawDiskImage
+Size Information:
+	Total Bytes: 2829352960
+	Compressed Ratio: 1
+	Sector Count: 5526080
+	Total Non-Empty Bytes: 2829352960
+	Compressed Bytes: 2829352960
+	Total Empty Bytes: 0
+Checksum Type: none
+Format: UDRW
+partitions:
+	partition-scheme: fdisk
+	block-size: 512
+	partitions:
+		0:
+			partition-name: Master Boot Record
+			partition-start: 0
+			partition-synthesized: true
+			partition-length: 1
+			partition-hint: MBR
+			boot-code: 0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000004E6978210000
+		1:
+			partition-name:
+			partition-start: 1
+			partition-synthesized: true
+			partition-length: 16383
+			partition-hint: Apple_Free
+		2:
+			partition-start: 16384
+			partition-number: 1
+			partition-length: 61440
+			partition-hint: DOS_FAT_32
+			partition-filesystems:
+				FAT16: FIRMWARE
+		3:
+			partition-start: 77824
+			partition-number: 2
+			partition-length: 5448256
+			partition-hint: Linux_Ext2FS
+	burnable: false
+Format Description: raw read/write
+Checksum Value:
+Properties:
+	Encrypted: false
+	Kernel Compatible: true
+	Checksummed: false
+	Software License Agreement: false
+	Partitioned: false
+	Compressed: no
+Segments:
+	0: /Users/logan/dev/proton-nix/nixos-pi-sd-image.img
+Backing Store Information:
+	URL: file:///Users/logan/dev/proton-nix/nixos-pi-sd-image.img
+	Name: nixos-pi-sd-image.img
+	Class Name: CBSDBackingStore
+Resize limits (per hdiutil resize -limits):
+5526080	5526080	181452016
+0
+</pre>
+
+<p>
+Wonderful!
+</p>
+
+<p>
+We can incorporate that into our eventual script we&rsquo;ll be creating, just to
+check on things.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">./with-podman.sh <span style="color: #7bc275;">" \</span>
+<span style="color: #7bc275;">nix \</span>
+<span style="color: #7bc275;">  --extra-experimental-features nix-command \</span>
+<span style="color: #7bc275;">  --extra-experimental-features flakes \</span>
+<span style="color: #7bc275;">  build '.#iron'</span>
+<span style="color: #7bc275;">ls</span><span style="color: #7bc275;"> -al \$(readlink result)/nix-support</span>
+<span style="color: #7bc275;">cp</span><span style="color: #7bc275;"> \$(readlink result)/sd-image/* /workdir/nixos-pi-sd-image.img.zst</span>
+<span style="color: #7bc275;">rm</span><span style="color: #7bc275;"> result</span>
+<span style="color: #7bc275;">"</span>
+unzstd -d nixos-pi-sd-image.img.zst -o nixos-pi-sd-image.img
+<span style="color: #FCCE7B;">rm</span> nixos-pi-sd-image.img.zst
+hdiutil imageinfo nixos-pi-sd-image.img
+</pre>
+</div>
+
+<p>
+And then we can incorporate the <code>dd</code> invocation into it:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">./with-podman.sh <span style="color: #7bc275;">" \</span>
+<span style="color: #7bc275;">nix \</span>
+<span style="color: #7bc275;">  --extra-experimental-features nix-command \</span>
+<span style="color: #7bc275;">  --extra-experimental-features flakes \</span>
+<span style="color: #7bc275;">  build '.#iron'</span>
+<span style="color: #7bc275;">ls</span><span style="color: #7bc275;"> -al \$(readlink result)/nix-support</span>
+<span style="color: #7bc275;">cp</span><span style="color: #7bc275;"> \$(readlink result)/sd-image/* /workdir/nixos-pi-sd-image.img.zst</span>
+<span style="color: #7bc275;">rm</span><span style="color: #7bc275;"> result</span>
+<span style="color: #7bc275;">"</span>
+unzstd -d nixos-pi-sd-image.img.zst -o nixos-pi-sd-image.img
+<span style="color: #FCCE7B;">rm</span> nixos-pi-sd-image.img.zst
+hdiutil imageinfo nixos-pi-sd-image.img
+<span style="color: #FCCE7B;">sudo</span> dd <span style="color: #dcafe9;">if</span>=nixos-pi-sd-image.img <span style="color: #dcafe9;">of</span>=/dev/disk4 <span style="color: #dcafe9;">bs</span>=1M <span style="color: #dcafe9;">status</span>=progress <span style="color: #dcafe9;">conv</span>=fsync
+</pre>
+</div>
+
+<p>
+Let&rsquo;s not run that yet, because just blindly doing <code>dd</code> on things under <code>/dev</code>
+is inherently dangerous.  Is there a way we can query for a detachable disk?
+</p>
+
+<p>
+There is for macOS, but it&rsquo;s not portable.  I have seen some mention that
+<code>lsusb</code> works for non-USB storage devices (and by extension, <code>cyme</code> would as
+well), but I have not observed that on my system.  Still, learning of <code>cyme</code> is
+useful and it&rsquo;s been added to my toolbox for later.
+</p>
+
+<p>
+This is what I came up with:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">system_profiler SPStorageDataType -json <span style="color: #7bc275;">\</span>
+  | jq -r <span style="color: #7bc275;">\</span>
+      <span style="color: #7bc275;">'.SPStorageDataType.[]</span>
+<span style="color: #7bc275;">        | select(.physical_drive.protocol == "Secure Digital")</span>
+<span style="color: #7bc275;">        | .bsd_name'</span> <span style="color: #7bc275;">\</span>
+  | sed -E <span style="color: #7bc275;">'s/s[0-9]+//'</span>
+</pre>
+</div>
+
+<p>
+Note that this might not work if using a USB attached SD card.  This could be
+the case if you&rsquo;re using a docking station setup on your Mac/MacBook, instead of
+preferring the on-board SD card reader.
+</p>
+
+<p>
+Okay so now we have the disk, dynamically.  We can just idiotically bail out if
+more than one is found.  We should only find one and only one result.
+</p>
+
+<p>
+Ugh.  I really wish we could actually replace Bash with a stronger scripting
+language but with the same level of ubiquitousness.  This is what I was able to
+put together for giving me a one-and-only-one search:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #62686E;">#</span><span style="color: #62686E;">!/usr/bin/</span><span style="color: #51afef;">env</span><span style="color: #62686E;"> bash</span>
+
+<span style="color: #C57BDB;">set</span> -euo pipefail
+
+<span style="color: #dcafe9;">IFS</span>=$<span style="color: #7bc275;">'\n'</span>
+<span style="color: #dcafe9;">result</span>=<span style="color: #51afef;">(</span> $<span style="color: #C57BDB;">(</span>system_profiler SPStorageDataType -json <span style="color: #7bc275;">\</span>
+  | jq -r <span style="color: #7bc275;">\</span>
+      <span style="color: #7bc275;">'.SPStorageDataType.[]</span>
+<span style="color: #7bc275;">        | select(.physical_drive.protocol == "Secure Digital")</span>
+<span style="color: #7bc275;">        | .bsd_name'</span> <span style="color: #7bc275;">\</span>
+  | sed -E <span style="color: #7bc275;">'s/s[0-9]+//'</span>
+<span style="color: #C57BDB;">)</span> <span style="color: #51afef;">)</span>
+<span style="color: #C57BDB;">unset</span> IFS
+<span style="color: #dcafe9;">count</span>=<span style="color: #7bc275;">"</span><span style="color: #a991f1;">$</span><span style="color: #dcafe9;">{#result[*]}</span><span style="color: #7bc275;">"</span>
+<span style="color: #51afef;">if</span> <span style="color: #51afef;">[</span><span style="color: #C57BDB;">[</span> $<span style="color: #dcafe9;">count</span> != <span style="color: #e69055; font-weight: bold;">1</span> <span style="color: #C57BDB;">]</span><span style="color: #51afef;">]</span>; <span style="color: #51afef;">then</span>
+  <span style="color: #FCCE7B;">echo</span> <span style="color: #7bc275;">"Error: </span><span style="color: #a991f1;">$</span><span style="color: #dcafe9;">result</span><span style="color: #7bc275;"> has </span><span style="color: #a991f1;">$</span><span style="color: #dcafe9;">count</span><span style="color: #7bc275;"> results but we expect exactly 1."</span> <span style="color: #e69055; font-weight: bold;">1</span>&gt;&amp;<span style="color: #e69055; font-weight: bold;">2</span>
+  <span style="color: #51afef;">exit</span> <span style="color: #e69055; font-weight: bold;">1</span>
+<span style="color: #51afef;">else</span>
+  <span style="color: #FCCE7B;">echo</span> -n $<span style="color: #dcafe9;">result</span>
+<span style="color: #51afef;">fi</span>
+</pre>
+</div>
+
+<p>
+I tested with 1 device and 4 devices, and got the results I wanted.
+</p>
+
+<p>
+This leaves us with a final script of:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #62686E;">#</span><span style="color: #62686E;">!/usr/bin/</span><span style="color: #51afef;">env</span><span style="color: #62686E;"> bash</span>
+
+./with-podman.sh <span style="color: #7bc275;">" \</span>
+<span style="color: #7bc275;">nix \</span>
+<span style="color: #7bc275;">  --extra-experimental-features nix-command \</span>
+<span style="color: #7bc275;">  --extra-experimental-features flakes \</span>
+<span style="color: #7bc275;">  build '.#iron'</span>
+<span style="color: #7bc275;">ls</span><span style="color: #7bc275;"> -al \$(readlink result)/nix-support</span>
+<span style="color: #7bc275;">cp</span><span style="color: #7bc275;"> \$(readlink result)/sd-image/* /workdir/nixos-pi-sd-image.img.zst</span>
+<span style="color: #7bc275;">rm</span><span style="color: #7bc275;"> result</span>
+<span style="color: #7bc275;">"</span>
+unzstd -d nixos-pi-sd-image.img.zst -o nixos-pi-sd-image.img
+<span style="color: #FCCE7B;">rm</span> nixos-pi-sd-image.img.zst
+hdiutil imageinfo nixos-pi-sd-image.img
+<span style="color: #FCCE7B;">sudo</span> dd <span style="color: #7bc275;">\</span>
+     <span style="color: #dcafe9;">if</span>=nixos-pi-sd-image.img <span style="color: #7bc275;">\</span>
+     <span style="color: #dcafe9;">of</span>=/dev/$<span style="color: #51afef;">(</span>./sd-card-dev-find.sh<span style="color: #51afef;">)</span> <span style="color: #7bc275;">\</span>
+     <span style="color: #dcafe9;">bs</span>=1M <span style="color: #7bc275;">\</span>
+     <span style="color: #dcafe9;">status</span>=progress <span style="color: #7bc275;">\</span>
+     <span style="color: #dcafe9;">conv</span>=fsync
+</pre>
+</div>
+
+<p>
+I found as part of futzing with this that <code>SPStorageDataType</code> only works for
+mounted devices but not available devices.  However I need things to be
+unmounted to use <code>dd</code> on them.  This does not make it easy to do ephemeral runs.
+If I wanted to always use <code>SPStorageDataType</code>, then I&rsquo;d need to know <span class="underline">what</span> to
+mount, which is what I&rsquo;m trying to determine in the first place.  Additionally,
+the disk might be totally fresh or using some unknown filesystem - both of which
+would render the device unmountable.  With some checking around from
+<code>system_profiler -listDataTypes</code> I found <code>SPCardReaderDataType</code> which looks
+promising:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">system_profiler SPCardReaderDataType
+</pre>
+</div>
+
+<p>
+And now the JSON form:
+</p>
+
+
+<div class="org-src-container">
+<pre class="src src-shell">system_profiler SPCardReaderDataType -json
+</pre>
+</div>
+
+<p>
+That gives me a <code>jq</code> query of:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">system_profiler SPCardReaderDataType -json <span style="color: #7bc275;">\</span>
+  | jq -r <span style="color: #7bc275;">\</span>
+      <span style="color: #7bc275;">'.SPCardReaderDataType[]._items[].bsd_name'</span>
+</pre>
+</div>
+
+<p>
+This leaves me with a final script for <code>sd-card-dev-find.sh</code> of:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #62686E;">#</span><span style="color: #62686E;">!/usr/bin/</span><span style="color: #51afef;">env</span><span style="color: #62686E;"> bash</span>
+<span style="color: #62686E;">##</span>
+<span style="color: #62686E;"># </span><span style="color: #62686E;">Finds the device file for the attached SD card (eg. /dev/disk4).  It will</span>
+<span style="color: #62686E;"># </span><span style="color: #62686E;">assume /dev as a relative directory to </span><span style="color: #62686E;">make</span><span style="color: #62686E;"> consumption easier.</span>
+<span style="color: #62686E;">#</span>
+<span style="color: #62686E;"># </span><span style="color: #62686E;">This has a non-zero exit code if more than one disk is found, or no disks are</span>
+<span style="color: #62686E;"># </span><span style="color: #62686E;">found.</span>
+<span style="color: #62686E;">##</span>
+
+<span style="color: #C57BDB;">set</span> -euo pipefail
+
+<span style="color: #51afef;">while </span><span style="color: #C57BDB;">true</span>; <span style="color: #51afef;">do</span>
+  <span style="color: #51afef;">case</span> <span style="color: #7bc275;">"</span><span style="color: #a991f1;">$</span><span style="color: #dcafe9;">{1:-}</span><span style="color: #7bc275;">"</span><span style="color: #51afef;"> in</span>
+    -h | --help)
+      <span style="color: #FCCE7B;">cat</span> &lt;&lt;EOH
+<span style="color: #7bc275;">Usage: $0</span>
+
+<span style="color: #7bc275;">Finds the device file for the attached SD card (eg. /dev/disk4).  It will</span>
+<span style="color: #7bc275;">assume /dev as a relative directory to </span><span style="color: #7bc275;">make</span><span style="color: #7bc275;"> consumption easier.</span>
+<span style="color: #7bc275;">EOH</span>
+      <span style="color: #51afef;">exit</span>
+      ;;
+    * ) <span style="color: #51afef;">break</span> ;;
+  <span style="color: #51afef;">esac</span>
+<span style="color: #51afef;">done</span>
+
+<span style="color: #dcafe9;">IFS</span>=$<span style="color: #7bc275;">'\n'</span>
+<span style="color: #dcafe9;">result</span>=$<span style="color: #51afef;">(</span>
+  system_profiler SPCardReaderDataType -json <span style="color: #7bc275;">\</span>
+    | jq -r <span style="color: #7bc275;">\</span>
+      <span style="color: #7bc275;">'.SPCardReaderDataType[]._items[].bsd_name'</span>
+<span style="color: #51afef;">)</span>
+<span style="color: #dcafe9;">array</span>=<span style="color: #51afef;">(</span> $<span style="color: #dcafe9;">result</span> <span style="color: #51afef;">)</span>
+<span style="color: #C57BDB;">unset</span> IFS
+<span style="color: #dcafe9;">count</span>=<span style="color: #7bc275;">"</span><span style="color: #a991f1;">$</span><span style="color: #dcafe9;">{#array[*]}</span><span style="color: #7bc275;">"</span>
+<span style="color: #51afef;">if</span> <span style="color: #51afef;">[</span><span style="color: #C57BDB;">[</span> $<span style="color: #dcafe9;">count</span> != <span style="color: #e69055; font-weight: bold;">1</span> <span style="color: #C57BDB;">]</span><span style="color: #51afef;">]</span>; <span style="color: #51afef;">then</span>
+  <span style="color: #FCCE7B;">echo</span> <span style="color: #7bc275;">"Error: Query result '</span><span style="color: #a991f1;">$</span><span style="color: #dcafe9;">result</span><span style="color: #7bc275;">' has </span><span style="color: #a991f1;">$</span><span style="color: #dcafe9;">count</span><span style="color: #7bc275;"> results but we expect exactly \</span>
+<span style="color: #7bc275;">1."</span> <span style="color: #e69055; font-weight: bold;">1</span>&gt;&amp;<span style="color: #e69055; font-weight: bold;">2</span>
+  <span style="color: #51afef;">exit</span> <span style="color: #e69055; font-weight: bold;">1</span>
+<span style="color: #51afef;">else</span>
+  <span style="color: #FCCE7B;">echo</span> -n $<span style="color: #dcafe9;">result</span>
+<span style="color: #51afef;">fi</span>
+</pre>
+</div>
+
+<p>
+Which also includes <code>-h</code> / <code>--help</code> and a comment describing how it works.  It
+might seem obvious, and it is, but that&rsquo;s because it&rsquo;s fresh.  I&rsquo;ve made life
+easier for future-me.
+</p>
+
+<p>
+Here&rsquo;s the same treatment for <code>image-create.sh</code>:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #62686E;">#</span><span style="color: #62686E;">!/usr/bin/</span><span style="color: #51afef;">env</span><span style="color: #62686E;"> bash</span>
+<span style="color: #62686E;">##</span>
+<span style="color: #62686E;"># </span><span style="color: #62686E;">Creates a bootable Raspberry Pi image with NixOS.  This image should contain</span>
+<span style="color: #62686E;"># </span><span style="color: #62686E;">the entirety of the configuration, sans password updates (until I can get</span>
+<span style="color: #62686E;"># </span><span style="color: #62686E;">secret management going).</span>
+<span style="color: #62686E;">#</span>
+<span style="color: #62686E;"># </span><span style="color: #62686E;">The image file name is printed upon success.</span>
+<span style="color: #62686E;">##</span>
+
+<span style="color: #C57BDB;">set</span> -euo pipefail
+
+<span style="color: #51afef;">while </span><span style="color: #C57BDB;">true</span>; <span style="color: #51afef;">do</span>
+  <span style="color: #51afef;">case</span> <span style="color: #7bc275;">"</span><span style="color: #a991f1;">$</span><span style="color: #dcafe9;">{1:-}</span><span style="color: #7bc275;">"</span><span style="color: #51afef;"> in</span>
+    -h | --help)
+      <span style="color: #FCCE7B;">cat</span> &lt;&lt;EOH
+<span style="color: #7bc275;">Usage: $0</span>
+
+<span style="color: #7bc275;">Creates a bootable Raspberry Pi image with NixOS.  This image should contain</span>
+<span style="color: #7bc275;">the entirety of the configuration, sans password updates (until I can get</span>
+<span style="color: #7bc275;">secret management going).</span>
+
+<span style="color: #7bc275;">The image file name is printed upon success.</span>
+<span style="color: #7bc275;">EOH</span>
+      <span style="color: #51afef;">exit</span>
+      ;;
+    * ) <span style="color: #51afef;">break</span> ;;
+  <span style="color: #51afef;">esac</span>
+<span style="color: #51afef;">done</span>
+
+<span style="color: #dcafe9;">image_name</span>=<span style="color: #7bc275;">'nixos-pi-sd-image.img'</span>
+./with-podman.sh <span style="color: #7bc275;">" \</span>
+<span style="color: #7bc275;">nix \</span>
+<span style="color: #7bc275;">  --extra-experimental-features nix-command \</span>
+<span style="color: #7bc275;">  --extra-experimental-features flakes \</span>
+<span style="color: #7bc275;">  build '.#iron'</span>
+<span style="color: #7bc275;">ls</span><span style="color: #7bc275;"> -al \$(readlink result)/nix-support</span>
+<span style="color: #7bc275;">cp</span><span style="color: #7bc275;"> \$(readlink result)/sd-image/* /workdir/</span><span style="color: #a991f1;">$</span><span style="color: #dcafe9;">image_name</span><span style="color: #7bc275;">.zst</span>
+<span style="color: #7bc275;">rm</span><span style="color: #7bc275;"> result</span>
+<span style="color: #7bc275;">"</span>
+unzstd <span style="color: #7bc275;">\</span>
+  --force <span style="color: #7bc275;">\</span>
+  --decompress $<span style="color: #dcafe9;">image_name</span>.zst <span style="color: #7bc275;">\</span>
+  -o $<span style="color: #dcafe9;">image_name</span>
+<span style="color: #FCCE7B;">rm</span> --force $<span style="color: #dcafe9;">image_name</span>.zst
+hdiutil imageinfo $<span style="color: #dcafe9;">image_name</span>
+
+<span style="color: #FCCE7B;">echo</span> <span style="color: #7bc275;">'Image built successfully.'</span> <span style="color: #e69055; font-weight: bold;">1</span>&gt;&amp;<span style="color: #e69055; font-weight: bold;">2</span>
+<span style="color: #62686E;"># </span><span style="color: #62686E;">Print the name used so we can use it elsewhere, and scripts needn't be tightly</span>
+<span style="color: #62686E;"># </span><span style="color: #62686E;">coupled.</span>
+<span style="color: #FCCE7B;">echo</span> $<span style="color: #dcafe9;">image_name</span>
+</pre>
+</div>
+
+<p>
+And I further broke things apart, such that <code>image-deploy.sh</code> actually installs
+it.  I have done this because building the image is its own ordeal, and
+something I might want to test separately.  Note that <code>image-create.sh</code> prints
+the file name of the image so <code>image-deploy.sh</code> can use it, and doesn&rsquo;t need to
+have intimate knowledge of the file name.  I have one place I can change the
+image file name (or parameterize it), and nothing else needs to be updated.
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-building-the-image--no-joy-on-boot" class="outline-3">
+<h3 id="building-the-image--no-joy-on-boot"><span class="section-number-3">7.4.</span> No Joy on Boot</h3>
+<div class="outline-text-3" id="text-building-the-image--no-joy-on-boot">
+<p>
+The Pi seems to &ldquo;boot&rdquo;, but results in the double-green flashes I had before I
+went down the NixOS image approach.  I happen to have a second Pi with me, and
+have tried it there, as well as a second card with the same image.  I don&rsquo;t feel
+like this has ruled out hardware problems.
+</p>
+
+<p>
+My card is from SanDisk, and is the SanDisk Ultra 128GB microSDXC UHS-I Card
+(<code>SDSQUNC-128G-GN6MA</code>) variant.  <a href="https://elinux.org/RPi_SD_cards">https://elinux.org/RPi_SD_cards</a> indicates that
+this should work.  Many of the recent SanDisk cards are reported as working.
+The Amazon reviews say that they specifically work for Raspberry Pis as well.
+Even though I got them from the same batch (as well as the Pis), I <span class="underline">suspect</span>
+this is not a hardware issue, but I haven&rsquo;t ruled it out.
+</p>
+
+<p>
+I need a display to see if there&rsquo;s some other critical information before I can
+continue.
+</p>
+
+<p>
+I did install <code>f3</code> utilities to test it (with <code>f3read</code> and <code>f3write</code>) but I
+haven&rsquo;t taken them for a spin yet.
+</p>
+</div>
+</div>
+<div id="outline-container-building-the-image--back-and-display-ports" class="outline-3">
+<h3 id="building-the-image--back-and-display-ports"><span class="section-number-3">7.5.</span> Back, and Display Ports</h3>
+<div class="outline-text-3" id="text-building-the-image--back-and-display-ports">
+<p>
+My travels are now complete, and I&rsquo;m able to inspect things with my home
+network.  A curious thing that came up was the displays ports.  The new
+(circa 2023) Raspberry Pi&rsquo;s come with micro-HDMI connections for display.  I did
+some searching around and found that HDMI actually requires royalties are paid
+(perhaps the Pis are exempt?) at the cost of $0.15 USD or $0.05 (or lower) if
+the HDMI logo is displayed per <a href="https://en.wikipedia.org/wiki/HDMI#HDMI_fee_structure">Wikipedia&rsquo;s HDMI article</a>.  The Pi has the logo
+printed on PCB.  The capabilities between HDMI. are on par with each other, from
+what various posts I could find.  Apologists have reported that HDMI is more
+universal, and thus more in line with the goals of the Pi to make cheaply
+accessible computers.  I still had to buy an adapter to connect it to any of my
+displays made in the last 10 years.  Granted, the adapter wasn&rsquo;t terribly
+expensive.  It did halt my work though.  Now I have one, and a display to
+connect it to.  The results were surprising!
+</p>
+</div>
+</div>
+<div id="outline-container-building-the-image--actually-joy-on-boot" class="outline-3">
+<h3 id="building-the-image--actually-joy-on-boot"><span class="section-number-3">7.6.</span> Actually Joy on Boot</h3>
+<div class="outline-text-3" id="text-building-the-image--actually-joy-on-boot">
+<p>
+I can see the Pi has actually booted up, and it works!  It successfully boots,
+and the flashing green light must just be &ldquo;activity&rdquo; that is on some regular
+interval.  The Bluetooth or WiFi radio, perhaps?  Either way, I have a working
+Pi!  Let&rsquo;s see if I can log in.
+</p>
+
+<pre class="example" id="org58022eb">
+$ ssh iron.proton
+The authenticity of host 'iron.proton (192.168.254.102)' can't be established.
+ED25519 key fingerprint is SHA256:E3b/T0lQiqItcIKbh2n6Wb/sOEV9nFbrVojJXlKmHrQ.
+This key is not known by any other names.
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+Warning: Permanently added 'iron.proton' (ED25519) to the list of known hosts.
+
+[logan@iron:~]$
+</pre>
+
+<p>
+Wow!  I&rsquo;d forgotten I&rsquo;d added one of my authorized keys to the list.  I have to
+admit, I&rsquo;m pretty giddy.  I do have a password to update.  A quick <code>passwd</code>
+invocation shows the <code>initialPassword</code> field is good, but you won&rsquo;t see
+anything interesting here:
+</p>
+
+<pre class="example" id="org610cb95">
+[logan@iron:~]$ passwd
+Changing password for logan.
+Current password:
+New password:
+Retype new password:
+passwd: password updated successfully
+</pre>
+
+<p>
+And then to see if I can use <code>sudo</code>:
+</p>
+
+<pre class="example" id="org7514f05">
+[logan@iron:~]$ sudo ls
+
+We trust you have received the usual lecture from the local System
+Administrator. It usually boils down to these three things:
+
+    #1) Respect the privacy of others.
+    #2) Think before you type.
+    #3) With great power comes great responsibility.
+
+For security reasons, the password you type will not be visible.
+
+[sudo] password for logan:
+
+[logan@iron:~]$
+</pre>
+
+<p>
+So this ticks all of my boxes for getting a Pi
+configured on the baseline, but lets go through the list to be sure:
+</p>
+
+<ul class="org-ul">
+<li class="on"><code>[X]</code> The Pi has the desired hostname.</li>
+<li class="on"><code>[X]</code> The Pi has my user.</li>
+<li class="on"><code>[X]</code> My user can be logged into via SSH.</li>
+<li class="on"><code>[X]</code> My user is a sudoer.</li>
+</ul>
+
+<p>
+That&rsquo;s everything!
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-conclusion" class="outline-2">
+<h2 id="conclusion"><span class="section-number-2">8.</span> Conclusion</h2>
+<div class="outline-text-2" id="text-conclusion">
+<p>
+I&rsquo;ll wrap this up here.  The next part of this adventure will be to get
+Wireguard configured on the Pi.  That&rsquo;s a bit beyond the scope of what I feel
+safe sharing here.
+</p>
+
+<p>
+I have noticed during my searching about that there are
+these <code>age</code> secrets that I intend to read up on, though I find it hard to
+believe these secrets are safely shared on public repositories.  Offline brute
+force attacks are highly effective, from what I understand.
+</p>
+</div>
+</div>
