@@ -252,17 +252,15 @@ I try:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-shell" id="org7fec394"><span style="color: #FCCE7B;">sudo</span> mount -t fuse-ext2 /dev/disk4s2 /Volumes/4s2
+<pre class="src src-shell" id="org131e1cc"><span style="color: #FCCE7B;">sudo</span> mount -t fuse-ext2 /dev/disk4s2 /Volumes/4s2
 </pre>
 </div>
 
-<p>
-mount: exec /Library/Filesystems/fuse-ext2.fs/Contents/Resources/mount<sub>fuse</sub>-ext2 for /Volumes/4s2: No such file or directory
+<pre class="example">
+mount: exec /Library/Filesystems/fuse-ext2.fs/Contents/Resources/mount_fuse-ext2 for /Volumes/4s2: No such file or directory
 mount: /Volumes/4s2 failed with 72
-</p>
-<p>
-:END:
-</p>
+</pre>
+
 
 <p>
 The <code>No such file or directory</code> portion can&rsquo;t be correct on the latter path -

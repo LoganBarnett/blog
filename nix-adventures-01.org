@@ -225,14 +225,13 @@ But I would expect to see _something_ here.  There is mention of a
 I try:
 
 #+name: fuse-ext2-mount
-#+begin_src shell :results output :cache yes :exports both
+#+begin_src shell :results output verbatim :cache yes :exports both
 sudo mount -t fuse-ext2 /dev/disk4s2 /Volumes/4s2
 #+end_src
 
-#+RESULTS[fbc255cffac2d6ed02548b549e3ed631fd0e9e7b]: fuse-ext2-mount
-mount: exec /Library/Filesystems/fuse-ext2.fs/Contents/Resources/mount_fuse-ext2 for /Volumes/4s2: No such file or directory
-mount: /Volumes/4s2 failed with 72
-:END:
+#+RESULTS[ac96832f9b034aefdd55f01f4f61bd4637efdde6]: fuse-ext2-mount
+: mount: exec /Library/Filesystems/fuse-ext2.fs/Contents/Resources/mount_fuse-ext2 for /Volumes/4s2: No such file or directory
+: mount: /Volumes/4s2 failed with 72
 
 The =No such file or directory= portion can't be correct on the latter path -
 =/Volumes/4s2= exists.  I check the =/Library/Filesystems/...= path and it is
