@@ -30,7 +30,7 @@ it represents the future of computing.  In others, I see a select few people
 with _deep_ understanding of the topic spouting off what is the equivalent of
 total nonsense to me.  I am glad these people are helping, and I am positive
 they are 100% correct in their statements.  I just don't understand any of it.
-There's some knowledge I was supposed to acquire while ~~skimming~~ reading
+There's some knowledge I was supposed to acquire while +skimming+ reading
 through a colossal set of documentation.
 
 Now, before this goes further, I want to make it really clear here:  I fully
