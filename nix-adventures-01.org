@@ -150,6 +150,7 @@ that.
 
 I try to mount my disk with invocations such as these:
 
+#+name: fuse-ext2-mount-disks
 #+begin_src shell :results none :exports code
 sudo fuse-ext2 /dev/disk4s1 /Volumes/4s1
 sudo fuse-ext2 /dev/disk4s2 /Volumes/4s2
@@ -182,6 +183,7 @@ I do the =csrutil disable= which prompts me but works anyways.  Knowing I have
 done the nasty successfully and my work here is done, I reboot to go back to my
 normal runtime.  I attempt to mount again with:
 
+#+name: fuse-ext2-mount-disk
 #+begin_src shell :results none :exports code
 sudo fuse-ext2 /dev/disk4s2 /Volumes/4s2
 #+end_src
@@ -205,6 +207,7 @@ Now I try again.  I have some vague memory that mount processes don't typically
 create the actual mount point directory in Linux, so I assume it's the same
 here.
 
+#+name: fuse-ext2-pre-create-directory
 #+begin_src shell :results none :exports code :cache yes
 sudo mkdir /Volumes/4s2
 sudo fuse-ext2 /dev/disk4s2 /Volumes/4s2
@@ -221,11 +224,12 @@ But I would expect to see _something_ here.  There is mention of a
 
 I try:
 
-#+begin_src shell :results output :exports both :cache yes
+#+name: fuse-ext2-mount
+#+begin_src shell :results output :cache yes :exports both
 sudo mount -t fuse-ext2 /dev/disk4s2 /Volumes/4s2
 #+end_src
 
-:RESULTS:
+#+RESULTS[fbc255cffac2d6ed02548b549e3ed631fd0e9e7b]: fuse-ext2-mount
 mount: exec /Library/Filesystems/fuse-ext2.fs/Contents/Resources/mount_fuse-ext2 for /Volumes/4s2: No such file or directory
 mount: /Volumes/4s2 failed with 72
 :END:
@@ -235,63 +239,65 @@ The =No such file or directory= portion can't be correct on the latter path -
 indeed non-existent.  Curious, looking in =/Library/Filesystems= directly shows
 me _something_ of relevance:
 
+#+name: filesystems-list
 #+begin_src shell :results output :exports both :cache yes
 ls /Library/Filesystems
 #+end_src
 
-#+RESULTS:
+#+RESULTS[ae92d246a7475fa147ffe5e633cf4a01bc678be6]: filesystems-list
 : NetFSPlugins
 : macfuse.fs
 
+
 So I try this modified =mount=:
 
-#+begin_src shell :results output :exports both :cache yes
+#+name: macfuse-mount
+#+begin_src shell :results output verbatim :exports both :cache yes
 sudo mount -t macfuse.fs /dev/disk4s2 /Volumes/4s2
 #+end_src
 
-:RESULTS:
-macFUSE mount version 4.5.0
-
-This program is not meant to be called directly. The macFUSE library calls it.
-
-Available mount options:
-    -o allow_other         allow access to others besides the user who mounted
-                           the file system
-    -o allow_recursion     allow a mount point that itself resides on a macFUSE
-                           volume (by default, such mounting is disallowed)
-    -o allow_root          allow access to root (can't be used with allow_other)
-    -o auto_xattr          handle extended attributes entirely through ._ files
-    -o blocksize=<size>    specify block size in bytes of "storage"
-    -o daemon_timeout=<s>  timeout in seconds for kernel calls to daemon
-    -o debug               turn on debug information printing
-    -o default_permissions let the kernel handle permission checks locally
-    -o defer_permissions   defer permission checks to file operations themselves
-    -o direct_io           use alternative (direct) path for kernel-user I/O
-    -o extended_security   turn on macOS extended security (ACLs)
-    -o fsid=<fsid>         set the second 32-bit component of the fsid
-    -o fsname=<name>       set the file system's name
-    -o fssubtype=<num>     set the file system's fssubtype identifier
-    -o fstypename=<name>   set the file system's type name
-    -o iosize=<size>       specify maximum I/O size in bytes
-    -o jail_symlinks       contain symbolic links within the mount
-    -o local               mark the volume as "local" (default is "nonlocal")
-    -o negative_vncache    enable vnode name caching of non-existent objects
-    -o sparse              enable support for sparse files
-    -o volname=<name>      set the file system's volume name
-
-Available negative mount options:
-    -o noalerts            disable all graphical alerts (if any) in macFUSE Core
-    -o noappledouble       ignore Apple Double (._) and .DS_Store files entirely
-    -o noapplexattr        ignore all "com.apple.*" extended attributes
-    -o nobrowse            mark the volume as non-browsable by the Finder
-    -o nolocalcaches       meta option equivalent to noreadahead,noubc,novncache
-    -o noreadahead         disable I/O read-ahead behavior for this file system
-    -o nosynconclose       disable sync-on-close behavior (enabled by default)
-    -o nosyncwrites        disable synchronous-writes behavior (dangerous)
-    -o noubc               disable the unified buffer cache for this file system
-    -o novncache           disable the vnode name cache for this file system
-mount: /Volumes/4s2 failed with 64
-:END:
+#+RESULTS[5691ced9d89ed99646b3ff2821e7dbef5f28fcec]: macfuse-mount
+: macFUSE mount version 4.5.0
+:
+: This program is not meant to be called directly. The macFUSE library calls it.
+:
+: Available mount options:
+:     -o allow_other         allow access to others besides the user who mounted
+:                            the file system
+:     -o allow_recursion     allow a mount point that itself resides on a macFUSE
+:                            volume (by default, such mounting is disallowed)
+:     -o allow_root          allow access to root (can't be used with allow_other)
+:     -o auto_xattr          handle extended attributes entirely through ._ files
+:     -o blocksize=<size>    specify block size in bytes of "storage"
+:     -o daemon_timeout=<s>  timeout in seconds for kernel calls to daemon
+:     -o debug               turn on debug information printing
+:     -o default_permissions let the kernel handle permission checks locally
+:     -o defer_permissions   defer permission checks to file operations themselves
+:     -o direct_io           use alternative (direct) path for kernel-user I/O
+:     -o extended_security   turn on macOS extended security (ACLs)
+:     -o fsid=<fsid>         set the second 32-bit component of the fsid
+:     -o fsname=<name>       set the file system's name
+:     -o fssubtype=<num>     set the file system's fssubtype identifier
+:     -o fstypename=<name>   set the file system's type name
+:     -o iosize=<size>       specify maximum I/O size in bytes
+:     -o jail_symlinks       contain symbolic links within the mount
+:     -o local               mark the volume as "local" (default is "nonlocal")
+:     -o negative_vncache    enable vnode name caching of non-existent objects
+:     -o sparse              enable support for sparse files
+:     -o volname=<name>      set the file system's volume name
+:
+: Available negative mount options:
+:     -o noalerts            disable all graphical alerts (if any) in macFUSE Core
+:     -o noappledouble       ignore Apple Double (._) and .DS_Store files entirely
+:     -o noapplexattr        ignore all "com.apple.*" extended attributes
+:     -o nobrowse            mark the volume as non-browsable by the Finder
+:     -o nolocalcaches       meta option equivalent to noreadahead,noubc,novncache
+:     -o noreadahead         disable I/O read-ahead behavior for this file system
+:     -o nosynconclose       disable sync-on-close behavior (enabled by default)
+:     -o nosyncwrites        disable synchronous-writes behavior (dangerous)
+:     -o noubc               disable the unified buffer cache for this file system
+:     -o novncache           disable the vnode name cache for this file system
+: mount: /Volumes/4s2 failed with 64
 
 So =mount= is looking less promising.  This appears to be =mount= just spewing
 the usage information of =macfuse= because it is giving =macfuse= an erroneous
@@ -317,6 +323,7 @@ reboots and swapping the physical card out to stow my laptop between attempts,
 it must have moved.  Sigh.  Let's do this again.  At least I know with
 confidence that I want to be mounting the "2" partition.
 
+#+name: fuse-ext2-mount-try-again
 #+begin_src shell :results none :exports code
 sudo fuse-ext2 /dev/disk6s2 /Volumes/4s2
 #+end_src
@@ -324,6 +331,7 @@ sudo fuse-ext2 /dev/disk6s2 /Volumes/4s2
 I didn't rename the directory to a matching =6s2= because I just want to _try_
 something.  Results are promising and with a delay:
 
+#+name: fuse-ext2-read-only-mount-output
 #+begin_example
 Mounting /dev/disk6s2 Read-Only.
 Use 'force' or 'rw+' options to enable Read-Write mode
@@ -331,11 +339,12 @@ Use 'force' or 'rw+' options to enable Read-Write mode
 
 And then:
 
+#+name: ext2-file-listing
 #+begin_src shell :results output :exports code :cache yes
 ls /Volumes/4s2
 #+end_src
 
-#+RESULTS[260f8515aac0e18dbcc8dc13599b92ea170b93ee]:
+#+RESULTS[67c84b0c58ad5ede4741907fe9e9d7e579ac0c9e]: ext2-file-listing
 #+begin_example
 bin
 boot
@@ -359,6 +368,7 @@ Wow something worked!  I'm going to treat myself.
 
 Now let's clean up the directory name, and make it read+write.
 
+#+name: fuse-ext2-mount-clean
 #+begin_src shell :results none :exports code
 sudo umount /Volumes/4s2
 sudo mv /Volumes/{4,6}s2
@@ -375,6 +385,7 @@ due to some =zsh= magic?
 
 The commands again, and note that now we're back to =disk4=:
 
+#+name: fuse-ext2-mount-clean-picard
 #+begin_src shell :results none :exports code
 sudo mkdir /Volumes/picard
 sudo fuse-ext2 -o rw+ /dev/disk4s2 /Volumes/picard
@@ -421,39 +432,43 @@ for whatever reason.
 
 Okay, I'm going to try really hard not to swear off computers forever.
 
-#+begin_src shell :results output
+#+name: pi-ssh-touch-file
+#+begin_src shell :results output :cache yes :exports code
 touch /Volumes/FIRMWARE/ssh
 echo "$USER:$(echo 'lolno' | openssl passwd -stdin)" > /Volumes/FIRMWARE/userconf
 #+end_src
 
 The instructions use a =-6= argument, but that doesn't work for my =openssl=:
 
+#+name: openssl-version
 #+begin_src shell :results output :cache yes :exports both
 openssl version
 #+end_src
 
-#+RESULTS[fd79c183d922dc546b2e5c0472485a433c65ca97]:
+#+RESULTS[fd79c183d922dc546b2e5c0472485a433c65ca97]: openssl-version
 : LibreSSL 3.3.6
 
 Which I believe is the stock version running on my MacBook, based on:
 
+#+name: openssl-which
 #+begin_src shell :results output :cache yes :exports both
 which openssl
 #+end_src
 
-#+RESULTS[dd1abf4838ce8ea7276cd82f3e78e268f7cec79e]:
+#+RESULTS[dd1abf4838ce8ea7276cd82f3e78e268f7cec79e]: openssl-which
 : /usr/bin/openssl
 
 Otherwise it would be a deep path under =/nix=.
 
 A quick check of the files shows they are there and in the desired state:
 
+#+name: pi-image-ssh-and-userconf
 #+begin_src shell :results output :exports both :cache yes
 ls /Volumes/FIRMWARE/ssh
 cat /Volumes/FIRMWARE/userconf
 #+end_src
 
-#+RESULTS[745fc503a9afa80c6d3f6fb251a8e1c43610236f]:
+#+RESULTS[745fc503a9afa80c6d3f6fb251a8e1c43610236f]: pi-image-ssh-and-userconf
 : /Volumes/FIRMWARE/ssh
 : logan:oKYG/fePTExgs
 
@@ -488,6 +503,7 @@ the Pi, which apparently it advertises on.
 
 The command link invocation is provided in this [[https://apple.stackexchange.com/a/362741][answer]]:
 
+#+name: pi-discover-dns-sd
 #+begin_src shell :results output :exports code
 dns-sd -Gv4v6 raspberrypi.local
 #+end_src
@@ -501,12 +517,13 @@ Essentially it means that the Pi isn't powered properly if the USB-C cable is
 So how do I know if the Pi got sufficient power or not?  I can check the SD card
 to see if the configuration files were removed on-boot.
 
+#+name: pi-image-list-ssh-and-userconf
 #+begin_src shell :results output :exports both :cache yes
 ls /Volumes/FIRMWARE | grep ssh
 ls /Volumes/FIRMWARE | grep userconf
 #+end_src
 
-#+RESULTS[b9b1f6084d57e738ed509800291ecaff1db68bca]:
+#+RESULTS[b9b1f6084d57e738ed509800291ecaff1db68bca]: pi-image-list-ssh-and-userconf
 : ssh
 : userconf
 
@@ -570,6 +587,7 @@ the "Nix way".
 
 I used:
 
+#+name: pi-image-wget
 #+begin_src shell :results none :exports code
 wget https://downloads.raspberrypi.com/raspios_arm64/images/raspios_arm64-2023-12-06/2023-12-05-raspios-bookworm-arm64.img.xz\?_gl\=1\*qvoa7r\*_ga\*MjYzMjA4NTA3LjE3MDMyMzk1Nzc.\*_ga_22FD70LWDS\*MTcwMzMzMTYzMi4yLjAuMTcwMzMzMTYzMi4wLjAuMA..
 mv \
@@ -583,9 +601,11 @@ Oh oh, I did get to use Nix a little!  I had to install the =xz= package to get
 
 And then flashed the card with:
 
+#+name: pi-image-dd
 #+begin_src shell :results none :exports code
 sudo dd if=2023-12-05-raspios-bookworm-arm64.img of=/dev/disk4 bs=1M status=progress conv=fsync
 #+end_src
+
 * Building the Image
 :PROPERTIES:
 :CUSTOM_ID: building-the-image
@@ -616,6 +636,7 @@ manage the host configuration via a standard Nix configuration.
 
 In the Discourse, Sweenu states the Pi can be updated thusly:
 
+#+name: nix-flake-grunfeld-deploy-example
 #+begin_src shell :results none :exports code
 nix flake update
 deploy ".#grunfeld"
@@ -626,6 +647,7 @@ Where =grunfeld= is the name of the Raspberry Pi.
 In the repository's README, it states the image can be created and copied like
 so:
 
+#+name: nix-flake-grunfeld-generate-attempt
 #+begin_src shell :results none :exports code
 nixos-generate --flake '.#grunfeld' --format sd-aarch64 --system aarch64-linux
 unzstd -d {the output path from the command above} -o nixos-sd-image.img
@@ -689,6 +711,7 @@ I found [[https://notes.abhinavsarkar.net/2022/just-nix-podman-combo][Just, Nix 
 thing.  The post has some great incantations in it that I was happy to leverage
 into this =with-podman.sh= script:
 
+#+name: podman-run-script-clean
 #+begin_src shell :results none :exports code
 #!/usr/bin/env bash
 set -euo pipefail
@@ -715,6 +738,7 @@ use thoughtlessly and I really like that.
 
 Here's an example run:
 
+#+name: podman-script-example
 #+begin_example
 @ ./with-podman.sh ls -al
 Error: podman-machine-default: VM already exists
@@ -780,6 +804,7 @@ paired down repository from =sweenu= and see if I can build an image from it.
 :END:
 From =sweenu='s earlier invocations, I have adapted it to be:
 
+#+name: podman-nix-pi-generate-for-iron
 #+begin_src shell :results none :exports code
 ./with-podman.sh "
 nixos-generate --flake '.#iron' --format sd-aarch64 --system aarch64-linux;
@@ -800,15 +825,17 @@ there isn't some weird quoting issues, but there isn't - all is well.
 
 I tried a nix invocation I know to work:
 
+#+name: podman-nix-pi-channel-list
 #+begin_src shell :results none :exports code
 ./with-podman.sh nix-channel --list
 #+end_src
 
 And I get:
 
-#+begin_example
+#+name: podman-nix-pi-channel-list-output
+#+begin_src :exports code
 nixpkgs https://nixos.org/channels/nixpkgs-unstable
-#+end_example
+#+end_src
 
 Which is a very reasonable/expected output.  So some nix tools are available,
 but why can't it find =nixos-genereate=?  This is literally my first time using
@@ -819,8 +846,9 @@ _something_, but just not on my path for whatever reason.  I double check and
 realize I'm searching for =nix-generate= instead of =nixos-generate=, whoops.
 
 =nixos-genereate= is supplied by [[https://github.com/nix-community/nixos-generators][nixos-generators]] and it requires installation -
-it's no something that ships with =nixos=.
+it's not something that ships with =nixos=.
 
+#+name: podman-nix-pi-genereate-with-nix-run
 #+begin_src shell :results none :exports code
 ./with-podman.sh "
 nix run github:nix-community/nixos-generators -- \
@@ -830,6 +858,7 @@ nix run github:nix-community/nixos-generators -- \
 
 And I get:
 
+#+name: podman-nix-pi-genereate-with-nix-run-output
 #+begin_example
 error: experimental Nix feature 'nix-command' is disabled; add '--extra-experimental-features nix-command' to enable it
 #+end_example
@@ -942,10 +971,6 @@ nix \
 #+end_src
 
 To get:
-
-#+begin_example
-
-#+end_example
 
 #+begin_src shell :results none :exports code
 ./with-podman.sh "
@@ -1198,11 +1223,12 @@ result -> /nix/store/dv21jmin4aqq4m0zvlbfbw2d6c1d47sr-nixos-sd-image-24.05.20231
 
 I quickly discovered that the symlink is orphaned.
 
+#+name: image-extract-ls
 #+begin_src shell :results output :dir ~/dev/proton-nix :cache yes :exports both
 ls -al $(readlink result) 2>&1
 #+end_src
 
-#+RESULTS:
+#+RESULTS[e5d8f652cbde164dd63fd986637e27c43c91eb26]: image-extract-ls
 : ls: cannot access '/nix/store/dv21jmin4aqq4m0zvlbfbw2d6c1d47sr-nixos-sd-image-24.05.20231222.6df37dc-aarch64-linux.img': No such file or directory
 
 I bet there is some =containerd= trickery going on here.  Here's what I think
