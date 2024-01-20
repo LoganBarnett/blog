@@ -6,7 +6,7 @@
 #+file_tags:
 #+tags:
 #+auto_id:   t
-#+options:   toc:nil
+#+options:   toc:t
 
 #+BEGIN_EXPORT html
 ---

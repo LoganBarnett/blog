@@ -1,3 +1,44 @@
+<div id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#what-is-this">1. What is this?</a></li>
+<li><a href="#introduction">2. Introduction</a></li>
+<li><a href="#nix-thus-far">3. Nix Thus Far</a></li>
+<li><a href="#today's-project:-working-on-a-raspberry-pi">4. Today&rsquo;s Project: Working on a Raspberry Pi</a></li>
+<li><a href="#somehow-write-to-the-pi-sd-card">5. Somehow Write to the Pi SD card</a>
+<ul>
+<li><a href="#somehow-write-to-the-pi-sd-card--empower-editing-sd-card-files-from-macos-directly">5.1. Empower Editing SD Card Files from macOS Directly</a></li>
+<li><a href="#somehow-write-to-the-pi-sd-card--making-edits-to-the-sd-card">5.2. Making Edits to the SD Card</a>
+<ul>
+<li><a href="#somehow-write-to-the-pi-sd-card--making-edits-to-the-sd-card--=sshd=">5.2.1. <code>sshd</code></a></li>
+</ul>
+</li>
+<li><a href="#somehow-write-to-the-pi-sd-card--connecting-to-the-pi-usb-c-fail">5.3. Connecting to the Pi (USB-C fail)</a></li>
+<li><a href="#somehow-write-to-the-pi-sd-card--imaging-the-pi-correctly">5.4. Imaging the Pi Correctly</a></li>
+</ul>
+</li>
+<li><a href="#abandon-nix-and-just-get-it-done">6. Abandon Nix and Just Get it Done<span class="tag"><span class="private">private</span></span></a></li>
+<li><a href="#building-the-image">7. Building the Image</a>
+<ul>
+<li><a href="#building-the-image--prior-art">7.1. Prior Art</a></li>
+<li><a href="#building-the-image--doing-real-nix-things-on-macos">7.2. Doing Real Nix Things on macOS</a></li>
+<li><a href="#building-the-image--building-the-nixos-pi-image">7.3. Building the NixOS Pi image</a>
+<ul>
+<li><a href="#building-the-image--building-the-nixos-pi-image--trying-to-make-it-work-with-=digga=">7.3.1. Trying to Make it Work with <code>digga</code></a></li>
+<li><a href="#building-the-image--building-the-nixos-pi-image--just-use-=nix-generators=">7.3.2. Just Use <code>nix-generators</code></a></li>
+<li><a href="#building-the-image--building-the-nixos-pi-image--extracting-the-image">7.3.3. Extracting the Image</a></li>
+</ul>
+</li>
+<li><a href="#building-the-image--no-joy-on-boot">7.4. No Joy on Boot</a></li>
+<li><a href="#building-the-image--back-and-display-ports">7.5. Back, and Display Ports</a></li>
+<li><a href="#building-the-image--actually-joy-on-boot">7.6. Actually Joy on Boot</a></li>
+</ul>
+</li>
+<li><a href="#conclusion">8. Conclusion</a></li>
+</ul>
+</div>
+</div>
 ---
 categories: nix
 date: 2023-12-22
@@ -162,7 +203,7 @@ I try to mount my disk with invocations such as these:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-shell" id="orge34ab73"><span style="color: #FCCE7B;">sudo</span> fuse-ext2 /dev/disk4s1 /Volumes/4s1
+<pre class="src src-shell" id="org3682bda"><span style="color: #FCCE7B;">sudo</span> fuse-ext2 /dev/disk4s1 /Volumes/4s1
 <span style="color: #FCCE7B;">sudo</span> fuse-ext2 /dev/disk4s2 /Volumes/4s2
 </pre>
 </div>
@@ -203,7 +244,7 @@ normal runtime.  I attempt to mount again with:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-shell" id="org75dc086"><span style="color: #FCCE7B;">sudo</span> fuse-ext2 /dev/disk4s2 /Volumes/4s2
+<pre class="src src-shell" id="org11a7739"><span style="color: #FCCE7B;">sudo</span> fuse-ext2 /dev/disk4s2 /Volumes/4s2
 </pre>
 </div>
 
@@ -231,7 +272,7 @@ here.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-shell" id="orgc12fae2"><span style="color: #FCCE7B;">sudo</span> <span style="color: #FCCE7B;">mkdir</span> /Volumes/4s2
+<pre class="src src-shell" id="org874425c"><span style="color: #FCCE7B;">sudo</span> <span style="color: #FCCE7B;">mkdir</span> /Volumes/4s2
 <span style="color: #FCCE7B;">sudo</span> fuse-ext2 /dev/disk4s2 /Volumes/4s2
 </pre>
 </div>
@@ -252,7 +293,7 @@ I try:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-shell" id="org131e1cc"><span style="color: #FCCE7B;">sudo</span> mount -t fuse-ext2 /dev/disk4s2 /Volumes/4s2
+<pre class="src src-shell" id="orge448fb2"><span style="color: #FCCE7B;">sudo</span> mount -t fuse-ext2 /dev/disk4s2 /Volumes/4s2
 </pre>
 </div>
 
@@ -270,7 +311,7 @@ me <span class="underline">something</span> of relevance:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-shell" id="orgc77de38"><span style="color: #FCCE7B;">ls</span> /Library/Filesystems
+<pre class="src src-shell" id="orgdba6458"><span style="color: #FCCE7B;">ls</span> /Library/Filesystems
 </pre>
 </div>
 
@@ -286,7 +327,7 @@ So I try this modified <code>mount</code>:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-shell" id="org0737515"><span style="color: #FCCE7B;">sudo</span> mount -t macfuse.fs /dev/disk4s2 /Volumes/4s2
+<pre class="src src-shell" id="orga6b9a61"><span style="color: #FCCE7B;">sudo</span> mount -t macfuse.fs /dev/disk4s2 /Volumes/4s2
 </pre>
 </div>
 
@@ -349,7 +390,7 @@ in order.  Oftentimes errors come from the user, not the software.  I find <code
 diskutil list</code> gives some good answers.
 </p>
 
-<pre class="example" id="orgf32fc4d">
+<pre class="example" id="org39153fd">
 &lt;snip&gt;
 /dev/disk6 (internal, physical):
    #:                       TYPE NAME                    SIZE       IDENTIFIER
@@ -366,7 +407,7 @@ confidence that I want to be mounting the &ldquo;2&rdquo; partition.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-shell" id="orgc869d4e"><span style="color: #FCCE7B;">sudo</span> fuse-ext2 /dev/disk6s2 /Volumes/4s2
+<pre class="src src-shell" id="orgf6d0821"><span style="color: #FCCE7B;">sudo</span> fuse-ext2 /dev/disk6s2 /Volumes/4s2
 </pre>
 </div>
 
@@ -375,7 +416,7 @@ I didn&rsquo;t rename the directory to a matching <code>6s2</code> because I jus
 something.  Results are promising and with a delay:
 </p>
 
-<pre class="example" id="orgee11389">
+<pre class="example" id="org0c4c628">
 Mounting /dev/disk6s2 Read-Only.
 Use 'force' or 'rw+' options to enable Read-Write mode
 </pre>
@@ -385,7 +426,7 @@ And then:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-shell" id="orgbe6c9e1"><span style="color: #FCCE7B;">ls</span> /Volumes/4s2
+<pre class="src src-shell" id="orgfd4f2c3"><span style="color: #FCCE7B;">ls</span> /Volumes/4s2
 </pre>
 </div>
 
@@ -398,7 +439,7 @@ Now let&rsquo;s clean up the directory name, and make it read+write.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-shell" id="org1f3a286"><span style="color: #FCCE7B;">sudo</span> umount /Volumes/4s2
+<pre class="src src-shell" id="org21ae28b"><span style="color: #FCCE7B;">sudo</span> umount /Volumes/4s2
 <span style="color: #FCCE7B;">sudo</span> <span style="color: #FCCE7B;">mv</span> /Volumes/<span style="color: #51afef;">{</span>4,6<span style="color: #51afef;">}</span>s2
 <span style="color: #FCCE7B;">sudo</span> fuse-ext2 -o rw+ /dev/disk6s2 /Volumes/4s2
 </pre>
@@ -419,7 +460,7 @@ The commands again, and note that now we&rsquo;re back to <code>disk4</code>:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-shell" id="org5eb57b6"><span style="color: #FCCE7B;">sudo</span> <span style="color: #FCCE7B;">mkdir</span> /Volumes/picard
+<pre class="src src-shell" id="org3edc779"><span style="color: #FCCE7B;">sudo</span> <span style="color: #FCCE7B;">mkdir</span> /Volumes/picard
 <span style="color: #FCCE7B;">sudo</span> fuse-ext2 -o rw+ /dev/disk4s2 /Volumes/picard
 </pre>
 </div>
@@ -480,7 +521,7 @@ Okay, I&rsquo;m going to try really hard not to swear off computers forever.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-shell" id="orgb3e046d"><span style="color: #FCCE7B;">touch</span> /Volumes/FIRMWARE/ssh
+<pre class="src src-shell" id="org72122b3"><span style="color: #FCCE7B;">touch</span> /Volumes/FIRMWARE/ssh
 <span style="color: #FCCE7B;">echo</span> <span style="color: #7bc275;">"</span><span style="color: #a991f1;">$</span><span style="color: #dcafe9;">USER</span><span style="color: #7bc275;">:</span><span style="color: #C57BDB; font-weight: bold;">$(</span><span style="color: #C57BDB; font-weight: bold;">echo</span><span style="color: #C57BDB; font-weight: bold;"> 'lolno' | openssl passwd -stdin)</span><span style="color: #7bc275;">"</span> &gt; /Volumes/FIRMWARE/usercon<span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">f</span>
 </pre>
 </div>
@@ -490,7 +531,7 @@ The instructions use a <code>-6</code> argument, but that doesn&rsquo;t work for
 </p>
 
 <div class="org-src-container">
-<pre class="src src-shell" id="orga8a2c07">openssl version
+<pre class="src src-shell" id="org575492d">openssl version
 </pre>
 </div>
 
@@ -504,7 +545,7 @@ Which I believe is the stock version running on my MacBook, based on:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-shell" id="org716fa20"><span style="color: #C57BDB;">which</span> openssl
+<pre class="src src-shell" id="org3748a24"><span style="color: #C57BDB;">which</span> openssl
 </pre>
 </div>
 
@@ -522,7 +563,7 @@ A quick check of the files shows they are there and in the desired state:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-shell" id="org288a97a"><span style="color: #FCCE7B;">ls</span> /Volumes/FIRMWARE/ssh
+<pre class="src src-shell" id="org8ab3cb8"><span style="color: #FCCE7B;">ls</span> /Volumes/FIRMWARE/ssh
 <span style="color: #FCCE7B;">cat</span> /Volumes/FIRMWARE/userconf
 </pre>
 </div>
@@ -577,7 +618,7 @@ The command link invocation is provided in this <a href="https://apple.stackexch
 </p>
 
 <div class="org-src-container">
-<pre class="src src-shell" id="orge23ebff">dns-sd -Gv4v6 raspberrypi.local
+<pre class="src src-shell" id="org88d6feb">dns-sd -Gv4v6 raspberrypi.local
 </pre>
 </div>
 
@@ -595,7 +636,7 @@ to see if the configuration files were removed on-boot.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-shell" id="orgd12bba0"><span style="color: #FCCE7B;">ls</span> /Volumes/FIRMWARE | <span style="color: #FCCE7B;">grep</span> ssh
+<pre class="src src-shell" id="org32a7282"><span style="color: #FCCE7B;">ls</span> /Volumes/FIRMWARE | <span style="color: #FCCE7B;">grep</span> ssh
 <span style="color: #FCCE7B;">ls</span> /Volumes/FIRMWARE | <span style="color: #FCCE7B;">grep</span> userconf
 </pre>
 </div>
@@ -682,7 +723,7 @@ I used:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-shell" id="org9776a29">wget https://downloads.raspberrypi.com/raspios_arm64/images/raspios_arm64-2023-1<span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">2-06/2023-12-05-raspios-bookworm-arm64.img.xz</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">\?</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">_gl</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">\=</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">1</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">\*</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">qvoa7r</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">\*</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">_ga</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">\*</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">MjYzMjA4NTA3LjE3MDMyMzk1Nzc.</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">\*</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">_ga_22FD70LWDS</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">\*</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">MTcwMzMzMTYzMi4yLjAuMTcwMzMzMTYzMi4wLjAuMA..</span>
+<pre class="src src-shell" id="org3b72a1e">wget https://downloads.raspberrypi.com/raspios_arm64/images/raspios_arm64-2023-1<span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">2-06/2023-12-05-raspios-bookworm-arm64.img.xz</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">\?</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">_gl</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">\=</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">1</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">\*</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">qvoa7r</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">\*</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">_ga</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">\*</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">MjYzMjA4NTA3LjE3MDMyMzk1Nzc.</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">\*</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">_ga_22FD70LWDS</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">\*</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">MTcwMzMzMTYzMi4yLjAuMTcwMzMzMTYzMi4wLjAuMA..</span>
 <span style="color: #FCCE7B;">mv</span> <span style="color: #7bc275;">\</span>
   <span style="color: #7bc275;">'2023-12-05-raspios-bookworm-arm64.img.xz?_gl=1*qvoa7r*_ga*MjYzMjA4NTA3LjE3MDM</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">yMzk1Nzc.*_ga_22FD70LWDS*MTcwMzMzMTYzMi4yLjAuMTcwMzMzMTYzMi4wLjAuMA..'</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;"> </span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">\</span>
   2023-12-05-raspios-bookworm-arm64.img.xz
@@ -700,7 +741,7 @@ And then flashed the card with:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-shell" id="org9b71add"><span style="color: #FCCE7B;">sudo</span> dd <span style="color: #dcafe9;">if</span>=2023-12-05-raspios-bookworm-arm64.img <span style="color: #dcafe9;">of</span>=/dev/disk4 <span style="color: #dcafe9;">bs</span>=1M <span style="color: #dcafe9;">status</span>=prog<span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">ress </span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">conv</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">=fsync</span>
+<pre class="src src-shell" id="org96d54a9"><span style="color: #FCCE7B;">sudo</span> dd <span style="color: #dcafe9;">if</span>=2023-12-05-raspios-bookworm-arm64.img <span style="color: #dcafe9;">of</span>=/dev/disk4 <span style="color: #dcafe9;">bs</span>=1M <span style="color: #dcafe9;">status</span>=prog<span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">ress </span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">conv</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">=fsync</span>
 </pre>
 </div>
 </div>
@@ -738,7 +779,7 @@ In the Discourse, Sweenu states the Pi can be updated thusly:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-shell" id="orga5596fc">nix flake update
+<pre class="src src-shell" id="org7e91dc3">nix flake update
 deploy <span style="color: #7bc275;">".#grunfeld"</span>
 </pre>
 </div>
@@ -753,7 +794,7 @@ so:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-shell" id="orgc1a771a">nixos-generate --flake <span style="color: #7bc275;">'.#grunfeld'</span> --format sd-aarch64 --system aarch64-linux
+<pre class="src src-shell" id="org420a9a7">nixos-generate --flake <span style="color: #7bc275;">'.#grunfeld'</span> --format sd-aarch64 --system aarch64-linux
 unzstd -d <span style="color: #51afef;">{</span>the output path from the command above<span style="color: #51afef;">}</span> -o nixos-sd-image.img
 <span style="color: #FCCE7B;">sudo</span> dd <span style="color: #dcafe9;">if</span>=nixos-sd-image.img <span style="color: #dcafe9;">of</span>=/dev/sda <span style="color: #dcafe9;">bs</span>=64K <span style="color: #dcafe9;">status</span>=progress
 </pre>
@@ -834,7 +875,7 @@ into this <code>with-podman.sh</code> script:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-shell" id="orgb9a1ebb"><span style="color: #62686E;">#</span><span style="color: #62686E;">!/usr/bin/</span><span style="color: #51afef;">env</span><span style="color: #62686E;"> bash</span>
+<pre class="src src-shell" id="orgc2e7bf3"><span style="color: #62686E;">#</span><span style="color: #62686E;">!/usr/bin/</span><span style="color: #51afef;">env</span><span style="color: #62686E;"> bash</span>
 <span style="color: #C57BDB;">set</span> -euo pipefail
 <span style="color: #dcafe9;">container_name</span>=<span style="color: #7bc275;">"nix-run"</span>
 <span style="color: #dcafe9;">script</span>=<span style="color: #7bc275;">"</span><span style="color: #a991f1;">$</span><span style="color: #dcafe9;">@</span><span style="color: #7bc275;">"</span>
@@ -864,7 +905,7 @@ use thoughtlessly and I really like that.
 Here&rsquo;s an example run:
 </p>
 
-<pre class="example" id="orge0d4d8d">
+<pre class="example" id="org36c18f4">
 @ ./with-podman.sh ls -al
 Error: podman-machine-default: VM already exists
 Error: cannot start VM podman-machine-default: VM already running or starting
@@ -939,7 +980,7 @@ From <code>sweenu</code>&rsquo;s earlier invocations, I have adapted it to be:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-shell" id="org1aa8167">./with-podman.sh <span style="color: #7bc275;">"</span>
+<pre class="src src-shell" id="org02d807a">./with-podman.sh <span style="color: #7bc275;">"</span>
 <span style="color: #7bc275;">nixos-generate --flake '.#iron' --format sd-aarch64 --system aarch64-linux;</span>
 <span style="color: #7bc275;">"</span>
 </pre>
@@ -949,7 +990,7 @@ From <code>sweenu</code>&rsquo;s earlier invocations, I have adapted it to be:
 Which outputs:
 </p>
 
-<pre class="example" id="org09588f9">
+<pre class="example" id="orgef7f72d">
 Error: crun: executable file `nixos-generate` not found in $PATH: No such file or directory: OCI runtime attempted to invoke a command that was not found
 Error: read unixpacket @-&gt;/proc/self/fd/13/attach: read: connection reset by peer
 </pre>
@@ -966,7 +1007,7 @@ I tried a nix invocation I know to work:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-shell" id="org13050f5">./with-podman.sh nix-channel --list
+<pre class="src src-shell" id="org65b0125">./with-podman.sh nix-channel --list
 </pre>
 </div>
 
@@ -975,7 +1016,7 @@ And I get:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-:exports" id="orgecca946">nixpkgs https://nixos.org/channels/nixpkgs-unstable
+<pre class="src src-:exports" id="orgbdafeb3">nixpkgs https://nixos.org/channels/nixpkgs-unstable
 </pre>
 </div>
 
@@ -995,7 +1036,7 @@ it&rsquo;s not something that ships with <code>nixos</code>.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-shell" id="org0a1c5b9">./with-podman.sh <span style="color: #7bc275;">"</span>
+<pre class="src src-shell" id="org388641c">./with-podman.sh <span style="color: #7bc275;">"</span>
 <span style="color: #7bc275;">nix run github:nix-community/nixos-generators -- \</span>
 <span style="color: #7bc275;">  --flake '.#iron' --format sd-aarch64 --system aarch64-linux;</span>
 <span style="color: #7bc275;">"</span>
@@ -1006,7 +1047,7 @@ it&rsquo;s not something that ships with <code>nixos</code>.
 And I get:
 </p>
 
-<pre class="example" id="orgf39acb5">
+<pre class="example" id="orge6e0fa3">
 error: experimental Nix feature 'nix-command' is disabled; add '--extra-experimental-features nix-command' to enable it
 </pre>
 
@@ -1034,7 +1075,7 @@ issues.
 Now I see:
 </p>
 
-<pre class="example" id="org29f5d7a">
+<pre class="example" id="orgcfbd338">
 error: experimental Nix feature 'flakes' is disabled; add '--extra-experimental-features flakes' to enable it
 </pre>
 
@@ -1063,7 +1104,7 @@ I see a lot of stuff going on with the nix store - a sign of progress!
 But we end with:
 </p>
 
-<pre class="example" id="org0f0bcd0">
+<pre class="example" id="orgb741ae2">
 warning: Ignoring setting 'auto-allocate-uids' because experimental feature 'auto-allocate-uids' is not enabled
 warning: Ignoring setting 'impure-env' because experimental feature 'configurable-impure-env' is not enabled
 building '/nix/store/531cw9n4lxqx3w830ijackc5xffgz27k-nixos-generate.drv'...
@@ -1090,7 +1131,7 @@ PR&#x2026;?  Let&rsquo;s cook a new invocation:
 I get:
 </p>
 
-<pre class="example" id="org0c4e3b2">
+<pre class="example" id="org0553d4b">
 error: cannot find flake 'flake:awk' in the flake registries
 </pre>
 
@@ -1128,7 +1169,7 @@ Actually I try several things out, and eventually land on:
 I ran into:
 </p>
 
-<pre class="example" id="orge871be6">
+<pre class="example" id="orgfd8a034">
 path '/workdir/--flake' does not contain a 'flake.nix', searching up
 error: getting status of '/workdir/--flake': No such file or directory
 </pre>
@@ -1347,7 +1388,7 @@ configured in some other way that is not obvious to me.
 The error for the boot loader is this:
 </p>
 
-<pre class="example" id="org2093a78">
+<pre class="example" id="org238d997">
 error: The option `system.build.installBootLoader' is defined multiple times while it's expected to be unique.
        Only one bootloader can be enabled at a time. This requirement has not
        been checked until NixOS 22.05. Earlier versions defaulted to the last
@@ -1362,7 +1403,7 @@ Unfortunately I don&rsquo;t have an error capture for <code>nix.registry</code>.
 The <code>nix.registry</code> error:
 </p>
 
-<pre class="example" id="orgf6ed8a8">
+<pre class="example" id="org5c6babd">
 error:
        … while calling the 'derivationStrict' builtin
 
@@ -1427,7 +1468,7 @@ I get no meaningful output, but no news is good news in the Unix world.  I see
 that my local directory gets an <code>result</code> file.  It&rsquo;s a symlink.
 </p>
 
-<pre class="example" id="org9b9316f">
+<pre class="example" id="org442d377">
 result -&gt; /nix/store/dv21jmin4aqq4m0zvlbfbw2d6c1d47sr-nixos-sd-image-24.05.20231222.6df37dc-aarch64-linux.img
 </pre>
 </div>
@@ -1440,7 +1481,7 @@ I quickly discovered that the symlink is orphaned.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-shell" id="org810bf3e"><span style="color: #FCCE7B;">ls</span> -al $<span style="color: #51afef;">(</span>readlink result<span style="color: #51afef;">)</span> <span style="color: #e69055; font-weight: bold;">2</span>&gt;&amp;<span style="color: #e69055; font-weight: bold;">1</span>
+<pre class="src src-shell" id="org13fb74d"><span style="color: #FCCE7B;">ls</span> -al $<span style="color: #51afef;">(</span>readlink result<span style="color: #51afef;">)</span> <span style="color: #e69055; font-weight: bold;">2</span>&gt;&amp;<span style="color: #e69055; font-weight: bold;">1</span>
 </pre>
 </div>
 
@@ -1565,7 +1606,7 @@ Excellent!  And the positive case?
 </pre>
 </div>
 
-<pre class="example" id="org40d8bba">
+<pre class="example" id="org7f56b4a">
 Class Name: CRawDiskImage
 Size Information:
 	Total Bytes: 2829352960
@@ -1994,7 +2035,7 @@ interval.  The Bluetooth or WiFi radio, perhaps?  Either way, I have a working
 Pi!  Let&rsquo;s see if I can log in.
 </p>
 
-<pre class="example" id="org75a4445">
+<pre class="example" id="org2c7d995">
 $ ssh iron.proton
 The authenticity of host 'iron.proton (192.168.254.102)' can't be established.
 ED25519 key fingerprint is SHA256:E3b/T0lQiqItcIKbh2n6Wb/sOEV9nFbrVojJXlKmHrQ.
@@ -2012,7 +2053,7 @@ invocation shows the <code>initialPassword</code> field is good, but you won&rsq
 anything interesting here:
 </p>
 
-<pre class="example" id="org0869fd0">
+<pre class="example" id="orgbf5e2ce">
 [logan@iron:~]$ passwd
 Changing password for logan.
 Current password:
@@ -2025,7 +2066,7 @@ passwd: password updated successfully
 And then to see if I can use <code>sudo</code>:
 </p>
 
-<pre class="example" id="org5fb67bb">
+<pre class="example" id="org0faed35">
 [logan@iron:~]$ sudo ls
 
 We trust you have received the usual lecture from the local System
