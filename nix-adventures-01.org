@@ -1,3 +1,12 @@
+#+BEGIN_EXPORT html
+---
+categories: nix
+date: 2023-12-22
+layout: default
+title: Nix Adventures (part 1 of ?)
+---
+#+END_EXPORT
+
 #+title:     Nix Adventures (part 1 of ?)
 #+author:    Logan Barnett
 #+email:     logustus@gmail.com
@@ -7,15 +16,6 @@
 #+tags:
 #+auto_id:   t
 #+options:   toc:t
-
-#+BEGIN_EXPORT html
----
-categories: nix
-date: 2023-12-22
-layout: default
-title: Nix Adventures (part 1 of ?)
----
-#+END_EXPORT
 
 * What is this?
 :PROPERTIES:
