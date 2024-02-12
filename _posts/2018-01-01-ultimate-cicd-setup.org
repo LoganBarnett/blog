@@ -7,14 +7,19 @@ categories: software-engineering
 ---
 #+END_EXPORT
 
-#+TITLE:  The Ultimate CI/CD Setup
-#+AUTHOR: Logan Barnett
-#+EMAIL:  logustus@gmail.com
-#+DATE:   <2018-01-01 Mon>
-#+TAGS:   software-engineering
-#+TOC:    headlines 3
+#+title:     The Ultimate CI/CD Setup
+#+author:    Logan Barnett
+#+email:     logustus@gmail.com
+#+date:      <2018-01-01 Mon>
+#+tags:      software-engineering
+#+file_tags:
+#+options:   toc:nil
+#+auto_id:   t
 
 * introduction
+:PROPERTIES:
+:CUSTOM_ID: introduction
+:END:
 
 CI/CD stands for Continuous Integration / Continous (Delivery|Deployment).
 Roughly when we refer to this, we're talking about an automated
@@ -25,7 +30,19 @@ to be able to use the software you made. So we need to deploy the software
 somewhere, and the software needs to be consumable in a way that doesn't require
 your machine's development setup for those who need to consume said software.
 
-* general philosophy
+* The Ultimate CI/CD Setup
+:PROPERTIES:
+:CUSTOM_ID: the-ultimate-ci/cd-setup
+:END:
+
+#+toc: headlines 10 local
+#+options: h:10
+#+options: num:10
+
+** general philosophy
+:PROPERTIES:
+:CUSTOM_ID: the-ultimate-ci/cd-setup--general-philosophy
+:END:
 
 You want to automate as much as possible. I've worked at software shops where
 there's a _6 month_ delay between the business analyst putting together
@@ -64,7 +81,10 @@ software does what we think it should do. Those checks can be run as part of
 that deployment process. Any failure in the process means no deployment. The
 general approach here is to automate virtually every part of this process.
 
-** small releases
+*** small releases
+:PROPERTIES:
+:CUSTOM_ID: the-ultimate-ci/cd-setup--general-philosophy--small-releases
+:END:
 Releases should be done frequently and not when people are about to go home for
 the day. Frequent releases mean small releases. That means if something goes
 wrong, it's not painful to roll back. With orgs that do giant releases, they
@@ -79,22 +99,34 @@ security). This is a colossal waste of resources and very damaging to your
 team's morale. If someone deploys a new button and the button screws up your
 page layout, reverting is a no brainer.
 
-** feature flags
+*** feature flags
+:PROPERTIES:
+:CUSTOM_ID: the-ultimate-ci/cd-setup--general-philosophy--feature-flags
+:END:
 You can use flags (generally configuration variables) in your codebase to
 disable or enable certain features. Take the button out entirely and only enable
 it when you want to. This makes it easy to deploy changes all the way to
 production because your code when deployed shouldn't do anything until you
 actually flip the switch. This is
 
-* automation
+** automation
+:PROPERTIES:
+:CUSTOM_ID: the-ultimate-ci/cd-setup--automation
+:END:
 
-** tests
+*** tests
+:PROPERTIES:
+:CUSTOM_ID: the-ultimate-ci/cd-setup--automation--tests
+:END:
 
 Your app might have a suite of unit test, acceptance tests, type checks, etc
 that can be run. You want to run all of these. On my teams I put in checks for
 formatting as well.
 
-** deployment
+*** deployment
+:PROPERTIES:
+:CUSTOM_ID: the-ultimate-ci/cd-setup--automation--deployment
+:END:
 
 Software engineer salaries are pretty high, and costs for hardware or hosting is
 very low. Having an environment where your software gets automatically deployed
@@ -177,7 +209,10 @@ package "Gated deployment" {
 #+RESULTS:
 [[file:cicd-flow.svg]]
 
-** release notes
+*** release notes
+:PROPERTIES:
+:CUSTOM_ID: the-ultimate-ci/cd-setup--automation--release-notes
+:END:
 
 Lots of places require release notes to be present as part of a release. Release
 notes, or a change log is a list of what's different about this particular
@@ -212,7 +247,10 @@ some intention behind the changes we make. If we _must_ add the ability to hold
 the thumb button to make the thumbs up icon bigger, at least we'll know it got
 in there on purpose.
 
-*** branch naming
+**** branch naming
+:PROPERTIES:
+:CUSTOM_ID: the-ultimate-ci/cd-setup--automation--release-notes--branch-naming
+:END:
 In the good example above, those release notes could be built with some tooling.
 Assuming you're using =git= or something similar for your code, you can enforce
 a naming convention on your branches. Something like =<ticket
@@ -226,7 +264,10 @@ generally have special meaning in just about all of our tools. When your system
 does its automatic checks against new work, it can verify that the branch name
 matches the format.
 
-*** commit messages
+**** commit messages
+:PROPERTIES:
+:CUSTOM_ID: the-ultimate-ci/cd-setup--automation--release-notes--commit-messages
+:END:
 As an added benefit, adding the ticket number to the commit messages also can
 help if you need to play CSI on your codebase later. Software engineers are
 rightfully lazy. Don't ask them to do this unless you like talking to walls.
@@ -239,7 +280,10 @@ become clickable links to the tickets. The ticket system can also link back to
 commits and branches because you referred to them. Let the computer work for
 you!
 
-*** pull requests
+**** pull requests
+:PROPERTIES:
+:CUSTOM_ID: the-ultimate-ci/cd-setup--automation--release-notes--pull-requests
+:END:
 The new hotness with merging work is forming a pull request. Your CI/CD software
 can do an additional check: When the pull request is formed, require that
 there's something in there as a release message. The pull request might normally
@@ -266,7 +310,10 @@ RELEASE NOTE: Fix a bug where the app would crash if you forgot to add at least
 one student to the test.
 #+end_example
 
-*** stringing together the whole process
+**** stringing together the whole process
+:PROPERTIES:
+:CUSTOM_ID: the-ultimate-ci/cd-setup--automation--release-notes--stringing-together-the-whole-process
+:END:
 Now here's the kicker, you make some tooling that looks at the commit hash for
 the last release you did, and do a log all the way to the hash of the current
 release you're doing. Collect all of the ticket numbers out of those commits,
@@ -274,7 +321,13 @@ and then look for pull requests that also have those ticket numbers. Ask each
 pull request for its description and pull out the =RELEASE NOTE= text. That's
 what you stuff into your release notes.
 
-**** TODO add code to do the release note gathering
-* more to come
+***** TODO add code to do the release note gathering
+:PROPERTIES:
+:CUSTOM_ID: the-ultimate-ci/cd-setup--automation--release-notes--stringing-together-the-whole-process--add-code-to-do-the-release-note-gathering
+:END:
+** more to come
+:PROPERTIES:
+:CUSTOM_ID: the-ultimate-ci/cd-setup--more-to-come
+:END:
 I'll add some more about specific tools (Jenkins, Travis, etc) and some usable
 examples.
