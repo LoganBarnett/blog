@@ -1,0 +1,44 @@
+#+title:     Logan's Blog
+#+author:    Logan Barnett
+#+email:     logustus@gmail.com
+#+date:      <2024-02-11 Sun>
+#+language:  en
+#+file_tags:
+#+tags:
+
+This is the repository for my blog.  No, this isn't the front page itself but
+the README where I can stuff some notes I need about the blog.  It uses a the
+Jekyll static site generator to build static HTML, which then is hosted on
+GitHub.
+
+* Front matter
+
+Front matter is required to be in the absolute front of the document (even
+before org-mode metadata).  This is an example front-matter:
+
+#+begin_src org :results none
+,#+BEGIN_EXPORT html
+,---
+,categories: nix
+,date: 2024-02-11
+,layout: default
+,title: Nix Adventures part 1
+,parent: nix-adventures.org
+,---
+,#+END_EXPORT
+#+end_src
+
+* Isn't Jekyll discontinued
+
+This is what I've read.  I need time to transition it over to another static
+site generator.
+
+* Troubleshooting
+
+** No styling or =<head>= tag
+
+This means the front-matter didn't appear first in the exported HTML.  First,
+ensure the front-matter is before everything (including org-mode metadata such
+as =#+title:=).  Second, do not use =#+options: toc:t= but instead something
+like =#+toc: headlines 3=.  I don't know why one over the other puts everything
+first.  It's probably not a use case covered often in org-mode HTML exports.
