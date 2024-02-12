@@ -1,0 +1,937 @@
+#+BEGIN_EXPORT html
+---
+categories: machine learning
+date: 2024-02-11
+layout: default
+title: Machine Learning - Stable Diffusion Prompt Engineering
+---
+#+END_EXPORT
+
+#+title:     Machine Learning - Stable Diffusion Prompt Engineering
+#+author:    Logan Barnett
+#+email:     logustus@gmail.com
+#+date:      <2024-02-06 Tue>
+#+language:  en
+#+file_tags:
+#+tags:
+
+* Introduction
+
+From my prior adventures during [[file:./nix-adventures-02.org][Nix Adventures Part 2]], I managed to stand up a
+local instances of [[https://github.com/AUTOMATIC1111/stable-diffusion-webui][stable-diffusion-webui]] and I've been having both a lot of fun
+and some frustration with it.  This domain is not quite as push-button as I
+thought it would be.  There's a lot of information here, some of it dated, and
+much of it sitting on YouTube.  I hope this serves as a repository of the
+knowledge I gain here.  I will do my best to keep this documentation entirely
+reproducible - meaning that you can see version numbers, commit hashes,
+generation parameters (seeds, models, sample sizes), etc.  This is one thing I
+have found lacking on some of the communities out there.
+
+As of [2024-02-11 Sun] this is very much still a work in progress and some
+sections will be empty or needing better references supplied to it, but don't be
+afraid to send me an email with some corrections!  I'll keep this updated, and
+will try to keep a loose changelog if you happen to be eager to see updates.
+
+* Prompt Engineering
+
+** Prompt Engineering Introduction
+
+Prompt Engineering is its own discipline, apparently.  For a quick refresher: A
+prompt in the context of machine learning is a set of instructions for the
+machine learning tool to operate upon.  You might see something like "3D pandas
+riding bicycles" or "A robot in a workshop filled with human parts instead of
+machine parts".  From those descriptions, the tool will generate something that
+matches it.
+
+On a very high level, my understanding is that these tools have
+been "trained". This means they are shown a wealth of data (images, in our case)
+alongside keywords to identify them.  So they might be shown a picture of a
+motorcycle.  The picture includes keywords such as "motorcycle" but also of
+"engine", "black" (for the paint), "pavement" (if the background includes such
+things), and more.  This is built up as a "network" (a neural network, I think).
+It takes a great deal of computing power to train these networks, and I assume a
+wealth of very good data.  This requires humans to catalog a lot of stuff, but
+perhaps also other machine learning tools that are essentially the inverse of
+prompt-to-image generation.  This training produces a "model".
+
+The model is then given a prompt by the consumer of the tool.  The tool will
+then offer up some really bad images and say "does this match what was asked
+for?", and on the first pass the answer will be a resounding "no", so the tool
+takes another pass to clean things up a bit and make things closer, and then the
+match check is given again.  You could think of this as the old "draw the owl"
+thing from drawing books, wherein one draws some circles that could vaguely
+define the outline of the owl.  Then the artist is instructed to draw more and
+more details until satisfaction is reached.
+
+[[./assets/draw-the-owl01.jpeg]]
+
+Though there is a lot of in-between steps.  This process is much like that.
+Again though, this is my layman understanding and I hope to revise this as I
+learn more.
+
+There is some prior art here.  I have found this [[https://i.ibb.co/vm4fm7L/1661440027115223.jpg][image depicting different
+sampling methods]] but I don't know what all was used and I cannot arbitrarily
+add more sampling methods to see how it works.  I don't have a seed to reproduce
+the image.
+
+** Generated
+
+The results of this entire document are generated via literate programming using
+=org-babel=.  If you view the source of the original =org-mode= document you can
+see how it got generated, and use it to generate your own.  This doesn't use
+=stable-diffusion-webui= but instead =stable-diffusion= itself.
+=stable-diffusion-webui= it more or less a wrapper around =stable-diffusion=
+which translates a web UI into the appropriate Python calls.  We'll be making
+the Python calls directly for generating our images, but I will ensure that
+these calls match what I see in the UI given the same inputs.
+
+That all makes this document both highly reproducible and easy to update.  You
+could even shim in your own models to see what it looks like.  At some point I
+might offer an easy diffing mechanism between various models, but for now it'll
+just focus on emitting consistent results given its inputs.
+
+*** Generating Images - The Code
+
+**** The Lisp Helper
+
+First we need a quick way to evaluate code blocks.  Per the documentation of
+=org-babel=, =cache= does not work on the =#+call= form of invoking =org-babel=
+blocks.  That said, we can just make blocks of =emacs-lisp= that call a function
+for us.  This is that function:
+
+#+name: org-babel-block
+#+begin_src emacs-lisp :results none
+(defun org-babel-block (block, args
+  (save-excursion
+    (goto-char
+    (org-babel-find-named-block block))
+    (org-babel-execute-src-block-maybe)
+    )
+  )
+#+end_src
+
+And something to catch the missing blocks:
+
+#+name: missing-block
+#+begin_src emacs-lisp :results output
+(message "Error: The 'block' parameter was not provided for org-babel-block.")
+#+end_src
+
+**** Making API calls - A Test
+
+The [[https://github.com/AUTOMATIC1111/stable-diffusion-webui/wiki/API][Wiki based API documentation]] for =stable-diffusion-webui= is not complete.
+It does point to a =/docs= that can be accessed on the server.  This is just a
+pretty form of a OpenAPI document.  I also don't see the documentation for
+actually kicking off a generation of an image using the =txt2image= setup.
+
+I did find this [[https://gist.github.com/w-e-w/0f37c04c18e14e4ee1482df5c4eb9f53][gist]] with a Python script that got me going.  Thanks =w-e-w=!
+
+In the Wiki link above it is stated that the web UI must be started with =--api=
+argument.  I thought surely this had changed since the document was written,
+because why wouldn't you want this enabled?  Seems like something you'd disable
+explicitly.  Perhaps it's more muggle based.  In any case, it's very much
+required.  This tripped me up during my discovery of things.
+
+Of course, once you are running things with =--api=, all of the endpoints show
+up correctly in the =/docs= URL.  I should clean this up soon.
+
+#+name: test-text-to-image
+#+begin_src python :results output raw :cache yes :exports both
+import urllib.request
+import base64
+import json
+import time
+import os
+
+file_out = 'test'
+payload = {
+  'prompt': 'dreamscape',
+  'steps': 20,
+  'seed': 503043532,
+}
+request = urllib.request.Request(
+    'http://localhost:7860/sdapi/v1/txt2img',
+    headers={ 'Content-Type': 'application/json; charset=utf-8' },
+    data= json.dumps(payload).encode('utf-8'),
+)
+response = urllib.request.urlopen(request)
+response_data = json.loads(response.read().decode('utf-8'))
+
+for index, image in enumerate(response_data.get('images')):
+    path = f'{file_out}-{index}.png'
+    with open(path, "wb") as file:
+        file.write(base64.b64decode(image))
+        print(f'[[file:./{path}]]')
+#+end_src
+
+#+RESULTS[f7fceac10dfa59f2cb07c0ae1fcce9ca63e7b0a6]: test-text-to-image
+[[file:./test-0.png]]
+
+**** Making API Calls - A Reusable Block
+
+#+name: text-to-image
+#+begin_src python :results raw output :var file_out="mistake" samples=30 prompt="office worker plant" :tangle no :noweb yes :exports code
+import urllib.request
+import base64
+import json
+import time
+import os
+
+payload = {
+  'prompt': prompt,
+  'steps': samples,
+  'seed': 503043532,
+}
+request = urllib.request.Request(
+    'http://localhost:7860/sdapi/v1/txt2img',
+    headers={ 'Content-Type': 'application/json; charset=utf-8' },
+    data= json.dumps(payload).encode('utf-8'),
+)
+response = urllib.request.urlopen(request)
+response_data = json.loads(response.read().decode('utf-8'))
+
+for index, image in enumerate(response_data.get('images')):
+    path = f'{file_out}-{index}.png'
+    with open(path, "wb") as file:
+        file.write(base64.b64decode(image))
+        print(f'[[file:./{path}]]')
+#+end_src
+
+
+** Sample Prompts
+
+To give a little variety here, let's agree on a few base sample prompts that
+should explore a variety of different things we could show.  For each parameter
+we choose to tweak, we will use all of these base prompts as well.
+
+These parameters are laid out as a necessity for consistent generation, and it
+isn't terribly important that the values are understood for new readers.  This
+could serve as good reference though.
+
+#+name: prompt-base-1
+#+begin_src text :results none :exports code
+dreamscape
+#+end_src
+
+#+name: prompt-base-2
+#+begin_src text :results none :exports code
+man
+#+end_src
+
+#+name: prompt-base-3
+#+begin_src text :results none :exports code
+woman
+#+end_src
+
+#+name: prompt-base-4
+#+begin_src text :results none :exports code
+city or village or landscape
+#+end_src
+
+The seed will be:
+
+#+name: prompt-seed
+#+begin_src text :results none :exports code
+503043532
+#+end_src
+
+Our default sample size will be:
+
+#+name: prompt-sample-size
+#+begin_src text :results none :exports code
+20
+#+end_src
+
+Our default model will be:
+
+#+name: prompt-model
+#+begin_src text :results none :exports code
+endjourneyXL_v11
+#+end_src
+
+Our default sampling method will be:
+
+#+name: prompt-sampling-method
+#+begin_src text :results none :exports code
+dpm2pp_2m_karras
+#+end_src
+
+#+name: prompt-height
+#+begin_src text :results none :exports code
+512
+#+end_src
+
+#+name: prompt-width
+#+begin_src text :results none :exports code
+512
+#+end_src
+
+#+name: prompt-cfg
+#+begin_src text :results none :exports code
+7
+#+end_src
+
+The base URL for the =stable-diffusion-webui= server is:
+
+#+name: base-url
+#+begin_src text :results none :exports code
+http://localhost:7860
+#+end_src
+
+
+** Inputs
+
+Various inputs decide the quality of the image, what appears in the image, and
+so on.  This includes the prompt itself, but also a lot of other variables.  For
+the purposes of illustration, let's use this base image so we can see what the
+varied outcomes are.
+
+*** The Base
+
+As described in [[Sample Prompts]], our base is as follows:
+
+<<prompt-base-1>>
+
+#+begin_src emacs-lisp :results value raw :cache yes
+(org-sbe text-to-image
+  (file_out prompt-base-1)
+  (prompt prompt-base-1)
+ )
+#+end_src
+
+
+#+RESULTS[aaebefc06b142de9620bb80bb2f61a50fe5a2997]:
+[[file:./dreamscape-0.png]]
+
+#+begin_src emacs-lisp :results value raw :cache yes
+(org-sbe text-to-image
+  (file_out prompt-base-2)
+  (prompt prompt-base-2)
+ )
+#+end_src
+
+#+RESULTS[ea5e54db3058033701dc08c62e8731becaa6c7dc]:
+[[file:./man-0.png]]
+
+#+begin_src emacs-lisp :results value raw :cache yes
+(org-sbe text-to-image
+  (file_out prompt-base-3)
+  (prompt prompt-base-3)
+ )
+#+end_src
+
+#+RESULTS[42f7d8770240bf7ce7927b4901932214b8160377]:
+[[file:./woman-0.png]]
+
+#+begin_src emacs-lisp :results value raw :cache yes
+(org-sbe text-to-image
+  (file_out prompt-base-4)
+  (prompt prompt-base-4)
+ )
+#+end_src
+
+#+RESULTS[03ac0a74654cd7115083fdd6e0a297d1da6733d8]:
+[[file:./city or village or landscape-0.png]]
+
+*** Seed
+
+This should be front an center because it is key to using consistent results.
+The seed is a concept taking from random number generators (which this uses
+under the hood).  Random number generators aren't actually random but instead
+produce a fixed sequence of numbers that appears random.  If you have two random
+number generators using the same algorithm and the same seed, they will produce
+the exact same two sequences.  This is handy because you can lock in the seed to
+refine the existing image by tweaking its parameters.  I've noticed that using a
+particular seed also seems to pick the same qualities, even if the parameters or
+even the model differ.  I had found a sequence where "cute girl" had produced a
+Japanese woman consistently, regardless of other modifiers given that didn't
+influence ethnicity.
+
+Seeds will be used heavily in this document to produce consistent results.
+
+*** Classifier Free Guidance (CFG)
+
+Stable Diffusion (or perhaps all of these tools) expresses "creativity" in which
+it adds things that weren't asked for or ignores parts of your prompt.  This is
+called the Classifier Free Guidance scale, or CFG.  A lower number indicates
+more freedom on the tool's end, where the lowest number indicates a complete
+disregard for the prompt.  The higher it is, the more strictly the prompt is
+held to.  At very high numbers, the images will appear "forced".
+
+7 is the default in =stable-diffusion-webui=, which offers a great deal of
+creativity.  I am told 15 is "very high", but I don't actually know that I've
+seen it do a "bad" job so far at that level.
+
+*** Samples
+
+The number of samples is loosely the number of passes that will be made against
+the image.  With =stable-diffusion-webui=, you can see it creating passes
+slowly.  Occasionally the UI will load an image in-progress, which starts off
+being very fuzzy, and then moves to something full of artifacts, and at some
+point later you get the final image.
+
+The number of samples you use increases the fidelity of the image and also will
+remove things that are obvious errors (such as poor faces, hands, and so on that
+these tools are notorious for).  More samples means the image will take much
+longer.  If it takes a minute to generate a 20 sample image, then it will take
+around two minutes for 40 samples of the same image.  The default value is 20,
+and I have been cautioned that going above 50 is undesirable.  I generally start
+at 20 until the main elements of the image are captured, and then regenerate
+with the same seed using 50.
+
+Generally I think of this as just doing refinements, but during these trials I
+found that sample size can also result in entirely different images.  In some
+cases the images just get better - things look less blotchy and ill-defined.  In
+the case of the woman, I effectively have a separate image for each run.
+
+**** very low samples
+
+#+begin_src emacs-lisp :results value raw :cache yes
+(org-sbe text-to-image
+  (file_out $(concat (org-sbe prompt-base-1) "-low-samples"))
+  (prompt prompt-base-1)
+  (samples 10)
+)
+#+end_src
+
+#+RESULTS[982c4823fd4b8650f38be7bc8aee4592915b1a29]:
+[[file:./dreamscape-low-samples-0.png]]
+
+#+begin_src emacs-lisp :results value raw :cache yes
+(org-sbe text-to-image
+  (file_out $(concat (org-sbe prompt-base-2) "-low-samples"))
+  (prompt prompt-base-2)
+  (samples 10)
+)
+#+end_src
+
+#+RESULTS[9edb0932d61eb6b1ee75caf0be076df45a6ce8de]:
+[[file:./man-low-samples-0.png]]
+
+#+begin_src emacs-lisp :results value raw :cache yes
+(org-sbe text-to-image
+  (file_out $(concat (org-sbe prompt-base-3) "-low-samples"))
+  (prompt prompt-base-3)
+  (samples 10)
+)
+#+end_src
+
+#+RESULTS[739a9dbc55b926f0cac99ee6f3282c625e92516f]:
+[[file:./woman-low-samples-0.png]]
+
+#+begin_src emacs-lisp :results value raw :cache yes
+(org-sbe text-to-image
+  (file_out $(concat (org-sbe prompt-base-4) "-low-samples"))
+  (prompt prompt-base-4)
+  (samples 10)
+)
+#+end_src
+
+#+RESULTS[f6c27c99adf4f40f3b01fcf582c9a6801912d37b]:
+[[file:./city or village or landscape-low-samples-0.png]]
+
+**** high samples
+
+#+begin_src emacs-lisp :results value raw :cache yes
+(org-sbe text-to-image
+  (file_out $(concat (org-sbe prompt-base-1) "-high-samples"))
+  (prompt prompt-base-1)
+  (samples 50)
+)
+#+end_src
+
+#+RESULTS[6e6e5084aa78cd591cf829930db6e08dd543b763]:
+[[file:./dreamscape-high-samples-0.png]]
+
+#+begin_src emacs-lisp :results value raw :cache yes
+(org-sbe text-to-image
+  (file_out $(concat (org-sbe prompt-base-2) "-high-samples"))
+  (prompt prompt-base-2)
+  (samples 50)
+)
+#+end_src
+
+#+RESULTS[93a73029fe4c8e6f1cc9abe4dc6f63b4391640c3]:
+[[file:./man-high-samples-0.png]]
+
+#+begin_src emacs-lisp :results value raw :cache yes
+(org-sbe text-to-image
+  (file_out $(concat (org-sbe prompt-base-3) "-high-samples"))
+  (prompt prompt-base-3)
+  (samples 50)
+)
+#+end_src
+
+#+RESULTS[ce94ca751debc02bc1ca199c86f4e33d27658535]:
+[[file:./woman-high-samples-0.png]]
+
+#+begin_src emacs-lisp :results value raw :cache yes
+(org-sbe text-to-image
+  (file_out $(concat (org-sbe prompt-base-4) "-high-samples"))
+  (prompt prompt-base-4)
+  (samples 50)
+)
+#+end_src
+
+#+RESULTS[8a42b72f3da362eee008801988b29e50851d8338]:
+[[file:./city or village or landscape-high-samples-0.png]]
+
+
+
+**** very high samples
+
+#+begin_src emacs-lisp :results value raw :cache yes
+(org-sbe text-to-image
+  (file_out $(concat (org-sbe prompt-base-1) "-very-high-samples"))
+  (prompt prompt-base-1)
+  (samples 100)
+)
+#+end_src
+
+#+RESULTS[c07ccaba8aa3fcc9156a300d0498247a67aeccda]:
+[[file:./dreamscape-very-high-samples-0.png]]
+
+#+begin_src emacs-lisp :results value raw :cache yes
+(org-sbe text-to-image
+  (file_out $(concat (org-sbe prompt-base-2) "-very-high-samples"))
+  (prompt prompt-base-2)
+  (samples 100)
+)
+#+end_src
+
+#+RESULTS[9861e89200ca6e0848f84b4e78e6d1ac3d9d51b5]:
+[[file:./man-very-high-samples-0.png]]
+
+#+begin_src emacs-lisp :results value raw :cache yes
+(org-sbe text-to-image
+  (file_out $(concat (org-sbe prompt-base-3) "-very-high-samples"))
+  (prompt prompt-base-3)
+  (samples 100)
+)
+#+end_src
+
+#+RESULTS[38bcef92895b2eb28df5e93efeec2236451b34c8]:
+[[file:./woman-very-high-samples-0.png]]
+
+#+begin_src emacs-lisp :results value raw :cache yes
+(org-sbe text-to-image
+  (file_out $(concat (org-sbe prompt-base-4) "-very-high-samples"))
+  (prompt prompt-base-4)
+  (samples 100)
+)
+#+end_src
+
+#+RESULTS[65ec67a7dd61100ef58e5dea76337c6403b0314e]:
+[[file:./city or village or landscape-very-high-samples-0.png]]
+
+Takeaway: The landscape image didn't improve much, but there were notable
+improvements on the other images.  More samples just means better.  I'd have to
+do higher numbers to get a better idea with diminishing returns.
+
+*** Sampling Method
+
+From my reading, the default DPM2++ 2M Karras (include true identifier) works
+best for modern models.  I've heard good things about Euler A but it is either
+subjective or for older models.  I need to do a study of how they differ.
+
+*** Dimensions
+
+I don't think that height and width are the literal size of the image but I need
+to verify this.  This does become a factor with the "Hires fix".
+
+*** High Resolution "Fix"
+*** Refiner
+
+*** Batch
+
+*** Tokens
+
+A token is effectively a single "thought" or a keyword/keyphrase inside of the
+prompt.  With a prompt such as "pandas filing taxes", that phrase gets
+tokenized.  How exactly it slices these tokens and interprets them is a complete
+mystery to me.
+
+The tokens are treated as a sort of word salad.  There is a limit to the number
+of tokens that can be used, with some caveats.  Tokens can be weighted (and
+possibly grouped?).  Tokens can also be "stepped" and even alternated with a
+cutoff with another token.  There is a standard syntax and a legacy syntax.
+
+**** Token Limits
+
+There is an upper limit to these tokens in both the positive and negative
+prompts.  I do not know if pushing closer to that boundary causes significantly
+increased processing time.  That upper limit just breaks the image processing
+into two large parts - one part with one set of tokens and another part with the
+remaining tokens (or some continuation of that, if you go many multiples over
+the limit).  The limit in Stable Diffusion is quite large I have found, with 75
+tokens.  I do not know if the tokens between the positive and negative prompts
+tally up.
+
+**** Word Salad
+
+I have noticed that words seem to be taken in any order with no respect to
+grammar.  So with "pandas filing taxes", the end result is something to the
+effect of "taxes", "pandas", and "filing", and the model goes to work on that.
+This can make some problems because if we use "blue hair", we'll get lots of
+things that aren't blue, and the hair might remain not-blue.
+
+#+name: word-salad-blue-hair
+#+begin_src text
+ blue hair
+#+end_src
+
+#+begin_src emacs-lisp :results value raw :cache yes
+(org-sbe text-to-image
+  (file_out $(concat (org-sbe prompt-base-1) "-word-salad-blue-hair"))
+  (prompt $(concat (org-sbe prompt-base-1) (org-sbe word-salad-blue-hair)))
+)
+#+end_src
+
+#+RESULTS[074e86d877e114eaa5555847713270573ab57362]:
+[[file:./dreamscape-word-salad-blue-hair-0.png]]
+
+#+begin_src emacs-lisp :results value raw :cache yes
+(org-sbe text-to-image
+  (file_out $(concat (org-sbe prompt-base-2) "-word-salad-blue-hair"))
+  (prompt $(concat (org-sbe prompt-base-2) (org-sbe word-salad-blue-hair)))
+)
+#+end_src
+
+#+RESULTS[d03c854cdcf54be46bd9286bf4af53b5335f4ddb]:
+[[file:./man-word-salad-blue-hair-0.png]]
+
+#+begin_src emacs-lisp :results value raw :cache yes
+(org-sbe text-to-image
+  (file_out $(concat (org-sbe prompt-base-3) "-word-salad-blue-hair"))
+  (prompt $(concat (org-sbe prompt-base-3) (org-sbe word-salad-blue-hair)))
+  (samples 30)
+)
+#+end_src
+
+#+RESULTS[21cd5da18746537660761c2a10f0dac1e7c4ffa8]:
+[[file:./woman-word-salad-blue-hair-0.png]]
+
+#+begin_src emacs-lisp :results value raw :cache yes
+(org-sbe text-to-image
+  (file_out $(concat (org-sbe prompt-base-4) "-word-salad-blue-hair"))
+  (prompt $(concat (org-sbe prompt-base-4) (org-sbe word-salad-blue-hair)))
+)
+#+end_src
+
+#+RESULTS[0cf02efdff65f54600c0eb4e3e245b4326752382]:
+[[file:./city or village or landscape-word-salad-blue-hair-0.png]]
+
+
+#+begin_src emacs-lisp :results value raw :cache yes
+(org-sbe text-to-image
+  (file_out $(concat (org-sbe prompt-base-3) "-word-salad-blue-hair"))
+  (prompt $(concat (org-sbe prompt-base-3) ", " (org-sbe word-salad-blue-hair)))
+  (samples 30)
+)
+#+end_src
+
+#+RESULTS[b4203fbffe0490533c8614f0f03e4fedf59dcad0]:
+[[file:./woman-word-salad-blue-hair-0.png]]
+
+It's interesting in the case of the dreamscape and landscape prompts that it
+ignored those and just used a woman, but that is for a later break-down.
+
+Adding just "blue hair" doesn't prove my point well.  I imagine this is because
+when the prompt is "man blue hair" that blue men aren't as common as blue hair
+on a man, or any colored hair on a man.  Let's try it with an additional prompt:
+
+#+name: word-salad-blue-hair-extra
+#+begin_src text
+, blue hair, red tie
+#+end_src
+
+#+begin_src emacs-lisp :results value raw :cache yes
+(org-sbe text-to-image
+  (file_out $(concat (org-sbe prompt-base-1) "-word-salad-blue-hair-extra"))
+  (prompt $(concat (org-sbe prompt-base-1) (org-sbe word-salad-blue-hair-extra)))
+)
+#+end_src
+
+#+RESULTS[a879e7644e3d5a925e8966f5878205075a6b0129]:
+[[file:./dreamscape-word-salad-blue-hair-extra-0.png]]
+
+#+begin_src emacs-lisp :results value raw :cache yes
+(org-sbe text-to-image
+  (file_out $(concat (org-sbe prompt-base-2) "-word-salad-blue-hair-extra"))
+  (prompt $(concat (org-sbe prompt-base-2) (org-sbe word-salad-blue-hair-extra)))
+)
+#+end_src
+
+#+RESULTS[2679675261b503e6102a05ce77ae1f66c68294d8]:
+[[file:./man-word-salad-blue-hair-extra-0.png]]
+
+
+#+begin_src emacs-lisp :results value raw :cache yes
+(org-sbe text-to-image
+  (file_out $(concat (org-sbe prompt-base-3) "-word-salad-blue-hair-extra"))
+  (prompt $(concat (org-sbe prompt-base-3) (org-sbe word-salad-blue-hair-extra)))
+)
+#+end_src
+
+#+RESULTS[8afb661aafeeebd85e593e76edf70ee6932988ad]:
+[[file:./woman-word-salad-blue-hair-extra-0.png]]
+
+#+begin_src emacs-lisp :results value raw :cache yes
+(org-sbe text-to-image
+  (file_out $(concat (org-sbe prompt-base-4) "-word-salad-blue-hair-extra"))
+  (prompt $(concat (org-sbe prompt-base-4) (org-sbe word-salad-blue-hair-extra)))
+)
+#+end_src
+
+#+RESULTS[0ddbfe053ded7b02466bbd1ddcf2ce77760c84e1]:
+[[file:./city or village or landscape-word-salad-blue-hair-extra-0.png]]
+
+Okay that's not enough to produce the "swap" issue I've seen.  Let's make this
+more complicated and add another color.
+
+#+name: word-salad-blue-hair-red-tie-green-house-hill
+#+begin_src text
+, blue hair, red tie, a green house on a hill
+#+end_src
+
+#+begin_src emacs-lisp :results value raw :cache yes
+(org-sbe text-to-image
+  (file_out $(concat (org-sbe prompt-base-1) "word-salad-blue-hair-red-tie-green-house-hill"))
+  (prompt $(concat (org-sbe prompt-base-1) (org-sbe word-salad-blue-hair-red-tie-green-house-hill)))
+)
+#+end_src
+
+#+RESULTS[56a6048109782f8b216e98dcdbcf5d9ab61c5373]:
+[[file:./dreamscapeword-salad-blue-hair-red-tie-green-house-hill-0.png]]
+
+#+begin_src emacs-lisp :results value raw :cache yes
+(org-sbe text-to-image
+  (file_out $(concat (org-sbe prompt-base-2) "word-salad-blue-hair-red-tie-green-house-hill"))
+  (prompt $(concat (org-sbe prompt-base-2) (org-sbe word-salad-blue-hair-red-tie-green-house-hill)))
+)
+#+end_src
+
+#+RESULTS[b198aac42cd3bf63bbd183c22f6a41290b83f97d]:
+[[file:./manword-salad-blue-hair-red-tie-green-house-hill-0.png]]
+
+
+#+begin_src emacs-lisp :results value raw :cache yes
+(org-sbe text-to-image
+  (file_out $(concat (org-sbe prompt-base-3) "word-salad-blue-hair-red-tie-green-house-hill"))
+  (prompt $(concat (org-sbe prompt-base-3) (org-sbe word-salad-blue-hair-red-tie-green-house-hill)))
+)
+#+end_src
+
+#+RESULTS[11673f89af7e0f66362fa44c4695047e66c9ba4b]:
+[[file:./womanword-salad-blue-hair-red-tie-green-house-hill-0.png]]
+
+#+begin_src emacs-lisp :results value raw :cache yes
+(org-sbe text-to-image
+  (file_out $(concat (org-sbe prompt-base-4) "word-salad-blue-hair-red-tie-green-house-hill"))
+  (prompt $(concat (org-sbe prompt-base-4) (org-sbe word-salad-blue-hair-red-tie-green-house-hill)))
+)
+#+end_src
+
+#+RESULTS[b2b1c8fee7ba04d2b587efc3029dcead86045ad2]:
+[[file:./city or village or landscapeword-salad-blue-hair-red-tie-green-house-hill-0.png]]
+
+
+Okay now we're seeing some color mixing.  How do we ensure we get what we
+wanted?  I've been told this is due to [[Swapped Tokens]].
+
+**** Weights
+
+Keywords can be weighted.  This is done via a parenthesis notation around the
+keyword, a colon, and a number.  So the keyword =dragon= would indicate you want
+to see a dragon.  Using =(dragon: 1.5)= means you want to see a dragon but is
+weighted higher than other keywords by a significant margin.  The
+
+**** Swapped Tokens
+
+Swapped tokens use the syntax =[foo:bar:step]=, were =foo= and =bar= are
+individual tokens separated by a colon, and followed by another colon is the
+step in the samples at which to switch to the other token.
+
+There is multiple utility here:
+1. Things can be blended together.  One can do something like =[forest:city:20]=
+   and the first 20 steps will be making a forest, where the last N steps will
+   be that of a city for whatever the forest part was.  This can make
+   forest-inspired or forest-looking cities.
+2. Color can be forced to work around issues observed wit [[Word Salad]].  I'm not
+   sure how this is done yet.
+
+***** Blending with Steps
+
+#+name: blending-steps-forest
+#+begin_src text
+, forest
+#+end_src
+
+
+#+begin_src emacs-lisp :results value raw :cache yes
+(org-sbe text-to-image
+  (file_out $(concat (org-sbe prompt-base-1) "-blending-steps-forest"))
+  (prompt $(concat (org-sbe prompt-base-1) (org-sbe blending-steps-forest)))
+)
+#+end_src
+
+#+RESULTS[2c882c90f797b51cc368754646d6d2d4a89aabbe]:
+[[file:./dreamscape-blending-steps-forest-0.png]]
+
+#+begin_src emacs-lisp :results value raw :cache yes
+(org-sbe text-to-image
+  (file_out $(concat (org-sbe prompt-base-2) "-blending-steps-forest"))
+  (prompt $(concat (org-sbe prompt-base-2) (org-sbe blending-steps-forest)))
+  )
+#+end_src
+
+#+RESULTS[c551d233e23fb5fd23d4b594e19d20aeda114d21]:
+[[file:./man-blending-steps-forest-0.png]]
+
+#+begin_src emacs-lisp :results value raw :cache yes
+(org-sbe text-to-image
+  (file_out $(concat (org-sbe prompt-base-3) "-blending-steps-forest"))
+  (prompt $(concat (org-sbe prompt-base-3) (org-sbe blending-steps-forest)))
+  )
+#+end_src
+
+#+RESULTS[42507c3d96aceac4a351518a378a89a7872db128]:
+[[file:./woman-blending-steps-forest-0.png]]
+
+
+#+begin_src emacs-lisp :results value raw :cache yes
+(org-sbe text-to-image
+  (file_out $(concat (org-sbe prompt-base-4) "-blending-steps-forest"))
+  (prompt $(concat (org-sbe prompt-base-4) (org-sbe blending-steps-forest)))
+  )
+#+end_src
+
+#+RESULTS[32783f7a23afa9dfe4363c23f93b9c8b0cb40218]:
+[[file:./city or village or landscape-blending-steps-forest-0.png]]
+
+Now let's do something that makes perfect sense: Make a forest of candy canes.
+
+#+name: blending-steps-forest-of-candy-canes
+#+begin_src text
+, [forest:candy-canes:5]
+#+end_src
+
+
+#+begin_src emacs-lisp :results value raw :cache yes
+(org-sbe text-to-image
+  (file_out $(concat (org-sbe prompt-base-1) "-blending-steps-forest-of-candy-canes"))
+  (prompt $(concat (org-sbe prompt-base-1) (org-sbe blending-steps-forest-of-candy-canes)))
+)
+#+end_src
+
+#+RESULTS[b1250db8cbcb204b2360b1ad602fb32ab9cb85b5]:
+[[file:./dreamscape-blending-steps-forest-of-candy-canes-0.png]]
+
+#+begin_src emacs-lisp :results value raw :cache yes
+(org-sbe text-to-image
+  (file_out $(concat (org-sbe prompt-base-2) "-blending-steps-forest-of-candy-canes"))
+  (prompt $(concat (org-sbe prompt-base-2) (org-sbe blending-steps-forest-of-candy-canes)))
+)
+#+end_src
+
+#+RESULTS[d68a671b12995295b977674c16ddffa0952d9e04]:
+[[file:./man-blending-steps-forest-of-candy-canes-0.png]]
+
+
+#+begin_src emacs-lisp :results value raw :cache yes
+(org-sbe text-to-image
+  (file_out $(concat (org-sbe prompt-base-3) "-blending-steps-forest-of-candy-canes"))
+  (prompt $(concat (org-sbe prompt-base-3) (org-sbe blending-steps-forest-of-candy-canes)))
+)
+#+end_src
+
+#+RESULTS[c8f8c57e35f926a34d1093407310554a12c82905]:
+[[file:./woman-blending-steps-forest-of-candy-canes-0.png]]
+
+#+begin_src emacs-lisp :results value raw :cache yes
+(org-sbe text-to-image
+  (file_out $(concat (org-sbe prompt-base-4) "-blending-steps-forest-of-candy-canes"))
+  (prompt $(concat (org-sbe prompt-base-4) (org-sbe blending-steps-forest-of-candy-canes)))
+)
+#+end_src
+
+#+RESULTS[0169b7a8895ce420f9923ba2701ffa06ed1dba8a]:
+[[file:./city or village or landscape-blending-steps-forest-of-candy-canes-0.png]]
+
+
+**** Alternating Tokens
+
+Like [[Swapped Tokens]], alternating tokens switch between the tokens every other
+step in the sampling.  Let's try the same forest of candy canes, but with
+alternating instead of stepped.
+
+#+name: alternating-steps-forest-of-candy-canes
+#+begin_src text
+, [forest|candy canes]
+#+end_src
+
+#+begin_src emacs-lisp :results value raw :cache yes
+(org-sbe text-to-image
+  (file_out $(concat (org-sbe prompt-base-1) "-alternating-steps-forest-of-candy-canes"))
+  (prompt $(concat (org-sbe prompt-base-1) (org-sbe alternating-steps-forest-of-candy-canes)))
+)
+#+end_src
+
+#+RESULTS[42c39d68fbab2853fa2ce6b30506861f488b305e]:
+[[file:./dreamscape-alternating-steps-forest-of-candy-canes-0.png]]
+
+#+begin_src emacs-lisp :results value raw :cache yes
+(org-sbe text-to-image
+  (file_out $(concat (org-sbe prompt-base-2) "-alternating-steps-forest-of-candy-canes"))
+  (prompt $(concat (org-sbe prompt-base-2) (org-sbe alternating-steps-forest-of-candy-canes)))
+)
+#+end_src
+
+#+RESULTS[132ea3481fbcfb31595f5a8ea0d98543218728ef]:
+[[file:./man-alternating-steps-forest-of-candy-canes-0.png]]
+
+#+begin_src emacs-lisp :results value raw :cache yes
+(org-sbe text-to-image
+  (file_out $(concat (org-sbe prompt-base-3) "-alternating-steps-forest-of-candy-canes"))
+  (prompt $(concat (org-sbe prompt-base-3) (org-sbe alternating-steps-forest-of-candy-canes)))
+)
+#+end_src
+
+#+RESULTS[6f52d88d59db9a5dddcd8371952f3f7c1521213e]:
+[[file:./woman-alternating-steps-forest-of-candy-canes-0.png]]
+
+#+begin_src emacs-lisp :results value raw :cache yes
+(org-sbe text-to-image
+  (file_out $(concat (org-sbe prompt-base-4) "-alternating-steps-forest-of-candy-canes"))
+  (prompt $(concat (org-sbe prompt-base-4) (org-sbe alternating-steps-forest-of-candy-canes)))
+)
+#+end_src
+
+#+RESULTS[03cf8236bb2e98fd9693d5ae97d5e5326a7ec434]:
+[[file:./city or village or landscape-alternating-steps-forest-of-candy-canes-0.png]]
+
+**** Tokens - Ceasing and Starting at Specific Steps
+
+Use =[token:step]= to start using =token= at sample step count =step=.  I've
+read this can be used to control color.
+
+Use =\[\[token:step]]= to _remove_ =token= at sample step count =step=.  I do
+not know the utility for this one as much.
+
+
+
+**** Legacy Syntax
+
+**** Special Keywords
+
+***** Distance
+
+***** Style
+
+***** Artist
+
+***** Camera angle
+*** Models
+
+* COMMENT
+#  LocalWords:  CFG

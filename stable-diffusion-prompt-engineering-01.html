@@ -1,0 +1,958 @@
+<div id="outline-container-org39383ad" class="outline-2">
+<h2 id="org39383ad"><span class="section-number-2">1.</span> Introduction</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+From my prior adventures during <a href="./nix-adventures-02.html">Nix Adventures Part 2</a>, I managed to stand up a
+local instances of <a href="https://github.com/AUTOMATIC1111/stable-diffusion-webui">stable-diffusion-webui</a> and I&rsquo;ve been having both a lot of fun
+and some frustration with it.  This domain is not quite as push-button as I
+thought it would be.  There&rsquo;s a lot of information here, some of it dated, and
+much of it sitting on YouTube.  I hope this serves as a repository of the
+knowledge I gain here.  I will do my best to keep this documentation entirely
+reproducible - meaning that you can see version numbers, commit hashes,
+generation parameters (seeds, models, sample sizes), etc.  This is one thing I
+have found lacking on some of the communities out there.
+</p>
+</div>
+</div>
+<div id="outline-container-org4de1eb8" class="outline-2">
+<h2 id="org4de1eb8"><span class="section-number-2">2.</span> Prompt Engineering</h2>
+<div class="outline-text-2" id="text-2">
+</div>
+<div id="outline-container-org024de56" class="outline-3">
+<h3 id="org024de56"><span class="section-number-3">2.1.</span> Prompt Engineering Introduction</h3>
+<div class="outline-text-3" id="text-2-1">
+<p>
+Prompt Engineering is its own discipline, apparently.  For a quick refresher: A
+prompt in the context of machine learning is a set of instructions for the
+machine learning tool to operate upon.  You might see something like &ldquo;3D pandas
+riding bicycles&rdquo; or &ldquo;A robot in a workshop filled with human parts instead of
+machine parts&rdquo;.  From those descriptions, the tool will generate something that
+matches it.
+</p>
+
+<p>
+On a very high level, my understanding is that these tools have
+been &ldquo;trained&rdquo;. This means they are shown a wealth of data (images, in our case)
+alongside keywords to identify them.  So they might be shown a picture of a
+motorcycle.  The picture includes keywords such as &ldquo;motorcycle&rdquo; but also of
+&ldquo;engine&rdquo;, &ldquo;black&rdquo; (for the paint), &ldquo;pavement&rdquo; (if the background includes such
+things), and more.  This is built up as a &ldquo;network&rdquo; (a neural network, I think).
+It takes a great deal of computing power to train these networks, and I assume a
+wealth of very good data.  This requires humans to catalog a lot of stuff, but
+perhaps also other machine learning tools that are essentially the inverse of
+prompt-to-image generation.  This training produces a &ldquo;model&rdquo;.
+</p>
+
+<p>
+The model is then given a prompt by the consumer of the tool.  The tool will
+then offer up some really bad images and say &ldquo;does this match what was asked
+for?&rdquo;, and on the first pass the answer will be a resounding &ldquo;no&rdquo;, so the tool
+takes another pass to clean things up a bit and make things closer, and then the
+match check is given again.  You could think of this as the old &ldquo;draw the owl&rdquo;
+thing from drawing books, wherein one draws some circles that could vaguely
+define the outline of the owl.  Then the artist is instructed to draw more and
+more details until satisfaction is reached.
+</p>
+
+
+<div id="org011d427" class="figure">
+<p><img src="./assets/draw-the-owl01.jpeg" alt="draw-the-owl01.jpeg" />
+</p>
+</div>
+
+<p>
+Though there is a lot of in-between steps.  This process is much like that.
+Again though, this is my layman understanding and I hope to revise this as I
+learn more.
+</p>
+</div>
+</div>
+<div id="outline-container-org919a352" class="outline-3">
+<h3 id="org919a352"><span class="section-number-3">2.2.</span> Generated</h3>
+<div class="outline-text-3" id="text-2-2">
+<p>
+The results of this entire document are generated via literate programming using
+<code>org-babel</code>.  If you view the source of the original <code>org-mode</code> document you can
+see how it got generated, and use it to generate your own.  This doesn&rsquo;t use
+<code>stable-diffusion-webui</code> but instead <code>stable-diffusion</code> itself.
+<code>stable-diffusion-webui</code> it more or less a wrapper around <code>stable-diffusion</code>
+which translates a web UI into the appropriate Python calls.  We&rsquo;ll be making
+the Python calls directly for generating our images, but I will ensure that
+these calls match what I see in the UI given the same inputs.
+</p>
+
+<p>
+That all makes this document both highly reproducible and easy to update.  You
+could even shim in your own models to see what it looks like.  At some point I
+might offer an easy diffing mechanism between various models, but for now it&rsquo;ll
+just focus on emitting consistent results given its inputs.
+</p>
+</div>
+<div id="outline-container-orgc054136" class="outline-4">
+<h4 id="orgc054136"><span class="section-number-4">2.2.1.</span> Generating Images - The Code</h4>
+<div class="outline-text-4" id="text-2-2-1">
+</div>
+<ol class="org-ol">
+<li><a id="org270ad74"></a>The Lisp Helper<br />
+<div class="outline-text-5" id="text-2-2-1-1">
+<p>
+First we need a quick way to evaluate code blocks.  Per the documentation of
+<code>org-babel</code>, <code>cache</code> does not work on the <code>#+call</code> form of invoking <code>org-babel</code>
+blocks.  That said, we can just make blocks of <code>emacs-lisp</code> that call a function
+for us.  This is that function:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp" id="orga204c9c"><span style="color: #51afef;">(</span><span style="color: #51afef;">defun</span> <span style="color: #5cEfFF;">org-babel-block</span> <span style="color: #C57BDB;">(</span>block, args
+  <span style="color: #7bc275;">(</span>save-excursion
+    <span style="color: #a991f1;">(</span><span style="color: #a991f1;">goto-char</span>
+    <span style="color: #51afef;">(</span><span style="color: #a991f1;">org-babel-find-named-block</span> block<span style="color: #51afef;">)</span><span style="color: #a991f1;">)</span>
+    <span style="color: #a991f1;">(</span><span style="color: #a991f1;">org-babel-execute-src-block-maybe</span><span style="color: #a991f1;">)</span>
+    <span style="color: #7bc275;">)</span>
+  <span style="color: #C57BDB;">)</span>
+</pre>
+</div>
+
+<p>
+And something to catch the missing blocks:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp" id="orgb871c13"><span style="color: #51afef;">(</span><span style="color: #a991f1;">message</span> <span style="color: #7bc275;">"Error: The '</span><span style="color: #a991f1;">block</span><span style="color: #7bc275;">' parameter was not provided for org-babel-block."</span><span style="color: #51afef;">)</span>
+</pre>
+</div>
+</div>
+</li>
+<li><a id="orga49397a"></a>Making API calls - A Test<br />
+<div class="outline-text-5" id="text-2-2-1-2">
+<p>
+The <a href="https://github.com/AUTOMATIC1111/stable-diffusion-webui/wiki/API">Wiki based API documentation</a> for <code>stable-diffusion-webui</code> is not complete.
+It does point to a <code>/docs</code> that can be accessed on the server.  This is just a
+pretty form of a OpenAPI document.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python" id="org71464e5"><span style="color: #51afef;">import</span> urllib.request
+<span style="color: #51afef;">import</span> base64
+<span style="color: #51afef;">import</span> json
+<span style="color: #51afef;">import</span> time
+<span style="color: #51afef;">import</span> os
+
+<span style="color: #dcafe9;">file_out</span> = <span style="color: #7bc275;">'test.png'</span>
+<span style="color: #dcafe9;">payload</span> = <span style="color: #51afef;">{</span>
+  <span style="color: #7bc275;">'prompt'</span>: <span style="color: #7bc275;">'dreamscape'</span>,
+  <span style="color: #7bc275;">'steps'</span>: <span style="color: #e69055; font-weight: bold;">20</span>,
+  <span style="color: #7bc275;">'seed'</span>: <span style="color: #e69055; font-weight: bold;">503043532</span>,
+<span style="color: #51afef;">}</span>
+<span style="color: #dcafe9;">request</span> = urllib.request.Request<span style="color: #51afef;">(</span>
+    <span style="color: #7bc275;">'http://localhost:7860/sdapi/v1/txt2img'</span>,
+    headers=<span style="color: #C57BDB;">{</span> <span style="color: #7bc275;">'Content-Type'</span>: <span style="color: #7bc275;">'application/json; charset=utf-8'</span> <span style="color: #C57BDB;">}</span>,
+    data= json.dumps<span style="color: #C57BDB;">(</span>payload<span style="color: #C57BDB;">)</span>.encode<span style="color: #C57BDB;">(</span><span style="color: #7bc275;">'utf-8'</span><span style="color: #C57BDB;">)</span>,
+<span style="color: #51afef;">)</span>
+<span style="color: #dcafe9;">response</span> = urllib.request.urlopen<span style="color: #51afef;">(</span>request<span style="color: #51afef;">)</span>
+<span style="color: #dcafe9;">response_data</span> = json.loads<span style="color: #51afef;">(</span>response.read<span style="color: #C57BDB;">()</span>.decode<span style="color: #C57BDB;">(</span><span style="color: #7bc275;">'utf-8'</span><span style="color: #C57BDB;">)</span><span style="color: #51afef;">)</span>
+
+<span style="color: #51afef;">for</span> index, image <span style="color: #51afef;">in</span> <span style="color: #C57BDB;">enumerate</span><span style="color: #51afef;">(</span>response_data.get<span style="color: #C57BDB;">(</span><span style="color: #7bc275;">'images'</span><span style="color: #C57BDB;">)</span><span style="color: #51afef;">)</span>:
+    <span style="color: #dcafe9;">path</span> = f<span style="color: #7bc275;">'</span>{file_out}<span style="color: #7bc275;">-</span>{index}<span style="color: #7bc275;">.png'</span>
+    <span style="color: #51afef;">with</span> <span style="color: #C57BDB;">open</span><span style="color: #51afef;">(</span>path, <span style="color: #7bc275;">"wb"</span><span style="color: #51afef;">)</span> <span style="color: #51afef;">as</span> <span style="color: #C57BDB;">file</span>:
+        <span style="color: #C57BDB;">file</span>.write<span style="color: #51afef;">(</span>base64.b64decode<span style="color: #C57BDB;">(</span>image<span style="color: #C57BDB;">)</span><span style="color: #51afef;">)</span>
+        <span style="color: #C57BDB;">print</span><span style="color: #51afef;">(</span>f<span style="color: #7bc275;">'[[file:./</span>{path}<span style="color: #7bc275;">]]'</span><span style="color: #51afef;">)</span>
+</pre>
+</div>
+
+
+<div id="org92a7a8f" class="figure">
+<p><img src="./test.png-0.png" alt="test.png-0.png" />
+</p>
+</div>
+</div>
+</li>
+<li><a id="orgc51acfb"></a>Making API Calls - A Reusable Block<br />
+<div class="outline-text-5" id="text-2-2-1-3">
+<div class="org-src-container">
+<pre class="src src-python" id="orgd3f8d7a"><span style="color: #51afef;">import</span> urllib.request
+<span style="color: #51afef;">import</span> base64
+<span style="color: #51afef;">import</span> json
+<span style="color: #51afef;">import</span> time
+<span style="color: #51afef;">import</span> os
+
+<span style="color: #dcafe9;">payload</span> = <span style="color: #51afef;">{</span>
+  <span style="color: #7bc275;">'prompt'</span>: prompt,
+  <span style="color: #7bc275;">'steps'</span>: samples,
+  <span style="color: #7bc275;">'seed'</span>: <span style="color: #e69055; font-weight: bold;">503043532</span>,
+<span style="color: #51afef;">}</span>
+<span style="color: #dcafe9;">request</span> = urllib.request.Request<span style="color: #51afef;">(</span>
+    <span style="color: #7bc275;">'http://localhost:7860/sdapi/v1/txt2img'</span>,
+    headers=<span style="color: #C57BDB;">{</span> <span style="color: #7bc275;">'Content-Type'</span>: <span style="color: #7bc275;">'application/json; charset=utf-8'</span> <span style="color: #C57BDB;">}</span>,
+    data= json.dumps<span style="color: #C57BDB;">(</span>payload<span style="color: #C57BDB;">)</span>.encode<span style="color: #C57BDB;">(</span><span style="color: #7bc275;">'utf-8'</span><span style="color: #C57BDB;">)</span>,
+<span style="color: #51afef;">)</span>
+<span style="color: #dcafe9;">response</span> = urllib.request.urlopen<span style="color: #51afef;">(</span>request<span style="color: #51afef;">)</span>
+<span style="color: #dcafe9;">response_data</span> = json.loads<span style="color: #51afef;">(</span>response.read<span style="color: #C57BDB;">()</span>.decode<span style="color: #C57BDB;">(</span><span style="color: #7bc275;">'utf-8'</span><span style="color: #C57BDB;">)</span><span style="color: #51afef;">)</span>
+
+<span style="color: #51afef;">for</span> index, image <span style="color: #51afef;">in</span> <span style="color: #C57BDB;">enumerate</span><span style="color: #51afef;">(</span>response_data.get<span style="color: #C57BDB;">(</span><span style="color: #7bc275;">'images'</span><span style="color: #C57BDB;">)</span><span style="color: #51afef;">)</span>:
+    <span style="color: #dcafe9;">path</span> = f<span style="color: #7bc275;">'</span>{file_out}<span style="color: #7bc275;">-</span>{index}<span style="color: #7bc275;">.png'</span>
+    <span style="color: #51afef;">with</span> <span style="color: #C57BDB;">open</span><span style="color: #51afef;">(</span>path, <span style="color: #7bc275;">"wb"</span><span style="color: #51afef;">)</span> <span style="color: #51afef;">as</span> <span style="color: #C57BDB;">file</span>:
+        <span style="color: #C57BDB;">file</span>.write<span style="color: #51afef;">(</span>base64.b64decode<span style="color: #C57BDB;">(</span>image<span style="color: #C57BDB;">)</span><span style="color: #51afef;">)</span>
+        <span style="color: #C57BDB;">print</span><span style="color: #51afef;">(</span>f<span style="color: #7bc275;">'[[file:./</span>{path}<span style="color: #7bc275;">]]'</span><span style="color: #51afef;">)</span>
+</pre>
+</div>
+
+
+<div id="org0465382" class="figure">
+<p><img src="./mistake-0.png" alt="mistake-0.png" />
+</p>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+<div id="outline-container-org828f283" class="outline-3">
+<h3 id="org828f283"><span class="section-number-3">2.3.</span> Sample Prompts</h3>
+<div class="outline-text-3" id="text-2-3">
+<p>
+To give a little variety here, let&rsquo;s agree on a few base sample prompts that
+should explore a variety of different things we could show.  For each parameter
+we choose to tweak, we will use all of these base prompts as well.
+</p>
+
+<p>
+These parameters are laid out as a necessity for consistent generation, and it
+isn&rsquo;t terribly important that the values are understood for new readers.  This
+could serve as good reference though.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-text" id="orgac8d9db">dreamscape
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-text" id="org3c1df1d">man
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-text" id="orgf484e64">woman
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-text" id="org1f82bde">city or village or landscape
+</pre>
+</div>
+
+<p>
+The seed will be:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-text" id="org732be48">503043532
+</pre>
+</div>
+
+<p>
+Our default sample size will be:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-text" id="org5116b33">20
+</pre>
+</div>
+
+<p>
+Our default model will be:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-text" id="org539c8c7">endjourneyXL_v11
+</pre>
+</div>
+
+<p>
+Our default sampling method will be:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-text" id="org92b3021">dpm2pp_2m_karras
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-text" id="orga52fbe6">512
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-text" id="orgf7a6cd6">512
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-text" id="orgd915613">7
+</pre>
+</div>
+
+<p>
+The base URL for the <code>stable-diffusion-webui</code> server is:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-text" id="orgb1a2c47">http://localhost:7860
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org2b92a24" class="outline-3">
+<h3 id="org2b92a24"><span class="section-number-3">2.4.</span> Inputs</h3>
+<div class="outline-text-3" id="text-2-4">
+<p>
+Various inputs decide the quality of the image, what appears in the image, and
+so on.  This includes the prompt itself, but also a lot of other variables.  For
+the purposes of illustration, let&rsquo;s use this base image so we can see what the
+varied outcomes are.
+</p>
+</div>
+<div id="outline-container-orgfedbe46" class="outline-4">
+<h4 id="orgfedbe46"><span class="section-number-4">2.4.1.</span> The Base</h4>
+<div class="outline-text-4" id="text-2-4-1">
+<p>
+As described in <a href="#org828f283">2.3</a>, our base is as follows:
+</p>
+
+<p>
+<a id="org4b2ac68"></a>
+</p>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span style="color: #51afef;">(</span><span style="color: #51afef;">org-sbe</span> text-to-image
+  <span style="color: #C57BDB;">(</span>file_out prompt-base-1<span style="color: #C57BDB;">)</span>
+  <span style="color: #C57BDB;">(</span>prompt prompt-base-1<span style="color: #C57BDB;">)</span>
+ <span style="color: #51afef;">)</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span style="color: #51afef;">(</span><span style="color: #51afef;">org-sbe</span> text-to-image
+  <span style="color: #C57BDB;">(</span>file_out prompt-base-2<span style="color: #C57BDB;">)</span>
+  <span style="color: #C57BDB;">(</span>prompt prompt-base-2<span style="color: #C57BDB;">)</span>
+ <span style="color: #51afef;">)</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span style="color: #51afef;">(</span><span style="color: #51afef;">org-sbe</span> text-to-image
+  <span style="color: #C57BDB;">(</span>file_out prompt-base-3<span style="color: #C57BDB;">)</span>
+  <span style="color: #C57BDB;">(</span>prompt prompt-base-3<span style="color: #C57BDB;">)</span>
+ <span style="color: #51afef;">)</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span style="color: #51afef;">(</span><span style="color: #51afef;">org-sbe</span> text-to-image
+  <span style="color: #C57BDB;">(</span>file_out prompt-base-4<span style="color: #C57BDB;">)</span>
+  <span style="color: #C57BDB;">(</span>prompt prompt-base-4<span style="color: #C57BDB;">)</span>
+ <span style="color: #51afef;">)</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org25559a4" class="outline-4">
+<h4 id="org25559a4"><span class="section-number-4">2.4.2.</span> Seed</h4>
+<div class="outline-text-4" id="text-2-4-2">
+<p>
+This should be front an center because it is key to using consistent results.
+The seed is a concept taking from random number generators (which this uses
+under the hood).  Random number generators aren&rsquo;t actually random but instead
+produce a fixed sequence of numbers that appears random.  If you have two random
+number generators using the same algorithm and the same seed, they will produce
+the exact same two sequences.  This is handy because you can lock in the seed to
+refine the existing image by tweaking its parameters.  I&rsquo;ve noticed that using a
+particular seed also seems to pick the same qualities, even if the parameters or
+even the model differ.  I had found a sequence where &ldquo;cute girl&rdquo; had produced a
+Japanese woman consistently, regardless of other modifiers given that didn&rsquo;t
+influence ethnicity.
+</p>
+
+<p>
+Seeds will be used heavily in this document to produce consistent results.
+</p>
+</div>
+</div>
+<div id="outline-container-orgcea32df" class="outline-4">
+<h4 id="orgcea32df"><span class="section-number-4">2.4.3.</span> Classifier Free Guidance (CFG)</h4>
+<div class="outline-text-4" id="text-2-4-3">
+<p>
+Stable Diffusion (or perhaps all of these tools) expresses &ldquo;creativity&rdquo; in which
+it adds things that weren&rsquo;t asked for or ignores parts of your prompt.  This is
+called the Classifier Free Guidance scale, or CFG.  A lower number indicates
+more freedom on the tool&rsquo;s end, where the lowest number indicates a complete
+disregard for the prompt.  The higher it is, the more strictly the prompt is
+held to.  At very high numbers, the images will appear &ldquo;forced&rdquo;.
+</p>
+
+<p>
+7 is the default in <code>stable-diffusion-webui</code>, which offers a great deal of
+creativity.  I am told 15 is &ldquo;very high&rdquo;, but I don&rsquo;t actually know that I&rsquo;ve
+seen it do a &ldquo;bad&rdquo; job so far at that level.
+</p>
+</div>
+</div>
+<div id="outline-container-org337c96a" class="outline-4">
+<h4 id="org337c96a"><span class="section-number-4">2.4.4.</span> Samples</h4>
+<div class="outline-text-4" id="text-2-4-4">
+<p>
+The number of samples is loosely the number of passes that will be made against
+the image.  With <code>stable-diffusion-webui</code>, you can see it creating passes
+slowly.  Occasionally the UI will load an image in-progress, which starts off
+being very fuzzy, and then moves to something full of artifacts, and at some
+point later you get the final image.
+</p>
+
+<p>
+The number of samples you use increases the fidelity of the image and also will
+remove things that are obvious errors (such as poor faces, hands, and so on that
+these tools are notorious for).  More samples means the image will take much
+longer.  If it takes a minute to generate a 20 sample image, then it will take
+around two minutes for 40 samples of the same image.  The default value is 20,
+and I have been cautioned that going above 50 is undesirable.  I generally start
+at 20 until the main elements of the image are captured, and then regenerate
+with the same seed using 50.
+</p>
+
+<p>
+Generally I think of this as just doing refinements, but during these trials I
+found that sample size can also result in entirely different images.  In some
+cases the images just get better - things look less blotchy and ill-defined.  In
+the case of the woman, I effectively have a separate image for each run.
+</p>
+</div>
+<ol class="org-ol">
+<li><a id="orgaecf6e2"></a>very low samples<br />
+<div class="outline-text-5" id="text-2-4-4-1">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span style="color: #51afef;">(</span><span style="color: #51afef;">org-sbe</span> text-to-image
+  <span style="color: #C57BDB;">(</span>file_out $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-1<span style="color: #a991f1;">)</span> <span style="color: #7bc275;">"-low-samples"</span><span style="color: #7bc275;">)</span><span style="color: #C57BDB;">)</span>
+  <span style="color: #C57BDB;">(</span>prompt prompt-base-1<span style="color: #C57BDB;">)</span>
+  <span style="color: #C57BDB;">(</span>samples <span style="color: #e69055; font-weight: bold;">10</span><span style="color: #C57BDB;">)</span>
+<span style="color: #51afef;">)</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span style="color: #51afef;">(</span><span style="color: #51afef;">org-sbe</span> text-to-image
+  <span style="color: #C57BDB;">(</span>file_out $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-2<span style="color: #a991f1;">)</span> <span style="color: #7bc275;">"-low-samples"</span><span style="color: #7bc275;">)</span><span style="color: #C57BDB;">)</span>
+  <span style="color: #C57BDB;">(</span>prompt prompt-base-2<span style="color: #C57BDB;">)</span>
+  <span style="color: #C57BDB;">(</span>samples <span style="color: #e69055; font-weight: bold;">10</span><span style="color: #C57BDB;">)</span>
+<span style="color: #51afef;">)</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span style="color: #51afef;">(</span><span style="color: #51afef;">org-sbe</span> text-to-image
+  <span style="color: #C57BDB;">(</span>file_out $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-3<span style="color: #a991f1;">)</span> <span style="color: #7bc275;">"-low-samples"</span><span style="color: #7bc275;">)</span><span style="color: #C57BDB;">)</span>
+  <span style="color: #C57BDB;">(</span>prompt prompt-base-3<span style="color: #C57BDB;">)</span>
+  <span style="color: #C57BDB;">(</span>samples <span style="color: #e69055; font-weight: bold;">10</span><span style="color: #C57BDB;">)</span>
+<span style="color: #51afef;">)</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span style="color: #51afef;">(</span><span style="color: #51afef;">org-sbe</span> text-to-image
+  <span style="color: #C57BDB;">(</span>file_out $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-4<span style="color: #a991f1;">)</span> <span style="color: #7bc275;">"-low-samples"</span><span style="color: #7bc275;">)</span><span style="color: #C57BDB;">)</span>
+  <span style="color: #C57BDB;">(</span>prompt prompt-base-4<span style="color: #C57BDB;">)</span>
+  <span style="color: #C57BDB;">(</span>samples <span style="color: #e69055; font-weight: bold;">10</span><span style="color: #C57BDB;">)</span>
+<span style="color: #51afef;">)</span>
+</pre>
+</div>
+</div>
+</li>
+<li><a id="org28e10ba"></a>high samples<br />
+<div class="outline-text-5" id="text-2-4-4-2">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span style="color: #51afef;">(</span><span style="color: #51afef;">org-sbe</span> text-to-image
+  <span style="color: #C57BDB;">(</span>file_out $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-1<span style="color: #a991f1;">)</span> <span style="color: #7bc275;">"-high-samples"</span><span style="color: #7bc275;">)</span><span style="color: #C57BDB;">)</span>
+  <span style="color: #C57BDB;">(</span>prompt prompt-base-1<span style="color: #C57BDB;">)</span>
+  <span style="color: #C57BDB;">(</span>samples <span style="color: #e69055; font-weight: bold;">50</span><span style="color: #C57BDB;">)</span>
+<span style="color: #51afef;">)</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span style="color: #51afef;">(</span><span style="color: #51afef;">org-sbe</span> text-to-image
+  <span style="color: #C57BDB;">(</span>file_out $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-2<span style="color: #a991f1;">)</span> <span style="color: #7bc275;">"-high-samples"</span><span style="color: #7bc275;">)</span><span style="color: #C57BDB;">)</span>
+  <span style="color: #C57BDB;">(</span>prompt prompt-base-2<span style="color: #C57BDB;">)</span>
+  <span style="color: #C57BDB;">(</span>samples <span style="color: #e69055; font-weight: bold;">50</span><span style="color: #C57BDB;">)</span>
+<span style="color: #51afef;">)</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span style="color: #51afef;">(</span><span style="color: #51afef;">org-sbe</span> text-to-image
+  <span style="color: #C57BDB;">(</span>file_out $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-3<span style="color: #a991f1;">)</span> <span style="color: #7bc275;">"-high-samples"</span><span style="color: #7bc275;">)</span><span style="color: #C57BDB;">)</span>
+  <span style="color: #C57BDB;">(</span>prompt prompt-base-3<span style="color: #C57BDB;">)</span>
+  <span style="color: #C57BDB;">(</span>samples <span style="color: #e69055; font-weight: bold;">50</span><span style="color: #C57BDB;">)</span>
+<span style="color: #51afef;">)</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span style="color: #51afef;">(</span><span style="color: #51afef;">org-sbe</span> text-to-image
+  <span style="color: #C57BDB;">(</span>file_out $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-4<span style="color: #a991f1;">)</span> <span style="color: #7bc275;">"-high-samples"</span><span style="color: #7bc275;">)</span><span style="color: #C57BDB;">)</span>
+  <span style="color: #C57BDB;">(</span>prompt prompt-base-4<span style="color: #C57BDB;">)</span>
+  <span style="color: #C57BDB;">(</span>samples <span style="color: #e69055; font-weight: bold;">50</span><span style="color: #C57BDB;">)</span>
+<span style="color: #51afef;">)</span>
+</pre>
+</div>
+</div>
+</li>
+<li><a id="orge89f818"></a>very high samples<br />
+<div class="outline-text-5" id="text-2-4-4-3">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span style="color: #51afef;">(</span><span style="color: #51afef;">org-sbe</span> text-to-image
+  <span style="color: #C57BDB;">(</span>file_out $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-1<span style="color: #a991f1;">)</span> <span style="color: #7bc275;">"-very-high-samples"</span><span style="color: #7bc275;">)</span><span style="color: #C57BDB;">)</span>
+  <span style="color: #C57BDB;">(</span>prompt prompt-base-1<span style="color: #C57BDB;">)</span>
+  <span style="color: #C57BDB;">(</span>samples <span style="color: #e69055; font-weight: bold;">100</span><span style="color: #C57BDB;">)</span>
+<span style="color: #51afef;">)</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span style="color: #51afef;">(</span><span style="color: #51afef;">org-sbe</span> text-to-image
+  <span style="color: #C57BDB;">(</span>file_out $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-2<span style="color: #a991f1;">)</span> <span style="color: #7bc275;">"-very-high-samples"</span><span style="color: #7bc275;">)</span><span style="color: #C57BDB;">)</span>
+  <span style="color: #C57BDB;">(</span>prompt prompt-base-2<span style="color: #C57BDB;">)</span>
+  <span style="color: #C57BDB;">(</span>samples <span style="color: #e69055; font-weight: bold;">100</span><span style="color: #C57BDB;">)</span>
+<span style="color: #51afef;">)</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span style="color: #51afef;">(</span><span style="color: #51afef;">org-sbe</span> text-to-image
+  <span style="color: #C57BDB;">(</span>file_out $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-3<span style="color: #a991f1;">)</span> <span style="color: #7bc275;">"-very-high-samples"</span><span style="color: #7bc275;">)</span><span style="color: #C57BDB;">)</span>
+  <span style="color: #C57BDB;">(</span>prompt prompt-base-3<span style="color: #C57BDB;">)</span>
+  <span style="color: #C57BDB;">(</span>samples <span style="color: #e69055; font-weight: bold;">100</span><span style="color: #C57BDB;">)</span>
+<span style="color: #51afef;">)</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span style="color: #51afef;">(</span><span style="color: #51afef;">org-sbe</span> text-to-image
+  <span style="color: #C57BDB;">(</span>file_out $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-4<span style="color: #a991f1;">)</span> <span style="color: #7bc275;">"-very-high-samples"</span><span style="color: #7bc275;">)</span><span style="color: #C57BDB;">)</span>
+  <span style="color: #C57BDB;">(</span>prompt prompt-base-4<span style="color: #C57BDB;">)</span>
+  <span style="color: #C57BDB;">(</span>samples <span style="color: #e69055; font-weight: bold;">100</span><span style="color: #C57BDB;">)</span>
+<span style="color: #51afef;">)</span>
+</pre>
+</div>
+
+<p>
+Takeaway: The landscape image didn&rsquo;t improve much, but there were notable
+improvements on the other images.  More samples just means better.  I&rsquo;d have to
+do higher numbers to get a better idea with diminishing returns.
+</p>
+</div>
+</li>
+</ol>
+</div>
+<div id="outline-container-org3bd49b9" class="outline-4">
+<h4 id="org3bd49b9"><span class="section-number-4">2.4.5.</span> Sampling Method</h4>
+<div class="outline-text-4" id="text-2-4-5">
+<p>
+From my reading, the default DPM2++ 2M Karras (include true identifier) works
+best for modern models.  I&rsquo;ve heard good things about Euler A but it is either
+subjective or for older models.  I need to do a study of how they differ.
+</p>
+</div>
+</div>
+<div id="outline-container-orgc7f42b0" class="outline-4">
+<h4 id="orgc7f42b0"><span class="section-number-4">2.4.6.</span> Dimensions</h4>
+<div class="outline-text-4" id="text-2-4-6">
+<p>
+I don&rsquo;t think that height and width are the literal size of the image but I need
+to verify this.  This does become a factor with the &ldquo;Hires fix&rdquo;.
+</p>
+</div>
+</div>
+<div id="outline-container-orgeb99ec8" class="outline-4">
+<h4 id="orgeb99ec8"><span class="section-number-4">2.4.7.</span> High Resolution &ldquo;Fix&rdquo;</h4>
+</div>
+<div id="outline-container-org71046ed" class="outline-4">
+<h4 id="org71046ed"><span class="section-number-4">2.4.8.</span> Refiner</h4>
+</div>
+
+<div id="outline-container-orgd962483" class="outline-4">
+<h4 id="orgd962483"><span class="section-number-4">2.4.9.</span> Batch</h4>
+</div>
+
+<div id="outline-container-org051926f" class="outline-4">
+<h4 id="org051926f"><span class="section-number-4">2.4.10.</span> Tokens</h4>
+<div class="outline-text-4" id="text-2-4-10">
+<p>
+A token is effectively a single &ldquo;thought&rdquo; or a keyword/keyphrase inside of the
+prompt.  With a prompt such as &ldquo;pandas filing taxes&rdquo;, that phrase gets
+tokenized.  How exactly it slices these tokens and interprets them is a complete
+mystery to me.
+</p>
+
+<p>
+The tokens are treated as a sort of word salad.  There is a limit to the number
+of tokens that can be used, with some caveats.  Tokens can be weighted (and
+possibly grouped?).  Tokens can also be &ldquo;stepped&rdquo; and even alternated with a
+cutoff with another token.  There is a standard syntax and a legacy syntax.
+</p>
+</div>
+<ol class="org-ol">
+<li><a id="org1fd5abe"></a>Token Limits<br />
+<div class="outline-text-5" id="text-2-4-10-1">
+<p>
+There is an upper limit to these tokens in both the positive and negative
+prompts.  I do not know if pushing closer to that boundary causes significantly
+increased processing time.  That upper limit just breaks the image processing
+into two large parts - one part with one set of tokens and another part with the
+remaining tokens (or some continuation of that, if you go many multiples over
+the limit).  The limit in Stable Diffusion is quite large I have found, with 75
+tokens.  I do not know if the tokens between the positive and negative prompts
+tally up.
+</p>
+</div>
+</li>
+<li><a id="orgd5df14d"></a>Word Salad<br />
+<div class="outline-text-5" id="text-2-4-10-2">
+<p>
+I have noticed that words seem to be taken in any order with no respect to
+grammar.  So with &ldquo;pandas filing taxes&rdquo;, the end result is something to the
+effect of &ldquo;taxes&rdquo;, &ldquo;pandas&rdquo;, and &ldquo;filing&rdquo;, and the model goes to work on that.
+This can make some problems because if we use &ldquo;blue hair&rdquo;, we&rsquo;ll get lots of
+things that aren&rsquo;t blue, and the hair might remain not-blue.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-text" id="org9ff9f14"> blue hair
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span style="color: #51afef;">(</span><span style="color: #51afef;">org-sbe</span> text-to-image
+  <span style="color: #C57BDB;">(</span>file_out $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-1<span style="color: #a991f1;">)</span> <span style="color: #7bc275;">"-word-salad-blue-hair"</span><span style="color: #7bc275;">)</span><span style="color: #C57BDB;">)</span>
+  <span style="color: #C57BDB;">(</span>prompt $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-1<span style="color: #a991f1;">)</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> word-salad-blue-hair<span style="color: #a991f1;">)</span><span style="color: #7bc275;">)</span><span style="color: #C57BDB;">)</span>
+<span style="color: #51afef;">)</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span style="color: #51afef;">(</span><span style="color: #51afef;">org-sbe</span> text-to-image
+  <span style="color: #C57BDB;">(</span>file_out $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-2<span style="color: #a991f1;">)</span> <span style="color: #7bc275;">"-word-salad-blue-hair"</span><span style="color: #7bc275;">)</span><span style="color: #C57BDB;">)</span>
+  <span style="color: #C57BDB;">(</span>prompt $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-2<span style="color: #a991f1;">)</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> word-salad-blue-hair<span style="color: #a991f1;">)</span><span style="color: #7bc275;">)</span><span style="color: #C57BDB;">)</span>
+<span style="color: #51afef;">)</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span style="color: #51afef;">(</span><span style="color: #51afef;">org-sbe</span> text-to-image
+  <span style="color: #C57BDB;">(</span>file_out $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-3<span style="color: #a991f1;">)</span> <span style="color: #7bc275;">"-word-salad-blue-hair"</span><span style="color: #7bc275;">)</span><span style="color: #C57BDB;">)</span>
+  <span style="color: #C57BDB;">(</span>prompt $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-3<span style="color: #a991f1;">)</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> word-salad-blue-hair<span style="color: #a991f1;">)</span><span style="color: #7bc275;">)</span><span style="color: #C57BDB;">)</span>
+  <span style="color: #C57BDB;">(</span>samples <span style="color: #e69055; font-weight: bold;">30</span><span style="color: #C57BDB;">)</span>
+<span style="color: #51afef;">)</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span style="color: #51afef;">(</span><span style="color: #51afef;">org-sbe</span> text-to-image
+  <span style="color: #C57BDB;">(</span>file_out $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-4<span style="color: #a991f1;">)</span> <span style="color: #7bc275;">"-word-salad-blue-hair"</span><span style="color: #7bc275;">)</span><span style="color: #C57BDB;">)</span>
+  <span style="color: #C57BDB;">(</span>prompt $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-4<span style="color: #a991f1;">)</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> word-salad-blue-hair<span style="color: #a991f1;">)</span><span style="color: #7bc275;">)</span><span style="color: #C57BDB;">)</span>
+<span style="color: #51afef;">)</span>
+</pre>
+</div>
+
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span style="color: #51afef;">(</span><span style="color: #51afef;">org-sbe</span> text-to-image
+  <span style="color: #C57BDB;">(</span>file_out $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-3<span style="color: #a991f1;">)</span> <span style="color: #7bc275;">"-word-salad-blue-hair"</span><span style="color: #7bc275;">)</span><span style="color: #C57BDB;">)</span>
+  <span style="color: #C57BDB;">(</span>prompt $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-3<span style="color: #a991f1;">)</span> <span style="color: #7bc275;">", "</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> word-salad-blue-hair<span style="color: #a991f1;">)</span><span style="color: #7bc275;">)</span><span style="color: #C57BDB;">)</span>
+  <span style="color: #C57BDB;">(</span>samples <span style="color: #e69055; font-weight: bold;">30</span><span style="color: #C57BDB;">)</span>
+<span style="color: #51afef;">)</span>
+</pre>
+</div>
+
+<p>
+It&rsquo;s interesting in the case of the dreamscape and landscape prompts that it
+ignored those and just used a woman, but that is for a later break-down.
+</p>
+
+<p>
+Adding just &ldquo;blue hair&rdquo; doesn&rsquo;t prove my point well.  I imagine this is because
+when the prompt is &ldquo;man blue hair&rdquo; that blue men aren&rsquo;t as common as blue hair
+on a man, or any colored hair on a man.  Let&rsquo;s try it with an additional prompt:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-text" id="orgb94d690">, blue hair, red tie
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span style="color: #51afef;">(</span><span style="color: #51afef;">org-sbe</span> text-to-image
+  <span style="color: #C57BDB;">(</span>file_out $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-1<span style="color: #a991f1;">)</span> <span style="color: #7bc275;">"-word-salad-blue-hair-extra"</span><span style="color: #7bc275;">)</span><span style="color: #C57BDB;">)</span>
+  <span style="color: #C57BDB;">(</span>prompt $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-1<span style="color: #a991f1;">)</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> word-salad-blue-hair-extra<span style="color: #a991f1;">)</span><span style="color: #7bc275;">)</span><span style="color: #C57BDB; background-color: #1c1f24; font-weight: bold;">)</span>
+<span style="color: #51afef;">)</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span style="color: #51afef;">(</span><span style="color: #51afef;">org-sbe</span> text-to-image
+  <span style="color: #C57BDB;">(</span>file_out $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-2<span style="color: #a991f1;">)</span> <span style="color: #7bc275;">"-word-salad-blue-hair-extra"</span><span style="color: #7bc275;">)</span><span style="color: #C57BDB;">)</span>
+  <span style="color: #C57BDB;">(</span>prompt $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-2<span style="color: #a991f1;">)</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> word-salad-blue-hair-extra<span style="color: #a991f1;">)</span><span style="color: #7bc275;">)</span><span style="color: #C57BDB; background-color: #1c1f24; font-weight: bold;">)</span>
+<span style="color: #51afef;">)</span>
+</pre>
+</div>
+
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span style="color: #51afef;">(</span><span style="color: #51afef;">org-sbe</span> text-to-image
+  <span style="color: #C57BDB;">(</span>file_out $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-3<span style="color: #a991f1;">)</span> <span style="color: #7bc275;">"-word-salad-blue-hair-extra"</span><span style="color: #7bc275;">)</span><span style="color: #C57BDB;">)</span>
+  <span style="color: #C57BDB;">(</span>prompt $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-3<span style="color: #a991f1;">)</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> word-salad-blue-hair-extra<span style="color: #a991f1;">)</span><span style="color: #7bc275;">)</span><span style="color: #C57BDB; background-color: #1c1f24; font-weight: bold;">)</span>
+<span style="color: #51afef;">)</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span style="color: #51afef;">(</span><span style="color: #51afef;">org-sbe</span> text-to-image
+  <span style="color: #C57BDB;">(</span>file_out $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-4<span style="color: #a991f1;">)</span> <span style="color: #7bc275;">"-word-salad-blue-hair-extra"</span><span style="color: #7bc275;">)</span><span style="color: #C57BDB;">)</span>
+  <span style="color: #C57BDB;">(</span>prompt $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-4<span style="color: #a991f1;">)</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> word-salad-blue-hair-extra<span style="color: #a991f1;">)</span><span style="color: #7bc275;">)</span><span style="color: #C57BDB; background-color: #1c1f24; font-weight: bold;">)</span>
+<span style="color: #51afef;">)</span>
+</pre>
+</div>
+
+<p>
+Okay that&rsquo;s not enough to produce the &ldquo;swap&rdquo; issue I&rsquo;ve seen.  Let&rsquo;s make this
+more complicated and add another color.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-text" id="org2912375">, blue hair, red tie, a green house on a hill
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span style="color: #51afef;">(</span><span style="color: #51afef;">org-sbe</span> text-to-image
+  <span style="color: #C57BDB;">(</span>file_out $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-1<span style="color: #a991f1;">)</span> <span style="color: #7bc275;">"word-salad-blue-hair-red-tie-green</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">-house-hill"</span><span style="color: #7bc275; background-color: #1c1f24; font-weight: bold;">)</span><span style="color: #C57BDB; background-color: #1c1f24; font-weight: bold;">)</span>
+  <span style="color: #C57BDB;">(</span>prompt $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-1<span style="color: #a991f1;">)</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> word-salad-blue-hair-red-tie<span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">-green-house-hill</span><span style="color: #a991f1; background-color: #1c1f24; font-weight: bold;">)</span><span style="color: #7bc275; background-color: #1c1f24; font-weight: bold;">)</span><span style="color: #C57BDB; background-color: #1c1f24; font-weight: bold;">)</span>
+<span style="color: #51afef;">)</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span style="color: #51afef;">(</span><span style="color: #51afef;">org-sbe</span> text-to-image
+  <span style="color: #C57BDB;">(</span>file_out $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-2<span style="color: #a991f1;">)</span> <span style="color: #7bc275;">"word-salad-blue-hair-red-tie-green</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">-house-hill"</span><span style="color: #7bc275; background-color: #1c1f24; font-weight: bold;">)</span><span style="color: #C57BDB; background-color: #1c1f24; font-weight: bold;">)</span>
+  <span style="color: #C57BDB;">(</span>prompt $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-2<span style="color: #a991f1;">)</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> word-salad-blue-hair-red-tie<span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">-green-house-hill</span><span style="color: #a991f1; background-color: #1c1f24; font-weight: bold;">)</span><span style="color: #7bc275; background-color: #1c1f24; font-weight: bold;">)</span><span style="color: #C57BDB; background-color: #1c1f24; font-weight: bold;">)</span>
+<span style="color: #51afef;">)</span>
+</pre>
+</div>
+
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span style="color: #51afef;">(</span><span style="color: #51afef;">org-sbe</span> text-to-image
+  <span style="color: #C57BDB;">(</span>file_out $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-3<span style="color: #a991f1;">)</span> <span style="color: #7bc275;">"word-salad-blue-hair-red-tie-green</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">-house-hill"</span><span style="color: #7bc275; background-color: #1c1f24; font-weight: bold;">)</span><span style="color: #C57BDB; background-color: #1c1f24; font-weight: bold;">)</span>
+  <span style="color: #C57BDB;">(</span>prompt $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-3<span style="color: #a991f1;">)</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> word-salad-blue-hair-red-tie<span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">-green-house-hill</span><span style="color: #a991f1; background-color: #1c1f24; font-weight: bold;">)</span><span style="color: #7bc275; background-color: #1c1f24; font-weight: bold;">)</span><span style="color: #C57BDB; background-color: #1c1f24; font-weight: bold;">)</span>
+<span style="color: #51afef;">)</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span style="color: #51afef;">(</span><span style="color: #51afef;">org-sbe</span> text-to-image
+  <span style="color: #C57BDB;">(</span>file_out $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-4<span style="color: #a991f1;">)</span> <span style="color: #7bc275;">"word-salad-blue-hair-red-tie-green</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">-house-hill"</span><span style="color: #7bc275; background-color: #1c1f24; font-weight: bold;">)</span><span style="color: #C57BDB; background-color: #1c1f24; font-weight: bold;">)</span>
+  <span style="color: #C57BDB;">(</span>prompt $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-4<span style="color: #a991f1;">)</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> word-salad-blue-hair-red-tie<span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">-green-house-hill</span><span style="color: #a991f1; background-color: #1c1f24; font-weight: bold;">)</span><span style="color: #7bc275; background-color: #1c1f24; font-weight: bold;">)</span><span style="color: #C57BDB; background-color: #1c1f24; font-weight: bold;">)</span>
+<span style="color: #51afef;">)</span>
+</pre>
+</div>
+
+
+<p>
+Okay now we&rsquo;re seeing some color mixing.  How do we ensure we get what we
+wanted?  I&rsquo;ve been told this is due to <a href="#org44d9bda">2.4.10.4</a>.
+</p>
+</div>
+</li>
+<li><a id="org45f6270"></a>Weights<br />
+<div class="outline-text-5" id="text-2-4-10-3">
+<p>
+Keywords can be weighted.  This is done via a parenthesis notation around the
+keyword, a colon, and a number.  So the keyword <code>dragon</code> would indicate you want
+to see a dragon.  Using <code>(dragon: 1.5)</code> means you want to see a dragon but is
+weighted higher than other keywords by a significant margin.  The
+</p>
+</div>
+</li>
+<li><a id="org44d9bda"></a>Stepped Tokens<br />
+<div class="outline-text-5" id="text-2-4-10-4">
+<p>
+Stepped tokens use the syntax <code>[foo:bar:step]</code>, were <code>foo</code> and <code>bar</code> are
+individual tokens separated by a colon, and followed by another colon is the
+step in the samples at which to switch to the other token.
+</p>
+
+<p>
+There is multiple utility here:
+</p>
+<ol class="org-ol">
+<li>Things can be blended together.  One can do something like <code>[forest:city:20]</code>
+and the first 20 steps will be making a forest, where the last N steps will
+be that of a city for whatever the forest part was.  This can make
+forest-inspired or forest-looking cities.</li>
+<li>Color can be forced to work around issues observed wit <a href="#orgd5df14d">2.4.10.2</a>.  I&rsquo;m not
+sure how this is done yet.</li>
+</ol>
+</div>
+<ol class="org-ol">
+<li><a id="org4e24c48"></a>Blending with Steps<br />
+<div class="outline-text-6" id="text-2-4-10-4-1">
+<div class="org-src-container">
+<pre class="src src-text" id="orgc4f4150">, forest
+</pre>
+</div>
+
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span style="color: #51afef;">(</span><span style="color: #51afef;">org-sbe</span> text-to-image
+  <span style="color: #C57BDB;">(</span>file_out $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-1<span style="color: #a991f1;">)</span> <span style="color: #7bc275;">"-blending-steps-forest"</span><span style="color: #7bc275;">)</span><span style="color: #C57BDB;">)</span>
+  <span style="color: #C57BDB;">(</span>prompt $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-1<span style="color: #a991f1;">)</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> blending-steps-forest<span style="color: #a991f1;">)</span><span style="color: #7bc275;">)</span><span style="color: #C57BDB;">)</span>
+<span style="color: #51afef;">)</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span style="color: #51afef;">(</span><span style="color: #51afef;">org-sbe</span> text-to-image
+  <span style="color: #C57BDB;">(</span>file_out $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-2<span style="color: #a991f1;">)</span> <span style="color: #7bc275;">"-blending-steps-forest"</span><span style="color: #7bc275;">)</span><span style="color: #C57BDB;">)</span>
+  <span style="color: #C57BDB;">(</span>prompt $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-2<span style="color: #a991f1;">)</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> blending-steps-forest<span style="color: #a991f1;">)</span><span style="color: #7bc275;">)</span><span style="color: #C57BDB;">)</span>
+  <span style="color: #51afef;">)</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span style="color: #51afef;">(</span><span style="color: #51afef;">org-sbe</span> text-to-image
+  <span style="color: #C57BDB;">(</span>file_out $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-3<span style="color: #a991f1;">)</span> <span style="color: #7bc275;">"-blending-steps-forest"</span><span style="color: #7bc275;">)</span><span style="color: #C57BDB;">)</span>
+  <span style="color: #C57BDB;">(</span>prompt $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-3<span style="color: #a991f1;">)</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> blending-steps-forest<span style="color: #a991f1;">)</span><span style="color: #7bc275;">)</span><span style="color: #C57BDB;">)</span>
+  <span style="color: #51afef;">)</span>
+</pre>
+</div>
+
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span style="color: #51afef;">(</span><span style="color: #51afef;">org-sbe</span> text-to-image
+  <span style="color: #C57BDB;">(</span>file_out $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-4<span style="color: #a991f1;">)</span> <span style="color: #7bc275;">"-blending-steps-forest"</span><span style="color: #7bc275;">)</span><span style="color: #C57BDB;">)</span>
+  <span style="color: #C57BDB;">(</span>prompt $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-4<span style="color: #a991f1;">)</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> blending-steps-forest<span style="color: #a991f1;">)</span><span style="color: #7bc275;">)</span><span style="color: #C57BDB;">)</span>
+  <span style="color: #51afef;">)</span>
+</pre>
+</div>
+
+<p>
+Now let&rsquo;s do something that makes perfect sense: Make a forest of candy canes.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-text" id="orgb6c15a2">, [forest:candy-canes:5]
+</pre>
+</div>
+
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span style="color: #51afef;">(</span><span style="color: #51afef;">org-sbe</span> text-to-image
+  <span style="color: #C57BDB;">(</span>file_out $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-1<span style="color: #a991f1;">)</span> <span style="color: #7bc275;">"-blending-steps-forest-of-candy-ca</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">nes"</span><span style="color: #7bc275; background-color: #1c1f24; font-weight: bold;">)</span><span style="color: #C57BDB; background-color: #1c1f24; font-weight: bold;">)</span>
+  <span style="color: #C57BDB;">(</span>prompt $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-1<span style="color: #a991f1;">)</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> blending-steps-forest-of-can<span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">dy-canes</span><span style="color: #a991f1; background-color: #1c1f24; font-weight: bold;">)</span><span style="color: #7bc275; background-color: #1c1f24; font-weight: bold;">)</span><span style="color: #C57BDB; background-color: #1c1f24; font-weight: bold;">)</span>
+<span style="color: #51afef;">)</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span style="color: #51afef;">(</span><span style="color: #51afef;">org-sbe</span> text-to-image
+  <span style="color: #C57BDB;">(</span>file_out $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-2<span style="color: #a991f1;">)</span> <span style="color: #7bc275;">"-blending-steps-forest-of-candy-ca</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">nes"</span><span style="color: #7bc275; background-color: #1c1f24; font-weight: bold;">)</span><span style="color: #C57BDB; background-color: #1c1f24; font-weight: bold;">)</span>
+  <span style="color: #C57BDB;">(</span>prompt $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-2<span style="color: #a991f1;">)</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> blending-steps-forest-of-can<span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">dy-canes</span><span style="color: #a991f1; background-color: #1c1f24; font-weight: bold;">)</span><span style="color: #7bc275; background-color: #1c1f24; font-weight: bold;">)</span><span style="color: #C57BDB; background-color: #1c1f24; font-weight: bold;">)</span>
+<span style="color: #51afef;">)</span>
+</pre>
+</div>
+
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span style="color: #51afef;">(</span><span style="color: #51afef;">org-sbe</span> text-to-image
+  <span style="color: #C57BDB;">(</span>file_out $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-3<span style="color: #a991f1;">)</span> <span style="color: #7bc275;">"-blending-steps-forest-of-candy-ca</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">nes"</span><span style="color: #7bc275; background-color: #1c1f24; font-weight: bold;">)</span><span style="color: #C57BDB; background-color: #1c1f24; font-weight: bold;">)</span>
+  <span style="color: #C57BDB;">(</span>prompt $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-3<span style="color: #a991f1;">)</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> blending-steps-forest-of-can<span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">dy-canes</span><span style="color: #a991f1; background-color: #1c1f24; font-weight: bold;">)</span><span style="color: #7bc275; background-color: #1c1f24; font-weight: bold;">)</span><span style="color: #C57BDB; background-color: #1c1f24; font-weight: bold;">)</span>
+<span style="color: #51afef;">)</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span style="color: #51afef;">(</span><span style="color: #51afef;">org-sbe</span> text-to-image
+  <span style="color: #C57BDB;">(</span>file_out $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-4<span style="color: #a991f1;">)</span> <span style="color: #7bc275;">"-blending-steps-forest-of-candy-ca</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">nes"</span><span style="color: #7bc275; background-color: #1c1f24; font-weight: bold;">)</span><span style="color: #C57BDB; background-color: #1c1f24; font-weight: bold;">)</span>
+  <span style="color: #C57BDB;">(</span>prompt $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-4<span style="color: #a991f1;">)</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> blending-steps-forest-of-can<span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">dy-canes</span><span style="color: #a991f1; background-color: #1c1f24; font-weight: bold;">)</span><span style="color: #7bc275; background-color: #1c1f24; font-weight: bold;">)</span><span style="color: #C57BDB; background-color: #1c1f24; font-weight: bold;">)</span>
+<span style="color: #51afef;">)</span>
+</pre>
+</div>
+</div>
+</li>
+</ol>
+</li>
+<li><a id="orgd48bda0"></a>Alternating Tokens<br />
+<div class="outline-text-5" id="text-2-4-10-5">
+<p>
+Like <a href="#org44d9bda">2.4.10.4</a>, alternating tokens switch between the tokens every other
+step in the sampling.  Let&rsquo;s try the same forest of candy canes, but with
+alternating instead of stepped.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-text" id="org0ab9172">, [forest|candy canes]
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span style="color: #51afef;">(</span><span style="color: #51afef;">org-sbe</span> text-to-image
+  <span style="color: #C57BDB;">(</span>file_out $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-1<span style="color: #a991f1;">)</span> <span style="color: #7bc275;">"-alternating-steps-forest-of-candy</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">-canes"</span><span style="color: #7bc275; background-color: #1c1f24; font-weight: bold;">)</span><span style="color: #C57BDB; background-color: #1c1f24; font-weight: bold;">)</span>
+  <span style="color: #C57BDB;">(</span>prompt $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-1<span style="color: #a991f1;">)</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> alternating-steps-forest-of-<span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">candy-canes</span><span style="color: #a991f1; background-color: #1c1f24; font-weight: bold;">)</span><span style="color: #7bc275; background-color: #1c1f24; font-weight: bold;">)</span><span style="color: #C57BDB; background-color: #1c1f24; font-weight: bold;">)</span>
+<span style="color: #51afef;">)</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span style="color: #51afef;">(</span><span style="color: #51afef;">org-sbe</span> text-to-image
+  <span style="color: #C57BDB;">(</span>file_out $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-2<span style="color: #a991f1;">)</span> <span style="color: #7bc275;">"-alternating-steps-forest-of-candy</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">-canes"</span><span style="color: #7bc275; background-color: #1c1f24; font-weight: bold;">)</span><span style="color: #C57BDB; background-color: #1c1f24; font-weight: bold;">)</span>
+  <span style="color: #C57BDB;">(</span>prompt $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-2<span style="color: #a991f1;">)</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> alternating-steps-forest-of-<span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">candy-canes</span><span style="color: #a991f1; background-color: #1c1f24; font-weight: bold;">)</span><span style="color: #7bc275; background-color: #1c1f24; font-weight: bold;">)</span><span style="color: #C57BDB; background-color: #1c1f24; font-weight: bold;">)</span>
+<span style="color: #51afef;">)</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span style="color: #51afef;">(</span><span style="color: #51afef;">org-sbe</span> text-to-image
+  <span style="color: #C57BDB;">(</span>file_out $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-3<span style="color: #a991f1;">)</span> <span style="color: #7bc275;">"-alternating-steps-forest-of-candy</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">-canes"</span><span style="color: #7bc275; background-color: #1c1f24; font-weight: bold;">)</span><span style="color: #C57BDB; background-color: #1c1f24; font-weight: bold;">)</span>
+  <span style="color: #C57BDB;">(</span>prompt $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-3<span style="color: #a991f1;">)</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> alternating-steps-forest-of-<span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">candy-canes</span><span style="color: #a991f1; background-color: #1c1f24; font-weight: bold;">)</span><span style="color: #7bc275; background-color: #1c1f24; font-weight: bold;">)</span><span style="color: #C57BDB; background-color: #1c1f24; font-weight: bold;">)</span>
+<span style="color: #51afef;">)</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span style="color: #51afef;">(</span><span style="color: #51afef;">org-sbe</span> text-to-image
+  <span style="color: #C57BDB;">(</span>file_out $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-4<span style="color: #a991f1;">)</span> <span style="color: #7bc275;">"-alternating-steps-forest-of-candy</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">-canes"</span><span style="color: #7bc275; background-color: #1c1f24; font-weight: bold;">)</span><span style="color: #C57BDB; background-color: #1c1f24; font-weight: bold;">)</span>
+  <span style="color: #C57BDB;">(</span>prompt $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-4<span style="color: #a991f1;">)</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> alternating-steps-forest-of-<span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">candy-canes</span><span style="color: #a991f1; background-color: #1c1f24; font-weight: bold;">)</span><span style="color: #7bc275; background-color: #1c1f24; font-weight: bold;">)</span><span style="color: #C57BDB; background-color: #1c1f24; font-weight: bold;">)</span>
+<span style="color: #51afef;">)</span>
+</pre>
+</div>
+</div>
+</li>
+<li><a id="org88d3138"></a>Legacy Syntax<br /></li>
+
+<li><a id="org59b3218"></a>Special Keywords<br />
+<ol class="org-ol">
+<li><a id="org573acf8"></a>Distance<br /></li>
+
+<li><a id="org8003ca1"></a>Style<br /></li>
+
+<li><a id="org6289f9a"></a>Artist<br /></li>
+
+<li><a id="orgfec01cd"></a>Camera angle<br /></li>
+</ol>
+</li>
+</ol>
+</div>
+<div id="outline-container-org3e79b28" class="outline-4">
+<h4 id="org3e79b28"><span class="section-number-4">2.4.11.</span> Models</h4>
+</div>
+</div>
+</div>
