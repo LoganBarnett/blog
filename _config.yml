@@ -23,8 +23,6 @@ kramdown:
 # static assets
 static_files: /assets
 
-permalink: /:title.html
-
 # github-pages doesn't respect this, so it doesn't matter what we set it to.
 # This means we can't use _plugins/foo.rb styled plugins.  See
 # http://jekyllrb.com/docs/plugins/installation/ for citation.

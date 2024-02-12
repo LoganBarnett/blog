@@ -1,3 +1,13 @@
+#+title:     Consider Not Doing That Rewrite
+#+author:    Logan Barnett
+#+email:     logustus@gmail.com
+#+date:      <2021-12-08 Wed>
+#+language:  en
+#+file_tags:
+#+tags:
+#+auto_id:   t
+#+options:   toc:nil
+
 #+BEGIN_EXPORT html
 ---
 layout: default
@@ -7,13 +17,10 @@ categories: software-engineering
 ---
 #+END_EXPORT
 
-#+title:     Consider Not Doing That Rewrite
-#+author:    Logan Barnett
-#+email:     logustus@gmail.com
-#+date:      <2021-12-08 Wed>
-#+language:  en
-#+file_tags:
-#+tags:
+* Introduction
+:PROPERTIES:
+:CUSTOM_ID: introduction
+:END:
 
 I've always heard the software engineering industry is a rapidly changing
 industry. One of the things that contributes to it (and not the other way
@@ -23,7 +30,14 @@ I have not had good experience with this, and this post will go into why. At a
 very high level, here's there's one really big point I want to drive home:
 Rewrites won't unburden a project from technical debt.
 
+#+toc: headlines 10 local
+#+options: h:10
+#+options: num:10
+
 * Technical Debt
+:PROPERTIES:
+:CUSTOM_ID: technical-debt
+:END:
 
 To understand more deeply about why we want to rewrite a particular piece of
 software, we need to first understand the prime motivation and establish it in
@@ -78,6 +92,9 @@ We do have a few techniques on how to avoid this, and I'll try going into some
 of that. Let's take a look at the old software we want to rewrite.
 
 * Legacy
+:PROPERTIES:
+:CUSTOM_ID: legacy
+:END:
 
 Software is not often viewed as fine wines - they do not age nicely. Words like
 "cruft", and "hacky" get thrown around. Legacy is oftentimes the term we give to
@@ -111,6 +128,9 @@ To restate that point, because of its importance: Rewriting software will not
 buy any reprieve from technical debt.
 
 * The Model
+:PROPERTIES:
+:CUSTOM_ID: the-model
+:END:
 
 The model is the core of any software endeavor. I'm not talking about doing UML
 modeling necessarily. A model is a representation - full stop. Models are
@@ -131,6 +151,9 @@ To establish a good model, you need two big habits to start with:
 These are easier said than done.
 
 ** Maintaining Documentation
+:PROPERTIES:
+:CUSTOM_ID: the-model--maintaining-documentation
+:END:
 Maintaining documentation is tricky. Too much documentation and it's a pain to
 read, and easy to miss things. Too little documentation, and you diverge from
 your actual model. I could write an entire post about documentation and I'd
@@ -169,6 +192,9 @@ software projects. The attitude of "look at the code" for documentation is not
 sustainable.
 
 ** Perspective on What's to Come
+:PROPERTIES:
+:CUSTOM_ID: the-model--perspective-on-what's-to-come
+:END:
 
 Knowing what you're building is so essential if you're building it. While I
 loathe the actual construction metaphor we use in software engineering, this is
@@ -208,6 +234,9 @@ application. You'll know you missed the mark when you feel like your application
 is riddled with edge cases.
 
 ** Edge Cases
+:PROPERTIES:
+:CUSTOM_ID: the-model--edge-cases
+:END:
 
 We've talked a little bit about edge cases but haven't established exactly what
 they are. Edge cases are simply exceptions. Spelling in the English language is
@@ -245,6 +274,9 @@ desired model needs to catch up with the actual model.
 
 
 * Other Costs of Rewriting
+:PROPERTIES:
+:CUSTOM_ID: other-costs-of-rewriting
+:END:
 
 Rewriting software is a colossal ask. It's basically saying "I need to disappear
 for months, and I will come back with a piece of software that is not in feature
@@ -268,6 +300,9 @@ new prospective engineers. That was not what was promised. Even if they helped
 you create another pile of technical debt.
 
 * So What, I'm stuck with X while the world moves onto Y?
+:PROPERTIES:
+:CUSTOM_ID: so-what-i'm-stuck-with-x-while-the-world-moves-onto-y
+:END:
 
 This isn't to say you can't update things. I dislike how much "software
 engineering" equates to "web development" - there are many other disciplines
@@ -294,6 +329,9 @@ For web calls, this is basically setting up a reverse proxy between the new and
 legacy system.
 
 * But you said I'll still have technical debt
+:PROPERTIES:
+:CUSTOM_ID: but-you-said-i'll-still-have-technical-debt
+:END:
 
 I did say you'll still have technical debt. You need to cultivate the skill of
 cleaning as you go, and sometimes just leveraging time to actually work on a
@@ -303,6 +341,9 @@ exception that comes in introduces a tag applied to clients that introduces
 additional behavior.
 
 * Legacy Ain't All That Bad
+:PROPERTIES:
+:CUSTOM_ID: legacy-ain't-all-that-bad
+:END:
 
 If you're stuck on a legacy system, know that while you probably have some
 difficult times, and you feel like you're trudging through a murky bog, keep in
