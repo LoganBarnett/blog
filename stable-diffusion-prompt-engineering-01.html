@@ -103,7 +103,7 @@ more details until satisfaction is reached.
 </p>
 
 
-<div id="org34a0afc" class="figure">
+<div id="orgd22a6d8" class="figure">
 <p><img src="./assets/draw-the-owl01.jpeg" alt="draw-the-owl01.jpeg" />
 </p>
 </div>
@@ -158,7 +158,7 @@ for us.  This is that function:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-emacs-lisp" id="org79bbf50"><span style="color: #51afef;">(</span><span style="color: #51afef;">defun</span> <span style="color: #5cEfFF;">org-babel-block</span> <span style="color: #C57BDB;">(</span>block, args
+<pre class="src src-emacs-lisp" id="orgbde27a5"><span style="color: #51afef;">(</span><span style="color: #51afef;">defun</span> <span style="color: #5cEfFF;">org-babel-block</span> <span style="color: #C57BDB;">(</span>block, args
   <span style="color: #7bc275;">(</span>save-excursion
     <span style="color: #a991f1;">(</span><span style="color: #a991f1;">goto-char</span>
     <span style="color: #51afef;">(</span><span style="color: #a991f1;">org-babel-find-named-block</span> block<span style="color: #51afef;">)</span><span style="color: #a991f1;">)</span>
@@ -173,7 +173,7 @@ And something to catch the missing blocks:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-emacs-lisp" id="orgf400be3"><span style="color: #51afef;">(</span><span style="color: #a991f1;">message</span> <span style="color: #7bc275;">"Error: The '</span><span style="color: #a991f1;">block</span><span style="color: #7bc275;">' parameter was not provided for org-babel-block."</span><span style="color: #51afef;">)</span>
+<pre class="src src-emacs-lisp" id="org6243beb"><span style="color: #51afef;">(</span><span style="color: #a991f1;">message</span> <span style="color: #7bc275;">"Error: The '</span><span style="color: #a991f1;">block</span><span style="color: #7bc275;">' parameter was not provided for org-babel-block."</span><span style="color: #51afef;">)</span>
 </pre>
 </div>
 </div>
@@ -205,7 +205,7 @@ up correctly in the <code>/docs</code> URL.  I should clean this up soon.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-python" id="orge1509d5"><span style="color: #51afef;">import</span> urllib.request
+<pre class="src src-python" id="orgff029a6"><span style="color: #51afef;">import</span> urllib.request
 <span style="color: #51afef;">import</span> base64
 <span style="color: #51afef;">import</span> json
 <span style="color: #51afef;">import</span> time
@@ -234,7 +234,7 @@ up correctly in the <code>/docs</code> URL.  I should clean this up soon.
 </div>
 
 
-<div id="orgd5a9014" class="figure">
+<div id="orgf89fc95" class="figure">
 <p><img src="./test-0.png" alt="test-0.png" />
 </p>
 </div>
@@ -243,7 +243,7 @@ up correctly in the <code>/docs</code> URL.  I should clean this up soon.
 <li><a id="prompt-engineering--generated--generating-images---the-code--making-api-calls---a-reusable-block"></a>Making API Calls - A Reusable Block<br />
 <div class="outline-text-5" id="text-prompt-engineering--generated--generating-images---the-code--making-api-calls---a-reusable-block">
 <div class="org-src-container">
-<pre class="src src-python" id="orgc6a6156"><span style="color: #51afef;">import</span> urllib.request
+<pre class="src src-python" id="org49d2651"><span style="color: #51afef;">import</span> urllib.request
 <span style="color: #51afef;">import</span> base64
 <span style="color: #51afef;">import</span> json
 <span style="color: #51afef;">import</span> time
@@ -290,22 +290,22 @@ could serve as good reference though.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-text" id="org30ee3e9">dreamscape
+<pre class="src src-text" id="org7e2f937">dreamscape
 </pre>
 </div>
 
 <div class="org-src-container">
-<pre class="src src-text" id="orgd096906">man
+<pre class="src src-text" id="org12ffe0a">man
 </pre>
 </div>
 
 <div class="org-src-container">
-<pre class="src src-text" id="org44ac1fd">woman
+<pre class="src src-text" id="org59759bc">woman
 </pre>
 </div>
 
 <div class="org-src-container">
-<pre class="src src-text" id="org2d46f91">city or village or landscape
+<pre class="src src-text" id="orge7bc631">city or village or landscape
 </pre>
 </div>
 
@@ -314,7 +314,7 @@ The seed will be:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-text" id="org49ecc19">503043532
+<pre class="src src-text" id="org95bd3c2">503043532
 </pre>
 </div>
 
@@ -323,7 +323,7 @@ Our default sample size will be:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-text" id="org989b07b">20
+<pre class="src src-text" id="orgad4b6e8">20
 </pre>
 </div>
 
@@ -332,7 +332,7 @@ Our default model will be:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-text" id="orgc6e13d7">endjourneyXL_v11
+<pre class="src src-text" id="org483bf2e">endjourneyXL_v11
 </pre>
 </div>
 
@@ -341,22 +341,22 @@ Our default sampling method will be:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-text" id="orgf0948f3">dpm2pp_2m_karras
+<pre class="src src-text" id="orgbe450f3">dpm2pp_2m_karras
 </pre>
 </div>
 
 <div class="org-src-container">
-<pre class="src src-text" id="orge0cd279">512
+<pre class="src src-text" id="orga9a4fa8">512
 </pre>
 </div>
 
 <div class="org-src-container">
-<pre class="src src-text" id="org9b1e722">512
+<pre class="src src-text" id="org3c942b9">512
 </pre>
 </div>
 
 <div class="org-src-container">
-<pre class="src src-text" id="org5fb495e">7
+<pre class="src src-text" id="org9bcbd63">7
 </pre>
 </div>
 
@@ -365,7 +365,7 @@ The base URL for the <code>stable-diffusion-webui</code> server is:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-text" id="org4d58183">http://localhost:7860
+<pre class="src src-text" id="org6394ff0">http://localhost:7860
 </pre>
 </div>
 </div>
@@ -388,7 +388,7 @@ As described in <a href="#prompt-engineering--sample-prompts">2.3</a>, our base 
 </p>
 
 <p>
-<a id="orga901f94"></a>
+<a id="org4305938"></a>
 </p>
 
 <div class="org-src-container">
@@ -506,6 +506,12 @@ the case of the woman, I effectively have a separate image for each run.
 </pre>
 </div>
 
+
+<div id="org156208e" class="figure">
+<p><img src="./dreamscape-low-samples-0.png" alt="dreamscape-low-samples-0.png" />
+</p>
+</div>
+
 <div class="org-src-container">
 <pre class="src src-emacs-lisp"><span style="color: #51afef;">(</span><span style="color: #51afef;">org-sbe</span> text-to-image
   <span style="color: #C57BDB;">(</span>file_out $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-2<span style="color: #a991f1;">)</span> <span style="color: #7bc275;">"-low-samples"</span><span style="color: #7bc275;">)</span><span style="color: #C57BDB;">)</span>
@@ -513,6 +519,12 @@ the case of the woman, I effectively have a separate image for each run.
   <span style="color: #C57BDB;">(</span>samples <span style="color: #e69055; font-weight: bold;">10</span><span style="color: #C57BDB;">)</span>
 <span style="color: #51afef;">)</span>
 </pre>
+</div>
+
+
+<div id="org06b5731" class="figure">
+<p><img src="./man-low-samples-0.png" alt="man-low-samples-0.png" />
+</p>
 </div>
 
 <div class="org-src-container">
@@ -524,6 +536,12 @@ the case of the woman, I effectively have a separate image for each run.
 </pre>
 </div>
 
+
+<div id="org628e1b9" class="figure">
+<p><img src="./woman-low-samples-0.png" alt="woman-low-samples-0.png" />
+</p>
+</div>
+
 <div class="org-src-container">
 <pre class="src src-emacs-lisp"><span style="color: #51afef;">(</span><span style="color: #51afef;">org-sbe</span> text-to-image
   <span style="color: #C57BDB;">(</span>file_out $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-4<span style="color: #a991f1;">)</span> <span style="color: #7bc275;">"-low-samples"</span><span style="color: #7bc275;">)</span><span style="color: #C57BDB;">)</span>
@@ -531,6 +549,12 @@ the case of the woman, I effectively have a separate image for each run.
   <span style="color: #C57BDB;">(</span>samples <span style="color: #e69055; font-weight: bold;">10</span><span style="color: #C57BDB;">)</span>
 <span style="color: #51afef;">)</span>
 </pre>
+</div>
+
+
+<div id="org192af31" class="figure">
+<p><img src="./city or village or landscape-low-samples-0.png" alt="city or village or landscape-low-samples-0.png" />
+</p>
 </div>
 </div>
 </li>
@@ -545,6 +569,12 @@ the case of the woman, I effectively have a separate image for each run.
 </pre>
 </div>
 
+
+<div id="orga1375b1" class="figure">
+<p><img src="./dreamscape-high-samples-0.png" alt="dreamscape-high-samples-0.png" />
+</p>
+</div>
+
 <div class="org-src-container">
 <pre class="src src-emacs-lisp"><span style="color: #51afef;">(</span><span style="color: #51afef;">org-sbe</span> text-to-image
   <span style="color: #C57BDB;">(</span>file_out $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-2<span style="color: #a991f1;">)</span> <span style="color: #7bc275;">"-high-samples"</span><span style="color: #7bc275;">)</span><span style="color: #C57BDB;">)</span>
@@ -552,6 +582,12 @@ the case of the woman, I effectively have a separate image for each run.
   <span style="color: #C57BDB;">(</span>samples <span style="color: #e69055; font-weight: bold;">50</span><span style="color: #C57BDB;">)</span>
 <span style="color: #51afef;">)</span>
 </pre>
+</div>
+
+
+<div id="org6f9a8d0" class="figure">
+<p><img src="./man-high-samples-0.png" alt="man-high-samples-0.png" />
+</p>
 </div>
 
 <div class="org-src-container">
@@ -563,6 +599,12 @@ the case of the woman, I effectively have a separate image for each run.
 </pre>
 </div>
 
+
+<div id="orgcf11a81" class="figure">
+<p><img src="./woman-high-samples-0.png" alt="woman-high-samples-0.png" />
+</p>
+</div>
+
 <div class="org-src-container">
 <pre class="src src-emacs-lisp"><span style="color: #51afef;">(</span><span style="color: #51afef;">org-sbe</span> text-to-image
   <span style="color: #C57BDB;">(</span>file_out $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-4<span style="color: #a991f1;">)</span> <span style="color: #7bc275;">"-high-samples"</span><span style="color: #7bc275;">)</span><span style="color: #C57BDB;">)</span>
@@ -570,6 +612,12 @@ the case of the woman, I effectively have a separate image for each run.
   <span style="color: #C57BDB;">(</span>samples <span style="color: #e69055; font-weight: bold;">50</span><span style="color: #C57BDB;">)</span>
 <span style="color: #51afef;">)</span>
 </pre>
+</div>
+
+
+<div id="orga2b32dc" class="figure">
+<p><img src="./city or village or landscape-high-samples-0.png" alt="city or village or landscape-high-samples-0.png" />
+</p>
 </div>
 </div>
 </li>
@@ -584,6 +632,12 @@ the case of the woman, I effectively have a separate image for each run.
 </pre>
 </div>
 
+
+<div id="org8d38c76" class="figure">
+<p><img src="./dreamscape-very-high-samples-0.png" alt="dreamscape-very-high-samples-0.png" />
+</p>
+</div>
+
 <div class="org-src-container">
 <pre class="src src-emacs-lisp"><span style="color: #51afef;">(</span><span style="color: #51afef;">org-sbe</span> text-to-image
   <span style="color: #C57BDB;">(</span>file_out $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-2<span style="color: #a991f1;">)</span> <span style="color: #7bc275;">"-very-high-samples"</span><span style="color: #7bc275;">)</span><span style="color: #C57BDB;">)</span>
@@ -591,6 +645,12 @@ the case of the woman, I effectively have a separate image for each run.
   <span style="color: #C57BDB;">(</span>samples <span style="color: #e69055; font-weight: bold;">100</span><span style="color: #C57BDB;">)</span>
 <span style="color: #51afef;">)</span>
 </pre>
+</div>
+
+
+<div id="org71f10ae" class="figure">
+<p><img src="./man-very-high-samples-0.png" alt="man-very-high-samples-0.png" />
+</p>
 </div>
 
 <div class="org-src-container">
@@ -602,6 +662,12 @@ the case of the woman, I effectively have a separate image for each run.
 </pre>
 </div>
 
+
+<div id="orgd672f48" class="figure">
+<p><img src="./woman-very-high-samples-0.png" alt="woman-very-high-samples-0.png" />
+</p>
+</div>
+
 <div class="org-src-container">
 <pre class="src src-emacs-lisp"><span style="color: #51afef;">(</span><span style="color: #51afef;">org-sbe</span> text-to-image
   <span style="color: #C57BDB;">(</span>file_out $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-4<span style="color: #a991f1;">)</span> <span style="color: #7bc275;">"-very-high-samples"</span><span style="color: #7bc275;">)</span><span style="color: #C57BDB;">)</span>
@@ -609,6 +675,12 @@ the case of the woman, I effectively have a separate image for each run.
   <span style="color: #C57BDB;">(</span>samples <span style="color: #e69055; font-weight: bold;">100</span><span style="color: #C57BDB;">)</span>
 <span style="color: #51afef;">)</span>
 </pre>
+</div>
+
+
+<div id="org0c4bb47" class="figure">
+<p><img src="./city or village or landscape-very-high-samples-0.png" alt="city or village or landscape-very-high-samples-0.png" />
+</p>
 </div>
 
 <p>
@@ -697,7 +769,7 @@ things that aren&rsquo;t blue, and the hair might remain not-blue.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-text" id="org168390b"> blue hair
+<pre class="src src-text" id="orgf909ab2"> blue hair
 </pre>
 </div>
 
@@ -709,12 +781,24 @@ things that aren&rsquo;t blue, and the hair might remain not-blue.
 </pre>
 </div>
 
+
+<div id="orge8778b2" class="figure">
+<p><img src="./dreamscape-word-salad-blue-hair-0.png" alt="dreamscape-word-salad-blue-hair-0.png" />
+</p>
+</div>
+
 <div class="org-src-container">
 <pre class="src src-emacs-lisp"><span style="color: #51afef;">(</span><span style="color: #51afef;">org-sbe</span> text-to-image
   <span style="color: #C57BDB;">(</span>file_out $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-2<span style="color: #a991f1;">)</span> <span style="color: #7bc275;">"-word-salad-blue-hair"</span><span style="color: #7bc275;">)</span><span style="color: #C57BDB;">)</span>
   <span style="color: #C57BDB;">(</span>prompt $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-2<span style="color: #a991f1;">)</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> word-salad-blue-hair<span style="color: #a991f1;">)</span><span style="color: #7bc275;">)</span><span style="color: #C57BDB;">)</span>
 <span style="color: #51afef;">)</span>
 </pre>
+</div>
+
+
+<div id="org9867bf7" class="figure">
+<p><img src="./man-word-salad-blue-hair-0.png" alt="man-word-salad-blue-hair-0.png" />
+</p>
 </div>
 
 <div class="org-src-container">
@@ -726,12 +810,24 @@ things that aren&rsquo;t blue, and the hair might remain not-blue.
 </pre>
 </div>
 
+
+<div id="orga70bc71" class="figure">
+<p><img src="./woman-word-salad-blue-hair-0.png" alt="woman-word-salad-blue-hair-0.png" />
+</p>
+</div>
+
 <div class="org-src-container">
 <pre class="src src-emacs-lisp"><span style="color: #51afef;">(</span><span style="color: #51afef;">org-sbe</span> text-to-image
   <span style="color: #C57BDB;">(</span>file_out $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-4<span style="color: #a991f1;">)</span> <span style="color: #7bc275;">"-word-salad-blue-hair"</span><span style="color: #7bc275;">)</span><span style="color: #C57BDB;">)</span>
   <span style="color: #C57BDB;">(</span>prompt $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-4<span style="color: #a991f1;">)</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> word-salad-blue-hair<span style="color: #a991f1;">)</span><span style="color: #7bc275;">)</span><span style="color: #C57BDB;">)</span>
 <span style="color: #51afef;">)</span>
 </pre>
+</div>
+
+
+<div id="org450b9fb" class="figure">
+<p><img src="./city or village or landscape-word-salad-blue-hair-0.png" alt="city or village or landscape-word-salad-blue-hair-0.png" />
+</p>
 </div>
 
 
@@ -742,6 +838,12 @@ things that aren&rsquo;t blue, and the hair might remain not-blue.
   <span style="color: #C57BDB;">(</span>samples <span style="color: #e69055; font-weight: bold;">30</span><span style="color: #C57BDB;">)</span>
 <span style="color: #51afef;">)</span>
 </pre>
+</div>
+
+
+<div id="org5a31d01" class="figure">
+<p><img src="./woman-word-salad-blue-hair-0.png" alt="woman-word-salad-blue-hair-0.png" />
+</p>
 </div>
 
 <p>
@@ -756,7 +858,7 @@ on a man, or any colored hair on a man.  Let&rsquo;s try it with an additional p
 </p>
 
 <div class="org-src-container">
-<pre class="src src-text" id="orgc71c873">, blue hair, red tie
+<pre class="src src-text" id="orgd194cd7">, blue hair, red tie
 </pre>
 </div>
 
@@ -768,12 +870,24 @@ on a man, or any colored hair on a man.  Let&rsquo;s try it with an additional p
 </pre>
 </div>
 
+
+<div id="org0965f0e" class="figure">
+<p><img src="./dreamscape-word-salad-blue-hair-extra-0.png" alt="dreamscape-word-salad-blue-hair-extra-0.png" />
+</p>
+</div>
+
 <div class="org-src-container">
 <pre class="src src-emacs-lisp"><span style="color: #51afef;">(</span><span style="color: #51afef;">org-sbe</span> text-to-image
   <span style="color: #C57BDB;">(</span>file_out $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-2<span style="color: #a991f1;">)</span> <span style="color: #7bc275;">"-word-salad-blue-hair-extra"</span><span style="color: #7bc275;">)</span><span style="color: #C57BDB;">)</span>
   <span style="color: #C57BDB;">(</span>prompt $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-2<span style="color: #a991f1;">)</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> word-salad-blue-hair-extra<span style="color: #a991f1;">)</span><span style="color: #7bc275;">)</span><span style="color: #C57BDB; background-color: #1c1f24; font-weight: bold;">)</span>
 <span style="color: #51afef;">)</span>
 </pre>
+</div>
+
+
+<div id="org7f49d39" class="figure">
+<p><img src="./man-word-salad-blue-hair-extra-0.png" alt="man-word-salad-blue-hair-extra-0.png" />
+</p>
 </div>
 
 
@@ -785,6 +899,12 @@ on a man, or any colored hair on a man.  Let&rsquo;s try it with an additional p
 </pre>
 </div>
 
+
+<div id="org53ec669" class="figure">
+<p><img src="./woman-word-salad-blue-hair-extra-0.png" alt="woman-word-salad-blue-hair-extra-0.png" />
+</p>
+</div>
+
 <div class="org-src-container">
 <pre class="src src-emacs-lisp"><span style="color: #51afef;">(</span><span style="color: #51afef;">org-sbe</span> text-to-image
   <span style="color: #C57BDB;">(</span>file_out $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-4<span style="color: #a991f1;">)</span> <span style="color: #7bc275;">"-word-salad-blue-hair-extra"</span><span style="color: #7bc275;">)</span><span style="color: #C57BDB;">)</span>
@@ -793,13 +913,19 @@ on a man, or any colored hair on a man.  Let&rsquo;s try it with an additional p
 </pre>
 </div>
 
+
+<div id="org72c7f67" class="figure">
+<p><img src="./city or village or landscape-word-salad-blue-hair-extra-0.png" alt="city or village or landscape-word-salad-blue-hair-extra-0.png" />
+</p>
+</div>
+
 <p>
 Okay that&rsquo;s not enough to produce the &ldquo;swap&rdquo; issue I&rsquo;ve seen.  Let&rsquo;s make this
 more complicated and add another color.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-text" id="org2a59230">, blue hair, red tie, a green house on a hill
+<pre class="src src-text" id="org69ac0d2">, blue hair, red tie, a green house on a hill
 </pre>
 </div>
 
@@ -811,12 +937,24 @@ more complicated and add another color.
 </pre>
 </div>
 
+
+<div id="org6b892e0" class="figure">
+<p><img src="./dreamscapeword-salad-blue-hair-red-tie-green-house-hill-0.png" alt="dreamscapeword-salad-blue-hair-red-tie-green-house-hill-0.png" />
+</p>
+</div>
+
 <div class="org-src-container">
 <pre class="src src-emacs-lisp"><span style="color: #51afef;">(</span><span style="color: #51afef;">org-sbe</span> text-to-image
   <span style="color: #C57BDB;">(</span>file_out $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-2<span style="color: #a991f1;">)</span> <span style="color: #7bc275;">"word-salad-blue-hair-red-tie-green</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">-house-hill"</span><span style="color: #7bc275; background-color: #1c1f24; font-weight: bold;">)</span><span style="color: #C57BDB; background-color: #1c1f24; font-weight: bold;">)</span>
   <span style="color: #C57BDB;">(</span>prompt $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-2<span style="color: #a991f1;">)</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> word-salad-blue-hair-red-tie<span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">-green-house-hill</span><span style="color: #a991f1; background-color: #1c1f24; font-weight: bold;">)</span><span style="color: #7bc275; background-color: #1c1f24; font-weight: bold;">)</span><span style="color: #C57BDB; background-color: #1c1f24; font-weight: bold;">)</span>
 <span style="color: #51afef;">)</span>
 </pre>
+</div>
+
+
+<div id="org2ae85ea" class="figure">
+<p><img src="./manword-salad-blue-hair-red-tie-green-house-hill-0.png" alt="manword-salad-blue-hair-red-tie-green-house-hill-0.png" />
+</p>
 </div>
 
 
@@ -828,12 +966,24 @@ more complicated and add another color.
 </pre>
 </div>
 
+
+<div id="org0dd8d7b" class="figure">
+<p><img src="./womanword-salad-blue-hair-red-tie-green-house-hill-0.png" alt="womanword-salad-blue-hair-red-tie-green-house-hill-0.png" />
+</p>
+</div>
+
 <div class="org-src-container">
 <pre class="src src-emacs-lisp"><span style="color: #51afef;">(</span><span style="color: #51afef;">org-sbe</span> text-to-image
   <span style="color: #C57BDB;">(</span>file_out $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-4<span style="color: #a991f1;">)</span> <span style="color: #7bc275;">"word-salad-blue-hair-red-tie-green</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">-house-hill"</span><span style="color: #7bc275; background-color: #1c1f24; font-weight: bold;">)</span><span style="color: #C57BDB; background-color: #1c1f24; font-weight: bold;">)</span>
   <span style="color: #C57BDB;">(</span>prompt $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-4<span style="color: #a991f1;">)</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> word-salad-blue-hair-red-tie<span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">-green-house-hill</span><span style="color: #a991f1; background-color: #1c1f24; font-weight: bold;">)</span><span style="color: #7bc275; background-color: #1c1f24; font-weight: bold;">)</span><span style="color: #C57BDB; background-color: #1c1f24; font-weight: bold;">)</span>
 <span style="color: #51afef;">)</span>
 </pre>
+</div>
+
+
+<div id="orgbcae978" class="figure">
+<p><img src="./city or village or landscapeword-salad-blue-hair-red-tie-green-house-hill-0.png" alt="city or village or landscapeword-salad-blue-hair-red-tie-green-house-hill-0.png" />
+</p>
 </div>
 
 
@@ -877,7 +1027,7 @@ sure how this is done yet.</li>
 <li><a id="prompt-engineering--inputs--tokens--swapped-tokens--blending-with-steps"></a>Blending with Steps<br />
 <div class="outline-text-6" id="text-prompt-engineering--inputs--tokens--swapped-tokens--blending-with-steps">
 <div class="org-src-container">
-<pre class="src src-text" id="org8ef7669">, forest
+<pre class="src src-text" id="org055fed7">, forest
 </pre>
 </div>
 
@@ -890,12 +1040,24 @@ sure how this is done yet.</li>
 </pre>
 </div>
 
+
+<div id="orgabda2a2" class="figure">
+<p><img src="./dreamscape-blending-steps-forest-0.png" alt="dreamscape-blending-steps-forest-0.png" />
+</p>
+</div>
+
 <div class="org-src-container">
 <pre class="src src-emacs-lisp"><span style="color: #51afef;">(</span><span style="color: #51afef;">org-sbe</span> text-to-image
   <span style="color: #C57BDB;">(</span>file_out $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-2<span style="color: #a991f1;">)</span> <span style="color: #7bc275;">"-blending-steps-forest"</span><span style="color: #7bc275;">)</span><span style="color: #C57BDB;">)</span>
   <span style="color: #C57BDB;">(</span>prompt $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-2<span style="color: #a991f1;">)</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> blending-steps-forest<span style="color: #a991f1;">)</span><span style="color: #7bc275;">)</span><span style="color: #C57BDB;">)</span>
   <span style="color: #51afef;">)</span>
 </pre>
+</div>
+
+
+<div id="orgc9a35a0" class="figure">
+<p><img src="./man-blending-steps-forest-0.png" alt="man-blending-steps-forest-0.png" />
+</p>
 </div>
 
 <div class="org-src-container">
@@ -907,6 +1069,12 @@ sure how this is done yet.</li>
 </div>
 
 
+<div id="org6bea4da" class="figure">
+<p><img src="./woman-blending-steps-forest-0.png" alt="woman-blending-steps-forest-0.png" />
+</p>
+</div>
+
+
 <div class="org-src-container">
 <pre class="src src-emacs-lisp"><span style="color: #51afef;">(</span><span style="color: #51afef;">org-sbe</span> text-to-image
   <span style="color: #C57BDB;">(</span>file_out $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-4<span style="color: #a991f1;">)</span> <span style="color: #7bc275;">"-blending-steps-forest"</span><span style="color: #7bc275;">)</span><span style="color: #C57BDB;">)</span>
@@ -915,12 +1083,18 @@ sure how this is done yet.</li>
 </pre>
 </div>
 
+
+<div id="orgfda6370" class="figure">
+<p><img src="./city or village or landscape-blending-steps-forest-0.png" alt="city or village or landscape-blending-steps-forest-0.png" />
+</p>
+</div>
+
 <p>
 Now let&rsquo;s do something that makes perfect sense: Make a forest of candy canes.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-text" id="org607e2e1">, [forest:candy-canes:5]
+<pre class="src src-text" id="orgf2982dd">, [forest:candy-canes:5]
 </pre>
 </div>
 
@@ -933,12 +1107,24 @@ Now let&rsquo;s do something that makes perfect sense: Make a forest of candy ca
 </pre>
 </div>
 
+
+<div id="org858d2e7" class="figure">
+<p><img src="./dreamscape-blending-steps-forest-of-candy-canes-0.png" alt="dreamscape-blending-steps-forest-of-candy-canes-0.png" />
+</p>
+</div>
+
 <div class="org-src-container">
 <pre class="src src-emacs-lisp"><span style="color: #51afef;">(</span><span style="color: #51afef;">org-sbe</span> text-to-image
   <span style="color: #C57BDB;">(</span>file_out $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-2<span style="color: #a991f1;">)</span> <span style="color: #7bc275;">"-blending-steps-forest-of-candy-ca</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">nes"</span><span style="color: #7bc275; background-color: #1c1f24; font-weight: bold;">)</span><span style="color: #C57BDB; background-color: #1c1f24; font-weight: bold;">)</span>
   <span style="color: #C57BDB;">(</span>prompt $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-2<span style="color: #a991f1;">)</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> blending-steps-forest-of-can<span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">dy-canes</span><span style="color: #a991f1; background-color: #1c1f24; font-weight: bold;">)</span><span style="color: #7bc275; background-color: #1c1f24; font-weight: bold;">)</span><span style="color: #C57BDB; background-color: #1c1f24; font-weight: bold;">)</span>
 <span style="color: #51afef;">)</span>
 </pre>
+</div>
+
+
+<div id="orgb903ced" class="figure">
+<p><img src="./man-blending-steps-forest-of-candy-canes-0.png" alt="man-blending-steps-forest-of-candy-canes-0.png" />
+</p>
 </div>
 
 
@@ -950,12 +1136,24 @@ Now let&rsquo;s do something that makes perfect sense: Make a forest of candy ca
 </pre>
 </div>
 
+
+<div id="org0a8bb4d" class="figure">
+<p><img src="./woman-blending-steps-forest-of-candy-canes-0.png" alt="woman-blending-steps-forest-of-candy-canes-0.png" />
+</p>
+</div>
+
 <div class="org-src-container">
 <pre class="src src-emacs-lisp"><span style="color: #51afef;">(</span><span style="color: #51afef;">org-sbe</span> text-to-image
   <span style="color: #C57BDB;">(</span>file_out $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-4<span style="color: #a991f1;">)</span> <span style="color: #7bc275;">"-blending-steps-forest-of-candy-ca</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">nes"</span><span style="color: #7bc275; background-color: #1c1f24; font-weight: bold;">)</span><span style="color: #C57BDB; background-color: #1c1f24; font-weight: bold;">)</span>
   <span style="color: #C57BDB;">(</span>prompt $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-4<span style="color: #a991f1;">)</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> blending-steps-forest-of-can<span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">dy-canes</span><span style="color: #a991f1; background-color: #1c1f24; font-weight: bold;">)</span><span style="color: #7bc275; background-color: #1c1f24; font-weight: bold;">)</span><span style="color: #C57BDB; background-color: #1c1f24; font-weight: bold;">)</span>
 <span style="color: #51afef;">)</span>
 </pre>
+</div>
+
+
+<div id="org30710bc" class="figure">
+<p><img src="./city or village or landscape-blending-steps-forest-of-candy-canes-0.png" alt="city or village or landscape-blending-steps-forest-of-candy-canes-0.png" />
+</p>
 </div>
 </div>
 </li>
@@ -970,7 +1168,7 @@ alternating instead of stepped.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-text" id="orgac51f2a">, [forest|candy canes]
+<pre class="src src-text" id="orgcf1049a">, [forest|candy canes]
 </pre>
 </div>
 
@@ -982,12 +1180,24 @@ alternating instead of stepped.
 </pre>
 </div>
 
+
+<div id="org8a91efa" class="figure">
+<p><img src="./dreamscape-alternating-steps-forest-of-candy-canes-0.png" alt="dreamscape-alternating-steps-forest-of-candy-canes-0.png" />
+</p>
+</div>
+
 <div class="org-src-container">
 <pre class="src src-emacs-lisp"><span style="color: #51afef;">(</span><span style="color: #51afef;">org-sbe</span> text-to-image
   <span style="color: #C57BDB;">(</span>file_out $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-2<span style="color: #a991f1;">)</span> <span style="color: #7bc275;">"-alternating-steps-forest-of-candy</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">-canes"</span><span style="color: #7bc275; background-color: #1c1f24; font-weight: bold;">)</span><span style="color: #C57BDB; background-color: #1c1f24; font-weight: bold;">)</span>
   <span style="color: #C57BDB;">(</span>prompt $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-2<span style="color: #a991f1;">)</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> alternating-steps-forest-of-<span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">candy-canes</span><span style="color: #a991f1; background-color: #1c1f24; font-weight: bold;">)</span><span style="color: #7bc275; background-color: #1c1f24; font-weight: bold;">)</span><span style="color: #C57BDB; background-color: #1c1f24; font-weight: bold;">)</span>
 <span style="color: #51afef;">)</span>
 </pre>
+</div>
+
+
+<div id="org1b1b33e" class="figure">
+<p><img src="./man-alternating-steps-forest-of-candy-canes-0.png" alt="man-alternating-steps-forest-of-candy-canes-0.png" />
+</p>
 </div>
 
 <div class="org-src-container">
@@ -998,12 +1208,24 @@ alternating instead of stepped.
 </pre>
 </div>
 
+
+<div id="orged8beea" class="figure">
+<p><img src="./woman-alternating-steps-forest-of-candy-canes-0.png" alt="woman-alternating-steps-forest-of-candy-canes-0.png" />
+</p>
+</div>
+
 <div class="org-src-container">
 <pre class="src src-emacs-lisp"><span style="color: #51afef;">(</span><span style="color: #51afef;">org-sbe</span> text-to-image
   <span style="color: #C57BDB;">(</span>file_out $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-4<span style="color: #a991f1;">)</span> <span style="color: #7bc275;">"-alternating-steps-forest-of-candy</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">-canes"</span><span style="color: #7bc275; background-color: #1c1f24; font-weight: bold;">)</span><span style="color: #C57BDB; background-color: #1c1f24; font-weight: bold;">)</span>
   <span style="color: #C57BDB;">(</span>prompt $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-4<span style="color: #a991f1;">)</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> alternating-steps-forest-of-<span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">candy-canes</span><span style="color: #a991f1; background-color: #1c1f24; font-weight: bold;">)</span><span style="color: #7bc275; background-color: #1c1f24; font-weight: bold;">)</span><span style="color: #C57BDB; background-color: #1c1f24; font-weight: bold;">)</span>
 <span style="color: #51afef;">)</span>
 </pre>
+</div>
+
+
+<div id="org2004590" class="figure">
+<p><img src="./city or village or landscape-alternating-steps-forest-of-candy-canes-0.png" alt="city or village or landscape-alternating-steps-forest-of-candy-canes-0.png" />
+</p>
 </div>
 </div>
 </li>

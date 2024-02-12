@@ -433,7 +433,7 @@ the case of the woman, I effectively have a separate image for each run.
 :CUSTOM_ID: prompt-engineering--inputs--samples--very-low-samples
 :END:
 
-#+begin_src emacs-lisp :results value raw :cache yes
+#+begin_src emacs-lisp :results value raw :cache yes :exports both
 (org-sbe text-to-image
   (file_out $(concat (org-sbe prompt-base-1) "-low-samples"))
   (prompt prompt-base-1)
@@ -441,10 +441,10 @@ the case of the woman, I effectively have a separate image for each run.
 )
 #+end_src
 
-#+RESULTS[982c4823fd4b8650f38be7bc8aee4592915b1a29]:
+#+RESULTS[e75af78827fd7a58b7a977ee9c3c801fbad9baa4]:
 [[file:./dreamscape-low-samples-0.png]]
 
-#+begin_src emacs-lisp :results value raw :cache yes
+#+begin_src emacs-lisp :results value raw :cache yes :exports both
 (org-sbe text-to-image
   (file_out $(concat (org-sbe prompt-base-2) "-low-samples"))
   (prompt prompt-base-2)
@@ -452,10 +452,10 @@ the case of the woman, I effectively have a separate image for each run.
 )
 #+end_src
 
-#+RESULTS[9edb0932d61eb6b1ee75caf0be076df45a6ce8de]:
+#+RESULTS[b78b30f2ebd260a5135810b781ea5d353d59f0d4]:
 [[file:./man-low-samples-0.png]]
 
-#+begin_src emacs-lisp :results value raw :cache yes
+#+begin_src emacs-lisp :results value raw :cache yes :exports both
 (org-sbe text-to-image
   (file_out $(concat (org-sbe prompt-base-3) "-low-samples"))
   (prompt prompt-base-3)
@@ -463,10 +463,10 @@ the case of the woman, I effectively have a separate image for each run.
 )
 #+end_src
 
-#+RESULTS[739a9dbc55b926f0cac99ee6f3282c625e92516f]:
+#+RESULTS[965dbcab3e808dc41ad961ae13551849696c1b54]:
 [[file:./woman-low-samples-0.png]]
 
-#+begin_src emacs-lisp :results value raw :cache yes
+#+begin_src emacs-lisp :results value raw :cache yes :exports both
 (org-sbe text-to-image
   (file_out $(concat (org-sbe prompt-base-4) "-low-samples"))
   (prompt prompt-base-4)
@@ -474,7 +474,7 @@ the case of the woman, I effectively have a separate image for each run.
 )
 #+end_src
 
-#+RESULTS[f6c27c99adf4f40f3b01fcf582c9a6801912d37b]:
+#+RESULTS[49eeab1a85dfb130eceb0b721c95c08c6dbd57f6]:
 [[file:./city or village or landscape-low-samples-0.png]]
 
 **** high samples
@@ -482,7 +482,7 @@ the case of the woman, I effectively have a separate image for each run.
 :CUSTOM_ID: prompt-engineering--inputs--samples--high-samples
 :END:
 
-#+begin_src emacs-lisp :results value raw :cache yes
+#+begin_src emacs-lisp :results value raw :cache yes :exports both
 (org-sbe text-to-image
   (file_out $(concat (org-sbe prompt-base-1) "-high-samples"))
   (prompt prompt-base-1)
@@ -490,10 +490,10 @@ the case of the woman, I effectively have a separate image for each run.
 )
 #+end_src
 
-#+RESULTS[6e6e5084aa78cd591cf829930db6e08dd543b763]:
+#+RESULTS[6d4ff57785403d9dd0befb07a2d7ca192f58055e]:
 [[file:./dreamscape-high-samples-0.png]]
 
-#+begin_src emacs-lisp :results value raw :cache yes
+#+begin_src emacs-lisp :results value raw :cache yes :exports both
 (org-sbe text-to-image
   (file_out $(concat (org-sbe prompt-base-2) "-high-samples"))
   (prompt prompt-base-2)
@@ -501,10 +501,10 @@ the case of the woman, I effectively have a separate image for each run.
 )
 #+end_src
 
-#+RESULTS[93a73029fe4c8e6f1cc9abe4dc6f63b4391640c3]:
+#+RESULTS[9032bc313d6cfb45d361f86d82a3fa89b4b5d30b]:
 [[file:./man-high-samples-0.png]]
 
-#+begin_src emacs-lisp :results value raw :cache yes
+#+begin_src emacs-lisp :results value raw :cache yes :exports both
 (org-sbe text-to-image
   (file_out $(concat (org-sbe prompt-base-3) "-high-samples"))
   (prompt prompt-base-3)
@@ -512,10 +512,10 @@ the case of the woman, I effectively have a separate image for each run.
 )
 #+end_src
 
-#+RESULTS[ce94ca751debc02bc1ca199c86f4e33d27658535]:
+#+RESULTS[e9142a00e31f2a8e1f6f4ed38982182f74e2cdb1]:
 [[file:./woman-high-samples-0.png]]
 
-#+begin_src emacs-lisp :results value raw :cache yes
+#+begin_src emacs-lisp :results value raw :cache yes :exports both
 (org-sbe text-to-image
   (file_out $(concat (org-sbe prompt-base-4) "-high-samples"))
   (prompt prompt-base-4)
@@ -523,17 +523,15 @@ the case of the woman, I effectively have a separate image for each run.
 )
 #+end_src
 
-#+RESULTS[8a42b72f3da362eee008801988b29e50851d8338]:
+#+RESULTS[4582749dbd66308543f2254fe30578a83dfd60f1]:
 [[file:./city or village or landscape-high-samples-0.png]]
-
-
 
 **** very high samples
 :PROPERTIES:
 :CUSTOM_ID: prompt-engineering--inputs--samples--very-high-samples
 :END:
 
-#+begin_src emacs-lisp :results value raw :cache yes
+#+begin_src emacs-lisp :results value raw :cache yes :exports both
 (org-sbe text-to-image
   (file_out $(concat (org-sbe prompt-base-1) "-very-high-samples"))
   (prompt prompt-base-1)
@@ -541,10 +539,10 @@ the case of the woman, I effectively have a separate image for each run.
 )
 #+end_src
 
-#+RESULTS[c07ccaba8aa3fcc9156a300d0498247a67aeccda]:
+#+RESULTS[1ee8bf057e58dcca113c5c3114487823d51187ca]:
 [[file:./dreamscape-very-high-samples-0.png]]
 
-#+begin_src emacs-lisp :results value raw :cache yes
+#+begin_src emacs-lisp :results value raw :cache yes :exports both
 (org-sbe text-to-image
   (file_out $(concat (org-sbe prompt-base-2) "-very-high-samples"))
   (prompt prompt-base-2)
@@ -552,10 +550,10 @@ the case of the woman, I effectively have a separate image for each run.
 )
 #+end_src
 
-#+RESULTS[9861e89200ca6e0848f84b4e78e6d1ac3d9d51b5]:
+#+RESULTS[d81d4107a77efeca8d5616b2da01132e07db79cc]:
 [[file:./man-very-high-samples-0.png]]
 
-#+begin_src emacs-lisp :results value raw :cache yes
+#+begin_src emacs-lisp :results value raw :cache yes :exports both
 (org-sbe text-to-image
   (file_out $(concat (org-sbe prompt-base-3) "-very-high-samples"))
   (prompt prompt-base-3)
@@ -563,10 +561,10 @@ the case of the woman, I effectively have a separate image for each run.
 )
 #+end_src
 
-#+RESULTS[38bcef92895b2eb28df5e93efeec2236451b34c8]:
+#+RESULTS[1f695be8d83f95be42d9b5767f303ab428db8038]:
 [[file:./woman-very-high-samples-0.png]]
 
-#+begin_src emacs-lisp :results value raw :cache yes
+#+begin_src emacs-lisp :results value raw :cache yes :exports both
 (org-sbe text-to-image
   (file_out $(concat (org-sbe prompt-base-4) "-very-high-samples"))
   (prompt prompt-base-4)
@@ -574,7 +572,7 @@ the case of the woman, I effectively have a separate image for each run.
 )
 #+end_src
 
-#+RESULTS[65ec67a7dd61100ef58e5dea76337c6403b0314e]:
+#+RESULTS[41381f783d2519302c3115b56938531e77c9565d]:
 [[file:./city or village or landscape-very-high-samples-0.png]]
 
 Takeaway: The landscape image didn't improve much, but there were notable
@@ -657,27 +655,27 @@ things that aren't blue, and the hair might remain not-blue.
  blue hair
 #+end_src
 
-#+begin_src emacs-lisp :results value raw :cache yes
+#+begin_src emacs-lisp :results value raw :cache yes :exports both
 (org-sbe text-to-image
   (file_out $(concat (org-sbe prompt-base-1) "-word-salad-blue-hair"))
   (prompt $(concat (org-sbe prompt-base-1) (org-sbe word-salad-blue-hair)))
 )
 #+end_src
 
-#+RESULTS[074e86d877e114eaa5555847713270573ab57362]:
+#+RESULTS[7a0ddabdbe0cb7dafc8cddec10a995c14d39f67f]:
 [[file:./dreamscape-word-salad-blue-hair-0.png]]
 
-#+begin_src emacs-lisp :results value raw :cache yes
+#+begin_src emacs-lisp :results value raw :cache yes :exports both
 (org-sbe text-to-image
   (file_out $(concat (org-sbe prompt-base-2) "-word-salad-blue-hair"))
   (prompt $(concat (org-sbe prompt-base-2) (org-sbe word-salad-blue-hair)))
 )
 #+end_src
 
-#+RESULTS[d03c854cdcf54be46bd9286bf4af53b5335f4ddb]:
+#+RESULTS[d9f32fbbcac8c9b2ebde6668a36c780021d6d40d]:
 [[file:./man-word-salad-blue-hair-0.png]]
 
-#+begin_src emacs-lisp :results value raw :cache yes
+#+begin_src emacs-lisp :results value raw :cache yes :exports both
 (org-sbe text-to-image
   (file_out $(concat (org-sbe prompt-base-3) "-word-salad-blue-hair"))
   (prompt $(concat (org-sbe prompt-base-3) (org-sbe word-salad-blue-hair)))
@@ -685,21 +683,21 @@ things that aren't blue, and the hair might remain not-blue.
 )
 #+end_src
 
-#+RESULTS[21cd5da18746537660761c2a10f0dac1e7c4ffa8]:
+#+RESULTS[cca612f42ffefc6c43d9223236a9916dc948eb53]:
 [[file:./woman-word-salad-blue-hair-0.png]]
 
-#+begin_src emacs-lisp :results value raw :cache yes
+#+begin_src emacs-lisp :results value raw :cache yes :exports both
 (org-sbe text-to-image
   (file_out $(concat (org-sbe prompt-base-4) "-word-salad-blue-hair"))
   (prompt $(concat (org-sbe prompt-base-4) (org-sbe word-salad-blue-hair)))
 )
 #+end_src
 
-#+RESULTS[0cf02efdff65f54600c0eb4e3e245b4326752382]:
+#+RESULTS[523f018097477d083dcea3b577d72676fc199000]:
 [[file:./city or village or landscape-word-salad-blue-hair-0.png]]
 
 
-#+begin_src emacs-lisp :results value raw :cache yes
+#+begin_src emacs-lisp :results value raw :cache yes :exports both
 (org-sbe text-to-image
   (file_out $(concat (org-sbe prompt-base-3) "-word-salad-blue-hair"))
   (prompt $(concat (org-sbe prompt-base-3) ", " (org-sbe word-salad-blue-hair)))
@@ -707,7 +705,7 @@ things that aren't blue, and the hair might remain not-blue.
 )
 #+end_src
 
-#+RESULTS[b4203fbffe0490533c8614f0f03e4fedf59dcad0]:
+#+RESULTS[b90cb6c1cae4a414c2338efbda4db388fdc57d9a]:
 [[file:./woman-word-salad-blue-hair-0.png]]
 
 It's interesting in the case of the dreamscape and landscape prompts that it
@@ -722,45 +720,45 @@ on a man, or any colored hair on a man.  Let's try it with an additional prompt:
 , blue hair, red tie
 #+end_src
 
-#+begin_src emacs-lisp :results value raw :cache yes
+#+begin_src emacs-lisp :results value raw :cache yes :exports both
 (org-sbe text-to-image
   (file_out $(concat (org-sbe prompt-base-1) "-word-salad-blue-hair-extra"))
   (prompt $(concat (org-sbe prompt-base-1) (org-sbe word-salad-blue-hair-extra)))
 )
 #+end_src
 
-#+RESULTS[a879e7644e3d5a925e8966f5878205075a6b0129]:
+#+RESULTS[6567ac0238825bb503a96a2e0a93e370466abf12]:
 [[file:./dreamscape-word-salad-blue-hair-extra-0.png]]
 
-#+begin_src emacs-lisp :results value raw :cache yes
+#+begin_src emacs-lisp :results value raw :cache yes :exports both
 (org-sbe text-to-image
   (file_out $(concat (org-sbe prompt-base-2) "-word-salad-blue-hair-extra"))
   (prompt $(concat (org-sbe prompt-base-2) (org-sbe word-salad-blue-hair-extra)))
 )
 #+end_src
 
-#+RESULTS[2679675261b503e6102a05ce77ae1f66c68294d8]:
+#+RESULTS[1acebeef89237d960d3940ac5908fea85bd94ed6]:
 [[file:./man-word-salad-blue-hair-extra-0.png]]
 
 
-#+begin_src emacs-lisp :results value raw :cache yes
+#+begin_src emacs-lisp :results value raw :cache yes :exports both
 (org-sbe text-to-image
   (file_out $(concat (org-sbe prompt-base-3) "-word-salad-blue-hair-extra"))
   (prompt $(concat (org-sbe prompt-base-3) (org-sbe word-salad-blue-hair-extra)))
 )
 #+end_src
 
-#+RESULTS[8afb661aafeeebd85e593e76edf70ee6932988ad]:
+#+RESULTS[f7064231ba1af39b2129eee88859a9ff7a0d5720]:
 [[file:./woman-word-salad-blue-hair-extra-0.png]]
 
-#+begin_src emacs-lisp :results value raw :cache yes
+#+begin_src emacs-lisp :results value raw :cache yes :exports both
 (org-sbe text-to-image
   (file_out $(concat (org-sbe prompt-base-4) "-word-salad-blue-hair-extra"))
   (prompt $(concat (org-sbe prompt-base-4) (org-sbe word-salad-blue-hair-extra)))
 )
 #+end_src
 
-#+RESULTS[0ddbfe053ded7b02466bbd1ddcf2ce77760c84e1]:
+#+RESULTS[25542a3774a5617cfdeabc0d39e028df6a581d1b]:
 [[file:./city or village or landscape-word-salad-blue-hair-extra-0.png]]
 
 Okay that's not enough to produce the "swap" issue I've seen.  Let's make this
@@ -771,45 +769,45 @@ more complicated and add another color.
 , blue hair, red tie, a green house on a hill
 #+end_src
 
-#+begin_src emacs-lisp :results value raw :cache yes
+#+begin_src emacs-lisp :results value raw :cache yes :exports both
 (org-sbe text-to-image
   (file_out $(concat (org-sbe prompt-base-1) "word-salad-blue-hair-red-tie-green-house-hill"))
   (prompt $(concat (org-sbe prompt-base-1) (org-sbe word-salad-blue-hair-red-tie-green-house-hill)))
 )
 #+end_src
 
-#+RESULTS[56a6048109782f8b216e98dcdbcf5d9ab61c5373]:
+#+RESULTS[a88a918160e89edc9d797e5a27b093d03ca71813]:
 [[file:./dreamscapeword-salad-blue-hair-red-tie-green-house-hill-0.png]]
 
-#+begin_src emacs-lisp :results value raw :cache yes
+#+begin_src emacs-lisp :results value raw :cache yes :exports both
 (org-sbe text-to-image
   (file_out $(concat (org-sbe prompt-base-2) "word-salad-blue-hair-red-tie-green-house-hill"))
   (prompt $(concat (org-sbe prompt-base-2) (org-sbe word-salad-blue-hair-red-tie-green-house-hill)))
 )
 #+end_src
 
-#+RESULTS[b198aac42cd3bf63bbd183c22f6a41290b83f97d]:
+#+RESULTS[582ddfe0e4ee80594a70bc559796ed78b6239776]:
 [[file:./manword-salad-blue-hair-red-tie-green-house-hill-0.png]]
 
 
-#+begin_src emacs-lisp :results value raw :cache yes
+#+begin_src emacs-lisp :results value raw :cache yes :exports both
 (org-sbe text-to-image
   (file_out $(concat (org-sbe prompt-base-3) "word-salad-blue-hair-red-tie-green-house-hill"))
   (prompt $(concat (org-sbe prompt-base-3) (org-sbe word-salad-blue-hair-red-tie-green-house-hill)))
 )
 #+end_src
 
-#+RESULTS[11673f89af7e0f66362fa44c4695047e66c9ba4b]:
+#+RESULTS[d2fd1e4388cd76a32a7266f18a0cbaf29954dfdc]:
 [[file:./womanword-salad-blue-hair-red-tie-green-house-hill-0.png]]
 
-#+begin_src emacs-lisp :results value raw :cache yes
+#+begin_src emacs-lisp :results value raw :cache yes :exports both
 (org-sbe text-to-image
   (file_out $(concat (org-sbe prompt-base-4) "word-salad-blue-hair-red-tie-green-house-hill"))
   (prompt $(concat (org-sbe prompt-base-4) (org-sbe word-salad-blue-hair-red-tie-green-house-hill)))
 )
 #+end_src
 
-#+RESULTS[b2b1c8fee7ba04d2b587efc3029dcead86045ad2]:
+#+RESULTS[33a61715913d88715aed38f05230824ca58b30e8]:
 [[file:./city or village or landscapeword-salad-blue-hair-red-tie-green-house-hill-0.png]]
 
 
@@ -854,45 +852,45 @@ There is multiple utility here:
 #+end_src
 
 
-#+begin_src emacs-lisp :results value raw :cache yes
+#+begin_src emacs-lisp :results value raw :cache yes :exports both
 (org-sbe text-to-image
   (file_out $(concat (org-sbe prompt-base-1) "-blending-steps-forest"))
   (prompt $(concat (org-sbe prompt-base-1) (org-sbe blending-steps-forest)))
 )
 #+end_src
 
-#+RESULTS[2c882c90f797b51cc368754646d6d2d4a89aabbe]:
+#+RESULTS[6016fc049b6e737c72280ff6ca063c3d17a9d13d]:
 [[file:./dreamscape-blending-steps-forest-0.png]]
 
-#+begin_src emacs-lisp :results value raw :cache yes
+#+begin_src emacs-lisp :results value raw :cache yes :exports both
 (org-sbe text-to-image
   (file_out $(concat (org-sbe prompt-base-2) "-blending-steps-forest"))
   (prompt $(concat (org-sbe prompt-base-2) (org-sbe blending-steps-forest)))
   )
 #+end_src
 
-#+RESULTS[c551d233e23fb5fd23d4b594e19d20aeda114d21]:
+#+RESULTS[b1df69a6b22aa801b6a30540c42c0fa330af297f]:
 [[file:./man-blending-steps-forest-0.png]]
 
-#+begin_src emacs-lisp :results value raw :cache yes
+#+begin_src emacs-lisp :results value raw :cache yes :exports both
 (org-sbe text-to-image
   (file_out $(concat (org-sbe prompt-base-3) "-blending-steps-forest"))
   (prompt $(concat (org-sbe prompt-base-3) (org-sbe blending-steps-forest)))
   )
 #+end_src
 
-#+RESULTS[42507c3d96aceac4a351518a378a89a7872db128]:
+#+RESULTS[a240385352b3657afa766b77fe716bc80c65a476]:
 [[file:./woman-blending-steps-forest-0.png]]
 
 
-#+begin_src emacs-lisp :results value raw :cache yes
+#+begin_src emacs-lisp :results value raw :cache yes :exports both
 (org-sbe text-to-image
   (file_out $(concat (org-sbe prompt-base-4) "-blending-steps-forest"))
   (prompt $(concat (org-sbe prompt-base-4) (org-sbe blending-steps-forest)))
   )
 #+end_src
 
-#+RESULTS[32783f7a23afa9dfe4363c23f93b9c8b0cb40218]:
+#+RESULTS[887e8f539aee25c9843645b725a9fbef7a5d6e0c]:
 [[file:./city or village or landscape-blending-steps-forest-0.png]]
 
 Now let's do something that makes perfect sense: Make a forest of candy canes.
@@ -903,45 +901,45 @@ Now let's do something that makes perfect sense: Make a forest of candy canes.
 #+end_src
 
 
-#+begin_src emacs-lisp :results value raw :cache yes
+#+begin_src emacs-lisp :results value raw :cache yes :exports both
 (org-sbe text-to-image
   (file_out $(concat (org-sbe prompt-base-1) "-blending-steps-forest-of-candy-canes"))
   (prompt $(concat (org-sbe prompt-base-1) (org-sbe blending-steps-forest-of-candy-canes)))
 )
 #+end_src
 
-#+RESULTS[b1250db8cbcb204b2360b1ad602fb32ab9cb85b5]:
+#+RESULTS[deff7cf4af9ce73937e91a17e0182f079006e354]:
 [[file:./dreamscape-blending-steps-forest-of-candy-canes-0.png]]
 
-#+begin_src emacs-lisp :results value raw :cache yes
+#+begin_src emacs-lisp :results value raw :cache yes :exports both
 (org-sbe text-to-image
   (file_out $(concat (org-sbe prompt-base-2) "-blending-steps-forest-of-candy-canes"))
   (prompt $(concat (org-sbe prompt-base-2) (org-sbe blending-steps-forest-of-candy-canes)))
 )
 #+end_src
 
-#+RESULTS[d68a671b12995295b977674c16ddffa0952d9e04]:
+#+RESULTS[cee48245140c0c4ae7a5187ae530a157b3066a92]:
 [[file:./man-blending-steps-forest-of-candy-canes-0.png]]
 
 
-#+begin_src emacs-lisp :results value raw :cache yes
+#+begin_src emacs-lisp :results value raw :cache yes :exports both
 (org-sbe text-to-image
   (file_out $(concat (org-sbe prompt-base-3) "-blending-steps-forest-of-candy-canes"))
   (prompt $(concat (org-sbe prompt-base-3) (org-sbe blending-steps-forest-of-candy-canes)))
 )
 #+end_src
 
-#+RESULTS[c8f8c57e35f926a34d1093407310554a12c82905]:
+#+RESULTS[26fae22e0bc33a5c82a19a41e8b0b40e1c26897c]:
 [[file:./woman-blending-steps-forest-of-candy-canes-0.png]]
 
-#+begin_src emacs-lisp :results value raw :cache yes
+#+begin_src emacs-lisp :results value raw :cache yes :exports both
 (org-sbe text-to-image
   (file_out $(concat (org-sbe prompt-base-4) "-blending-steps-forest-of-candy-canes"))
   (prompt $(concat (org-sbe prompt-base-4) (org-sbe blending-steps-forest-of-candy-canes)))
 )
 #+end_src
 
-#+RESULTS[0169b7a8895ce420f9923ba2701ffa06ed1dba8a]:
+#+RESULTS[7bf58baf1b2d045372d7331d913852b2a455fd2b]:
 [[file:./city or village or landscape-blending-steps-forest-of-candy-canes-0.png]]
 
 
@@ -959,44 +957,44 @@ alternating instead of stepped.
 , [forest|candy canes]
 #+end_src
 
-#+begin_src emacs-lisp :results value raw :cache yes
+#+begin_src emacs-lisp :results value raw :cache yes :exports both
 (org-sbe text-to-image
   (file_out $(concat (org-sbe prompt-base-1) "-alternating-steps-forest-of-candy-canes"))
   (prompt $(concat (org-sbe prompt-base-1) (org-sbe alternating-steps-forest-of-candy-canes)))
 )
 #+end_src
 
-#+RESULTS[42c39d68fbab2853fa2ce6b30506861f488b305e]:
+#+RESULTS[bb753429bdfdee4f610a21e247cefac69aca7861]:
 [[file:./dreamscape-alternating-steps-forest-of-candy-canes-0.png]]
 
-#+begin_src emacs-lisp :results value raw :cache yes
+#+begin_src emacs-lisp :results value raw :cache yes :exports both
 (org-sbe text-to-image
   (file_out $(concat (org-sbe prompt-base-2) "-alternating-steps-forest-of-candy-canes"))
   (prompt $(concat (org-sbe prompt-base-2) (org-sbe alternating-steps-forest-of-candy-canes)))
 )
 #+end_src
 
-#+RESULTS[132ea3481fbcfb31595f5a8ea0d98543218728ef]:
+#+RESULTS[c91e39cfc5fbbc14578f5794975740787427940a]:
 [[file:./man-alternating-steps-forest-of-candy-canes-0.png]]
 
-#+begin_src emacs-lisp :results value raw :cache yes
+#+begin_src emacs-lisp :results value raw :cache yes :exports both
 (org-sbe text-to-image
   (file_out $(concat (org-sbe prompt-base-3) "-alternating-steps-forest-of-candy-canes"))
   (prompt $(concat (org-sbe prompt-base-3) (org-sbe alternating-steps-forest-of-candy-canes)))
 )
 #+end_src
 
-#+RESULTS[6f52d88d59db9a5dddcd8371952f3f7c1521213e]:
+#+RESULTS[b2c8dd02fbdd17fc0d78c61b447c08c5ab4f312c]:
 [[file:./woman-alternating-steps-forest-of-candy-canes-0.png]]
 
-#+begin_src emacs-lisp :results value raw :cache yes
+#+begin_src emacs-lisp :results value raw :cache yes :exports both
 (org-sbe text-to-image
   (file_out $(concat (org-sbe prompt-base-4) "-alternating-steps-forest-of-candy-canes"))
   (prompt $(concat (org-sbe prompt-base-4) (org-sbe alternating-steps-forest-of-candy-canes)))
 )
 #+end_src
 
-#+RESULTS[03cf8236bb2e98fd9693d5ae97d5e5326a7ec434]:
+#+RESULTS[49241632edba8eb509b04acd9d79db212a3a7e22]:
 [[file:./city or village or landscape-alternating-steps-forest-of-candy-canes-0.png]]
 
 **** Tokens - Ceasing and Starting at Specific Steps
