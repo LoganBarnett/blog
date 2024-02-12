@@ -23,6 +23,19 @@ kramdown:
 # static assets
 static_files: /assets
 
+permalink: /:title.html
+
+# github-pages doesn't respect this, so it doesn't matter what we set it to.
+# This means we can't use _plugins/foo.rb styled plugins.  See
+# http://jekyllrb.com/docs/plugins/installation/ for citation.
+# safe: false
+
+# This disables the linking of blog posts to dates and categories, with titles
+# being a sort of after-thought.  We just want the title and its extension.
+# Even the "none" option in
+# https://jekyllrb.com/docs/permalinks/#built-in-formats comes with "something"
+# (categories).
+permalink: ":title:output_ext"
 
 #markdown: redcarpet
 #redcarpet:

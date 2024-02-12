@@ -16,10 +16,15 @@
       <div class="trigger">
         {% for page in site.pages %}
           {% if page.title %} {% unless page.parent %}
-          <a class="page-link" href="{{ page.url | prepend: site.baseurl }}">{{ page.title }}</a>
+            <a class="page-link" href="{{ page.url | prepend: site.baseurl }}">
+              {{ page.title }}
+            </a>
           {% endunless %}{% endif %}
         {% endfor %}
-          <a class="page-link" href="{{ '/' | prepend: site.baseurl }}">posts</a>
+        <a class="page-link" href="{{ '/' | prepend: site.baseurl }}">posts</a>
+        <a class="page-link" href="{{ '/categories' | prepend: site.baseurl }}">
+          categories
+        </a>
       </div>
     </nav>
 
