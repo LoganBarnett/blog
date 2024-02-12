@@ -9,7 +9,10 @@
 # Ignore Jekyll generated files.
 _site
 .sass-cache
+# Ignore location of installed Ruby gems.
 vendor/bundle
+# Ignore `jekyll serve --incremental` cache.
+.jekyll-metadata
 
 # Ignore generated PDF files.
 *-resume-*.pdf
