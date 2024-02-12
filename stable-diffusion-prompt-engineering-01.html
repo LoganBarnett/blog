@@ -1,6 +1,47 @@
-<div id="outline-container-org39383ad" class="outline-2">
-<h2 id="org39383ad"><span class="section-number-2">1.</span> Introduction</h2>
-<div class="outline-text-2" id="text-1">
+---
+categories: machine learning
+date: 2024-02-11
+layout: default
+title: Machine Learning - Stable Diffusion Prompt Engineering
+---
+
+<div id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#introduction">1. Introduction</a></li>
+<li><a href="#prompt-engineering">2. Prompt Engineering</a>
+<ul>
+<li><a href="#prompt-engineering--prompt-engineering-introduction">2.1. Prompt Engineering Introduction</a></li>
+<li><a href="#prompt-engineering--generated">2.2. Generated</a>
+<ul>
+<li><a href="#prompt-engineering--generated--generating-images---the-code">2.2.1. Generating Images - The Code</a></li>
+</ul>
+</li>
+<li><a href="#prompt-engineering--sample-prompts">2.3. Sample Prompts</a></li>
+<li><a href="#prompt-engineering--inputs">2.4. Inputs</a>
+<ul>
+<li><a href="#prompt-engineering--inputs--the-base">2.4.1. The Base</a></li>
+<li><a href="#prompt-engineering--inputs--seed">2.4.2. Seed</a></li>
+<li><a href="#prompt-engineering--inputs--classifier-free-guidance-cfg">2.4.3. Classifier Free Guidance (CFG)</a></li>
+<li><a href="#prompt-engineering--inputs--samples">2.4.4. Samples</a></li>
+<li><a href="#prompt-engineering--inputs--sampling-method">2.4.5. Sampling Method</a></li>
+<li><a href="#prompt-engineering--inputs--dimensions">2.4.6. Dimensions</a></li>
+<li><a href="#prompt-engineering--inputs--high-resolution-fix">2.4.7. High Resolution &ldquo;Fix&rdquo;</a></li>
+<li><a href="#prompt-engineering--inputs--refiner">2.4.8. Refiner</a></li>
+<li><a href="#prompt-engineering--inputs--batch">2.4.9. Batch</a></li>
+<li><a href="#prompt-engineering--inputs--tokens">2.4.10. Tokens</a></li>
+<li><a href="#prompt-engineering--inputs--models">2.4.11. Models</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-introduction" class="outline-2">
+<h2 id="introduction"><span class="section-number-2">1.</span> Introduction</h2>
+<div class="outline-text-2" id="text-introduction">
 <p>
 From my prior adventures during <a href="./nix-adventures-02.html">Nix Adventures Part 2</a>, I managed to stand up a
 local instances of <a href="https://github.com/AUTOMATIC1111/stable-diffusion-webui">stable-diffusion-webui</a> and I&rsquo;ve been having both a lot of fun
@@ -12,15 +53,22 @@ reproducible - meaning that you can see version numbers, commit hashes,
 generation parameters (seeds, models, sample sizes), etc.  This is one thing I
 have found lacking on some of the communities out there.
 </p>
+
+<p>
+As of <span class="timestamp-wrapper"><span class="timestamp">[2024-02-11 Sun] </span></span> this is very much still a work in progress and some
+sections will be empty or needing better references supplied to it, but don&rsquo;t be
+afraid to send me an email with some corrections!  I&rsquo;ll keep this updated, and
+will try to keep a loose changelog if you happen to be eager to see updates.
+</p>
 </div>
 </div>
-<div id="outline-container-org4de1eb8" class="outline-2">
-<h2 id="org4de1eb8"><span class="section-number-2">2.</span> Prompt Engineering</h2>
-<div class="outline-text-2" id="text-2">
+<div id="outline-container-prompt-engineering" class="outline-2">
+<h2 id="prompt-engineering"><span class="section-number-2">2.</span> Prompt Engineering</h2>
+<div class="outline-text-2" id="text-prompt-engineering">
 </div>
-<div id="outline-container-org024de56" class="outline-3">
-<h3 id="org024de56"><span class="section-number-3">2.1.</span> Prompt Engineering Introduction</h3>
-<div class="outline-text-3" id="text-2-1">
+<div id="outline-container-prompt-engineering--prompt-engineering-introduction" class="outline-3">
+<h3 id="prompt-engineering--prompt-engineering-introduction"><span class="section-number-3">2.1.</span> Prompt Engineering Introduction</h3>
+<div class="outline-text-3" id="text-prompt-engineering--prompt-engineering-introduction">
 <p>
 Prompt Engineering is its own discipline, apparently.  For a quick refresher: A
 prompt in the context of machine learning is a set of instructions for the
@@ -55,7 +103,7 @@ more details until satisfaction is reached.
 </p>
 
 
-<div id="org011d427" class="figure">
+<div id="org34a0afc" class="figure">
 <p><img src="./assets/draw-the-owl01.jpeg" alt="draw-the-owl01.jpeg" />
 </p>
 </div>
@@ -65,11 +113,18 @@ Though there is a lot of in-between steps.  This process is much like that.
 Again though, this is my layman understanding and I hope to revise this as I
 learn more.
 </p>
+
+<p>
+There is some prior art here.  I have found this <a href="https://i.ibb.co/vm4fm7L/1661440027115223.jpg">image depicting different
+sampling methods</a> but I don&rsquo;t know what all was used and I cannot arbitrarily
+add more sampling methods to see how it works.  I don&rsquo;t have a seed to reproduce
+the image.
+</p>
 </div>
 </div>
-<div id="outline-container-org919a352" class="outline-3">
-<h3 id="org919a352"><span class="section-number-3">2.2.</span> Generated</h3>
-<div class="outline-text-3" id="text-2-2">
+<div id="outline-container-prompt-engineering--generated" class="outline-3">
+<h3 id="prompt-engineering--generated"><span class="section-number-3">2.2.</span> Generated</h3>
+<div class="outline-text-3" id="text-prompt-engineering--generated">
 <p>
 The results of this entire document are generated via literate programming using
 <code>org-babel</code>.  If you view the source of the original <code>org-mode</code> document you can
@@ -88,13 +143,13 @@ might offer an easy diffing mechanism between various models, but for now it&rsq
 just focus on emitting consistent results given its inputs.
 </p>
 </div>
-<div id="outline-container-orgc054136" class="outline-4">
-<h4 id="orgc054136"><span class="section-number-4">2.2.1.</span> Generating Images - The Code</h4>
-<div class="outline-text-4" id="text-2-2-1">
+<div id="outline-container-prompt-engineering--generated--generating-images---the-code" class="outline-4">
+<h4 id="prompt-engineering--generated--generating-images---the-code"><span class="section-number-4">2.2.1.</span> Generating Images - The Code</h4>
+<div class="outline-text-4" id="text-prompt-engineering--generated--generating-images---the-code">
 </div>
 <ol class="org-ol">
-<li><a id="org270ad74"></a>The Lisp Helper<br />
-<div class="outline-text-5" id="text-2-2-1-1">
+<li><a id="prompt-engineering--generated--generating-images---the-code--the-lisp-helper"></a>The Lisp Helper<br />
+<div class="outline-text-5" id="text-prompt-engineering--generated--generating-images---the-code--the-lisp-helper">
 <p>
 First we need a quick way to evaluate code blocks.  Per the documentation of
 <code>org-babel</code>, <code>cache</code> does not work on the <code>#+call</code> form of invoking <code>org-babel</code>
@@ -103,7 +158,7 @@ for us.  This is that function:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-emacs-lisp" id="orga204c9c"><span style="color: #51afef;">(</span><span style="color: #51afef;">defun</span> <span style="color: #5cEfFF;">org-babel-block</span> <span style="color: #C57BDB;">(</span>block, args
+<pre class="src src-emacs-lisp" id="org79bbf50"><span style="color: #51afef;">(</span><span style="color: #51afef;">defun</span> <span style="color: #5cEfFF;">org-babel-block</span> <span style="color: #C57BDB;">(</span>block, args
   <span style="color: #7bc275;">(</span>save-excursion
     <span style="color: #a991f1;">(</span><span style="color: #a991f1;">goto-char</span>
     <span style="color: #51afef;">(</span><span style="color: #a991f1;">org-babel-find-named-block</span> block<span style="color: #51afef;">)</span><span style="color: #a991f1;">)</span>
@@ -118,27 +173,45 @@ And something to catch the missing blocks:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-emacs-lisp" id="orgb871c13"><span style="color: #51afef;">(</span><span style="color: #a991f1;">message</span> <span style="color: #7bc275;">"Error: The '</span><span style="color: #a991f1;">block</span><span style="color: #7bc275;">' parameter was not provided for org-babel-block."</span><span style="color: #51afef;">)</span>
+<pre class="src src-emacs-lisp" id="orgf400be3"><span style="color: #51afef;">(</span><span style="color: #a991f1;">message</span> <span style="color: #7bc275;">"Error: The '</span><span style="color: #a991f1;">block</span><span style="color: #7bc275;">' parameter was not provided for org-babel-block."</span><span style="color: #51afef;">)</span>
 </pre>
 </div>
 </div>
 </li>
-<li><a id="orga49397a"></a>Making API calls - A Test<br />
-<div class="outline-text-5" id="text-2-2-1-2">
+<li><a id="prompt-engineering--generated--generating-images---the-code--making-api-calls---a-test"></a>Making API calls - A Test<br />
+<div class="outline-text-5" id="text-prompt-engineering--generated--generating-images---the-code--making-api-calls---a-test">
 <p>
 The <a href="https://github.com/AUTOMATIC1111/stable-diffusion-webui/wiki/API">Wiki based API documentation</a> for <code>stable-diffusion-webui</code> is not complete.
 It does point to a <code>/docs</code> that can be accessed on the server.  This is just a
-pretty form of a OpenAPI document.
+pretty form of a OpenAPI document.  I also don&rsquo;t see the documentation for
+actually kicking off a generation of an image using the <code>txt2image</code> setup.
+</p>
+
+<p>
+I did find this <a href="https://gist.github.com/w-e-w/0f37c04c18e14e4ee1482df5c4eb9f53">gist</a> with a Python script that got me going.  Thanks <code>w-e-w</code>!
+</p>
+
+<p>
+In the Wiki link above it is stated that the web UI must be started with <code>--api</code>
+argument.  I thought surely this had changed since the document was written,
+because why wouldn&rsquo;t you want this enabled?  Seems like something you&rsquo;d disable
+explicitly.  Perhaps it&rsquo;s more muggle based.  In any case, it&rsquo;s very much
+required.  This tripped me up during my discovery of things.
+</p>
+
+<p>
+Of course, once you are running things with <code>--api</code>, all of the endpoints show
+up correctly in the <code>/docs</code> URL.  I should clean this up soon.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-python" id="org71464e5"><span style="color: #51afef;">import</span> urllib.request
+<pre class="src src-python" id="orge1509d5"><span style="color: #51afef;">import</span> urllib.request
 <span style="color: #51afef;">import</span> base64
 <span style="color: #51afef;">import</span> json
 <span style="color: #51afef;">import</span> time
 <span style="color: #51afef;">import</span> os
 
-<span style="color: #dcafe9;">file_out</span> = <span style="color: #7bc275;">'test.png'</span>
+<span style="color: #dcafe9;">file_out</span> = <span style="color: #7bc275;">'test'</span>
 <span style="color: #dcafe9;">payload</span> = <span style="color: #51afef;">{</span>
   <span style="color: #7bc275;">'prompt'</span>: <span style="color: #7bc275;">'dreamscape'</span>,
   <span style="color: #7bc275;">'steps'</span>: <span style="color: #e69055; font-weight: bold;">20</span>,
@@ -161,16 +234,16 @@ pretty form of a OpenAPI document.
 </div>
 
 
-<div id="org92a7a8f" class="figure">
-<p><img src="./test.png-0.png" alt="test.png-0.png" />
+<div id="orgd5a9014" class="figure">
+<p><img src="./test-0.png" alt="test-0.png" />
 </p>
 </div>
 </div>
 </li>
-<li><a id="orgc51acfb"></a>Making API Calls - A Reusable Block<br />
-<div class="outline-text-5" id="text-2-2-1-3">
+<li><a id="prompt-engineering--generated--generating-images---the-code--making-api-calls---a-reusable-block"></a>Making API Calls - A Reusable Block<br />
+<div class="outline-text-5" id="text-prompt-engineering--generated--generating-images---the-code--making-api-calls---a-reusable-block">
 <div class="org-src-container">
-<pre class="src src-python" id="orgd3f8d7a"><span style="color: #51afef;">import</span> urllib.request
+<pre class="src src-python" id="orgc6a6156"><span style="color: #51afef;">import</span> urllib.request
 <span style="color: #51afef;">import</span> base64
 <span style="color: #51afef;">import</span> json
 <span style="color: #51afef;">import</span> time
@@ -196,20 +269,14 @@ pretty form of a OpenAPI document.
         <span style="color: #C57BDB;">print</span><span style="color: #51afef;">(</span>f<span style="color: #7bc275;">'[[file:./</span>{path}<span style="color: #7bc275;">]]'</span><span style="color: #51afef;">)</span>
 </pre>
 </div>
-
-
-<div id="org0465382" class="figure">
-<p><img src="./mistake-0.png" alt="mistake-0.png" />
-</p>
-</div>
 </div>
 </li>
 </ol>
 </div>
 </div>
-<div id="outline-container-org828f283" class="outline-3">
-<h3 id="org828f283"><span class="section-number-3">2.3.</span> Sample Prompts</h3>
-<div class="outline-text-3" id="text-2-3">
+<div id="outline-container-prompt-engineering--sample-prompts" class="outline-3">
+<h3 id="prompt-engineering--sample-prompts"><span class="section-number-3">2.3.</span> Sample Prompts</h3>
+<div class="outline-text-3" id="text-prompt-engineering--sample-prompts">
 <p>
 To give a little variety here, let&rsquo;s agree on a few base sample prompts that
 should explore a variety of different things we could show.  For each parameter
@@ -223,22 +290,22 @@ could serve as good reference though.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-text" id="orgac8d9db">dreamscape
+<pre class="src src-text" id="org30ee3e9">dreamscape
 </pre>
 </div>
 
 <div class="org-src-container">
-<pre class="src src-text" id="org3c1df1d">man
+<pre class="src src-text" id="orgd096906">man
 </pre>
 </div>
 
 <div class="org-src-container">
-<pre class="src src-text" id="orgf484e64">woman
+<pre class="src src-text" id="org44ac1fd">woman
 </pre>
 </div>
 
 <div class="org-src-container">
-<pre class="src src-text" id="org1f82bde">city or village or landscape
+<pre class="src src-text" id="org2d46f91">city or village or landscape
 </pre>
 </div>
 
@@ -247,7 +314,7 @@ The seed will be:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-text" id="org732be48">503043532
+<pre class="src src-text" id="org49ecc19">503043532
 </pre>
 </div>
 
@@ -256,7 +323,7 @@ Our default sample size will be:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-text" id="org5116b33">20
+<pre class="src src-text" id="org989b07b">20
 </pre>
 </div>
 
@@ -265,7 +332,7 @@ Our default model will be:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-text" id="org539c8c7">endjourneyXL_v11
+<pre class="src src-text" id="orgc6e13d7">endjourneyXL_v11
 </pre>
 </div>
 
@@ -274,22 +341,22 @@ Our default sampling method will be:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-text" id="org92b3021">dpm2pp_2m_karras
+<pre class="src src-text" id="orgf0948f3">dpm2pp_2m_karras
 </pre>
 </div>
 
 <div class="org-src-container">
-<pre class="src src-text" id="orga52fbe6">512
+<pre class="src src-text" id="orge0cd279">512
 </pre>
 </div>
 
 <div class="org-src-container">
-<pre class="src src-text" id="orgf7a6cd6">512
+<pre class="src src-text" id="org9b1e722">512
 </pre>
 </div>
 
 <div class="org-src-container">
-<pre class="src src-text" id="orgd915613">7
+<pre class="src src-text" id="org5fb495e">7
 </pre>
 </div>
 
@@ -298,14 +365,14 @@ The base URL for the <code>stable-diffusion-webui</code> server is:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-text" id="orgb1a2c47">http://localhost:7860
+<pre class="src src-text" id="org4d58183">http://localhost:7860
 </pre>
 </div>
 </div>
 </div>
-<div id="outline-container-org2b92a24" class="outline-3">
-<h3 id="org2b92a24"><span class="section-number-3">2.4.</span> Inputs</h3>
-<div class="outline-text-3" id="text-2-4">
+<div id="outline-container-prompt-engineering--inputs" class="outline-3">
+<h3 id="prompt-engineering--inputs"><span class="section-number-3">2.4.</span> Inputs</h3>
+<div class="outline-text-3" id="text-prompt-engineering--inputs">
 <p>
 Various inputs decide the quality of the image, what appears in the image, and
 so on.  This includes the prompt itself, but also a lot of other variables.  For
@@ -313,15 +380,15 @@ the purposes of illustration, let&rsquo;s use this base image so we can see what
 varied outcomes are.
 </p>
 </div>
-<div id="outline-container-orgfedbe46" class="outline-4">
-<h4 id="orgfedbe46"><span class="section-number-4">2.4.1.</span> The Base</h4>
-<div class="outline-text-4" id="text-2-4-1">
+<div id="outline-container-prompt-engineering--inputs--the-base" class="outline-4">
+<h4 id="prompt-engineering--inputs--the-base"><span class="section-number-4">2.4.1.</span> The Base</h4>
+<div class="outline-text-4" id="text-prompt-engineering--inputs--the-base">
 <p>
-As described in <a href="#org828f283">2.3</a>, our base is as follows:
+As described in <a href="#prompt-engineering--sample-prompts">2.3</a>, our base is as follows:
 </p>
 
 <p>
-<a id="org4b2ac68"></a>
+<a id="orga901f94"></a>
 </p>
 
 <div class="org-src-container">
@@ -357,9 +424,9 @@ As described in <a href="#org828f283">2.3</a>, our base is as follows:
 </div>
 </div>
 </div>
-<div id="outline-container-org25559a4" class="outline-4">
-<h4 id="org25559a4"><span class="section-number-4">2.4.2.</span> Seed</h4>
-<div class="outline-text-4" id="text-2-4-2">
+<div id="outline-container-prompt-engineering--inputs--seed" class="outline-4">
+<h4 id="prompt-engineering--inputs--seed"><span class="section-number-4">2.4.2.</span> Seed</h4>
+<div class="outline-text-4" id="text-prompt-engineering--inputs--seed">
 <p>
 This should be front an center because it is key to using consistent results.
 The seed is a concept taking from random number generators (which this uses
@@ -379,9 +446,9 @@ Seeds will be used heavily in this document to produce consistent results.
 </p>
 </div>
 </div>
-<div id="outline-container-orgcea32df" class="outline-4">
-<h4 id="orgcea32df"><span class="section-number-4">2.4.3.</span> Classifier Free Guidance (CFG)</h4>
-<div class="outline-text-4" id="text-2-4-3">
+<div id="outline-container-prompt-engineering--inputs--classifier-free-guidance-cfg" class="outline-4">
+<h4 id="prompt-engineering--inputs--classifier-free-guidance-cfg"><span class="section-number-4">2.4.3.</span> Classifier Free Guidance (CFG)</h4>
+<div class="outline-text-4" id="text-prompt-engineering--inputs--classifier-free-guidance-cfg">
 <p>
 Stable Diffusion (or perhaps all of these tools) expresses &ldquo;creativity&rdquo; in which
 it adds things that weren&rsquo;t asked for or ignores parts of your prompt.  This is
@@ -398,9 +465,9 @@ seen it do a &ldquo;bad&rdquo; job so far at that level.
 </p>
 </div>
 </div>
-<div id="outline-container-org337c96a" class="outline-4">
-<h4 id="org337c96a"><span class="section-number-4">2.4.4.</span> Samples</h4>
-<div class="outline-text-4" id="text-2-4-4">
+<div id="outline-container-prompt-engineering--inputs--samples" class="outline-4">
+<h4 id="prompt-engineering--inputs--samples"><span class="section-number-4">2.4.4.</span> Samples</h4>
+<div class="outline-text-4" id="text-prompt-engineering--inputs--samples">
 <p>
 The number of samples is loosely the number of passes that will be made against
 the image.  With <code>stable-diffusion-webui</code>, you can see it creating passes
@@ -428,8 +495,8 @@ the case of the woman, I effectively have a separate image for each run.
 </p>
 </div>
 <ol class="org-ol">
-<li><a id="orgaecf6e2"></a>very low samples<br />
-<div class="outline-text-5" id="text-2-4-4-1">
+<li><a id="prompt-engineering--inputs--samples--very-low-samples"></a>very low samples<br />
+<div class="outline-text-5" id="text-prompt-engineering--inputs--samples--very-low-samples">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp"><span style="color: #51afef;">(</span><span style="color: #51afef;">org-sbe</span> text-to-image
   <span style="color: #C57BDB;">(</span>file_out $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-1<span style="color: #a991f1;">)</span> <span style="color: #7bc275;">"-low-samples"</span><span style="color: #7bc275;">)</span><span style="color: #C57BDB;">)</span>
@@ -467,8 +534,8 @@ the case of the woman, I effectively have a separate image for each run.
 </div>
 </div>
 </li>
-<li><a id="org28e10ba"></a>high samples<br />
-<div class="outline-text-5" id="text-2-4-4-2">
+<li><a id="prompt-engineering--inputs--samples--high-samples"></a>high samples<br />
+<div class="outline-text-5" id="text-prompt-engineering--inputs--samples--high-samples">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp"><span style="color: #51afef;">(</span><span style="color: #51afef;">org-sbe</span> text-to-image
   <span style="color: #C57BDB;">(</span>file_out $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-1<span style="color: #a991f1;">)</span> <span style="color: #7bc275;">"-high-samples"</span><span style="color: #7bc275;">)</span><span style="color: #C57BDB;">)</span>
@@ -506,8 +573,8 @@ the case of the woman, I effectively have a separate image for each run.
 </div>
 </div>
 </li>
-<li><a id="orge89f818"></a>very high samples<br />
-<div class="outline-text-5" id="text-2-4-4-3">
+<li><a id="prompt-engineering--inputs--samples--very-high-samples"></a>very high samples<br />
+<div class="outline-text-5" id="text-prompt-engineering--inputs--samples--very-high-samples">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp"><span style="color: #51afef;">(</span><span style="color: #51afef;">org-sbe</span> text-to-image
   <span style="color: #C57BDB;">(</span>file_out $<span style="color: #7bc275;">(</span><span style="color: #a991f1;">concat</span> <span style="color: #a991f1;">(</span><span style="color: #51afef;">org-sbe</span> prompt-base-1<span style="color: #a991f1;">)</span> <span style="color: #7bc275;">"-very-high-samples"</span><span style="color: #7bc275;">)</span><span style="color: #C57BDB;">)</span>
@@ -553,9 +620,9 @@ do higher numbers to get a better idea with diminishing returns.
 </li>
 </ol>
 </div>
-<div id="outline-container-org3bd49b9" class="outline-4">
-<h4 id="org3bd49b9"><span class="section-number-4">2.4.5.</span> Sampling Method</h4>
-<div class="outline-text-4" id="text-2-4-5">
+<div id="outline-container-prompt-engineering--inputs--sampling-method" class="outline-4">
+<h4 id="prompt-engineering--inputs--sampling-method"><span class="section-number-4">2.4.5.</span> Sampling Method</h4>
+<div class="outline-text-4" id="text-prompt-engineering--inputs--sampling-method">
 <p>
 From my reading, the default DPM2++ 2M Karras (include true identifier) works
 best for modern models.  I&rsquo;ve heard good things about Euler A but it is either
@@ -563,29 +630,33 @@ subjective or for older models.  I need to do a study of how they differ.
 </p>
 </div>
 </div>
-<div id="outline-container-orgc7f42b0" class="outline-4">
-<h4 id="orgc7f42b0"><span class="section-number-4">2.4.6.</span> Dimensions</h4>
-<div class="outline-text-4" id="text-2-4-6">
+<div id="outline-container-prompt-engineering--inputs--dimensions" class="outline-4">
+<h4 id="prompt-engineering--inputs--dimensions"><span class="section-number-4">2.4.6.</span> Dimensions</h4>
+<div class="outline-text-4" id="text-prompt-engineering--inputs--dimensions">
 <p>
 I don&rsquo;t think that height and width are the literal size of the image but I need
 to verify this.  This does become a factor with the &ldquo;Hires fix&rdquo;.
 </p>
 </div>
 </div>
-<div id="outline-container-orgeb99ec8" class="outline-4">
-<h4 id="orgeb99ec8"><span class="section-number-4">2.4.7.</span> High Resolution &ldquo;Fix&rdquo;</h4>
+<div id="outline-container-prompt-engineering--inputs--high-resolution-fix" class="outline-4">
+<h4 id="prompt-engineering--inputs--high-resolution-fix"><span class="section-number-4">2.4.7.</span> High Resolution &ldquo;Fix&rdquo;</h4>
+<div class="outline-text-4" id="text-prompt-engineering--inputs--high-resolution-fix">
 </div>
-<div id="outline-container-org71046ed" class="outline-4">
-<h4 id="org71046ed"><span class="section-number-4">2.4.8.</span> Refiner</h4>
 </div>
-
-<div id="outline-container-orgd962483" class="outline-4">
-<h4 id="orgd962483"><span class="section-number-4">2.4.9.</span> Batch</h4>
+<div id="outline-container-prompt-engineering--inputs--refiner" class="outline-4">
+<h4 id="prompt-engineering--inputs--refiner"><span class="section-number-4">2.4.8.</span> Refiner</h4>
+<div class="outline-text-4" id="text-prompt-engineering--inputs--refiner">
 </div>
-
-<div id="outline-container-org051926f" class="outline-4">
-<h4 id="org051926f"><span class="section-number-4">2.4.10.</span> Tokens</h4>
-<div class="outline-text-4" id="text-2-4-10">
+</div>
+<div id="outline-container-prompt-engineering--inputs--batch" class="outline-4">
+<h4 id="prompt-engineering--inputs--batch"><span class="section-number-4">2.4.9.</span> Batch</h4>
+<div class="outline-text-4" id="text-prompt-engineering--inputs--batch">
+</div>
+</div>
+<div id="outline-container-prompt-engineering--inputs--tokens" class="outline-4">
+<h4 id="prompt-engineering--inputs--tokens"><span class="section-number-4">2.4.10.</span> Tokens</h4>
+<div class="outline-text-4" id="text-prompt-engineering--inputs--tokens">
 <p>
 A token is effectively a single &ldquo;thought&rdquo; or a keyword/keyphrase inside of the
 prompt.  With a prompt such as &ldquo;pandas filing taxes&rdquo;, that phrase gets
@@ -601,8 +672,8 @@ cutoff with another token.  There is a standard syntax and a legacy syntax.
 </p>
 </div>
 <ol class="org-ol">
-<li><a id="org1fd5abe"></a>Token Limits<br />
-<div class="outline-text-5" id="text-2-4-10-1">
+<li><a id="prompt-engineering--inputs--tokens--token-limits"></a>Token Limits<br />
+<div class="outline-text-5" id="text-prompt-engineering--inputs--tokens--token-limits">
 <p>
 There is an upper limit to these tokens in both the positive and negative
 prompts.  I do not know if pushing closer to that boundary causes significantly
@@ -615,8 +686,8 @@ tally up.
 </p>
 </div>
 </li>
-<li><a id="orgd5df14d"></a>Word Salad<br />
-<div class="outline-text-5" id="text-2-4-10-2">
+<li><a id="prompt-engineering--inputs--tokens--word-salad"></a>Word Salad<br />
+<div class="outline-text-5" id="text-prompt-engineering--inputs--tokens--word-salad">
 <p>
 I have noticed that words seem to be taken in any order with no respect to
 grammar.  So with &ldquo;pandas filing taxes&rdquo;, the end result is something to the
@@ -626,7 +697,7 @@ things that aren&rsquo;t blue, and the hair might remain not-blue.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-text" id="org9ff9f14"> blue hair
+<pre class="src src-text" id="org168390b"> blue hair
 </pre>
 </div>
 
@@ -685,7 +756,7 @@ on a man, or any colored hair on a man.  Let&rsquo;s try it with an additional p
 </p>
 
 <div class="org-src-container">
-<pre class="src src-text" id="orgb94d690">, blue hair, red tie
+<pre class="src src-text" id="orgc71c873">, blue hair, red tie
 </pre>
 </div>
 
@@ -728,7 +799,7 @@ more complicated and add another color.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-text" id="org2912375">, blue hair, red tie, a green house on a hill
+<pre class="src src-text" id="org2a59230">, blue hair, red tie, a green house on a hill
 </pre>
 </div>
 
@@ -768,12 +839,12 @@ more complicated and add another color.
 
 <p>
 Okay now we&rsquo;re seeing some color mixing.  How do we ensure we get what we
-wanted?  I&rsquo;ve been told this is due to <a href="#org44d9bda">2.4.10.4</a>.
+wanted?  I&rsquo;ve been told this is due to <a href="#prompt-engineering--inputs--tokens--swapped-tokens">2.4.10.4</a>.
 </p>
 </div>
 </li>
-<li><a id="org45f6270"></a>Weights<br />
-<div class="outline-text-5" id="text-2-4-10-3">
+<li><a id="prompt-engineering--inputs--tokens--weights"></a>Weights<br />
+<div class="outline-text-5" id="text-prompt-engineering--inputs--tokens--weights">
 <p>
 Keywords can be weighted.  This is done via a parenthesis notation around the
 keyword, a colon, and a number.  So the keyword <code>dragon</code> would indicate you want
@@ -782,10 +853,10 @@ weighted higher than other keywords by a significant margin.  The
 </p>
 </div>
 </li>
-<li><a id="org44d9bda"></a>Stepped Tokens<br />
-<div class="outline-text-5" id="text-2-4-10-4">
+<li><a id="prompt-engineering--inputs--tokens--swapped-tokens"></a>Swapped Tokens<br />
+<div class="outline-text-5" id="text-prompt-engineering--inputs--tokens--swapped-tokens">
 <p>
-Stepped tokens use the syntax <code>[foo:bar:step]</code>, were <code>foo</code> and <code>bar</code> are
+Swapped tokens use the syntax <code>[foo:bar:step]</code>, were <code>foo</code> and <code>bar</code> are
 individual tokens separated by a colon, and followed by another colon is the
 step in the samples at which to switch to the other token.
 </p>
@@ -798,15 +869,15 @@ There is multiple utility here:
 and the first 20 steps will be making a forest, where the last N steps will
 be that of a city for whatever the forest part was.  This can make
 forest-inspired or forest-looking cities.</li>
-<li>Color can be forced to work around issues observed wit <a href="#orgd5df14d">2.4.10.2</a>.  I&rsquo;m not
+<li>Color can be forced to work around issues observed wit <a href="#prompt-engineering--inputs--tokens--word-salad">2.4.10.2</a>.  I&rsquo;m not
 sure how this is done yet.</li>
 </ol>
 </div>
 <ol class="org-ol">
-<li><a id="org4e24c48"></a>Blending with Steps<br />
-<div class="outline-text-6" id="text-2-4-10-4-1">
+<li><a id="prompt-engineering--inputs--tokens--swapped-tokens--blending-with-steps"></a>Blending with Steps<br />
+<div class="outline-text-6" id="text-prompt-engineering--inputs--tokens--swapped-tokens--blending-with-steps">
 <div class="org-src-container">
-<pre class="src src-text" id="orgc4f4150">, forest
+<pre class="src src-text" id="org8ef7669">, forest
 </pre>
 </div>
 
@@ -849,7 +920,7 @@ Now let&rsquo;s do something that makes perfect sense: Make a forest of candy ca
 </p>
 
 <div class="org-src-container">
-<pre class="src src-text" id="orgb6c15a2">, [forest:candy-canes:5]
+<pre class="src src-text" id="org607e2e1">, [forest:candy-canes:5]
 </pre>
 </div>
 
@@ -890,16 +961,16 @@ Now let&rsquo;s do something that makes perfect sense: Make a forest of candy ca
 </li>
 </ol>
 </li>
-<li><a id="orgd48bda0"></a>Alternating Tokens<br />
-<div class="outline-text-5" id="text-2-4-10-5">
+<li><a id="prompt-engineering--inputs--tokens--alternating-tokens"></a>Alternating Tokens<br />
+<div class="outline-text-5" id="text-prompt-engineering--inputs--tokens--alternating-tokens">
 <p>
-Like <a href="#org44d9bda">2.4.10.4</a>, alternating tokens switch between the tokens every other
+Like <a href="#prompt-engineering--inputs--tokens--swapped-tokens">2.4.10.4</a>, alternating tokens switch between the tokens every other
 step in the sampling.  Let&rsquo;s try the same forest of candy canes, but with
 alternating instead of stepped.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-text" id="org0ab9172">, [forest|candy canes]
+<pre class="src src-text" id="orgac51f2a">, [forest|candy canes]
 </pre>
 </div>
 
@@ -936,23 +1007,51 @@ alternating instead of stepped.
 </div>
 </div>
 </li>
-<li><a id="org88d3138"></a>Legacy Syntax<br /></li>
+<li><a id="prompt-engineering--inputs--tokens--tokens---ceasing-and-starting-at-specific-steps"></a>Tokens - Ceasing and Starting at Specific Steps<br />
+<div class="outline-text-5" id="text-prompt-engineering--inputs--tokens--tokens---ceasing-and-starting-at-specific-steps">
+<p>
+Use <code>[token:step]</code> to start using <code>token</code> at sample step count <code>step</code>.  I&rsquo;ve
+read this can be used to control color.
+</p>
 
-<li><a id="org59b3218"></a>Special Keywords<br />
+<p>
+Use <code>\[\[token:step]]</code> to <span class="underline">remove</span> <code>token</code> at sample step count <code>step</code>.  I do
+not know the utility for this one as much.
+</p>
+</div>
+</li>
+<li><a id="prompt-engineering--inputs--tokens--legacy-syntax"></a>Legacy Syntax<br />
+<div class="outline-text-5" id="text-prompt-engineering--inputs--tokens--legacy-syntax">
+</div>
+</li>
+<li><a id="prompt-engineering--inputs--tokens--special-keywords"></a>Special Keywords<br />
+<div class="outline-text-5" id="text-prompt-engineering--inputs--tokens--special-keywords">
+</div>
 <ol class="org-ol">
-<li><a id="org573acf8"></a>Distance<br /></li>
-
-<li><a id="org8003ca1"></a>Style<br /></li>
-
-<li><a id="org6289f9a"></a>Artist<br /></li>
-
-<li><a id="orgfec01cd"></a>Camera angle<br /></li>
+<li><a id="prompt-engineering--inputs--tokens--special-keywords--distance"></a>Distance<br />
+<div class="outline-text-6" id="text-prompt-engineering--inputs--tokens--special-keywords--distance">
+</div>
+</li>
+<li><a id="prompt-engineering--inputs--tokens--special-keywords--style"></a>Style<br />
+<div class="outline-text-6" id="text-prompt-engineering--inputs--tokens--special-keywords--style">
+</div>
+</li>
+<li><a id="prompt-engineering--inputs--tokens--special-keywords--artist"></a>Artist<br />
+<div class="outline-text-6" id="text-prompt-engineering--inputs--tokens--special-keywords--artist">
+</div>
+</li>
+<li><a id="prompt-engineering--inputs--tokens--special-keywords--camera-angle"></a>Camera angle<br />
+<div class="outline-text-6" id="text-prompt-engineering--inputs--tokens--special-keywords--camera-angle">
+</div>
+</li>
 </ol>
 </li>
 </ol>
 </div>
-<div id="outline-container-org3e79b28" class="outline-4">
-<h4 id="org3e79b28"><span class="section-number-4">2.4.11.</span> Models</h4>
+<div id="outline-container-prompt-engineering--inputs--models" class="outline-4">
+<h4 id="prompt-engineering--inputs--models"><span class="section-number-4">2.4.11.</span> Models</h4>
+<div class="outline-text-4" id="text-prompt-engineering--inputs--models">
+</div>
 </div>
 </div>
 </div>

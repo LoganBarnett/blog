@@ -3,11 +3,12 @@
 categories: nix
 date: 2024-02-11
 layout: default
-title: Nix Adventures (part 2 of ?)
+title: "Nix Adventures Part 2: Machine Learning Servers"
+parent: nix-adventures.org
 ---
 #+END_EXPORT
 
-#+title:     Nix Adventures (part 2 of ?)
+#+title:     Nix Adventures Part 2: Machine Learning Servers
 #+author:    Logan Barnett
 #+email:     logustus@gmail.com
 #+date:      <2024-01-19 Fri>
@@ -15,7 +16,7 @@ title: Nix Adventures (part 2 of ?)
 #+file_tags:
 #+tags:
 #+auto_id:   t
-#+options:   toc:t
+#+toc:       headlines 3
 
 * What is this?
 :PROPERTIES:
