@@ -4,41 +4,6 @@ date: 2024-02-11
 layout: default
 title: Machine Learning - Stable Diffusion Prompt Engineering
 ---
-
-<div id="table-of-contents" role="doc-toc">
-<h2>Table of Contents</h2>
-<div id="text-table-of-contents" role="doc-toc">
-<ul>
-<li><a href="#introduction">1. Introduction</a></li>
-<li><a href="#prompt-engineering">2. Prompt Engineering</a>
-<ul>
-<li><a href="#prompt-engineering--prompt-engineering-introduction">2.1. Prompt Engineering Introduction</a></li>
-<li><a href="#prompt-engineering--generated">2.2. Generated</a>
-<ul>
-<li><a href="#prompt-engineering--generated--generating-images---the-code">2.2.1. Generating Images - The Code</a></li>
-</ul>
-</li>
-<li><a href="#prompt-engineering--sample-prompts">2.3. Sample Prompts</a></li>
-<li><a href="#prompt-engineering--inputs">2.4. Inputs</a>
-<ul>
-<li><a href="#prompt-engineering--inputs--the-base">2.4.1. The Base</a></li>
-<li><a href="#prompt-engineering--inputs--seed">2.4.2. Seed</a></li>
-<li><a href="#prompt-engineering--inputs--classifier-free-guidance-cfg">2.4.3. Classifier Free Guidance (CFG)</a></li>
-<li><a href="#prompt-engineering--inputs--samples">2.4.4. Samples</a></li>
-<li><a href="#prompt-engineering--inputs--sampling-method">2.4.5. Sampling Method</a></li>
-<li><a href="#prompt-engineering--inputs--dimensions">2.4.6. Dimensions</a></li>
-<li><a href="#prompt-engineering--inputs--high-resolution-fix">2.4.7. High Resolution &ldquo;Fix&rdquo;</a></li>
-<li><a href="#prompt-engineering--inputs--refiner">2.4.8. Refiner</a></li>
-<li><a href="#prompt-engineering--inputs--batch">2.4.9. Batch</a></li>
-<li><a href="#prompt-engineering--inputs--tokens">2.4.10. Tokens</a></li>
-<li><a href="#prompt-engineering--inputs--models">2.4.11. Models</a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</div>
-</div>
 <div id="outline-container-introduction" class="outline-2">
 <h2 id="introduction"><span class="section-number-2">1.</span> Introduction</h2>
 <div class="outline-text-2" id="text-introduction">
@@ -63,11 +28,71 @@ will try to keep a loose changelog if you happen to be eager to see updates.
 </div>
 </div>
 <div id="outline-container-prompt-engineering" class="outline-2">
-<h2 id="prompt-engineering"><span class="section-number-2">2.</span> Prompt Engineering</h2>
+<h2 id="prompt-engineering">Prompt Engineering</h2>
 <div class="outline-text-2" id="text-prompt-engineering">
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#prompt-engineering--prompt-engineering-introduction">Prompt Engineering Introduction</a></li>
+<li><a href="#prompt-engineering--generated">Generated</a>
+<ul>
+<li><a href="#prompt-engineering--generated--generating-images---the-code">Generating Images - The Code</a>
+<ul>
+<li><a href="#prompt-engineering--generated--generating-images---the-code--the-lisp-helper">The Lisp Helper</a></li>
+<li><a href="#prompt-engineering--generated--generating-images---the-code--making-api-calls---a-test">Making API calls - A Test</a></li>
+<li><a href="#prompt-engineering--generated--generating-images---the-code--making-api-calls---a-reusable-block">Making API Calls - A Reusable Block</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#prompt-engineering--sample-prompts">Sample Prompts</a></li>
+<li><a href="#prompt-engineering--inputs">Inputs</a>
+<ul>
+<li><a href="#prompt-engineering--inputs--the-base">The Base</a></li>
+<li><a href="#prompt-engineering--inputs--seed">Seed</a></li>
+<li><a href="#prompt-engineering--inputs--classifier-free-guidance-cfg">Classifier Free Guidance (CFG)</a></li>
+<li><a href="#prompt-engineering--inputs--samples">Samples</a>
+<ul>
+<li><a href="#prompt-engineering--inputs--samples--very-low-samples">very low samples</a></li>
+<li><a href="#prompt-engineering--inputs--samples--high-samples">high samples</a></li>
+<li><a href="#prompt-engineering--inputs--samples--very-high-samples">very high samples</a></li>
+</ul>
+</li>
+<li><a href="#prompt-engineering--inputs--sampling-method">Sampling Method</a></li>
+<li><a href="#prompt-engineering--inputs--dimensions">Dimensions</a></li>
+<li><a href="#prompt-engineering--inputs--high-resolution-fix">High Resolution &ldquo;Fix&rdquo;</a></li>
+<li><a href="#prompt-engineering--inputs--refiner">Refiner</a></li>
+<li><a href="#prompt-engineering--inputs--batch">Batch</a></li>
+<li><a href="#prompt-engineering--inputs--tokens">Tokens</a>
+<ul>
+<li><a href="#prompt-engineering--inputs--tokens--token-limits">Token Limits</a></li>
+<li><a href="#prompt-engineering--inputs--tokens--word-salad">Word Salad</a></li>
+<li><a href="#prompt-engineering--inputs--tokens--weights">Weights</a></li>
+<li><a href="#prompt-engineering--inputs--tokens--swapped-tokens">Swapped Tokens</a>
+<ul>
+<li><a href="#prompt-engineering--inputs--tokens--swapped-tokens--blending-with-steps">Blending with Steps</a></li>
+</ul>
+</li>
+<li><a href="#prompt-engineering--inputs--tokens--alternating-tokens">Alternating Tokens</a></li>
+<li><a href="#prompt-engineering--inputs--tokens--tokens---ceasing-and-starting-at-specific-steps">Tokens - Ceasing and Starting at Specific Steps</a></li>
+<li><a href="#prompt-engineering--inputs--tokens--legacy-syntax">Legacy Syntax</a></li>
+<li><a href="#prompt-engineering--inputs--tokens--special-keywords">Special Keywords</a>
+<ul>
+<li><a href="#prompt-engineering--inputs--tokens--special-keywords--distance">Distance</a></li>
+<li><a href="#prompt-engineering--inputs--tokens--special-keywords--style">Style</a></li>
+<li><a href="#prompt-engineering--inputs--tokens--special-keywords--artist">Artist</a></li>
+<li><a href="#prompt-engineering--inputs--tokens--special-keywords--camera-angle">Camera angle</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#prompt-engineering--inputs--models">Models</a></li>
+</ul>
+</li>
+</ul>
+</div>
 </div>
 <div id="outline-container-prompt-engineering--prompt-engineering-introduction" class="outline-3">
-<h3 id="prompt-engineering--prompt-engineering-introduction"><span class="section-number-3">2.1.</span> Prompt Engineering Introduction</h3>
+<h3 id="prompt-engineering--prompt-engineering-introduction">Prompt Engineering Introduction</h3>
 <div class="outline-text-3" id="text-prompt-engineering--prompt-engineering-introduction">
 <p>
 Prompt Engineering is its own discipline, apparently.  For a quick refresher: A
@@ -103,7 +128,7 @@ more details until satisfaction is reached.
 </p>
 
 
-<div id="orgd22a6d8" class="figure">
+<div id="org63df022" class="figure">
 <p><img src="./assets/draw-the-owl01.jpeg" alt="draw-the-owl01.jpeg" />
 </p>
 </div>
@@ -123,7 +148,7 @@ the image.
 </div>
 </div>
 <div id="outline-container-prompt-engineering--generated" class="outline-3">
-<h3 id="prompt-engineering--generated"><span class="section-number-3">2.2.</span> Generated</h3>
+<h3 id="prompt-engineering--generated">Generated</h3>
 <div class="outline-text-3" id="text-prompt-engineering--generated">
 <p>
 The results of this entire document are generated via literate programming using
@@ -144,11 +169,11 @@ just focus on emitting consistent results given its inputs.
 </p>
 </div>
 <div id="outline-container-prompt-engineering--generated--generating-images---the-code" class="outline-4">
-<h4 id="prompt-engineering--generated--generating-images---the-code"><span class="section-number-4">2.2.1.</span> Generating Images - The Code</h4>
+<h4 id="prompt-engineering--generated--generating-images---the-code">Generating Images - The Code</h4>
 <div class="outline-text-4" id="text-prompt-engineering--generated--generating-images---the-code">
 </div>
-<ol class="org-ol">
-<li><a id="prompt-engineering--generated--generating-images---the-code--the-lisp-helper"></a>The Lisp Helper<br />
+<div id="outline-container-prompt-engineering--generated--generating-images---the-code--the-lisp-helper" class="outline-5">
+<h5 id="prompt-engineering--generated--generating-images---the-code--the-lisp-helper">The Lisp Helper</h5>
 <div class="outline-text-5" id="text-prompt-engineering--generated--generating-images---the-code--the-lisp-helper">
 <p>
 First we need a quick way to evaluate code blocks.  Per the documentation of
@@ -158,7 +183,7 @@ for us.  This is that function:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-emacs-lisp" id="orgbde27a5"><span style="color: #51afef;">(</span><span style="color: #51afef;">defun</span> <span style="color: #5cEfFF;">org-babel-block</span> <span style="color: #C57BDB;">(</span>block, args
+<pre class="src src-emacs-lisp" id="org1a464ce"><span style="color: #51afef;">(</span><span style="color: #51afef;">defun</span> <span style="color: #5cEfFF;">org-babel-block</span> <span style="color: #C57BDB;">(</span>block, args
   <span style="color: #7bc275;">(</span>save-excursion
     <span style="color: #a991f1;">(</span><span style="color: #a991f1;">goto-char</span>
     <span style="color: #51afef;">(</span><span style="color: #a991f1;">org-babel-find-named-block</span> block<span style="color: #51afef;">)</span><span style="color: #a991f1;">)</span>
@@ -173,12 +198,13 @@ And something to catch the missing blocks:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-emacs-lisp" id="org6243beb"><span style="color: #51afef;">(</span><span style="color: #a991f1;">message</span> <span style="color: #7bc275;">"Error: The '</span><span style="color: #a991f1;">block</span><span style="color: #7bc275;">' parameter was not provided for org-babel-block."</span><span style="color: #51afef;">)</span>
+<pre class="src src-emacs-lisp" id="orgdf0e72f"><span style="color: #51afef;">(</span><span style="color: #a991f1;">message</span> <span style="color: #7bc275;">"Error: The '</span><span style="color: #a991f1;">block</span><span style="color: #7bc275;">' parameter was not provided for org-babel-block."</span><span style="color: #51afef;">)</span>
 </pre>
 </div>
 </div>
-</li>
-<li><a id="prompt-engineering--generated--generating-images---the-code--making-api-calls---a-test"></a>Making API calls - A Test<br />
+</div>
+<div id="outline-container-prompt-engineering--generated--generating-images---the-code--making-api-calls---a-test" class="outline-5">
+<h5 id="prompt-engineering--generated--generating-images---the-code--making-api-calls---a-test">Making API calls - A Test</h5>
 <div class="outline-text-5" id="text-prompt-engineering--generated--generating-images---the-code--making-api-calls---a-test">
 <p>
 The <a href="https://github.com/AUTOMATIC1111/stable-diffusion-webui/wiki/API">Wiki based API documentation</a> for <code>stable-diffusion-webui</code> is not complete.
@@ -205,7 +231,7 @@ up correctly in the <code>/docs</code> URL.  I should clean this up soon.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-python" id="orgff029a6"><span style="color: #51afef;">import</span> urllib.request
+<pre class="src src-python" id="orgbb96dd0"><span style="color: #51afef;">import</span> urllib.request
 <span style="color: #51afef;">import</span> base64
 <span style="color: #51afef;">import</span> json
 <span style="color: #51afef;">import</span> time
@@ -234,16 +260,17 @@ up correctly in the <code>/docs</code> URL.  I should clean this up soon.
 </div>
 
 
-<div id="orgf89fc95" class="figure">
+<div id="org58f9e70" class="figure">
 <p><img src="./test-0.png" alt="test-0.png" />
 </p>
 </div>
 </div>
-</li>
-<li><a id="prompt-engineering--generated--generating-images---the-code--making-api-calls---a-reusable-block"></a>Making API Calls - A Reusable Block<br />
+</div>
+<div id="outline-container-prompt-engineering--generated--generating-images---the-code--making-api-calls---a-reusable-block" class="outline-5">
+<h5 id="prompt-engineering--generated--generating-images---the-code--making-api-calls---a-reusable-block">Making API Calls - A Reusable Block</h5>
 <div class="outline-text-5" id="text-prompt-engineering--generated--generating-images---the-code--making-api-calls---a-reusable-block">
 <div class="org-src-container">
-<pre class="src src-python" id="org49d2651"><span style="color: #51afef;">import</span> urllib.request
+<pre class="src src-python" id="org31915de"><span style="color: #51afef;">import</span> urllib.request
 <span style="color: #51afef;">import</span> base64
 <span style="color: #51afef;">import</span> json
 <span style="color: #51afef;">import</span> time
@@ -270,12 +297,11 @@ up correctly in the <code>/docs</code> URL.  I should clean this up soon.
 </pre>
 </div>
 </div>
-</li>
-</ol>
+</div>
 </div>
 </div>
 <div id="outline-container-prompt-engineering--sample-prompts" class="outline-3">
-<h3 id="prompt-engineering--sample-prompts"><span class="section-number-3">2.3.</span> Sample Prompts</h3>
+<h3 id="prompt-engineering--sample-prompts">Sample Prompts</h3>
 <div class="outline-text-3" id="text-prompt-engineering--sample-prompts">
 <p>
 To give a little variety here, let&rsquo;s agree on a few base sample prompts that
@@ -290,22 +316,22 @@ could serve as good reference though.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-text" id="org7e2f937">dreamscape
+<pre class="src src-text" id="orga3cbc42">dreamscape
 </pre>
 </div>
 
 <div class="org-src-container">
-<pre class="src src-text" id="org12ffe0a">man
+<pre class="src src-text" id="orgffe5440">man
 </pre>
 </div>
 
 <div class="org-src-container">
-<pre class="src src-text" id="org59759bc">woman
+<pre class="src src-text" id="orged38a3c">woman
 </pre>
 </div>
 
 <div class="org-src-container">
-<pre class="src src-text" id="orge7bc631">city or village or landscape
+<pre class="src src-text" id="orgd63a92c">city or village or landscape
 </pre>
 </div>
 
@@ -314,7 +340,7 @@ The seed will be:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-text" id="org95bd3c2">503043532
+<pre class="src src-text" id="org33502cc">503043532
 </pre>
 </div>
 
@@ -323,7 +349,7 @@ Our default sample size will be:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-text" id="orgad4b6e8">20
+<pre class="src src-text" id="org6d50ab1">20
 </pre>
 </div>
 
@@ -332,7 +358,7 @@ Our default model will be:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-text" id="org483bf2e">endjourneyXL_v11
+<pre class="src src-text" id="org84053a9">endjourneyXL_v11
 </pre>
 </div>
 
@@ -341,22 +367,22 @@ Our default sampling method will be:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-text" id="orgbe450f3">dpm2pp_2m_karras
+<pre class="src src-text" id="org7b9d793">dpm2pp_2m_karras
 </pre>
 </div>
 
 <div class="org-src-container">
-<pre class="src src-text" id="orga9a4fa8">512
+<pre class="src src-text" id="orga29671a">512
 </pre>
 </div>
 
 <div class="org-src-container">
-<pre class="src src-text" id="org3c942b9">512
+<pre class="src src-text" id="orgaffef3a">512
 </pre>
 </div>
 
 <div class="org-src-container">
-<pre class="src src-text" id="org9bcbd63">7
+<pre class="src src-text" id="orgb1fa626">7
 </pre>
 </div>
 
@@ -365,13 +391,13 @@ The base URL for the <code>stable-diffusion-webui</code> server is:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-text" id="org6394ff0">http://localhost:7860
+<pre class="src src-text" id="org5a2dd13">http://localhost:7860
 </pre>
 </div>
 </div>
 </div>
 <div id="outline-container-prompt-engineering--inputs" class="outline-3">
-<h3 id="prompt-engineering--inputs"><span class="section-number-3">2.4.</span> Inputs</h3>
+<h3 id="prompt-engineering--inputs">Inputs</h3>
 <div class="outline-text-3" id="text-prompt-engineering--inputs">
 <p>
 Various inputs decide the quality of the image, what appears in the image, and
@@ -381,14 +407,14 @@ varied outcomes are.
 </p>
 </div>
 <div id="outline-container-prompt-engineering--inputs--the-base" class="outline-4">
-<h4 id="prompt-engineering--inputs--the-base"><span class="section-number-4">2.4.1.</span> The Base</h4>
+<h4 id="prompt-engineering--inputs--the-base">The Base</h4>
 <div class="outline-text-4" id="text-prompt-engineering--inputs--the-base">
 <p>
-As described in <a href="#prompt-engineering--sample-prompts">2.3</a>, our base is as follows:
+As described in <a href="#prompt-engineering--sample-prompts">Sample Prompts</a>, our base is as follows:
 </p>
 
 <p>
-<a id="org4305938"></a>
+<a id="org9ecfc19"></a>
 </p>
 
 <div class="org-src-container">
@@ -425,7 +451,7 @@ As described in <a href="#prompt-engineering--sample-prompts">2.3</a>, our base 
 </div>
 </div>
 <div id="outline-container-prompt-engineering--inputs--seed" class="outline-4">
-<h4 id="prompt-engineering--inputs--seed"><span class="section-number-4">2.4.2.</span> Seed</h4>
+<h4 id="prompt-engineering--inputs--seed">Seed</h4>
 <div class="outline-text-4" id="text-prompt-engineering--inputs--seed">
 <p>
 This should be front an center because it is key to using consistent results.
@@ -447,7 +473,7 @@ Seeds will be used heavily in this document to produce consistent results.
 </div>
 </div>
 <div id="outline-container-prompt-engineering--inputs--classifier-free-guidance-cfg" class="outline-4">
-<h4 id="prompt-engineering--inputs--classifier-free-guidance-cfg"><span class="section-number-4">2.4.3.</span> Classifier Free Guidance (CFG)</h4>
+<h4 id="prompt-engineering--inputs--classifier-free-guidance-cfg">Classifier Free Guidance (CFG)</h4>
 <div class="outline-text-4" id="text-prompt-engineering--inputs--classifier-free-guidance-cfg">
 <p>
 Stable Diffusion (or perhaps all of these tools) expresses &ldquo;creativity&rdquo; in which
@@ -466,7 +492,7 @@ seen it do a &ldquo;bad&rdquo; job so far at that level.
 </div>
 </div>
 <div id="outline-container-prompt-engineering--inputs--samples" class="outline-4">
-<h4 id="prompt-engineering--inputs--samples"><span class="section-number-4">2.4.4.</span> Samples</h4>
+<h4 id="prompt-engineering--inputs--samples">Samples</h4>
 <div class="outline-text-4" id="text-prompt-engineering--inputs--samples">
 <p>
 The number of samples is loosely the number of passes that will be made against
@@ -494,8 +520,8 @@ cases the images just get better - things look less blotchy and ill-defined.  In
 the case of the woman, I effectively have a separate image for each run.
 </p>
 </div>
-<ol class="org-ol">
-<li><a id="prompt-engineering--inputs--samples--very-low-samples"></a>very low samples<br />
+<div id="outline-container-prompt-engineering--inputs--samples--very-low-samples" class="outline-5">
+<h5 id="prompt-engineering--inputs--samples--very-low-samples">very low samples</h5>
 <div class="outline-text-5" id="text-prompt-engineering--inputs--samples--very-low-samples">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp"><span style="color: #51afef;">(</span><span style="color: #51afef;">org-sbe</span> text-to-image
@@ -507,7 +533,7 @@ the case of the woman, I effectively have a separate image for each run.
 </div>
 
 
-<div id="org156208e" class="figure">
+<div id="org7a5a371" class="figure">
 <p><img src="./dreamscape-low-samples-0.png" alt="dreamscape-low-samples-0.png" />
 </p>
 </div>
@@ -522,7 +548,7 @@ the case of the woman, I effectively have a separate image for each run.
 </div>
 
 
-<div id="org06b5731" class="figure">
+<div id="orgf128b5e" class="figure">
 <p><img src="./man-low-samples-0.png" alt="man-low-samples-0.png" />
 </p>
 </div>
@@ -537,7 +563,7 @@ the case of the woman, I effectively have a separate image for each run.
 </div>
 
 
-<div id="org628e1b9" class="figure">
+<div id="org250cae7" class="figure">
 <p><img src="./woman-low-samples-0.png" alt="woman-low-samples-0.png" />
 </p>
 </div>
@@ -552,13 +578,14 @@ the case of the woman, I effectively have a separate image for each run.
 </div>
 
 
-<div id="org192af31" class="figure">
+<div id="org3ea0eab" class="figure">
 <p><img src="./city or village or landscape-low-samples-0.png" alt="city or village or landscape-low-samples-0.png" />
 </p>
 </div>
 </div>
-</li>
-<li><a id="prompt-engineering--inputs--samples--high-samples"></a>high samples<br />
+</div>
+<div id="outline-container-prompt-engineering--inputs--samples--high-samples" class="outline-5">
+<h5 id="prompt-engineering--inputs--samples--high-samples">high samples</h5>
 <div class="outline-text-5" id="text-prompt-engineering--inputs--samples--high-samples">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp"><span style="color: #51afef;">(</span><span style="color: #51afef;">org-sbe</span> text-to-image
@@ -570,7 +597,7 @@ the case of the woman, I effectively have a separate image for each run.
 </div>
 
 
-<div id="orga1375b1" class="figure">
+<div id="orgf436cbe" class="figure">
 <p><img src="./dreamscape-high-samples-0.png" alt="dreamscape-high-samples-0.png" />
 </p>
 </div>
@@ -585,7 +612,7 @@ the case of the woman, I effectively have a separate image for each run.
 </div>
 
 
-<div id="org6f9a8d0" class="figure">
+<div id="org55c8620" class="figure">
 <p><img src="./man-high-samples-0.png" alt="man-high-samples-0.png" />
 </p>
 </div>
@@ -600,7 +627,7 @@ the case of the woman, I effectively have a separate image for each run.
 </div>
 
 
-<div id="orgcf11a81" class="figure">
+<div id="orgbf71a50" class="figure">
 <p><img src="./woman-high-samples-0.png" alt="woman-high-samples-0.png" />
 </p>
 </div>
@@ -615,13 +642,14 @@ the case of the woman, I effectively have a separate image for each run.
 </div>
 
 
-<div id="orga2b32dc" class="figure">
+<div id="org6782891" class="figure">
 <p><img src="./city or village or landscape-high-samples-0.png" alt="city or village or landscape-high-samples-0.png" />
 </p>
 </div>
 </div>
-</li>
-<li><a id="prompt-engineering--inputs--samples--very-high-samples"></a>very high samples<br />
+</div>
+<div id="outline-container-prompt-engineering--inputs--samples--very-high-samples" class="outline-5">
+<h5 id="prompt-engineering--inputs--samples--very-high-samples">very high samples</h5>
 <div class="outline-text-5" id="text-prompt-engineering--inputs--samples--very-high-samples">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp"><span style="color: #51afef;">(</span><span style="color: #51afef;">org-sbe</span> text-to-image
@@ -633,7 +661,7 @@ the case of the woman, I effectively have a separate image for each run.
 </div>
 
 
-<div id="org8d38c76" class="figure">
+<div id="orgd6f3467" class="figure">
 <p><img src="./dreamscape-very-high-samples-0.png" alt="dreamscape-very-high-samples-0.png" />
 </p>
 </div>
@@ -648,7 +676,7 @@ the case of the woman, I effectively have a separate image for each run.
 </div>
 
 
-<div id="org71f10ae" class="figure">
+<div id="org9007a13" class="figure">
 <p><img src="./man-very-high-samples-0.png" alt="man-very-high-samples-0.png" />
 </p>
 </div>
@@ -663,7 +691,7 @@ the case of the woman, I effectively have a separate image for each run.
 </div>
 
 
-<div id="orgd672f48" class="figure">
+<div id="orga4dde96" class="figure">
 <p><img src="./woman-very-high-samples-0.png" alt="woman-very-high-samples-0.png" />
 </p>
 </div>
@@ -678,7 +706,7 @@ the case of the woman, I effectively have a separate image for each run.
 </div>
 
 
-<div id="org0c4bb47" class="figure">
+<div id="org1e1f503" class="figure">
 <p><img src="./city or village or landscape-very-high-samples-0.png" alt="city or village or landscape-very-high-samples-0.png" />
 </p>
 </div>
@@ -689,11 +717,10 @@ improvements on the other images.  More samples just means better.  I&rsquo;d ha
 do higher numbers to get a better idea with diminishing returns.
 </p>
 </div>
-</li>
-</ol>
+</div>
 </div>
 <div id="outline-container-prompt-engineering--inputs--sampling-method" class="outline-4">
-<h4 id="prompt-engineering--inputs--sampling-method"><span class="section-number-4">2.4.5.</span> Sampling Method</h4>
+<h4 id="prompt-engineering--inputs--sampling-method">Sampling Method</h4>
 <div class="outline-text-4" id="text-prompt-engineering--inputs--sampling-method">
 <p>
 From my reading, the default DPM2++ 2M Karras (include true identifier) works
@@ -703,7 +730,7 @@ subjective or for older models.  I need to do a study of how they differ.
 </div>
 </div>
 <div id="outline-container-prompt-engineering--inputs--dimensions" class="outline-4">
-<h4 id="prompt-engineering--inputs--dimensions"><span class="section-number-4">2.4.6.</span> Dimensions</h4>
+<h4 id="prompt-engineering--inputs--dimensions">Dimensions</h4>
 <div class="outline-text-4" id="text-prompt-engineering--inputs--dimensions">
 <p>
 I don&rsquo;t think that height and width are the literal size of the image but I need
@@ -712,22 +739,22 @@ to verify this.  This does become a factor with the &ldquo;Hires fix&rdquo;.
 </div>
 </div>
 <div id="outline-container-prompt-engineering--inputs--high-resolution-fix" class="outline-4">
-<h4 id="prompt-engineering--inputs--high-resolution-fix"><span class="section-number-4">2.4.7.</span> High Resolution &ldquo;Fix&rdquo;</h4>
+<h4 id="prompt-engineering--inputs--high-resolution-fix">High Resolution &ldquo;Fix&rdquo;</h4>
 <div class="outline-text-4" id="text-prompt-engineering--inputs--high-resolution-fix">
 </div>
 </div>
 <div id="outline-container-prompt-engineering--inputs--refiner" class="outline-4">
-<h4 id="prompt-engineering--inputs--refiner"><span class="section-number-4">2.4.8.</span> Refiner</h4>
+<h4 id="prompt-engineering--inputs--refiner">Refiner</h4>
 <div class="outline-text-4" id="text-prompt-engineering--inputs--refiner">
 </div>
 </div>
 <div id="outline-container-prompt-engineering--inputs--batch" class="outline-4">
-<h4 id="prompt-engineering--inputs--batch"><span class="section-number-4">2.4.9.</span> Batch</h4>
+<h4 id="prompt-engineering--inputs--batch">Batch</h4>
 <div class="outline-text-4" id="text-prompt-engineering--inputs--batch">
 </div>
 </div>
 <div id="outline-container-prompt-engineering--inputs--tokens" class="outline-4">
-<h4 id="prompt-engineering--inputs--tokens"><span class="section-number-4">2.4.10.</span> Tokens</h4>
+<h4 id="prompt-engineering--inputs--tokens">Tokens</h4>
 <div class="outline-text-4" id="text-prompt-engineering--inputs--tokens">
 <p>
 A token is effectively a single &ldquo;thought&rdquo; or a keyword/keyphrase inside of the
@@ -743,8 +770,8 @@ possibly grouped?).  Tokens can also be &ldquo;stepped&rdquo; and even alternate
 cutoff with another token.  There is a standard syntax and a legacy syntax.
 </p>
 </div>
-<ol class="org-ol">
-<li><a id="prompt-engineering--inputs--tokens--token-limits"></a>Token Limits<br />
+<div id="outline-container-prompt-engineering--inputs--tokens--token-limits" class="outline-5">
+<h5 id="prompt-engineering--inputs--tokens--token-limits">Token Limits</h5>
 <div class="outline-text-5" id="text-prompt-engineering--inputs--tokens--token-limits">
 <p>
 There is an upper limit to these tokens in both the positive and negative
@@ -757,8 +784,9 @@ tokens.  I do not know if the tokens between the positive and negative prompts
 tally up.
 </p>
 </div>
-</li>
-<li><a id="prompt-engineering--inputs--tokens--word-salad"></a>Word Salad<br />
+</div>
+<div id="outline-container-prompt-engineering--inputs--tokens--word-salad" class="outline-5">
+<h5 id="prompt-engineering--inputs--tokens--word-salad">Word Salad</h5>
 <div class="outline-text-5" id="text-prompt-engineering--inputs--tokens--word-salad">
 <p>
 I have noticed that words seem to be taken in any order with no respect to
@@ -769,7 +797,7 @@ things that aren&rsquo;t blue, and the hair might remain not-blue.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-text" id="orgf909ab2"> blue hair
+<pre class="src src-text" id="orga86a6af"> blue hair
 </pre>
 </div>
 
@@ -782,7 +810,7 @@ things that aren&rsquo;t blue, and the hair might remain not-blue.
 </div>
 
 
-<div id="orge8778b2" class="figure">
+<div id="orgb2977dd" class="figure">
 <p><img src="./dreamscape-word-salad-blue-hair-0.png" alt="dreamscape-word-salad-blue-hair-0.png" />
 </p>
 </div>
@@ -796,7 +824,7 @@ things that aren&rsquo;t blue, and the hair might remain not-blue.
 </div>
 
 
-<div id="org9867bf7" class="figure">
+<div id="org4ae6154" class="figure">
 <p><img src="./man-word-salad-blue-hair-0.png" alt="man-word-salad-blue-hair-0.png" />
 </p>
 </div>
@@ -811,7 +839,7 @@ things that aren&rsquo;t blue, and the hair might remain not-blue.
 </div>
 
 
-<div id="orga70bc71" class="figure">
+<div id="orgfe0e7d3" class="figure">
 <p><img src="./woman-word-salad-blue-hair-0.png" alt="woman-word-salad-blue-hair-0.png" />
 </p>
 </div>
@@ -825,7 +853,7 @@ things that aren&rsquo;t blue, and the hair might remain not-blue.
 </div>
 
 
-<div id="org450b9fb" class="figure">
+<div id="org734570a" class="figure">
 <p><img src="./city or village or landscape-word-salad-blue-hair-0.png" alt="city or village or landscape-word-salad-blue-hair-0.png" />
 </p>
 </div>
@@ -841,7 +869,7 @@ things that aren&rsquo;t blue, and the hair might remain not-blue.
 </div>
 
 
-<div id="org5a31d01" class="figure">
+<div id="orgc01acac" class="figure">
 <p><img src="./woman-word-salad-blue-hair-0.png" alt="woman-word-salad-blue-hair-0.png" />
 </p>
 </div>
@@ -858,7 +886,7 @@ on a man, or any colored hair on a man.  Let&rsquo;s try it with an additional p
 </p>
 
 <div class="org-src-container">
-<pre class="src src-text" id="orgd194cd7">, blue hair, red tie
+<pre class="src src-text" id="org0701223">, blue hair, red tie
 </pre>
 </div>
 
@@ -871,7 +899,7 @@ on a man, or any colored hair on a man.  Let&rsquo;s try it with an additional p
 </div>
 
 
-<div id="org0965f0e" class="figure">
+<div id="orgc49f71d" class="figure">
 <p><img src="./dreamscape-word-salad-blue-hair-extra-0.png" alt="dreamscape-word-salad-blue-hair-extra-0.png" />
 </p>
 </div>
@@ -885,7 +913,7 @@ on a man, or any colored hair on a man.  Let&rsquo;s try it with an additional p
 </div>
 
 
-<div id="org7f49d39" class="figure">
+<div id="org275ab22" class="figure">
 <p><img src="./man-word-salad-blue-hair-extra-0.png" alt="man-word-salad-blue-hair-extra-0.png" />
 </p>
 </div>
@@ -900,7 +928,7 @@ on a man, or any colored hair on a man.  Let&rsquo;s try it with an additional p
 </div>
 
 
-<div id="org53ec669" class="figure">
+<div id="org3f4a27b" class="figure">
 <p><img src="./woman-word-salad-blue-hair-extra-0.png" alt="woman-word-salad-blue-hair-extra-0.png" />
 </p>
 </div>
@@ -914,7 +942,7 @@ on a man, or any colored hair on a man.  Let&rsquo;s try it with an additional p
 </div>
 
 
-<div id="org72c7f67" class="figure">
+<div id="org8dcb2ac" class="figure">
 <p><img src="./city or village or landscape-word-salad-blue-hair-extra-0.png" alt="city or village or landscape-word-salad-blue-hair-extra-0.png" />
 </p>
 </div>
@@ -925,7 +953,7 @@ more complicated and add another color.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-text" id="org69ac0d2">, blue hair, red tie, a green house on a hill
+<pre class="src src-text" id="orgae15cf4">, blue hair, red tie, a green house on a hill
 </pre>
 </div>
 
@@ -938,7 +966,7 @@ more complicated and add another color.
 </div>
 
 
-<div id="org6b892e0" class="figure">
+<div id="orga13b39c" class="figure">
 <p><img src="./dreamscapeword-salad-blue-hair-red-tie-green-house-hill-0.png" alt="dreamscapeword-salad-blue-hair-red-tie-green-house-hill-0.png" />
 </p>
 </div>
@@ -952,7 +980,7 @@ more complicated and add another color.
 </div>
 
 
-<div id="org2ae85ea" class="figure">
+<div id="org9881bf6" class="figure">
 <p><img src="./manword-salad-blue-hair-red-tie-green-house-hill-0.png" alt="manword-salad-blue-hair-red-tie-green-house-hill-0.png" />
 </p>
 </div>
@@ -967,7 +995,7 @@ more complicated and add another color.
 </div>
 
 
-<div id="org0dd8d7b" class="figure">
+<div id="orgdec68ab" class="figure">
 <p><img src="./womanword-salad-blue-hair-red-tie-green-house-hill-0.png" alt="womanword-salad-blue-hair-red-tie-green-house-hill-0.png" />
 </p>
 </div>
@@ -981,7 +1009,7 @@ more complicated and add another color.
 </div>
 
 
-<div id="orgbcae978" class="figure">
+<div id="orgd4c7785" class="figure">
 <p><img src="./city or village or landscapeword-salad-blue-hair-red-tie-green-house-hill-0.png" alt="city or village or landscapeword-salad-blue-hair-red-tie-green-house-hill-0.png" />
 </p>
 </div>
@@ -989,11 +1017,12 @@ more complicated and add another color.
 
 <p>
 Okay now we&rsquo;re seeing some color mixing.  How do we ensure we get what we
-wanted?  I&rsquo;ve been told this is due to <a href="#prompt-engineering--inputs--tokens--swapped-tokens">2.4.10.4</a>.
+wanted?  I&rsquo;ve been told this is due to <a href="#prompt-engineering--inputs--tokens--swapped-tokens">Swapped Tokens</a>.
 </p>
 </div>
-</li>
-<li><a id="prompt-engineering--inputs--tokens--weights"></a>Weights<br />
+</div>
+<div id="outline-container-prompt-engineering--inputs--tokens--weights" class="outline-5">
+<h5 id="prompt-engineering--inputs--tokens--weights">Weights</h5>
 <div class="outline-text-5" id="text-prompt-engineering--inputs--tokens--weights">
 <p>
 Keywords can be weighted.  This is done via a parenthesis notation around the
@@ -1002,8 +1031,9 @@ to see a dragon.  Using <code>(dragon: 1.5)</code> means you want to see a drago
 weighted higher than other keywords by a significant margin.  The
 </p>
 </div>
-</li>
-<li><a id="prompt-engineering--inputs--tokens--swapped-tokens"></a>Swapped Tokens<br />
+</div>
+<div id="outline-container-prompt-engineering--inputs--tokens--swapped-tokens" class="outline-5">
+<h5 id="prompt-engineering--inputs--tokens--swapped-tokens">Swapped Tokens</h5>
 <div class="outline-text-5" id="text-prompt-engineering--inputs--tokens--swapped-tokens">
 <p>
 Swapped tokens use the syntax <code>[foo:bar:step]</code>, were <code>foo</code> and <code>bar</code> are
@@ -1019,15 +1049,15 @@ There is multiple utility here:
 and the first 20 steps will be making a forest, where the last N steps will
 be that of a city for whatever the forest part was.  This can make
 forest-inspired or forest-looking cities.</li>
-<li>Color can be forced to work around issues observed wit <a href="#prompt-engineering--inputs--tokens--word-salad">2.4.10.2</a>.  I&rsquo;m not
+<li>Color can be forced to work around issues observed wit <a href="#prompt-engineering--inputs--tokens--word-salad">Word Salad</a>.  I&rsquo;m not
 sure how this is done yet.</li>
 </ol>
 </div>
-<ol class="org-ol">
-<li><a id="prompt-engineering--inputs--tokens--swapped-tokens--blending-with-steps"></a>Blending with Steps<br />
+<div id="outline-container-prompt-engineering--inputs--tokens--swapped-tokens--blending-with-steps" class="outline-6">
+<h6 id="prompt-engineering--inputs--tokens--swapped-tokens--blending-with-steps">Blending with Steps</h6>
 <div class="outline-text-6" id="text-prompt-engineering--inputs--tokens--swapped-tokens--blending-with-steps">
 <div class="org-src-container">
-<pre class="src src-text" id="org055fed7">, forest
+<pre class="src src-text" id="org34266bc">, forest
 </pre>
 </div>
 
@@ -1041,7 +1071,7 @@ sure how this is done yet.</li>
 </div>
 
 
-<div id="orgabda2a2" class="figure">
+<div id="org9bff3b2" class="figure">
 <p><img src="./dreamscape-blending-steps-forest-0.png" alt="dreamscape-blending-steps-forest-0.png" />
 </p>
 </div>
@@ -1055,7 +1085,7 @@ sure how this is done yet.</li>
 </div>
 
 
-<div id="orgc9a35a0" class="figure">
+<div id="orgeb10262" class="figure">
 <p><img src="./man-blending-steps-forest-0.png" alt="man-blending-steps-forest-0.png" />
 </p>
 </div>
@@ -1069,7 +1099,7 @@ sure how this is done yet.</li>
 </div>
 
 
-<div id="org6bea4da" class="figure">
+<div id="orgc27ed8f" class="figure">
 <p><img src="./woman-blending-steps-forest-0.png" alt="woman-blending-steps-forest-0.png" />
 </p>
 </div>
@@ -1084,7 +1114,7 @@ sure how this is done yet.</li>
 </div>
 
 
-<div id="orgfda6370" class="figure">
+<div id="org1ea3a3c" class="figure">
 <p><img src="./city or village or landscape-blending-steps-forest-0.png" alt="city or village or landscape-blending-steps-forest-0.png" />
 </p>
 </div>
@@ -1094,7 +1124,7 @@ Now let&rsquo;s do something that makes perfect sense: Make a forest of candy ca
 </p>
 
 <div class="org-src-container">
-<pre class="src src-text" id="orgf2982dd">, [forest:candy-canes:5]
+<pre class="src src-text" id="org0116fa9">, [forest:candy-canes:5]
 </pre>
 </div>
 
@@ -1108,7 +1138,7 @@ Now let&rsquo;s do something that makes perfect sense: Make a forest of candy ca
 </div>
 
 
-<div id="org858d2e7" class="figure">
+<div id="orga9c75c5" class="figure">
 <p><img src="./dreamscape-blending-steps-forest-of-candy-canes-0.png" alt="dreamscape-blending-steps-forest-of-candy-canes-0.png" />
 </p>
 </div>
@@ -1122,7 +1152,7 @@ Now let&rsquo;s do something that makes perfect sense: Make a forest of candy ca
 </div>
 
 
-<div id="orgb903ced" class="figure">
+<div id="orge03ad3d" class="figure">
 <p><img src="./man-blending-steps-forest-of-candy-canes-0.png" alt="man-blending-steps-forest-of-candy-canes-0.png" />
 </p>
 </div>
@@ -1137,7 +1167,7 @@ Now let&rsquo;s do something that makes perfect sense: Make a forest of candy ca
 </div>
 
 
-<div id="org0a8bb4d" class="figure">
+<div id="org488c4ce" class="figure">
 <p><img src="./woman-blending-steps-forest-of-candy-canes-0.png" alt="woman-blending-steps-forest-of-candy-canes-0.png" />
 </p>
 </div>
@@ -1151,24 +1181,24 @@ Now let&rsquo;s do something that makes perfect sense: Make a forest of candy ca
 </div>
 
 
-<div id="org30710bc" class="figure">
+<div id="org4f8babe" class="figure">
 <p><img src="./city or village or landscape-blending-steps-forest-of-candy-canes-0.png" alt="city or village or landscape-blending-steps-forest-of-candy-canes-0.png" />
 </p>
 </div>
 </div>
-</li>
-</ol>
-</li>
-<li><a id="prompt-engineering--inputs--tokens--alternating-tokens"></a>Alternating Tokens<br />
+</div>
+</div>
+<div id="outline-container-prompt-engineering--inputs--tokens--alternating-tokens" class="outline-5">
+<h5 id="prompt-engineering--inputs--tokens--alternating-tokens">Alternating Tokens</h5>
 <div class="outline-text-5" id="text-prompt-engineering--inputs--tokens--alternating-tokens">
 <p>
-Like <a href="#prompt-engineering--inputs--tokens--swapped-tokens">2.4.10.4</a>, alternating tokens switch between the tokens every other
+Like <a href="#prompt-engineering--inputs--tokens--swapped-tokens">Swapped Tokens</a>, alternating tokens switch between the tokens every other
 step in the sampling.  Let&rsquo;s try the same forest of candy canes, but with
 alternating instead of stepped.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-text" id="orgcf1049a">, [forest|candy canes]
+<pre class="src src-text" id="org5e10779">, [forest|candy canes]
 </pre>
 </div>
 
@@ -1181,7 +1211,7 @@ alternating instead of stepped.
 </div>
 
 
-<div id="org8a91efa" class="figure">
+<div id="orgef6a2e9" class="figure">
 <p><img src="./dreamscape-alternating-steps-forest-of-candy-canes-0.png" alt="dreamscape-alternating-steps-forest-of-candy-canes-0.png" />
 </p>
 </div>
@@ -1195,7 +1225,7 @@ alternating instead of stepped.
 </div>
 
 
-<div id="org1b1b33e" class="figure">
+<div id="org94c0c46" class="figure">
 <p><img src="./man-alternating-steps-forest-of-candy-canes-0.png" alt="man-alternating-steps-forest-of-candy-canes-0.png" />
 </p>
 </div>
@@ -1209,7 +1239,7 @@ alternating instead of stepped.
 </div>
 
 
-<div id="orged8beea" class="figure">
+<div id="org6113406" class="figure">
 <p><img src="./woman-alternating-steps-forest-of-candy-canes-0.png" alt="woman-alternating-steps-forest-of-candy-canes-0.png" />
 </p>
 </div>
@@ -1223,13 +1253,14 @@ alternating instead of stepped.
 </div>
 
 
-<div id="org2004590" class="figure">
+<div id="orge9f136f" class="figure">
 <p><img src="./city or village or landscape-alternating-steps-forest-of-candy-canes-0.png" alt="city or village or landscape-alternating-steps-forest-of-candy-canes-0.png" />
 </p>
 </div>
 </div>
-</li>
-<li><a id="prompt-engineering--inputs--tokens--tokens---ceasing-and-starting-at-specific-steps"></a>Tokens - Ceasing and Starting at Specific Steps<br />
+</div>
+<div id="outline-container-prompt-engineering--inputs--tokens--tokens---ceasing-and-starting-at-specific-steps" class="outline-5">
+<h5 id="prompt-engineering--inputs--tokens--tokens---ceasing-and-starting-at-specific-steps">Tokens - Ceasing and Starting at Specific Steps</h5>
 <div class="outline-text-5" id="text-prompt-engineering--inputs--tokens--tokens---ceasing-and-starting-at-specific-steps">
 <p>
 Use <code>[token:step]</code> to start using <code>token</code> at sample step count <code>step</code>.  I&rsquo;ve
@@ -1241,37 +1272,40 @@ Use <code>\[\[token:step]]</code> to <span class="underline">remove</span> <code
 not know the utility for this one as much.
 </p>
 </div>
-</li>
-<li><a id="prompt-engineering--inputs--tokens--legacy-syntax"></a>Legacy Syntax<br />
+</div>
+<div id="outline-container-prompt-engineering--inputs--tokens--legacy-syntax" class="outline-5">
+<h5 id="prompt-engineering--inputs--tokens--legacy-syntax">Legacy Syntax</h5>
 <div class="outline-text-5" id="text-prompt-engineering--inputs--tokens--legacy-syntax">
 </div>
-</li>
-<li><a id="prompt-engineering--inputs--tokens--special-keywords"></a>Special Keywords<br />
+</div>
+<div id="outline-container-prompt-engineering--inputs--tokens--special-keywords" class="outline-5">
+<h5 id="prompt-engineering--inputs--tokens--special-keywords">Special Keywords</h5>
 <div class="outline-text-5" id="text-prompt-engineering--inputs--tokens--special-keywords">
 </div>
-<ol class="org-ol">
-<li><a id="prompt-engineering--inputs--tokens--special-keywords--distance"></a>Distance<br />
+<div id="outline-container-prompt-engineering--inputs--tokens--special-keywords--distance" class="outline-6">
+<h6 id="prompt-engineering--inputs--tokens--special-keywords--distance">Distance</h6>
 <div class="outline-text-6" id="text-prompt-engineering--inputs--tokens--special-keywords--distance">
 </div>
-</li>
-<li><a id="prompt-engineering--inputs--tokens--special-keywords--style"></a>Style<br />
+</div>
+<div id="outline-container-prompt-engineering--inputs--tokens--special-keywords--style" class="outline-6">
+<h6 id="prompt-engineering--inputs--tokens--special-keywords--style">Style</h6>
 <div class="outline-text-6" id="text-prompt-engineering--inputs--tokens--special-keywords--style">
 </div>
-</li>
-<li><a id="prompt-engineering--inputs--tokens--special-keywords--artist"></a>Artist<br />
+</div>
+<div id="outline-container-prompt-engineering--inputs--tokens--special-keywords--artist" class="outline-6">
+<h6 id="prompt-engineering--inputs--tokens--special-keywords--artist">Artist</h6>
 <div class="outline-text-6" id="text-prompt-engineering--inputs--tokens--special-keywords--artist">
 </div>
-</li>
-<li><a id="prompt-engineering--inputs--tokens--special-keywords--camera-angle"></a>Camera angle<br />
+</div>
+<div id="outline-container-prompt-engineering--inputs--tokens--special-keywords--camera-angle" class="outline-6">
+<h6 id="prompt-engineering--inputs--tokens--special-keywords--camera-angle">Camera angle</h6>
 <div class="outline-text-6" id="text-prompt-engineering--inputs--tokens--special-keywords--camera-angle">
 </div>
-</li>
-</ol>
-</li>
-</ol>
+</div>
+</div>
 </div>
 <div id="outline-container-prompt-engineering--inputs--models" class="outline-4">
-<h4 id="prompt-engineering--inputs--models"><span class="section-number-4">2.4.11.</span> Models</h4>
+<h4 id="prompt-engineering--inputs--models">Models</h4>
 <div class="outline-text-4" id="text-prompt-engineering--inputs--models">
 </div>
 </div>

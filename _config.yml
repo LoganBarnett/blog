@@ -10,6 +10,7 @@ github_username:  LoganBarnett
 
 exclude: [
   "_posts/*.org",
+  "*.org",
   "vendor"
   ]
 

@@ -14,7 +14,7 @@ title: Machine Learning - Stable Diffusion Prompt Engineering
 #+language:  en
 #+file_tags:
 #+tags:
-#+toc:       headlines 3
+#+options:   toc:nil
 #+auto_id:   t
 
 * Introduction
@@ -40,7 +40,14 @@ will try to keep a loose changelog if you happen to be eager to see updates.
 * Prompt Engineering
 :PROPERTIES:
 :CUSTOM_ID: prompt-engineering
+:UNNUMBERED: toc
 :END:
+
+#+toc: headlines 10 local
+# I am unsure which of these does the trick, but it is one or both.  See also:
+# https://github.com/fniessen/org-html-themes/issues/91
+#+OPTIONS: H:10
+#+OPTIONS: num:10
 
 ** Prompt Engineering Introduction
 :PROPERTIES:
