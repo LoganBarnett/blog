@@ -1,0 +1,2608 @@
+#+BEGIN_EXPORT html
+---
+categories: nix
+date: 2024-02-11
+layout: default
+title: Nix Adventures (part 2 of ?)
+---
+#+END_EXPORT
+
+#+title:     Nix Adventures (part 2 of ?)
+#+author:    Logan Barnett
+#+email:     logustus@gmail.com
+#+date:      <2024-01-19 Fri>
+#+language:  en
+#+file_tags:
+#+tags:
+#+auto_id:   t
+#+options:   toc:t
+
+* What is this?
+:PROPERTIES:
+:CUSTOM_ID: what-is-this
+:END:
+
+See [[file:./nix-adventures-01.org][Nix Adventures Part 1]] for the introduction for all of this.
+
+* Today's adventure: Building a Suite of Machine Learning Servers
+:PROPERTIES:
+:CUSTOM_ID: today's-adventure:-building-a-suite-of-machine-learning-servers
+:END:
+
+I want to get a machine learning platform setup in my local network.  I love the
+power of the Internet and I hate how dependent we are upon it, and the lack of
+privacy and control we have as a result.  But with lots of spare time anyone can
+setup their own servers with this stuff.  [[https://localai.io][LocalAI]] looks good for this.  Cool
+kids can tell me if there's something better.
+
+I want to setup LocalAI on my local network, but first I need to _build_ it.  I
+know it comes with a Docker image but Docker images, in my experience, are very
+frail and do not age well.  Maybe it has something to do with the =apt-get
+update= or equivalent that's at the start of every image in existence.  This is
+where Nix shines, fortunately, and more so with Nix Flakes.  A quick reminder:
+Nix Flakes uses a =flake.lock= file which has the pinned information needed to
+make a perfect copy of the constructed software under any circumstance.
+
+** Building on macOS (LocalAI)
+:PROPERTIES:
+:CUSTOM_ID: today's-adventure:-building-a-suite-of-machine-learning-servers--building-on-macos-localai
+:END:
+
+I thought perhaps, that maybe building on macOS wouldn't be so bad.  I've done
+some native builds recently using Nix to bootstrap the environment in some
+cases, and in others to build the tool entirely.  I set out initially to build
+using a bootstrapped environment (=devShell=, in Nix vernacular) and use
+LocalAI's =make build= to get it going.  I got pretty far with it, I think, but
+some of the sub dependencies started to become a problem.  I think this should
+be a proper Nix derivation.  I'll go back and post my results here.
+
+I don't _need_ this to be on macOS, but it's easier for me if I can.
+Additionally I have the Podman setup from the last episode of this series.  But
+it's 2024 and I more or less have very precise control of my ecosystem.  I
+should be able to do this, so we're going to burn some cycles on it.
+
+I did, by the way, get one of my old machines plugged in (I think this is one
+gifted to me from the illustrious Tom Sears, but they all look the same to me
+from behind - the way I like them).  As I've been working on this, I have a
+backburner thought about eventually moving my results to this machine.  It
+involves setting up a bootstrapped environment.  I'll either need to use a hard
+drive enclosure to write to the file, or perhaps Nix has some sort of installer
+I can use.  As I write this, I think I prefer the former over the latter,
+because it removes interaction on my part.  Just write to disk and plug it in,
+just like I did last episode for the Raspberry Pi.
+
+Getting this working via a =devShell= as my first approach, using Nix Flakes.
+While I could get the requisite packages installed, I did have an issue with
+platforms.  From my reading, this is an [[https://github.com/NixOS/nix/issues/3843][apparent problem with Nix Flakes]], and
+how the authors say it isn't production ready, in spite of many of us using it
+in a production sense (I can't find the post again yet, but I saw it!).  Flakes
+filled a vital missing piece in Nix - the ability to lock down packages and
+ensure a specific state.  Not every part of it was completely designed through.
+Because of this, we have things like =devShells.aarch64-darwin=, =flake-utils=,
+and =forAllSystems=.  The first is the "ugh - I have to do this for each
+platform?".  The latter two are attempts to address that - [[https://ayats.org/blog/no-flake-utils/][both with problems]]
+that will slowly make a Nix expert out of anyone trying to actually _use_ them
+with any success.  I don't consider myself at that level, and I don't want my
+doctorate in Nix to be "I can write a =flake.nix= without looking at someone's
+blog", impressive of a feat that may be.
+
+This is my latest incantation:
+
+#+begin_src nix :results none
+{
+  description = "A devShell for LocalAI.";
+
+  inputs = {
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+  };
+  outputs = inputs@{ flake-parts, nixpkgs, ... }:
+    let
+      forAllSystems = function:
+      nixpkgs.lib.genAttrs [
+        "aarch64-darwin"
+      ] (system: function nixpkgs.legacyPackages.${system});
+    in {
+      packages.default = forAllSystems (pkgs: [
+        pkgs.abseil-cpp
+        pkgs.blas
+        pkgs.cmake
+        pkgs.go
+        pkgs.grpc
+        pkgs.libcxxabi
+        pkgs.openssl
+        pkgs.protobuf
+        pkgs.wget
+      ]);
+      devShells.aarch64-darwin.default.packages =
+        (with nixpkgs.darwin.apple_sdk.frameworks; [
+          # ] ++ pkgs.stdenv.isDarwin [
+          # I have other examples using cf-private and this package is not a
+          # formal framework but a workaround in Nix.  So it is kept for
+          # reference while I still work on this.
+          # pkgs.darwin.cf-private
+          Accelerate
+          CoreFoundation
+          MetalKit
+          MetalPerformanceShaders
+          Security
+        ]);
+    };
+}
+#+end_src
+
+But it complains about =devShells.aarch64-darwin.default.packages= "is not a
+derivation or path".  Okay.  Let's just stop being fancy for a moment and do
+this with a hardcoded platform.  Then maybe we can dial that back in.
+
+#+begin_src nix :results none
+{
+  description = "A devShell for LocalAI.";
+
+  inputs = {
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+  };
+  outputs = inputs@{ flake-parts, nixpkgs, ... }:
+    let
+      forAllSystems = function:
+      nixpkgs.lib.genAttrs [
+        "aarch64-darwin"
+      ] (system: function nixpkgs.legacyPackages.${system});
+    in {
+      packages.default = forAllSystems (pkgs: [
+        pkgs.abseil-cpp
+        pkgs.blas
+        pkgs.cmake
+        pkgs.go
+        pkgs.grpc
+        pkgs.libcxxabi
+        pkgs.openssl
+        pkgs.protobuf
+        pkgs.wget
+      ] ++ (with nixpkgs.darwin.apple_sdk.frameworks; [
+          Accelerate
+          CoreFoundation
+          MetalKit
+          MetalPerformanceShaders
+          Security
+      ]));
+    };
+    # Sadness awaits.
+    #   devShells.aarch64-darwin.default.packages =
+    #     (with nixpkgs.darwin.apple_sdk.frameworks; [
+    #       # ] ++ pkgs.stdenv.isDarwin [
+    #       # I have other examples using cf-private and this package is not a
+    #       # formal framework but a workaround in Nix.  So it is kept for
+    #       # reference while I still work on this.
+    #       # pkgs.darwin.cf-private
+    #       Accelerate
+    #       CoreFoundation
+    #       MetalKit
+    #       MetalPerformanceShaders
+    #       Security
+    #     ]);
+    # };
+}
+#+end_src
+
+This gives back:
+
+#+begin_example
+error: flake 'git+file:///Users/logan/dev/LocalAI' does not provide attribute 'devShells.aarch64-darwin.default', 'devShell.aarch64-darwin', 'packages.aarch64-darwin.default' or 'defaultPackage.aarch64-darwin'
+#+end_example
+
+Which I thought was the whole point of the =forAllSystems=.  Maybe it just
+expects a =devShell= but isn't communicating that to me very well.
+
+#+begin_src nix :results none
+{
+  description = "A devShell for LocalAI.";
+
+  inputs = {
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+  };
+  outputs = inputs@{ flake-parts, nixpkgs, ... }:
+    let
+      forAllSystems = function:
+      nixpkgs.lib.genAttrs [
+        "aarch64-darwin"
+      ] (system: function nixpkgs.legacyPackages.${system});
+    in {
+      devShell.default = forAllSystems (pkgs: [
+        pkgs.abseil-cpp
+        pkgs.blas
+        pkgs.cmake
+        pkgs.go
+        pkgs.grpc
+        pkgs.libcxxabi
+        pkgs.openssl
+        pkgs.protobuf
+        pkgs.wget
+      ] ++ (with nixpkgs.darwin.apple_sdk.frameworks; [
+          Accelerate
+          CoreFoundation
+          MetalKit
+          MetalPerformanceShaders
+          Security
+      ]));
+    };
+    # Sadness awaits.
+    #   devShells.aarch64-darwin.default.packages =
+    #     (with nixpkgs.darwin.apple_sdk.frameworks; [
+    #       # ] ++ pkgs.stdenv.isDarwin [
+    #       # I have other examples using cf-private and this package is not a
+    #       # formal framework but a workaround in Nix.  So it is kept for
+    #       # reference while I still work on this.
+    #       # pkgs.darwin.cf-private
+    #       Accelerate
+    #       CoreFoundation
+    #       MetalKit
+    #       MetalPerformanceShaders
+    #       Security
+    #     ]);
+    # };
+}
+#+end_src
+
+Now the error is even more misleading:
+
+#+begin_example
+error: flake 'git+file:///Users/logan/dev/LocalAI' does not provide attribute 'devShells.aarch64-darwin.default', 'devShell.aarch64-darwin', 'packages.aarch64-darwin.default' or 'defaultPackage.aarch64-darwin'
+       Did you mean devShell?
+#+end_example
+
+Why yes, I did.  In fact, I have =devShell= already!  Ugh.  Okay, let's just
+throw out all of the =forAllsystems= stuff.  It's making things more painful
+than helpful.
+
+Upon removing =forAllSystems=, I wind up with the smaller:
+
+#+begin_src nix :results none
+{
+  description = "A devShell for LocalAI.";
+
+  inputs = {
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+  };
+  outputs = inputs@{ flake-parts, nixpkgs, ... }:
+    let
+      pkgs = nixpkgs;
+    in {
+      devShells.aarch64-darwin.default = {
+        packages = [
+        pkgs.abseil-cpp
+        pkgs.blas
+        pkgs.cmake
+        pkgs.go
+        pkgs.grpc
+        pkgs.libcxxabi
+        pkgs.openssl
+        pkgs.protobuf
+        pkgs.wget
+      ] ++
+        (with nixpkgs.darwin.apple_sdk.frameworks; [
+          # ] ++ pkgs.stdenv.isDarwin [
+          # I have other examples using cf-private and this package is not a
+          # formal framework but a workaround in Nix.  So it is kept for
+          # reference while I still work on this.
+          # pkgs.darwin.cf-private
+          Accelerate
+          CoreFoundation
+          MetalKit
+          MetalPerformanceShaders
+          Security
+        ]);
+      };
+    };
+}
+#+end_src
+
+And that gives:
+
+#+begin_example
+error: flake 'git+file:///Users/logan/dev/LocalAI' does not provide attribute 'devShells.aarch64-darwin.default', 'devShell.aarch64-darwin', 'packages.aarch64-darwin.default' or 'defaultPackage.aarch64-darwin'
+       Did you mean devShells?
+#+end_example
+
+I'm literally providing the aforementioned attributes, so what gives here?
+
+Maybe it's got something to do with the object not being defined ahead of time?
+I never know with Nix on this.
+
+#+begin_src nix :results none
+{
+  description = "A devShell for LocalAI.";
+
+  inputs = {
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+  };
+  outputs = inputs@{ flake-parts, nixpkgs, ... }:
+    let
+      pkgs = nixpkgs;
+    in {
+      devShells.aarch64-darwin.default = {
+        packages = [
+          pkgs.abseil-cpp
+          pkgs.blas
+          pkgs.cmake
+          pkgs.go
+          pkgs.grpc
+          pkgs.libcxxabi
+          pkgs.openssl
+          pkgs.protobuf
+          pkgs.wget
+        ] ++
+        (with nixpkgs.darwin.apple_sdk.frameworks; [
+          # ] ++ pkgs.stdenv.isDarwin [
+          # I have other examples using cf-private and this package is not a
+          # formal framework but a workaround in Nix.  So it is kept for
+          # reference while I still work on this.
+          # pkgs.darwin.cf-private
+          Accelerate
+          CoreFoundation
+          MetalKit
+          MetalPerformanceShaders
+          Security
+        ]);
+      };
+    };
+}
+#+end_src
+
+#+begin_example
+error: flake output attribute 'devShells.aarch64-darwin.default' is not a derivation or path
+#+end_example
+
+Which makes no sense to me since this is breaking the Law of Demeter _less_ than
+before.
+
+This is where I break down and go hunting for a bare bones example.  The
+[[https://nixos.wiki/wiki/Flakes][NixOS wiki]] seems to be the most authoritative documentation I can find, and it
+shows no examples - just the equivalent of "etc".  Telling me that I do
+=devShells."<system>".default = derivation;= doesn't actually tell me anything
+if I don't know what =derivation= looks like.  And apparently setting that to
+just anything doesn't grant me error messages that would guide me closer to a
+correct answer.
+
+[[https://devenv.sh/guides/using-with-flakes/#modifying-your-flakenix-file][devenv.sh]] has an example though:
+
+#+begin_src nix :results none
+{
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-23.05";
+    devenv.url = "github:cachix/devenv";
+  };
+
+  nixConfig = {
+    extra-trusted-public-keys = "devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw=";
+    extra-substituters = "https://devenv.cachix.org";
+  };
+
+  outputs = { self, nixpkgs, devenv, ... } @ inputs:
+    let
+      pkgs = nixpkgs.legacyPackages."x86_64-linux";
+    in
+    {
+      devShell.x86_64-linux = devenv.lib.mkShell {
+        inherit inputs pkgs;
+        modules = [
+          ({ pkgs, config, ... }: {
+            # This is your devenv configuration
+            packages = [ pkgs.hello ];
+
+            enterShell = ''
+              hello
+            '';
+
+            processes.run.exec = "hello";
+          })
+        ];
+      };
+    };
+}
+#+end_src
+
+Okay so I need to call =mkShell=?  This is using this =devenv= library, which I
+didn't think I needed.  Let's see if we can do this with the more standard
+=lib.mkShell=.  The problem here is I didn't know it needed to be some object
+emitted from =mkShell= in the first place.
+
+My attempts to use =nixpkgs.lib.mkShell= failed.  So did =lib.mkShell=.  Wow it
+would be nice if this information was readily available.  I read some blog posts
+again, and skip some because they lean hard on =flake-utils=.  Eventually I find
+[[https://www.softwarefactory-project.io/reproducible-shell-environments-via-nix-flakes.html][an example]] where they use =pkgs.mkShell=.  Oh so it's a non-package in the
+packages object.  Obviously.
+
+Trying again.
+
+#+begin_src nix :results none
+{
+  description = "A devShell for LocalAI.";
+
+  inputs = {
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+  };
+  outputs = inputs@{ flake-parts, nixpkgs, ... }:
+    let
+      pkgs = nixpkgs;
+    in {
+      devShells.aarch64-darwin.default = pkgs.mkShell {
+        packages = [
+          pkgs.abseil-cpp
+          pkgs.blas
+          pkgs.cmake
+          pkgs.go
+          pkgs.grpc
+          pkgs.libcxxabi
+          pkgs.openssl
+          pkgs.protobuf
+          pkgs.wget
+        ] ++
+        (with nixpkgs.darwin.apple_sdk.frameworks; [
+          # ] ++ pkgs.stdenv.isDarwin [
+          # I have other examples using cf-private and this package is not a
+          # formal framework but a workaround in Nix.  So it is kept for
+          # reference while I still work on this.
+          # pkgs.darwin.cf-private
+          Accelerate
+          CoreFoundation
+          MetalKit
+          MetalPerformanceShaders
+          Security
+        ]);
+      };
+    };
+}
+#+end_src
+
+#+begin_example
+error: attribute 'mkShell' missing
+
+       at /nix/store/43jbd73hvig4skvdhdvci6xnlrfaaqk2-source/flake.nix:11:42:
+
+           10|     in {
+           11|       devShells.aarch64-darwin.default = pkgs.mkShell {
+#+end_example
+
+And yet the example I found is:
+
+#+begin_src nix :results none
+{
+  description = "My-project build environment";
+  nixConfig.bash-prompt = "[nix(my-project)] ";
+  inputs = { nixpkgs.url = "github:nixos/nixpkgs/22.11"; };
+
+  outputs = { self, nixpkgs }:
+    let
+      pkgs = nixpkgs.legacyPackages.x86_64-linux.pkgs;
+      fooScript = pkgs.writeScriptBin "foo.sh" ''
+        #!/bin/sh
+        echo $FOO
+      '';
+    in {
+      devShells.x86_64-linux.default = pkgs.mkShell {
+        name = "My-project build environment";
+        buildInputs = [
+          pkgs.python39
+          pkgs.python39Packages.tox
+          pkgs.python39Packages.flake8
+          pkgs.python39Packages.requests
+          pkgs.python39Packages.ipython
+          fooScript
+        ];
+        shellHook = ''
+          echo "Welcome in $name"
+          export FOO="BAR"
+        '';
+      };
+    };
+}
+#+end_src
+
+Oh, well this isn't one-to-one because I didn't do the =legacyPackages= thing
+because of a different example I was probably cribbing from.
+
+My relevant line is:
+
+#+begin_src nix :results none
+      pkgs = nixpkgs.legacyPackage.aarch64-darwin.pkgs;
+#+end_src
+
+Which gives me:
+
+#+begin_src nix :results none
+{
+  description = "A devShell for LocalAI.";
+
+  inputs = {
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+  };
+  outputs = inputs@{ flake-parts, nixpkgs, ... }:
+    let
+      pkgs = nixpkgs.legacyPackages.aarch64-darwin.pkgs;
+    in {
+      devShells.aarch64-darwin.default = pkgs.mkShell {
+        packages = [
+          pkgs.abseil-cpp
+          pkgs.blas
+          pkgs.cmake
+          pkgs.go
+          pkgs.grpc
+          pkgs.libcxxabi
+          pkgs.openssl
+          pkgs.protobuf
+          pkgs.wget
+        ] ++
+        (with nixpkgs.darwin.apple_sdk.frameworks; [
+          # ] ++ pkgs.stdenv.isDarwin [
+          # I have other examples using cf-private and this package is not a
+          # formal framework but a workaround in Nix.  So it is kept for
+          # reference while I still work on this.
+          # pkgs.darwin.cf-private
+          Accelerate
+          CoreFoundation
+          MetalKit
+          MetalPerformanceShaders
+          Security
+        ]);
+      };
+    };
+}
+#+end_src
+
+This run takes a lot longer, which is progress!
+
+#+begin_example
+error:
+       … while calling the 'derivationStrict' builtin
+
+         at /builtin/derivation.nix:9:12: (source not available)
+
+       … while evaluating derivation 'nix-shell'
+         whose name attribute is located at /nix/store/11zbgb8j7wnnccbbjcq0q556h28g7p4r-source/pkgs/stdenv/generic/make-derivation.nix:352:7
+
+       … while evaluating attribute 'nativeBuildInputs' of derivation 'nix-shell'
+
+         at /nix/store/11zbgb8j7wnnccbbjcq0q556h28g7p4r-source/pkgs/stdenv/generic/make-derivation.nix:396:7:
+
+          395|       depsBuildBuild              = elemAt (elemAt dependencies 0) 0;
+          396|       nativeBuildInputs           = elemAt (elemAt dependencies 0) 1;
+             |       ^
+          397|       depsBuildTarget             = elemAt (elemAt dependencies 0) 2;
+
+       error: attribute 'darwin' missing
+
+       at /nix/store/w8plgb1pyr6w6rglbq5vpq714bff9w7m-source/flake.nix:23:15:
+
+           22|         ] ++
+           23|         (with nixpkgs.darwin.apple_sdk.frameworks; [
+             |               ^
+           24|           # ] ++ pkgs.stdenv.isDarwin [
+#+end_example
+
+Okay, I think this makes sense.  I'm not using =nixpkgs= directly but some stuff
+under =legacyPackages= which is like =nixpkgs= but platform specific or platform
+_enabled_...?  Either way, I should make it consistent.
+
+#+begin_src nix :results none
+{
+  description = "A devShell for LocalAI.";
+
+  inputs = {
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+  };
+  outputs = inputs@{ flake-parts, nixpkgs, ... }:
+    let
+      pkgs = nixpkgs.legacyPackages.aarch64-darwin.pkgs;
+    in {
+      devShells.aarch64-darwin.default = pkgs.mkShell {
+        packages = [
+          pkgs.abseil-cpp
+          pkgs.blas
+          pkgs.cmake
+          pkgs.go
+          pkgs.grpc
+          pkgs.libcxxabi
+          pkgs.openssl
+          pkgs.protobuf
+          pkgs.wget
+        ] ++
+        (with pkgs.darwin.apple_sdk.frameworks; [
+          # ] ++ pkgs.stdenv.isDarwin [
+          # I have other examples using cf-private and this package is not a
+          # formal framework but a workaround in Nix.  So it is kept for
+          # reference while I still work on this.
+          # pkgs.darwin.cf-private
+          Accelerate
+          CoreFoundation
+          MetalKit
+          MetalPerformanceShaders
+          Security
+        ]);
+      };
+    };
+}
+#+end_src
+
+And that... worked?  I get a non-zero exit code, so that's something.
+
+A side thought I've had while I've been working on this - I've been doing this
+via a =devShell= setup and really what I think I want to do is make this a
+proper derivation using =mkDerivation=.  But this is still progress and I have
+learned much about Nix Flakes along the way.  And frustration.
+
+At some point I would like to get this more platform agnostic in its settings.
+I just want to express the general tools, and how each platform deviates in its
+packages or settings.  Perhaps that could be done with a simple =let ... in=
+construct, but it would still require adding new platforms explicitly.
+
+Now with a =make clean; make build= I get:
+
+#+begin_example
+CMake Error at /nix/store/slgfvfhi4nbdms9h7p13rp998ls191az-cmake-3.27.8/share/cmake-3.27/Modules/CMakeTestCXXCompiler.cmake:60 (message):
+  The C++ compiler
+
+    "/nix/store/2k44jw0kwqnymimzfwq1p53s59rvbvzr-clang-wrapper-16.0.6/bin/clang++"
+
+  is not able to compile a simple test program.
+
+  It fails with the following output:
+
+    Change Dir: '/Users/logan/dev/LocalAI/sources/gpt4all/gpt4all-bindings/golang/buildllm/CMakeFiles/CMakeScratch/TryCompile-V81wvy'
+
+    Run Build Command(s): /nix/store/slgfvfhi4nbdms9h7p13rp998ls191az-cmake-3.27.8/bin/cmake -E env VERBOSE=1 /nix/store/842p7sln6lmwixwqaacdikczlshisqrw-gnumake-4.4.1/bin/make -f Makefile cmTC_85df6/fast
+    make[2]: Entering directory '/Users/logan/dev/LocalAI/sources/gpt4all/gpt4all-bindings/golang/buildllm/CMakeFiles/CMakeScratch/TryCompile-V81wvy'
+    /nix/store/842p7sln6lmwixwqaacdikczlshisqrw-gnumake-4.4.1/bin/make  -f CMakeFiles/cmTC_85df6.dir/build.make CMakeFiles/cmTC_85df6.dir/build
+    make[3]: Entering directory '/Users/logan/dev/LocalAI/sources/gpt4all/gpt4all-bindings/golang/buildllm/CMakeFiles/CMakeScratch/TryCompile-V81wvy'
+    Building CXX object CMakeFiles/cmTC_85df6.dir/testCXXCompiler.cxx.o
+    /nix/store/2k44jw0kwqnymimzfwq1p53s59rvbvzr-clang-wrapper-16.0.6/bin/clang++   -arch arm64 -arch x86_64 -isysroot /nix/store/p5f3cn5izi1h1a67r35npfgazkl8fr5g-xcodebuild-0.1.2-pre/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.0.sdk -mmacosx-version-min=11.0 -MD -MT CMakeFiles/cmTC_85df6.dir/testCXXCompiler.cxx.o -MF CMakeFiles/cmTC_85df6.dir/testCXXCompiler.cxx.o.d -o CMakeFiles/cmTC_85df6.dir/testCXXCompiler.cxx.o -c /Users/logan/dev/LocalAI/sources/gpt4all/gpt4all-bindings/golang/buildllm/CMakeFiles/CMakeScratch/TryCompile-V81wvy/testCXXCompiler.cxx
+    error: unknown target CPU 'armv8.3-a+crypto+sha2+aes+crc+fp16+lse+simd+ras+rdm+rcpc'
+    note: valid target CPU values are: nocona, core2, penryn, bonnell, atom, silvermont, slm, goldmont, goldmont-plus, tremont, nehalem, corei7, westmere, sandybridge, corei7-avx, ivybridge, core-avx-i, haswell, core-avx2, broadwell, skylake, skylake-avx512, skx, cascadelake, cooperlake, cannonlake, icelake-client, rocketlake, icelake-server, tigerlake, sapphirerapids, alderlake, raptorlake, meteorlake, sierraforest, grandridge, graniterapids, emeraldrapids, knl, knm, k8, athlon64, athlon-fx, opteron, k8-sse3, athlon64-sse3, opteron-sse3, amdfam10, barcelona, btver1, btver2, bdver1, bdver2, bdver3, bdver4, znver1, znver2, znver3, znver4, x86-64, x86-64-v2, x86-64-v3, x86-64-v4
+    make[3]: *** [CMakeFiles/cmTC_85df6.dir/build.make:79: CMakeFiles/cmTC_85df6.dir/testCXXCompiler.cxx.o] Error 1
+    make[3]: Leaving directory '/Users/logan/dev/LocalAI/sources/gpt4all/gpt4all-bindings/golang/buildllm/CMakeFiles/CMakeScratch/TryCompile-V81wvy'
+    make[2]: *** [Makefile:127: cmTC_85df6/fast] Error 2
+    make[2]: Leaving directory '/Users/logan/dev/LocalAI/sources/gpt4all/gpt4all-bindings/golang/buildllm/CMakeFiles/CMakeScratch/TryCompile-V81wvy'
+#+end_example
+
+=armv8.3= certainly isn't in that big list of lakes.
+
+Some reading I have done indicates that this can come up when there is a
+mismatch on Apple Silicon machines between compilers that emit =x86_64= binaries
+and =aarch64=.  I don't believe that is the case here, since the paths make
+sense in Nix, I haven't had trouble compiling anything else, and I can verify
+from the stack that everything seems to be using the Nix based tools.  But I can
+offer no other path forward.
+
+I did muck around in the =Makefile= of the submodule in question and wasn't able
+to find anything that would point toward using the wrong platform or whatnot.
+It's kind of hard to track, because =make= assumes a lot of C-isms if targets
+are left out.  While I did learn C long ago, I know there is much to it that I
+don't know (like all of the linker bits), and those depths await me in a foreign
+project's =Makefile=.  Not a dive I want to do today.
+
+I'd like to try making a proper derivation of out of this.  This way, I can
+build the program from top to bottom using Nix, and also any sort of patches I
+can do will be retained.  Otherwise I'll have to just pay close attention to the
+modifications I make to various files.  One such would be the =clean= =make=
+target.  I can't have it clean the other repository it needs without it wiping
+the changes I made to said repository.  With Nix, I can just specify that there
+should be a patch done, and then that patch makes its way into git/editor
+history - a much safer place.
+
+I did notice that one can specify the entire derivation from within the
+=flake.nix=, though generally that should go into another file.  I will call
+this file =derivation.nix=, and later I will see if there are any established
+conventions - or even better: a convention that fast-tracks the project onto
+=nixpkgs=.
+
+-----
+
+One thing that is hard to show in this format is the rabbit holes I go down for
+linking and documenting.  I make a statement, and then I say "actually is that
+correct?".  I do some searching or deeper reads, find out I was wrong, and then
+sometimes even I find out that there's a way better path forward.  Given this
+project was started more than a week ago from [2024-01-30 Tue], this
+[[https://github.com/NixOS/nixpkgs/issues/269582#issuecomment-1909046618][comment]] has the derivation!  I'd read this before and that was not present.
+Let's grab theirs and see what we can do.
+
+This is the original:
+
+#+begin_src nix :results none
+{ stdenv
+, lib
+, fetchFromGitHub
+, ncurses
+, abseil-cpp
+, protobuf
+, grpc
+, openssl
+, openblas
+, cmake
+, buildGoModule
+, pkg-config
+, cudaPackages
+, makeWrapper
+, runCommand
+, buildType ? ""
+}:
+let
+  go-llama = fetchFromGitHub {
+    owner = "go-skynet";
+    repo = "go-llama.cpp";
+    rev = "aeba71ee842819da681ea537e78846dc75949ac0";
+    hash = "sha256-ELoaJg7wOHloQws+do6TZUo7zOxUP0E85v80BlpUOJA=";
+    fetchSubmodules = true;
+  };
+
+  go-llama-ggml = fetchFromGitHub {
+    owner = "go-skynet";
+    repo = "go-llama.cpp";
+    rev = "50cee7712066d9e38306eccadcfbb44ea87df4b7";
+    hash = "sha256-5qwUSg56fyHk5x8NgwLrgl+9Ibl2GTBP1Aq5sAvTs+s=";
+    fetchSubmodules = true;
+  };
+
+  llama_cpp = fetchFromGitHub {
+    owner = "ggerganov";
+    repo = "llama.cpp";
+    rev = "6f9939d119b2d004c264952eb510bd106455531e";
+    hash = "sha256-TfSD+ZR8TR6xhfOjMfpvcfQXCRhRnvzcNXQOYaaWzVU=";
+    fetchSubmodules = true;
+  };
+
+  llama_cpp' = runCommand "llama_cpp_src" { } ''
+    cp -r --no-preserve=mode,ownership ${llama_cpp} $out
+    sed -i $out/CMakeLists.txt \
+      -e 's;pkg_check_modules(DepBLAS REQUIRED openblas);pkg_check_modules(DepBLAS REQUIRED openblas64);'
+  '';
+
+  go-ggml-transformers = fetchFromGitHub {
+    owner = "go-skynet";
+    repo = "go-ggml-transformers.cpp";
+    rev = "ffb09d7dd71e2cbc6c5d7d05357d230eea6f369a";
+    hash = "sha256-WdCj6cfs98HvG3jnA6CWsOtACjMkhSmrKw9weHkLQQ4=";
+    fetchSubmodules = true;
+  };
+
+  gpt4all = fetchFromGitHub {
+    owner = "nomic-ai";
+    repo = "gpt4all";
+    rev = "27a8b020c36b0df8f8b82a252d261cda47cf44b8";
+    hash = "sha256-djq1eK6ncvhkO3MNDgasDBUY/7WWcmZt/GJsHAulLdI=";
+    fetchSubmodules = true;
+  };
+
+  go-piper = fetchFromGitHub {
+    owner = "mudler";
+    repo = "go-piper";
+    rev = "d6b6275ba037dabdba4a8b65dfdf6b2a73a67f07";
+    hash = "sha256-p589giBsEPsoR+RQU7qfGfpfqpTdBI51lvnLs4DmE0Y=";
+    fetchSubmodules = true;
+  };
+
+  go-rwkv = fetchFromGitHub {
+    owner = "donomii";
+    repo = "go-rwkv.cpp";
+    rev = "633c5a3485c403cb2520693dc0991a25dace9f0f";
+    hash = "sha256-BECmBLbtAh5pdZZz0NBLbt+BX2TaC2NjHYwSEEAFPlI=";
+    fetchSubmodules = true;
+  };
+
+  whisper = fetchFromGitHub {
+    owner = "ggerganov";
+    repo = "whisper.cpp";
+    rev = "9286d3f584240ba58bd44a1bd1e85141579c78d4";
+    hash = "sha256-hLPtfJVYiopnSdDqu9n/k9Avb4ibgbjmrVr81BTWW/w=";
+    fetchSubmodules = true;
+  };
+
+  go-bert = fetchFromGitHub {
+    owner = "go-skynet";
+    repo = "go-bert.cpp";
+    rev = "6abe312cded14042f6b7c3cd8edf082713334a4d";
+    hash = "sha256-lh9cvXc032Eq31kysxFOkRd0zPjsCznRl0tzg9P2ygo=";
+    fetchSubmodules = true;
+  };
+
+  go-stable-diffusion = fetchFromGitHub {
+    owner = "mudler";
+    repo = "go-stable-diffusion";
+    rev = "902db5f066fd137697e3b69d0fa10d4782bd2c2f";
+    hash = "sha256-MbVYeWQF/aJNsg2NpTMVx5tD31BK5pQ8Zg92uoWRkcU=";
+    fetchSubmodules = true;
+  };
+
+  go-tiny-dream = fetchFromGitHub {
+    owner = "M0Rf30";
+    repo = "go-tiny-dream";
+    rev = "772a9c0d9aaf768290e63cca3c904fe69faf677a";
+    hash = "sha256-r+wzFIjaI6cxAm/eXN3q8LRZZz+lE5EA4lCTk5+ZnIY=";
+    fetchSubmodules = true;
+  };
+
+in
+buildGoModule rec {
+  pname = "local-ai";
+  version = "2.6.1";
+
+  src = fetchFromGitHub {
+    owner = "go-skynet";
+    repo = "LocalAI";
+    rev = "v${version}";
+    hash = "sha256-xGbrNbHQpl9Tdh5w+Csx7mhkMDBF8JgGtIVvgOu0XWs=";
+  };
+
+  vendorHash = "sha256-WUgDyRzShftJ15yumlvcSN0rUx8ytQPQGAO37AxMHeA=";
+
+  # Workaround for
+  # `cc1plus: error: '-Wformat-security' ignored without '-Wformat' [-Werror=format-security]`
+  # when building jtreg
+  env.NIX_CFLAGS_COMPILE = "-Wformat";
+
+  postPatch =
+    let
+      cp = "cp -r --no-preserve=mode,ownership";
+    in
+    ''
+      sed -i Makefile \
+        -e 's;git clone.*go-llama$;${cp} ${go-llama} sources/go-llama;' \
+        -e 's;git clone.*go-llama-ggml$;${cp} ${go-llama-ggml} sources/go-llama-ggml;' \
+        -e 's;git clone.*go-ggml-transformers$;${cp} ${go-ggml-transformers} sources/go-ggml-transformers;' \
+        -e 's;git clone.*gpt4all$;${cp} ${gpt4all} sources/gpt4all;' \
+        -e 's;git clone.*go-piper$;${cp} ${go-piper} sources/go-piper;' \
+        -e 's;git clone.*go-rwkv$;${cp} ${go-rwkv} sources/go-rwkv;' \
+        -e 's;git clone.*whisper\.cpp$;${cp} ${whisper} sources/whisper\.cpp;' \
+        -e 's;git clone.*go-bert$;${cp} ${go-bert} sources/go-bert;' \
+        -e 's;git clone.*diffusion$;${cp} ${go-stable-diffusion} sources/go-stable-diffusion;' \
+        -e 's;git clone.*go-tiny-dream$;${cp} ${go-tiny-dream} sources/go-tiny-dream;' \
+        -e 's, && git checkout.*,,g' \
+        -e '/mod download/ d' \
+
+      sed -i backend/cpp/llama/Makefile \
+        -e 's;git clone.*llama\.cpp$;${cp} ${llama_cpp'} llama\.cpp;' \
+        -e 's, && git checkout.*,,g' \
+
+    ''
+  ;
+
+  modBuildPhase = ''
+    mkdir sources
+    make prepare-sources
+    go mod tidy -v
+  '';
+
+  proxyVendor = true;
+
+  buildPhase = ''
+    mkdir sources
+    make \
+      VERSION=v${version} \
+      BUILD_TYPE=${buildType} \
+      build
+  '';
+
+  installPhase = ''
+    install -Dt $out/bin ${pname}
+  '';
+
+  buildInputs = [
+    abseil-cpp
+    protobuf
+    grpc
+    openssl
+  ]
+  ++ lib.optional (buildType == "cublas") cudaPackages.cudatoolkit
+  ++ lib.optional (buildType == "openblas") openblas.dev
+  ;
+
+  # patching rpath with patchelf doens't work. The execuable
+  # raises an segmentation fault
+  postFixup = lib.optionalString (buildType == "cublas") ''
+    wrapProgram $out/bin/${pname} \
+      --prefix LD_LIBRARY_PATH : "${cudaPackages.libcublas}/lib:${cudaPackages.cuda_cudart}/lib:/run/opengl-driver/lib"
+  ''
+  + lib.optionalString (buildType == "openblas") ''
+    wrapProgram $out/bin/${pname} \
+      --prefix LD_LIBRARY_PATH : "${openblas}/lib"
+  '';
+
+  nativeBuildInputs = [
+    ncurses
+    cmake
+    makeWrapper
+  ]
+  ++ lib.optional (buildType == "openblas") pkg-config
+  ++ lib.optional (buildType == "cublas") cudaPackages.cuda_nvcc
+  ;
+}
+#+end_src
+
+I modified it to accept some macOS libraries.  I don't know if it works yet.
+
+#+begin_src nix :results none
+{ stdenv
+, darwin
+, lib
+, fetchFromGitHub
+, ncurses
+, abseil-cpp
+, protobuf
+, grpc
+, openssl
+, openblas
+, cmake
+, buildGoModule
+, pkg-config
+, cudaPackages
+, makeWrapper
+, runCommand
+, buildType ? ""
+}:
+let
+  go-llama = fetchFromGitHub {
+    owner = "go-skynet";
+    repo = "go-llama.cpp";
+    rev = "aeba71ee842819da681ea537e78846dc75949ac0";
+    hash = "sha256-ELoaJg7wOHloQws+do6TZUo7zOxUP0E85v80BlpUOJA=";
+    fetchSubmodules = true;
+  };
+
+  go-llama-ggml = fetchFromGitHub {
+    owner = "go-skynet";
+    repo = "go-llama.cpp";
+    rev = "50cee7712066d9e38306eccadcfbb44ea87df4b7";
+    hash = "sha256-5qwUSg56fyHk5x8NgwLrgl+9Ibl2GTBP1Aq5sAvTs+s=";
+    fetchSubmodules = true;
+  };
+
+  llama_cpp = fetchFromGitHub {
+    owner = "ggerganov";
+    repo = "llama.cpp";
+    rev = "6f9939d119b2d004c264952eb510bd106455531e";
+    hash = "sha256-TfSD+ZR8TR6xhfOjMfpvcfQXCRhRnvzcNXQOYaaWzVU=";
+    fetchSubmodules = true;
+  };
+
+  llama_cpp' = runCommand "llama_cpp_src" { } ''
+    cp -r --no-preserve=mode,ownership ${llama_cpp} $out
+    sed -i $out/CMakeLists.txt \
+      -e 's;pkg_check_modules(DepBLAS REQUIRED openblas);pkg_check_modules(DepBLAS REQUIRED openblas64);'
+  '';
+
+  go-ggml-transformers = fetchFromGitHub {
+    owner = "go-skynet";
+    repo = "go-ggml-transformers.cpp";
+    rev = "ffb09d7dd71e2cbc6c5d7d05357d230eea6f369a";
+    hash = "sha256-WdCj6cfs98HvG3jnA6CWsOtACjMkhSmrKw9weHkLQQ4=";
+    fetchSubmodules = true;
+  };
+
+  gpt4all = fetchFromGitHub {
+    owner = "nomic-ai";
+    repo = "gpt4all";
+    rev = "27a8b020c36b0df8f8b82a252d261cda47cf44b8";
+    hash = "sha256-djq1eK6ncvhkO3MNDgasDBUY/7WWcmZt/GJsHAulLdI=";
+    fetchSubmodules = true;
+  };
+
+  go-piper = fetchFromGitHub {
+    owner = "mudler";
+    repo = "go-piper";
+    rev = "d6b6275ba037dabdba4a8b65dfdf6b2a73a67f07";
+    hash = "sha256-p589giBsEPsoR+RQU7qfGfpfqpTdBI51lvnLs4DmE0Y=";
+    fetchSubmodules = true;
+  };
+
+  go-rwkv = fetchFromGitHub {
+    owner = "donomii";
+    repo = "go-rwkv.cpp";
+    rev = "633c5a3485c403cb2520693dc0991a25dace9f0f";
+    hash = "sha256-BECmBLbtAh5pdZZz0NBLbt+BX2TaC2NjHYwSEEAFPlI=";
+    fetchSubmodules = true;
+  };
+
+  whisper = fetchFromGitHub {
+    owner = "ggerganov";
+    repo = "whisper.cpp";
+    rev = "9286d3f584240ba58bd44a1bd1e85141579c78d4";
+    hash = "sha256-hLPtfJVYiopnSdDqu9n/k9Avb4ibgbjmrVr81BTWW/w=";
+    fetchSubmodules = true;
+  };
+
+  go-bert = fetchFromGitHub {
+    owner = "go-skynet";
+    repo = "go-bert.cpp";
+    rev = "6abe312cded14042f6b7c3cd8edf082713334a4d";
+    hash = "sha256-lh9cvXc032Eq31kysxFOkRd0zPjsCznRl0tzg9P2ygo=";
+    fetchSubmodules = true;
+  };
+
+  go-stable-diffusion = fetchFromGitHub {
+    owner = "mudler";
+    repo = "go-stable-diffusion";
+    rev = "902db5f066fd137697e3b69d0fa10d4782bd2c2f";
+    hash = "sha256-MbVYeWQF/aJNsg2NpTMVx5tD31BK5pQ8Zg92uoWRkcU=";
+    fetchSubmodules = true;
+  };
+
+  go-tiny-dream = fetchFromGitHub {
+    owner = "M0Rf30";
+    repo = "go-tiny-dream";
+    rev = "772a9c0d9aaf768290e63cca3c904fe69faf677a";
+    hash = "sha256-r+wzFIjaI6cxAm/eXN3q8LRZZz+lE5EA4lCTk5+ZnIY=";
+    fetchSubmodules = true;
+  };
+
+in
+buildGoModule rec {
+  pname = "local-ai";
+  version = "2.6.1";
+
+  src = fetchFromGitHub {
+    owner = "go-skynet";
+    repo = "LocalAI";
+    rev = "v${version}";
+    hash = "sha256-xGbrNbHQpl9Tdh5w+Csx7mhkMDBF8JgGtIVvgOu0XWs=";
+  };
+
+  vendorHash = "sha256-WUgDyRzShftJ15yumlvcSN0rUx8ytQPQGAO37AxMHeA=";
+
+  # Workaround for
+  # `cc1plus: error: '-Wformat-security' ignored without '-Wformat' [-Werror=format-security]`
+  # when building jtreg
+  env.NIX_CFLAGS_COMPILE = "-Wformat";
+
+  postPatch =
+    let
+      cp = "cp -r --no-preserve=mode,ownership";
+    in
+    ''
+      sed -i Makefile \
+        -e 's;git clone.*go-llama$;${cp} ${go-llama} sources/go-llama;' \
+        -e 's;git clone.*go-llama-ggml$;${cp} ${go-llama-ggml} sources/go-llama-ggml;' \
+        -e 's;git clone.*go-ggml-transformers$;${cp} ${go-ggml-transformers} sources/go-ggml-transformers;' \
+        -e 's;git clone.*gpt4all$;${cp} ${gpt4all} sources/gpt4all;' \
+        -e 's;git clone.*go-piper$;${cp} ${go-piper} sources/go-piper;' \
+        -e 's;git clone.*go-rwkv$;${cp} ${go-rwkv} sources/go-rwkv;' \
+        -e 's;git clone.*whisper\.cpp$;${cp} ${whisper} sources/whisper\.cpp;' \
+        -e 's;git clone.*go-bert$;${cp} ${go-bert} sources/go-bert;' \
+        -e 's;git clone.*diffusion$;${cp} ${go-stable-diffusion} sources/go-stable-diffusion;' \
+        -e 's;git clone.*go-tiny-dream$;${cp} ${go-tiny-dream} sources/go-tiny-dream;' \
+        -e 's, && git checkout.*,,g' \
+        -e '/mod download/ d' \
+
+      sed -i backend/cpp/llama/Makefile \
+        -e 's;git clone.*llama\.cpp$;${cp} ${llama_cpp'} llama\.cpp;' \
+        -e 's, && git checkout.*,,g' \
+
+    ''
+  ;
+
+  modBuildPhase = ''
+    mkdir sources
+    make prepare-sources
+    go mod tidy -v
+  '';
+
+  proxyVendor = true;
+
+  buildPhase = ''
+    mkdir sources
+    make \
+      VERSION=v${version} \
+      BUILD_TYPE=${buildType} \
+      build
+  '';
+
+  installPhase = ''
+    install -Dt $out/bin ${pname}
+  '';
+
+  buildInputs = [
+    abseil-cpp
+    protobuf
+    grpc
+    openssl
+  ]
+  ++ lib.optional (buildType == "cublas") cudaPackages.cudatoolkit
+  ++ lib.optional (buildType == "openblas") openblas.dev
+  ;
+
+  # patching rpath with patchelf doens't work. The execuable
+  # raises an segmentation fault
+  postFixup = lib.optionalString (buildType == "cublas") ''
+    wrapProgram $out/bin/${pname} \
+      --prefix LD_LIBRARY_PATH : "${cudaPackages.libcublas}/lib:${cudaPackages.cuda_cudart}/lib:/run/opengl-driver/lib"
+  ''
+  + lib.optionalString (buildType == "openblas") ''
+    wrapProgram $out/bin/${pname} \
+      --prefix LD_LIBRARY_PATH : "${openblas}/lib"
+  '';
+
+  nativeBuildInputs = [
+    ncurses
+    cmake
+    makeWrapper
+  ]
+  ++ lib.optional (buildType == "openblas") pkg-config
+  ++ lib.optional (buildType == "cublas") cudaPackages.cuda_nvcc
+  ++ lib.optional (stdenv.isDarwin)
+    (with darwin.apple_sdk.frameworks; [
+      Accelerate
+      CoreFoundation
+      MetalKit
+      MetalPerformanceShaders
+      Security
+    ])
+  ;
+}
+#+end_src
+
+I had to do some more digging about the anatomy of a Nix Flake.  Thus far, my
+builds have "succeeded" but finish in about a second or two, and the =result=
+that comes from it is about 6K in size - vastly smaller than I expected, which
+makes me think something is very wrong.
+
+I can define an "app" thusly:
+
+#+begin_src nix :results none
+apps.aarch64-darwin.localai = {
+  type = "app";
+  program = "local-ai";
+};
+#+end_src
+
+And this is adjacent to =packages= and =devShells=.  But this is wrong and the
+documentation about Nix Flakes doesn't tell me what structure the value of the
+=apps= entry should contain.  When I try to do =nix run '.#local-ai'=, I get:
+
+#+begin_example
+error: app program 'local-ai' is not in the Nix store
+#+end_example
+
+All I have for documentation is that the value must be a =<store-path>=,
+whatever that means.  Clearly it isn't a relative path to the file, as relative
+to the =bin= or whatever output directory the build machinery for the repository
+is using.  Reading up on the store path in Nix doesn't yield anything
+meaningful.  I need an example.  What do you want?  An absolute path?  Relative?
+Are there helpers since I don't know what the absolute path will be since it's
+got a bunch of generated cruft in it?  Frustration mounts.  I just look at
+=nixpkgs= for some arbitrary package.
+
+In some [[https://github.com/NixOS/nixpkgs/blob/master/pkgs/applications/audio/airwave/default.nix][arbitrary sample]] I found =$out= used in =postInstall=, which looks
+promising.  I see the derivation I cribbed has the following:
+
+#+begin_src nix :results none
+installPhase = ''
+  install -Dt $out/bin ${pname}
+'';
+#+end_src
+
+Okay good, so it installs under =$out/bin= a binary named =${pname}= which
+resolves to =local-ai=.  I got this from the derivation:
+
+#+begin_src nix :results none
+  pname = "local-ai";
+#+end_src
+
+I tried changing =program= to =local-ai= (was =localai=), but still no joy.
+None of this has told me what should go into the =<store-path>=.  I suppose I
+know the name of the executable, but not its _path_.
+
+I stumbled across [[https://dev.to/dooygoy/flake-my-life-how-do-nix-flakes-work-2foe][Flake my life - how do nix flakes work?]] which captures another
+user's attempt at grasping what is actually going on here and struggling
+immensely.  I have found kin.
+
+The official Flake documentation has this:
+
+#+begin_example
+When output apps.<system>.myapp is not defined, nix run myapp runs <packages or
+legacyPackages.<system>.myapp>/bin/<myapp.meta.mainProgram or myapp.pname or
+myapp.name (the non-version part)>
+#+end_example
+
+Okay, so I just commented out my =apps= declaration. Now I'm using =nix run .=
+with =packages.aarch64-darwin.default = ./derivation.nix= (note it's =default=
+instead of =localai= as it was before).
+
+But still:
+
+#+begin_example
+error: attribute 'packages.aarch64-darwin.default.type' does not exist
+#+end_example
+
+The nix docs have:
+
+#+begin_src nix :results none
+# Executed by `nix build .`
+packages."<system>".default = derivation;
+#+end_src
+
+I did find a some documentation on =store-path= by the way:
+
+#+begin_example
+<store-path> is a /nix/store.. path
+#+end_example
+
+Which I already knew and still have _no idea what should go into the =path=
+field_.
+
+Looking for the =type= error is indicative that even the =packages= entry must
+be some specific type of value and whatever comes out of =mkDerivation= isn't
+it.  That, or the result from =mkDerivation= needs to actually be executed.
+From a programming perspective, I think this kind of makes sense.
+
+I flail some more.  I vaguely remembered =callPackage=, and found out it's
+[[https://nixos.org/guides/nix-pills/callpackage-design-pattern][exactly what I want and documented as such kind of]].
+
+My =packages= becomes:
+
+#+begin_src nix :results none
+packages.aarch64-darwin.default = pkgs.callPackage ./derivation.nix  {};
+#+end_src
+
+Now when I run it, I'm seeing a bunch of download activity.  Result!  Or at
+least progress!
+
+Moments later I see:
+
+#+begin_example
+error: builder for '/nix/store/ik0a8kblr1w76iamyv40qimacbd2pdpg-local-ai-2.6.1.drv' failed with exit code 2;
+       last 10 log lines:
+       > make[5]: Leaving directory '/private/tmp/nix-build-local-ai-2.6.1.drv-0/source/sources/go-ggml-transformers/build'
+       > make[4]: *** [CMakeFiles/Makefile2:343: src/CMakeFiles/ggml.dir/all] Error 2
+       > make[4]: Leaving directory '/private/tmp/nix-build-local-ai-2.6.1.drv-0/source/sources/go-ggml-transformers/build'
+       > make[3]: *** [CMakeFiles/Makefile2:350: src/CMakeFiles/ggml.dir/rule] Error 2
+       > make[3]: Leaving directory '/private/tmp/nix-build-local-ai-2.6.1.drv-0/source/sources/go-ggml-transformers/build'
+       > make[2]: *** [Makefile:179: ggml] Error 2
+       > make[2]: Leaving directory '/private/tmp/nix-build-local-ai-2.6.1.drv-0/source/sources/go-ggml-transformers/build'
+       > make[1]: *** [Makefile:150: ggml.o] Error 2
+       > make[1]: Leaving directory '/private/tmp/nix-build-local-ai-2.6.1.drv-0/source/sources/go-ggml-transformers'
+       > make: *** [Makefile:226: sources/go-ggml-transformers/libtransformers.a] Error 2
+       For full logs, run 'nix-store -l /nix/store/ik0a8kblr1w76iamyv40qimacbd2pdpg-local-ai-2.6.1.drv'.
+#+end_example
+
+The logs:
+
+#+begin_src sh :results output
+nix-store -l /nix/store/ik0a8kblr1w76iamyv40qimacbd2pdpg-local-ai-2.6.1.drv
+#+end_src
+
+#+RESULTS:
+#+begin_example
+@nix { "action": "setPhase", "phase": "unpackPhase" }
+Running phase: unpackPhase
+unpacking source archive /nix/store/karj5hshnspfjr59mijbd7mjpiph523n-source
+source root is source
+@nix { "action": "setPhase", "phase": "patchPhase" }
+Running phase: patchPhase
+@nix { "action": "setPhase", "phase": "updateAutotoolsGnuConfigScriptsPhase" }
+Running phase: updateAutotoolsGnuConfigScriptsPhase
+@nix { "action": "setPhase", "phase": "configurePhase" }
+Running phase: configurePhase
+@nix { "action": "setPhase", "phase": "buildPhase" }
+Running phase: buildPhase
+sh: line 1: security: command not found
+mkdir -p backend-assets
+LLAMA_VERSION=6f9939d119b2d004c264952eb510bd106455531e make -C backend/cpp/llama llama.cpp
+make[1]: Entering directory '/private/tmp/nix-build-local-ai-2.6.1.drv-0/source/backend/cpp/llama'
+cp -r --no-preserve=mode,ownership /nix/store/02fcbxwp8x4nzlhj9rqvnf7m09kvsxlr-llama_cpp_src llama.cpp
+if [ -z "6f9939d119b2d004c264952eb510bd106455531e" ]; then \
+	exit 1; \
+fi
+cd llama.cpp
+make[1]: Leaving directory '/private/tmp/nix-build-local-ai-2.6.1.drv-0/source/backend/cpp/llama'
+cp -r --no-preserve=mode,ownership /nix/store/5wgc9npp8wrgbdhg529011pb9db99vx8-source sources/go-llama
+cd sources/go-llama
+cp -r --no-preserve=mode,ownership /nix/store/n4imdq0vr97l1dyj1frmln4rn712bq8m-source sources/go-llama-ggml
+cd sources/go-llama-ggml
+cp -r --no-preserve=mode,ownership /nix/store/6bn9yb7k1gar7gikmhsc6srw5znh5720-source sources/go-ggml-transformers
+cd sources/go-ggml-transformers
+cp -r --no-preserve=mode,ownership /nix/store/s3a0byb91x4fbjlrpw87s783gy0is2ak-source sources/gpt4all
+cd sources/gpt4all
+cp -r --no-preserve=mode,ownership /nix/store/h4g02icbz6p76sj3c8s2vdjhyp3ig1z8-source sources/go-piper
+cd sources/go-piper
+cp -r --no-preserve=mode,ownership /nix/store/dx53n8ssabl5qh0ykkz46zkcvdzxpf6l-source sources/go-rwkv
+cd sources/go-rwkv
+cp -r --no-preserve=mode,ownership /nix/store/xiz3xyvczns54ixcxbmv9r6np2d3w426-source sources/whisper.cpp
+cd sources/whisper.cpp
+cp -r --no-preserve=mode,ownership /nix/store/v16zaqxhkbl55a257qphmlh5qkl1a3q5-source sources/go-bert
+cd sources/go-bert
+cp -r --no-preserve=mode,ownership /nix/store/dbl9ns41hzr7mnzqpkfbnb0ad2qh6l3v-source sources/go-stable-diffusion
+cd sources/go-stable-diffusion
+cp -r --no-preserve=mode,ownership /nix/store/zdh6pn6fsqymqqg2hqnzx7pfg5j10afp-source sources/go-tiny-dream
+cd sources/go-tiny-dream
+touch get-sources
+go mod edit -replace github.com/nomic-ai/gpt4all/gpt4all-bindings/golang=/private/tmp/nix-build-local-ai-2.6.1.drv-0/source/sources/gpt4all/gpt4all-bindings/golang
+go mod edit -replace github.com/go-skynet/go-ggml-transformers.cpp=/private/tmp/nix-build-local-ai-2.6.1.drv-0/source/sources/go-ggml-transformers
+go mod edit -replace github.com/donomii/go-rwkv.cpp=/private/tmp/nix-build-local-ai-2.6.1.drv-0/source/sources/go-rwkv
+go mod edit -replace github.com/ggerganov/whisper.cpp=/private/tmp/nix-build-local-ai-2.6.1.drv-0/source/sources/whisper.cpp
+go mod edit -replace github.com/ggerganov/whisper.cpp/bindings/go=/private/tmp/nix-build-local-ai-2.6.1.drv-0/source/sources/whisper.cpp/bindings/go
+go mod edit -replace github.com/go-skynet/go-bert.cpp=/private/tmp/nix-build-local-ai-2.6.1.drv-0/source/sources/go-bert
+go mod edit -replace github.com/mudler/go-stable-diffusion=/private/tmp/nix-build-local-ai-2.6.1.drv-0/source/sources/go-stable-diffusion
+go mod edit -replace github.com/M0Rf30/go-tiny-dream=/private/tmp/nix-build-local-ai-2.6.1.drv-0/source/sources/go-tiny-dream
+go mod edit -replace github.com/mudler/go-piper=/private/tmp/nix-build-local-ai-2.6.1.drv-0/source/sources/go-piper
+touch prepare-sources
+touch prepare
+mkdir -p backend-assets/grpc
+make: git: No such file or directory
+go build -ldflags "-X "github.com/go-skynet/LocalAI/internal.Version=v2.6.1" -X "github.com/go-skynet/LocalAI/internal.Commit="" -tags "" -o backend-assets/grpc/langchain-huggingface ./backend/go/llm/langchain/
+go: downloading github.com/tmc/langchaingo v0.0.0-20231019140956-c636b3da7701
+go: downloading google.golang.org/grpc v1.59.0
+go: downloading github.com/shirou/gopsutil/v3 v3.23.9
+go: downloading google.golang.org/protobuf v1.31.0
+go: downloading github.com/tklauser/go-sysconf v0.3.12
+go: downloading golang.org/x/sys v0.13.0
+go: downloading github.com/rs/zerolog v1.31.0
+go: downloading gopkg.in/yaml.v3 v3.0.1
+go: downloading github.com/shoenig/go-m1cpu v0.1.6
+go: downloading github.com/mholt/archiver/v3 v3.5.1
+go: downloading github.com/mattn/go-colorable v0.1.13
+go: downloading github.com/andybalholm/brotli v1.0.5
+go: downloading github.com/dsnet/compress v0.0.2-0.20210315054119-f66993602bf5
+go: downloading github.com/golang/snappy v0.0.2
+go: downloading github.com/klauspost/compress v1.16.7
+go: downloading github.com/klauspost/pgzip v1.2.5
+go: downloading github.com/nwaples/rardecode v1.1.0
+go: downloading github.com/pierrec/lz4/v4 v4.1.2
+go: downloading github.com/ulikunitz/xz v0.5.9
+go: downloading github.com/xi2/xz v0.0.0-20171230120015-48954b6210f8
+go: downloading github.com/mattn/go-isatty v0.0.19
+go: downloading golang.org/x/net v0.17.0
+go: downloading google.golang.org/genproto/googleapis/rpc v0.0.0-20230822172742-b8732ec3820d
+go: downloading github.com/golang/protobuf v1.5.3
+go: downloading github.com/pkoukk/tiktoken-go v0.1.2
+go: downloading github.com/dlclark/regexp2 v1.8.1
+go: downloading github.com/google/uuid v1.3.1
+go: downloading golang.org/x/text v0.13.0
+make -C sources/go-ggml-transformers BUILD_TYPE= libtransformers.a
+make[1]: Entering directory '/private/tmp/nix-build-local-ai-2.6.1.drv-0/source/sources/go-ggml-transformers'
+I libtransformers build info:
+I UNAME_S:  Darwin
+I UNAME_P:  arm
+I UNAME_M:  arm64
+I CFLAGS:   -I. -I./ggml.cpp/include -I./ggml.cpp/include/ggml/ -I./ggml.cpp/examples/ -I -O3 -DNDEBUG -std=c11 -fPIC -Wall -Wextra -Wpedantic -Wcast-qual -Wdouble-promotion -Wshadow -Wstrict-prototypes -Wpointer-arith -Wno-unused-function -pthread -DGGML_USE_ACCELERATE
+I CXXFLAGS: -I. -I./ggml.cpp/include -I./ggml.cpp/include/ggml/ -I./ggml.cpp/examples/ -O3 -DNDEBUG -std=c++17 -fPIC -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wno-multichar -pthread
+I LDFLAGS:  -framework Accelerate
+I CMAKE_ARGS:
+I CC:       clang version 16.0.6
+I CXX:      clang version 16.0.6
+
+clang++ -I. -I./ggml.cpp/include -I./ggml.cpp/include/ggml/ -I./ggml.cpp/examples/ -O3 -DNDEBUG -std=c++17 -fPIC -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wno-multichar -pthread starcoder.cpp -o starcoder.o -c -framework Accelerate
+clang-16: [0;1;35mwarning: [0m[1m-framework Accelerate: 'linker' input unused [-Wunused-command-line-argument][0m
+In file included from starcoder.cpp:19:
+[1m./ggml.cpp/examples/starcoder/main.cpp:799:23: [0m[0;1;35mwarning: [0m[1mcomparison of integers of different signs: 'int' and 'size_type' (aka 'unsigned long') [-Wsign-compare][0m
+    for (int i = 0; i < embd_inp.size(); i++) {
+[0;1;32m                    ~ ^ ~~~~~~~~~~~~~~~
+[0m[1m./ggml.cpp/examples/starcoder/main.cpp:821:33: [0m[0;1;35mwarning: [0m[1mcomparison of integers of different signs: 'int' and 'size_type' (aka 'unsigned long') [-Wsign-compare][0m
+    for (int i = embd.size(); i < embd_inp.size() + params.n_predict; i++) {
+[0;1;32m                              ~ ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[0m[1m./ggml.cpp/examples/starcoder/main.cpp:837:15: [0m[0;1;35mwarning: [0m[1mcomparison of integers of different signs: 'int' and 'size_type' (aka 'unsigned long') [-Wsign-compare][0m
+        if (i >= embd_inp.size()) {
+[0;1;32m            ~ ^  ~~~~~~~~~~~~~~~
+[0m[1m./ggml.cpp/examples/starcoder/main.cpp:859:31: [0m[0;1;35mwarning: [0m[1mcomparison of integers of different signs: 'int' and 'size_type' (aka 'unsigned long') [-Wsign-compare][0m
+            for (int k = i; k < embd_inp.size(); k++) {
+[0;1;32m                            ~ ^ ~~~~~~~~~~~~~~~
+[0m[1m./ggml.cpp/examples/starcoder/main.cpp:861:33: [0m[0;1;35mwarning: [0m[1mcomparison of integers of different signs: 'size_type' (aka 'unsigned long') and 'int32_t' (aka 'int') [-Wsign-compare][0m
+                if (embd.size() >= params.n_batch) {
+[0;1;32m                    ~~~~~~~~~~~ ^  ~~~~~~~~~~~~~~
+[0m[1mstarcoder.cpp:36:19: [0m[0;1;35mwarning: [0m[1munused variable 't_main_start_us' [-Wunused-variable][0m
+    const int64_t t_main_start_us = ggml_time_us();
+[0;1;32m                  ^
+[0m[1mstarcoder.cpp:47:13: [0m[0;1;35mwarning: [0m[1munused variable 't_load_us' [-Wunused-variable][0m
+    int64_t t_load_us = 0;
+[0;1;32m            ^
+[0m[1mstarcoder.cpp:51:13: [0m[0;1;35mwarning: [0m[1mvariable 't_sample_us' set but not used [-Wunused-but-set-variable][0m
+    int64_t t_sample_us  = 0;
+[0;1;32m            ^
+[0m[1mstarcoder.cpp:52:13: [0m[0;1;35mwarning: [0m[1mvariable 't_predict_us' set but not used [-Wunused-but-set-variable][0m
+    int64_t t_predict_us = 0;
+[0;1;32m            ^
+[0m[1mstarcoder.cpp:80:33: [0m[0;1;35mwarning: [0m[1mcomparison of integers of different signs: 'int' and 'size_type' (aka 'unsigned long') [-Wsign-compare][0m
+    for (int i = embd.size(); i < embd_inp.size() + params.n_predict; i++) {
+[0;1;32m                              ~ ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[0m[1mstarcoder.cpp:96:15: [0m[0;1;35mwarning: [0m[1mcomparison of integers of different signs: 'int' and 'size_type' (aka 'unsigned long') [-Wsign-compare][0m
+        if (i >= embd_inp.size()) {
+[0;1;32m            ~ ^  ~~~~~~~~~~~~~~~
+[0m[1mstarcoder.cpp:118:31: [0m[0;1;35mwarning: [0m[1mcomparison of integers of different signs: 'int' and 'size_type' (aka 'unsigned long') [-Wsign-compare][0m
+            for (int k = i; k < embd_inp.size(); k++) {
+[0;1;32m                            ~ ^ ~~~~~~~~~~~~~~~
+[0m[1mstarcoder.cpp:120:33: [0m[0;1;35mwarning: [0m[1mcomparison of integers of different signs: 'size_type' (aka 'unsigned long') and 'int32_t' (aka 'int') [-Wsign-compare][0m
+                if (embd.size() >= params.n_batch) {
+[0;1;32m                    ~~~~~~~~~~~ ^  ~~~~~~~~~~~~~~
+[0m13 warnings generated.
+clang++ -I. -I./ggml.cpp/include -I./ggml.cpp/include/ggml/ -I./ggml.cpp/examples/ -O3 -DNDEBUG -std=c++17 -fPIC -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wno-multichar -pthread falcon.cpp -o falcon.o -c -framework Accelerate
+clang-16: [0;1;35mwarning: [0m[1m-framework Accelerate: 'linker' input unused [-Wunused-command-line-argument][0m
+In file included from falcon.cpp:19:
+[1m./implementations/falcon.cpp:187:13: [0m[0;1;35mwarning: [0m[1mdesignated initializers are a C++20 extension [-Wc++20-designator][0m
+            .mem_size   = ctx_size,
+[0;1;32m            ^
+[0m[1m./implementations/falcon.cpp:410:9: [0m[0;1;35mwarning: [0m[1mdesignated initializers are a C++20 extension [-Wc++20-designator][0m
+        .mem_size   = buf_size,
+[0;1;32m        ^
+[0m[1mfalcon.cpp:36:19: [0m[0;1;35mwarning: [0m[1munused variable 't_main_start_us' [-Wunused-variable][0m
+    const int64_t t_main_start_us = ggml_time_us();
+[0;1;32m                  ^
+[0m[1mfalcon.cpp:48:13: [0m[0;1;35mwarning: [0m[1munused variable 't_load_us' [-Wunused-variable][0m
+    int64_t t_load_us = 0;
+[0;1;32m            ^
+[0m[1mfalcon.cpp:52:13: [0m[0;1;35mwarning: [0m[1mvariable 't_sample_us' set but not used [-Wunused-but-set-variable][0m
+    int64_t t_sample_us  = 0;
+[0;1;32m            ^
+[0m[1mfalcon.cpp:53:13: [0m[0;1;35mwarning: [0m[1mvariable 't_predict_us' set but not used [-Wunused-but-set-variable][0m
+    int64_t t_predict_us = 0;
+[0;1;32m            ^
+[0m[1mfalcon.cpp:69:34: [0m[0;1;35mwarning: [0m[1mcomparison of integers of different signs: 'int' and 'size_type' (aka 'unsigned long') [-Wsign-compare][0m
+     for (int i = embd.size(); i < embd_inp.size() + params.n_predict; i++) {
+[0;1;32m                               ~ ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[0m[1mfalcon.cpp:85:15: [0m[0;1;35mwarning: [0m[1mcomparison of integers of different signs: 'int' and 'size_type' (aka 'unsigned long') [-Wsign-compare][0m
+        if (i >= embd_inp.size()) {
+[0;1;32m            ~ ^  ~~~~~~~~~~~~~~~
+[0m[1mfalcon.cpp:107:31: [0m[0;1;35mwarning: [0m[1mcomparison of integers of different signs: 'int' and 'size_type' (aka 'unsigned long') [-Wsign-compare][0m
+            for (int k = i; k < embd_inp.size(); k++) {
+[0;1;32m                            ~ ^ ~~~~~~~~~~~~~~~
+[0m[1mfalcon.cpp:109:33: [0m[0;1;35mwarning: [0m[1mcomparison of integers of different signs: 'size_type' (aka 'unsigned long') and 'int32_t' (aka 'int') [-Wsign-compare][0m
+                if (embd.size() > params.n_batch) {
+[0;1;32m                    ~~~~~~~~~~~ ^ ~~~~~~~~~~~~~~
+[0m10 warnings generated.
+clang++ -I. -I./ggml.cpp/include -I./ggml.cpp/include/ggml/ -I./ggml.cpp/examples/ -O3 -DNDEBUG -std=c++17 -fPIC -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wno-multichar -pthread gptj.cpp -o gptj.o -c -framework Accelerate
+clang-16: [0;1;35mwarning: [0m[1m-framework Accelerate: 'linker' input unused [-Wunused-command-line-argument][0m
+In file included from gptj.cpp:19:
+[1m./ggml.cpp/examples/gpt-j/main.cpp:674:33: [0m[0;1;35mwarning: [0m[1mcomparison of integers of different signs: 'int' and 'size_type' (aka 'unsigned long') [-Wsign-compare][0m
+    for (int i = embd.size(); i < embd_inp.size() + params.n_predict; i++) {
+[0;1;32m                              ~ ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[0m[1m./ggml.cpp/examples/gpt-j/main.cpp:690:15: [0m[0;1;35mwarning: [0m[1mcomparison of integers of different signs: 'int' and 'size_type' (aka 'unsigned long') [-Wsign-compare][0m
+        if (i >= embd_inp.size()) {
+[0;1;32m            ~ ^  ~~~~~~~~~~~~~~~
+[0m[1m./ggml.cpp/examples/gpt-j/main.cpp:712:31: [0m[0;1;35mwarning: [0m[1mcomparison of integers of different signs: 'int' and 'size_type' (aka 'unsigned long') [-Wsign-compare][0m
+            for (int k = i; k < embd_inp.size(); k++) {
+[0;1;32m                            ~ ^ ~~~~~~~~~~~~~~~
+[0m[1m./ggml.cpp/examples/gpt-j/main.cpp:714:33: [0m[0;1;35mwarning: [0m[1mcomparison of integers of different signs: 'size_type' (aka 'unsigned long') and 'int32_t' (aka 'int') [-Wsign-compare][0m
+                if (embd.size() > params.n_batch) {
+[0;1;32m                    ~~~~~~~~~~~ ^ ~~~~~~~~~~~~~~
+[0m[1mgptj.cpp:36:19: [0m[0;1;35mwarning: [0m[1munused variable 't_main_start_us' [-Wunused-variable][0m
+    const int64_t t_main_start_us = ggml_time_us();
+[0;1;32m                  ^
+[0m[1mgptj.cpp:48:13: [0m[0;1;35mwarning: [0m[1munused variable 't_load_us' [-Wunused-variable][0m
+    int64_t t_load_us = 0;
+[0;1;32m            ^
+[0m[1mgptj.cpp:52:13: [0m[0;1;35mwarning: [0m[1mvariable 't_sample_us' set but not used [-Wunused-but-set-variable][0m
+    int64_t t_sample_us  = 0;
+[0;1;32m            ^
+[0m[1mgptj.cpp:53:13: [0m[0;1;35mwarning: [0m[1mvariable 't_predict_us' set but not used [-Wunused-but-set-variable][0m
+    int64_t t_predict_us = 0;
+[0;1;32m            ^
+[0m[1mgptj.cpp:72:33: [0m[0;1;35mwarning: [0m[1mcomparison of integers of different signs: 'int' and 'size_type' (aka 'unsigned long') [-Wsign-compare][0m
+    for (int i = embd.size(); i < embd_inp.size() + params.n_predict; i++) {
+[0;1;32m                              ~ ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[0m[1mgptj.cpp:88:15: [0m[0;1;35mwarning: [0m[1mcomparison of integers of different signs: 'int' and 'size_type' (aka 'unsigned long') [-Wsign-compare][0m
+        if (i >= embd_inp.size()) {
+[0;1;32m            ~ ^  ~~~~~~~~~~~~~~~
+[0m[1mgptj.cpp:110:31: [0m[0;1;35mwarning: [0m[1mcomparison of integers of different signs: 'int' and 'size_type' (aka 'unsigned long') [-Wsign-compare][0m
+            for (int k = i; k < embd_inp.size(); k++) {
+[0;1;32m                            ~ ^ ~~~~~~~~~~~~~~~
+[0m[1mgptj.cpp:112:33: [0m[0;1;35mwarning: [0m[1mcomparison of integers of different signs: 'size_type' (aka 'unsigned long') and 'int32_t' (aka 'int') [-Wsign-compare][0m
+                if (embd.size() > params.n_batch) {
+[0;1;32m                    ~~~~~~~~~~~ ^ ~~~~~~~~~~~~~~
+[0m12 warnings generated.
+clang++ -I. -I./ggml.cpp/include -I./ggml.cpp/include/ggml/ -I./ggml.cpp/examples/ -O3 -DNDEBUG -std=c++17 -fPIC -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wno-multichar -pthread mpt.cpp -o mpt.o -c -framework Accelerate
+clang-16: [0;1;35mwarning: [0m[1m-framework Accelerate: 'linker' input unused [-Wunused-command-line-argument][0m
+In file included from mpt.cpp:19:
+[1m./ggml.cpp/examples/mpt/main.cpp:246:31: [0m[0;1;35mwarning: [0m[1mcomparison of integers of different signs: 'int' and 'size_type' (aka 'unsigned long') [-Wsign-compare][0m
+            for (int w = 0; w < word_multibytes.size(); w++) {
+[0;1;32m                            ~ ^ ~~~~~~~~~~~~~~~~~~~~~~
+[0m[1mmpt.cpp:37:19: [0m[0;1;35mwarning: [0m[1munused variable 't_main_start_us' [-Wunused-variable][0m
+    const int64_t t_main_start_us = ggml_time_us();
+[0;1;32m                  ^
+[0m[1mmpt.cpp:49:13: [0m[0;1;35mwarning: [0m[1munused variable 't_load_us' [-Wunused-variable][0m
+    int64_t t_load_us = 0;
+[0;1;32m            ^
+[0m[1mmpt.cpp:52:13: [0m[0;1;35mwarning: [0m[1mvariable 't_sample_us' set but not used [-Wunused-but-set-variable][0m
+    int64_t t_sample_us  = 0;
+[0;1;32m            ^
+[0m[1mmpt.cpp:53:13: [0m[0;1;35mwarning: [0m[1mvariable 't_predict_us' set but not used [-Wunused-but-set-variable][0m
+    int64_t t_predict_us = 0;
+[0;1;32m            ^
+[0m5 warnings generated.
+mkdir build
+cd build && cmake ../ggml.cpp  && make VERBOSE=1 ggml && cp -rf src/CMakeFiles/ggml.dir/ggml.c.o ../ggml.o
+[0mCMake Deprecation Warning at CMakeLists.txt:1 (cmake_minimum_required):
+  Compatibility with CMake < 3.5 will be removed from a future version of
+  CMake.
+
+  Update the VERSION argument <min> value or use a ...<max> suffix to tell
+  CMake that the project does not need compatibility with older versions.
+
+[0m
+-- The C compiler identification is Clang 16.0.6
+-- The CXX compiler identification is Clang 16.0.6
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /nix/store/2k44jw0kwqnymimzfwq1p53s59rvbvzr-clang-wrapper-16.0.6/bin/clang - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /nix/store/2k44jw0kwqnymimzfwq1p53s59rvbvzr-clang-wrapper-16.0.6/bin/clang++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Could NOT find Git (missing: GIT_EXECUTABLE)
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+-- Found Threads: TRUE
+-- CMAKE_SYSTEM_PROCESSOR: arm64
+-- ARM detected
+-- Accelerate framework found
+-- ARM detected
+-- Accelerate framework found
+-- Configuring done (1.4s)
+-- Generating done (0.1s)
+-- Build files have been written to: /tmp/nix-build-local-ai-2.6.1.drv-0/source/sources/go-ggml-transformers/build
+make[2]: Entering directory '/private/tmp/nix-build-local-ai-2.6.1.drv-0/source/sources/go-ggml-transformers/build'
+/nix/store/slgfvfhi4nbdms9h7p13rp998ls191az-cmake-3.27.8/bin/cmake -S/tmp/nix-build-local-ai-2.6.1.drv-0/source/sources/go-ggml-transformers/ggml.cpp -B/tmp/nix-build-local-ai-2.6.1.drv-0/source/sources/go-ggml-transformers/build --check-build-system CMakeFiles/Makefile.cmake 0
+make  -f CMakeFiles/Makefile2 ggml
+make[3]: Entering directory '/private/tmp/nix-build-local-ai-2.6.1.drv-0/source/sources/go-ggml-transformers/build'
+/nix/store/slgfvfhi4nbdms9h7p13rp998ls191az-cmake-3.27.8/bin/cmake -S/tmp/nix-build-local-ai-2.6.1.drv-0/source/sources/go-ggml-transformers/ggml.cpp -B/tmp/nix-build-local-ai-2.6.1.drv-0/source/sources/go-ggml-transformers/build --check-build-system CMakeFiles/Makefile.cmake 0
+/nix/store/slgfvfhi4nbdms9h7p13rp998ls191az-cmake-3.27.8/bin/cmake -E cmake_progress_start /tmp/nix-build-local-ai-2.6.1.drv-0/source/sources/go-ggml-transformers/build/CMakeFiles 2
+make  -f CMakeFiles/Makefile2 src/CMakeFiles/ggml.dir/all
+make[4]: Entering directory '/private/tmp/nix-build-local-ai-2.6.1.drv-0/source/sources/go-ggml-transformers/build'
+make  -f src/CMakeFiles/ggml.dir/build.make src/CMakeFiles/ggml.dir/depend
+make[5]: Entering directory '/private/tmp/nix-build-local-ai-2.6.1.drv-0/source/sources/go-ggml-transformers/build'
+cd /tmp/nix-build-local-ai-2.6.1.drv-0/source/sources/go-ggml-transformers/build && /nix/store/slgfvfhi4nbdms9h7p13rp998ls191az-cmake-3.27.8/bin/cmake -E cmake_depends "Unix Makefiles" /tmp/nix-build-local-ai-2.6.1.drv-0/source/sources/go-ggml-transformers/ggml.cpp /tmp/nix-build-local-ai-2.6.1.drv-0/source/sources/go-ggml-transformers/ggml.cpp/src /tmp/nix-build-local-ai-2.6.1.drv-0/source/sources/go-ggml-transformers/build /tmp/nix-build-local-ai-2.6.1.drv-0/source/sources/go-ggml-transformers/build/src /tmp/nix-build-local-ai-2.6.1.drv-0/source/sources/go-ggml-transformers/build/src/CMakeFiles/ggml.dir/DependInfo.cmake "--color="
+make[5]: Leaving directory '/private/tmp/nix-build-local-ai-2.6.1.drv-0/source/sources/go-ggml-transformers/build'
+make  -f src/CMakeFiles/ggml.dir/build.make src/CMakeFiles/ggml.dir/build
+make[5]: Entering directory '/private/tmp/nix-build-local-ai-2.6.1.drv-0/source/sources/go-ggml-transformers/build'
+[ 50%] [32mBuilding C object src/CMakeFiles/ggml.dir/ggml.c.o[0m
+cd /tmp/nix-build-local-ai-2.6.1.drv-0/source/sources/go-ggml-transformers/build/src && /nix/store/2k44jw0kwqnymimzfwq1p53s59rvbvzr-clang-wrapper-16.0.6/bin/clang -DGGML_USE_ACCELERATE -I/tmp/nix-build-local-ai-2.6.1.drv-0/source/sources/go-ggml-transformers/ggml.cpp/src/. -I/tmp/nix-build-local-ai-2.6.1.drv-0/source/sources/go-ggml-transformers/ggml.cpp/src/../include -I/tmp/nix-build-local-ai-2.6.1.drv-0/source/sources/go-ggml-transformers/ggml.cpp/src/../include/ggml -Wall                                       -Wextra                                     -Wpedantic                                  -Wshadow                                    -Wcast-qual                                 -Wstrict-prototypes                         -Wpointer-arith                             -Wdouble-promotion                          -Wno-unused-function                     -Werror=vla -O3 -DNDEBUG -std=gnu11 -MD -MT src/CMakeFiles/ggml.dir/ggml.c.o -MF CMakeFiles/ggml.dir/ggml.c.o.d -o CMakeFiles/ggml.dir/ggml.c.o -c /tmp/nix-build-local-ai-2.6.1.drv-0/source/sources/go-ggml-transformers/ggml.cpp/src/ggml.c
+[1m/tmp/nix-build-local-ai-2.6.1.drv-0/source/sources/go-ggml-transformers/ggml.cpp/src/ggml.c:227:10: [0m[0;1;31mfatal error: [0m[1m'Accelerate/Accelerate.h' file not found[0m
+#include <Accelerate/Accelerate.h>
+[0;1;32m         ^~~~~~~~~~~~~~~~~~~~~~~~~
+[0m1 error generated.
+make[5]: *** [src/CMakeFiles/ggml.dir/build.make:76: src/CMakeFiles/ggml.dir/ggml.c.o] Error 1
+make[5]: Leaving directory '/private/tmp/nix-build-local-ai-2.6.1.drv-0/source/sources/go-ggml-transformers/build'
+make[4]: *** [CMakeFiles/Makefile2:343: src/CMakeFiles/ggml.dir/all] Error 2
+make[4]: Leaving directory '/private/tmp/nix-build-local-ai-2.6.1.drv-0/source/sources/go-ggml-transformers/build'
+make[3]: *** [CMakeFiles/Makefile2:350: src/CMakeFiles/ggml.dir/rule] Error 2
+make[3]: Leaving directory '/private/tmp/nix-build-local-ai-2.6.1.drv-0/source/sources/go-ggml-transformers/build'
+make[2]: *** [Makefile:179: ggml] Error 2
+make[2]: Leaving directory '/private/tmp/nix-build-local-ai-2.6.1.drv-0/source/sources/go-ggml-transformers/build'
+make[1]: *** [Makefile:150: ggml.o] Error 2
+make[1]: Leaving directory '/private/tmp/nix-build-local-ai-2.6.1.drv-0/source/sources/go-ggml-transformers'
+make: *** [Makefile:226: sources/go-ggml-transformers/libtransformers.a] Error 2
+#+end_example
+
+Notably:
+
+#+begin_example
+[1m/tmp/nix-build-local-ai-2.6.1.drv-0/source/sources/go-ggml-transformers/ggml.cpp/src/ggml.c:227:10: [0m[0;1;31mfatal error: [0m[1m'Accelerate/Accelerate.h' file not found[0m
+#include <Accelerate/Accelerate.h>
+[0;1;32m         ^~~~~~~~~~~~~~~~~~~~~~~~~
+#+end_example
+
+This is something I've seen from earlier fiddling - it's missing the
+=Accelerate= Apple framework headers.  I thought my earlier addition to
+=nativeBuildInputs= covered this.  This is the relevant snippet from that:
+
+#+begin_src nix :results none
+  nativeBuildInputs = [
+    ncurses
+    cmake
+    makeWrapper
+  ]
+  ++ lib.optional (buildType == "openblas") pkg-config
+  ++ lib.optional (buildType == "cublas") cudaPackages.cuda_nvcc
+  ++ lib.optional (stdenv.isDarwin)
+    (with darwin.apple_sdk.frameworks; [
+      Accelerate
+      CoreFoundation
+      MetalKit
+      MetalPerformanceShaders
+      Security
+    ])
+  ;
+#+end_src
+
+Maybe something weird is going on with =stdenv.isDarwin=.  I'll do what I've
+done with =flake.nix= itself: Just remove the conditional/smart parts.  Those
+can go back in once I have something functional.
+
+That then becomes this:
+
+#+begin_src nix :results none
+  nativeBuildInputs = [
+    ncurses
+    cmake
+    makeWrapper
+  ]
+    ++ (with darwin.apple_sdk.frameworks; [
+      Accelerate
+      CoreFoundation
+      MetalKit
+      MetalPerformanceShaders
+      Security
+    ])
+  ++ lib.optional (buildType == "openblas") pkg-config
+  ++ lib.optional (buildType == "cublas") cudaPackages.cuda_nvcc
+  ;
+#+end_src
+
+I get the same error in the same location.  Okay - is =nativeBuildInputs= not
+the right place to put this?  I figure that since they are headers for natively
+built libraries, they must be... native?  Let's just put it in =buildInputs=
+instead.
+
+#+begin_src nix :results none
+  buildInputs = [
+    abseil-cpp
+    protobuf
+    grpc
+    openssl
+  ]
+    ++ (with darwin.apple_sdk.frameworks; [
+      Accelerate
+      CoreFoundation
+      MetalKit
+      MetalPerformanceShaders
+      Security
+    ])
+  ++ lib.optional (buildType == "cublas") cudaPackages.cudatoolkit
+  ++ lib.optional (buildType == "openblas") openblas.dev
+  ;
+#+end_src
+
+But still no joy.
+
+#+begin_example
+ar src libtransformers.a replit.o gptj.o mpt.o gptneox.o starcoder.o gpt2.o dolly.o  falcon.o  ggml.o common-ggml.o common.o
+make[1]: Leaving directory '/private/tmp/nix-build-local-ai-2.6.1.drv-0/source/sources/go-ggml-transformers'
+make: git: No such file or directory
+CGO_LDFLAGS="-lcblas -framework Accelerate" C_INCLUDE_PATH=/private/tmp/nix-build-local-ai-2.6.1.drv-0/source/sources/go-ggml-transformers LIBRARY_PATH=/private/tmp/nix-build-local-ai-2.6.1.drv-0/source/sources/go-ggml-transformers \
+go build -ldflags "-X "github.com/go-skynet/LocalAI/internal.Version=v2.6.1" -X "github.com/go-skynet/LocalAI/internal.Commit="" -tags "" -o backend-assets/grpc/falcon-ggml ./backend/go/llm/falcon-ggml/
+# github.com/go-skynet/go-ggml-transformers.cpp
+replit.cpp:65:50: warning: format specifies type 'int' but the argument has type 'value_type' (aka 'unsigned long') [-Wformat]
+# github.com/go-skynet/LocalAI/backend/go/llm/falcon-ggml
+/nix/store/z6p2j8shdwi74kbm86jwdh03vxq91l0q-go-1.21.5/share/go/pkg/tool/darwin_arm64/link: running clang++ failed: exit status 1
+ld: library not found for -lcblas
+clang-16: error: linker command failed with exit code 1 (use -v to see invocation)
+#+end_example
+
+I think the =git: No such file or directory= is an ignorable error.  This is
+mostly because the build process proceeds.  See the =go build= that comes
+afterwards for evidence of that.
+
+The notable part is:
+
+#+begin_example
+ld: library not found for -lcblas
+#+end_example
+
+=cblas=, =cublas=, or =openblas= (whatever it is really called) is missing.  I
+recall the =optional= sections in the =buildInputs= and =nativeBuildInputs=
+alike had this:
+
+#+begin_src nix :results none
+# buildInputs
+  ++ lib.optional (buildType == "cublas") cudaPackages.cudatoolkit
+  ++ lib.optional (buildType == "openblas") openblas.dev
+# nativeBuildInputs
+  ++ lib.optional (buildType == "openblas") pkg-config
+  ++ lib.optional (buildType == "cublas") cudaPackages.cuda_nvcc
+#+end_src
+
+=buildType= is a parameter for the derivation, but I don't know how to set it.
+The original code I yanked this from has this in its =overlay.nix=:
+
+#+begin_src nix :results none
+    local-ai = callPackage ./local-ai { };
+    local-ai-cublas = callPackage ./local-ai { buildType = "cublas"; };
+    local-ai-openblas = callPackage ./local-ai { buildType = "openblas"; };
+#+end_src
+
+But as we found out earlier, =callPackage= has some magic that makes it pull
+variables from, well, anywhere maybe?
+
+From checking =man nix build=, I see there is an =--arg= and =--attr= that looks
+promising.  I could also just use three different packages (perhaps even one
+additional one for =metal= which is for Apple systems (something I ran into when
+poking around the =Makefiles= earlier).  Let's try just making more packages.
+In some ways it offends my sense ergonomics to just have more things instead of
+properly parameterizing them, but then again something must be chosen at some
+point.  I wish it were more automatic, but I don't understand the nature of the
+=cblas= stuff enough to make a decision there.
+
+So now in my =flake.nix= I have:
+
+#+begin_src nix :results none
+      packages.aarch64-darwin.default = pkgs.callPackage ./derivation.nix  {};
+      packages.aarch64-darwin.local-ai = pkgs.callPackage ./derivation.nix { };
+      packages.aarch64-darwin.local-ai-cublas = pkgs.callPackage
+        ./derivation.nix { buildType = "cublas"; };
+      packages.aarch64-darwin.local-ai-openblas = pkgs.callPackage
+        ./derivation.nix { buildType = "openblas"; };
+      packages.aarch64-darwin.local-ai-metal = pkgs.callPackage
+        ./derivation.nix { buildType = "metal"; };
+#+end_src
+
+As an aside, I noticed the original code just imports =./local-ai= instead of
+=./local-ai.nix= but it could also be =./local-ai/default.nix= (which it is in
+this case).  I really like that Node.js does this, and seeing Nix do it too is
+displeasing to me.  I'd really rather just avoid confusion, and I'm especially
+disliking of short-hand that adds confusion or "one more thing to remember"
+which I will definitely forget when I'm maintaining infrastructure with Nix 10
+years later and something newer and shiner has come out to grab all of my
+attention.  There's a lot of language cruft in my head, and it's difficult to
+track it all.  Adding a =.nix= won't give anyone carpal tunnel.
+
+So now I do:
+
+#+begin_src sh :results none :exports code
+nix run '.#local-ai-metal'
+#+end_src
+
+And I have the same error as before.  I don't think =buildType= supports =metal=
+in the derivation yet.
+
+The =wrapProgram= section in =postFixup= has references to =cublas= and
+=openblas= that I haven't covered for =metal= yet.  I don't know what the
+library path should be.  With some fancy searching, I found the [[https://github.com/NixOS/nixpkgs/blob/7ba3caea70556bb6691f0ed0792c2ac89393018b/pkgs/applications/editors/neovim/neovide/default.nix#L86-L102][neovim nix
+package]] has this:
+
+#+begin_src nix :results none
+  postFixup = let
+    libPath = lib.makeLibraryPath ([
+      libglvnd
+      libxkbcommon
+      xorg.libXcursor
+      xorg.libXext
+      xorg.libXrandr
+      xorg.libXi
+    ] ++ lib.optionals enableWayland [ wayland ]);
+  in ''
+      # library skia embeds the path to its sources
+      remove-references-to -t "$SKIA_SOURCE_DIR" \
+        $out/bin/neovide
+
+      wrapProgram $out/bin/neovide \
+        --prefix LD_LIBRARY_PATH : ${libPath}
+    '';
+#+end_src
+
+So some combination of =makeLibraryPath= seems like the way to go.  This is what
+I have adapted:
+
+#+begin_src nix :results none
+  postFixup = let
+    lib-path = lib.makeLibraryPath ([
+      abseil-cpp
+      protobuf
+      grpc
+      openssl
+    ] ++ lib.optional (buildType == "metal")
+      (with darwin.apple_sdk.frameworks; [
+        Accelerate
+        CoreFoundation
+        MetalKit
+        MetalPerformanceShaders
+        Security
+      ])
+    )
+    ;
+  in lib.optionalString (buildType == "cublas") ''
+    wrapProgram $out/bin/${pname} \
+      --prefix LD_LIBRARY_PATH : "${cudaPackages.libcublas}/lib:${cudaPackages.cuda_cudart}/lib:/run/opengl-driver/lib"
+  ''
+  + lib.optionalString (buildType == "metal") ''
+    wrapProgram $out/bin/${pname} \
+      --prefix LD_LIBRARY_PATH : "${lib-path}"
+  ''
+  + lib.optionalString (buildType == "openblas") ''
+    wrapProgram $out/bin/${pname} \
+      --prefix LD_LIBRARY_PATH : "${openblas}/lib"
+  ''
+  ;
+#+end_src
+
+Another aside: Note the trailing =;= which I see a lot of Nix authors doing, and
+I've done in some of my independent code that requires =;= as a "full stop" in
+many languages.  The =;= is generally useless in my opinion, and only serves as
+noise in the commit history.  It becomes more difficult to do a =git blame= when
+unrelated lines are updated from a commit just because it had to move a
+delimiter or hard-stop.
+
+I ran into:
+
+#+begin_example
+          197|   # raises an segmentation fault
+          198|   postFixup = let
+             |   ^
+          199|     lib-path = lib.makeLibraryPath ([
+
+       error: cannot coerce a list to a string
+#+end_example
+
+Is that from... =makeLibraryPath=?  I'll just take it out.
+
+That leaves me with:
+
+#+begin_src nix :results none
+  postFixup = let
+    # lib-path = lib.makeLibraryPath ([
+    # ] ++ lib.optional (buildType == "metal")
+    #   (with darwin.apple_sdk.frameworks; [
+    #     Accelerate
+    #     CoreFoundation
+    #     MetalKit
+    #     MetalPerformanceShaders
+    #     Security
+    #   ])
+    # )
+    # ;
+  in lib.optionalString (buildType == "cublas") ''
+    wrapProgram $out/bin/${pname} \
+      --prefix LD_LIBRARY_PATH : "${cudaPackages.libcublas}/lib:${cudaPackages.cuda_cudart}/lib:/run/opengl-driver/lib"
+  ''
+  + lib.optionalString (buildType == "metal") ''
+    wrapProgram $out/bin/${pname}
+  ''
+  + lib.optionalString (buildType == "openblas") ''
+    wrapProgram $out/bin/${pname} \
+      --prefix LD_LIBRARY_PATH : "${openblas}/lib"
+  ''
+  ;
+#+end_src
+
+And the error persists, which is not surprising.  I did find an issue where
+[[https://github.com/mudler/LocalAI/issues/1560#issuecomment-1890859859][other frameworks are mentioned]].  Those should be added to the list.  I've copied
+this list around for a while.  It's going into a variable now, at the top of the
+derivation.
+
+#+begin_src nix :results none
+  darwin-frameworks = (with darwin.apple_sdk.frameworks; [
+    Accelerate
+    CoreFoundation
+    CoreML
+    MetalKit
+    MetalPerformanceShaders
+    Security
+  ]);
+#+end_src
+
+Here's the whole file, with modifications to use the new framework:
+
+#+begin_src nix :results none
+{ stdenv
+, darwin
+, lib
+, fetchFromGitHub
+, ncurses
+, abseil-cpp
+, protobuf
+, grpc
+, openssl
+, openblas
+, cmake
+, buildGoModule
+, pkg-config
+, cudaPackages
+, makeWrapper
+, runCommand
+, buildType ? ""
+}:
+let
+  go-llama = fetchFromGitHub {
+    owner = "go-skynet";
+    repo = "go-llama.cpp";
+    rev = "aeba71ee842819da681ea537e78846dc75949ac0";
+    hash = "sha256-ELoaJg7wOHloQws+do6TZUo7zOxUP0E85v80BlpUOJA=";
+    fetchSubmodules = true;
+  };
+
+  go-llama-ggml = fetchFromGitHub {
+    owner = "go-skynet";
+    repo = "go-llama.cpp";
+    rev = "50cee7712066d9e38306eccadcfbb44ea87df4b7";
+    hash = "sha256-5qwUSg56fyHk5x8NgwLrgl+9Ibl2GTBP1Aq5sAvTs+s=";
+    fetchSubmodules = true;
+  };
+
+  llama_cpp = fetchFromGitHub {
+    owner = "ggerganov";
+    repo = "llama.cpp";
+    rev = "6f9939d119b2d004c264952eb510bd106455531e";
+    hash = "sha256-TfSD+ZR8TR6xhfOjMfpvcfQXCRhRnvzcNXQOYaaWzVU=";
+    fetchSubmodules = true;
+  };
+
+  llama_cpp' = runCommand "llama_cpp_src" { } ''
+    cp -r --no-preserve=mode,ownership ${llama_cpp} $out
+    sed -i $out/CMakeLists.txt \
+      -e 's;pkg_check_modules(DepBLAS REQUIRED openblas);pkg_check_modules(DepBLAS REQUIRED openblas64);'
+  '';
+
+  go-ggml-transformers = fetchFromGitHub {
+    owner = "go-skynet";
+    repo = "go-ggml-transformers.cpp";
+    rev = "ffb09d7dd71e2cbc6c5d7d05357d230eea6f369a";
+    hash = "sha256-WdCj6cfs98HvG3jnA6CWsOtACjMkhSmrKw9weHkLQQ4=";
+    fetchSubmodules = true;
+  };
+
+  gpt4all = fetchFromGitHub {
+    owner = "nomic-ai";
+    repo = "gpt4all";
+    rev = "27a8b020c36b0df8f8b82a252d261cda47cf44b8";
+    hash = "sha256-djq1eK6ncvhkO3MNDgasDBUY/7WWcmZt/GJsHAulLdI=";
+    fetchSubmodules = true;
+  };
+
+  go-piper = fetchFromGitHub {
+    owner = "mudler";
+    repo = "go-piper";
+    rev = "d6b6275ba037dabdba4a8b65dfdf6b2a73a67f07";
+    hash = "sha256-p589giBsEPsoR+RQU7qfGfpfqpTdBI51lvnLs4DmE0Y=";
+    fetchSubmodules = true;
+  };
+
+  go-rwkv = fetchFromGitHub {
+    owner = "donomii";
+    repo = "go-rwkv.cpp";
+    rev = "633c5a3485c403cb2520693dc0991a25dace9f0f";
+    hash = "sha256-BECmBLbtAh5pdZZz0NBLbt+BX2TaC2NjHYwSEEAFPlI=";
+    fetchSubmodules = true;
+  };
+
+  whisper = fetchFromGitHub {
+    owner = "ggerganov";
+    repo = "whisper.cpp";
+    rev = "9286d3f584240ba58bd44a1bd1e85141579c78d4";
+    hash = "sha256-hLPtfJVYiopnSdDqu9n/k9Avb4ibgbjmrVr81BTWW/w=";
+    fetchSubmodules = true;
+  };
+
+  go-bert = fetchFromGitHub {
+    owner = "go-skynet";
+    repo = "go-bert.cpp";
+    rev = "6abe312cded14042f6b7c3cd8edf082713334a4d";
+    hash = "sha256-lh9cvXc032Eq31kysxFOkRd0zPjsCznRl0tzg9P2ygo=";
+    fetchSubmodules = true;
+  };
+
+  go-stable-diffusion = fetchFromGitHub {
+    owner = "mudler";
+    repo = "go-stable-diffusion";
+    rev = "902db5f066fd137697e3b69d0fa10d4782bd2c2f";
+    hash = "sha256-MbVYeWQF/aJNsg2NpTMVx5tD31BK5pQ8Zg92uoWRkcU=";
+    fetchSubmodules = true;
+  };
+
+  go-tiny-dream = fetchFromGitHub {
+    owner = "M0Rf30";
+    repo = "go-tiny-dream";
+    rev = "772a9c0d9aaf768290e63cca3c904fe69faf677a";
+    hash = "sha256-r+wzFIjaI6cxAm/eXN3q8LRZZz+lE5EA4lCTk5+ZnIY=";
+    fetchSubmodules = true;
+  };
+  darwin-frameworks = (with darwin.apple_sdk.frameworks; [
+    Accelerate
+    CoreFoundation
+    CoreML
+    MetalKit
+    MetalPerformanceShaders
+    Security
+  ]);
+in
+buildGoModule rec {
+  pname = "local-ai";
+  version = "2.6.1";
+
+  src = fetchFromGitHub {
+    owner = "go-skynet";
+    repo = "LocalAI";
+    rev = "v${version}";
+    hash = "sha256-xGbrNbHQpl9Tdh5w+Csx7mhkMDBF8JgGtIVvgOu0XWs=";
+  };
+
+  vendorHash = "sha256-WUgDyRzShftJ15yumlvcSN0rUx8ytQPQGAO37AxMHeA=";
+
+  # Workaround for
+  # `cc1plus: error: '-Wformat-security' ignored without '-Wformat' [-Werror=format-security]`
+  # when building jtreg
+  env.NIX_CFLAGS_COMPILE = "-Wformat";
+
+  postPatch =
+    let
+      cp = "cp -r --no-preserve=mode,ownership";
+    in
+    ''
+      sed -i Makefile \
+        -e 's;git clone.*go-llama$;${cp} ${go-llama} sources/go-llama;' \
+        -e 's;git clone.*go-llama-ggml$;${cp} ${go-llama-ggml} sources/go-llama-ggml;' \
+        -e 's;git clone.*go-ggml-transformers$;${cp} ${go-ggml-transformers} sources/go-ggml-transformers;' \
+        -e 's;git clone.*gpt4all$;${cp} ${gpt4all} sources/gpt4all;' \
+        -e 's;git clone.*go-piper$;${cp} ${go-piper} sources/go-piper;' \
+        -e 's;git clone.*go-rwkv$;${cp} ${go-rwkv} sources/go-rwkv;' \
+        -e 's;git clone.*whisper\.cpp$;${cp} ${whisper} sources/whisper\.cpp;' \
+        -e 's;git clone.*go-bert$;${cp} ${go-bert} sources/go-bert;' \
+        -e 's;git clone.*diffusion$;${cp} ${go-stable-diffusion} sources/go-stable-diffusion;' \
+        -e 's;git clone.*go-tiny-dream$;${cp} ${go-tiny-dream} sources/go-tiny-dream;' \
+        -e 's, && git checkout.*,,g' \
+        -e '/mod download/ d' \
+
+      sed -i backend/cpp/llama/Makefile \
+        -e 's;git clone.*llama\.cpp$;${cp} ${llama_cpp'} llama\.cpp;' \
+        -e 's, && git checkout.*,,g' \
+
+    ''
+  ;
+
+  modBuildPhase = ''
+    mkdir sources
+    make prepare-sources
+    go mod tidy -v
+  '';
+
+  proxyVendor = true;
+
+  buildPhase = ''
+    mkdir sources
+    make \
+      VERSION=v${version} \
+      BUILD_TYPE=${buildType} \
+      build
+  '';
+
+  installPhase = ''
+    install -Dt $out/bin ${pname}
+  '';
+
+  buildInputs = [
+    abseil-cpp
+    protobuf
+    grpc
+    openssl
+  ]
+  ++ lib.optional (buildType == "cublas") cudaPackages.cudatoolkit
+  ++ lib.optional (buildType == "metal") darwin-frameworks
+  ++ lib.optional (buildType == "openblas") openblas.dev
+  ;
+
+  # patching rpath with patchelf doens't work. The execuable
+  # raises an segmentation fault
+  postFixup = let
+    # lib-path = lib.makeLibraryPath ([
+    # ] ++ lib.optional (buildType == "metal") darwin-frameworks
+    # )
+    # ;
+  in lib.optionalString (buildType == "cublas") ''
+    wrapProgram $out/bin/${pname} \
+      --prefix LD_LIBRARY_PATH : "${cudaPackages.libcublas}/lib:${cudaPackages.cuda_cudart}/lib:/run/opengl-driver/lib"
+  ''
+  + lib.optionalString (buildType == "metal") ''
+    wrapProgram $out/bin/${pname}
+  ''
+  + lib.optionalString (buildType == "openblas") ''
+    wrapProgram $out/bin/${pname} \
+      --prefix LD_LIBRARY_PATH : "${openblas}/lib"
+  ''
+  ;
+
+  nativeBuildInputs = [
+    ncurses
+    cmake
+    makeWrapper
+  ]
+  ++ lib.optional (buildType == "openblas") pkg-config
+  ++ lib.optional (buildType == "metal") darwin-frameworks
+  ++ lib.optional (buildType == "cublas") cudaPackages.cuda_nvcc
+  ;
+}
+#+end_src
+
+The only material change is that I've added the =CoreML= framework, which stands
+a chance of standing in for the =cblas= stuff.
+
+Another run produces the same error once again.  Okay, how do I get this =cblas=
+thing setup, or do I need to take it out somewhere?
+
+From that same issue, I see a [[https://github.com/mudler/LocalAI/issues/1560#issuecomment-1912502699][comment]] mentioning that =falcon-ggml= is
+deprecated and there are means to [[https://localai.io/basics/build/#build-only-a-single-backend][exclude]] that "backend" from the build, or at
+least only build the ones I want.  I can't find mention of =falcon-ggml= in the
+derivation, but from reading the [[https://github.com/mudler/LocalAI/issues/1126][linked issue]], I can find that the thing being
+deprecated is =go-llama= and I guess =falcon-ggml= goes along for the ride.  I
+don't really know what happens if I start pulling out these "backends" but I
+guess a build is better than nothing.  I'll just prune one at a time until I get
+what I want.  Excluding them is done via building up the list of backends (if
+explicitly declared) is by setting the =GRPC_BACKENDS= environment variable when
+running =make build=.  I found an [[https://github.com/mudler/LocalAI/blob/16cebf0390927929380961cbbd8397d1c8008afd/Dockerfile#L16][example]] which shows that backends are
+separated by commas, and the name and path are separated by a colon.   For now,
+I will manually build this.
+
+I get this new =buildPhase=:
+
+#+begin_src nix :results none
+  buildPhase = ''
+    mkdir sources
+    make \
+      VERSION=v${version} \
+      BUILD_TYPE=${buildType} \
+      GRPC_BACKENDS="\
+go-llama-ggml:${go-llama-ggml},\
+go-ggml-transformers:${go-ggml-transformers},\
+llama_cpp:${llama_cpp},\
+gpt4all:${gpt4all},\
+go-piper:${go-piper},\
+go-rwkv:${go-rwkv},\
+whisper:${whisper},\
+go-bert:${go-bert},\
+go-stable-diffusion:${go-stable-diffusion},\
+go-tiny-dream:${go-tiny-dream}\
+" \
+      build
+  '';
+#+end_src
+
+The references come from =fetchFromGitHub= in the =let...in=, but also
+=postPatch= uses those references as paths like this:
+
+#+begin_src nix :results none
+  postPatch =
+    let
+      cp = "cp -r --no-preserve=mode,ownership";
+    in
+    ''
+      sed -i Makefile \
+        -e 's;git clone.*go-llama-ggml$;${cp} ${go-llama-ggml} sources/go-llama-ggml;' \
+        -e 's;git clone.*go-ggml-transformers$;${cp} ${go-ggml-transformers} sources/go-ggml-transformers;' \
+        # ad nauseam
+    ''
+      ;
+#+end_src
+
+Now I get:
+
+#+begin_example
+error: builder for '/nix/store/3pnry3hcgmaznhv0w9s280nhjk0g0bnd-local-ai-2.6.1.drv' failed with exit code 2;
+       last 9 log lines:
+       > Running phase: unpackPhase
+       > unpacking source archive /nix/store/karj5hshnspfjr59mijbd7mjpiph523n-source
+       > source root is source
+       > Running phase: patchPhase
+       > Running phase: updateAutotoolsGnuConfigScriptsPhase
+       > Running phase: configurePhase
+       > Running phase: buildPhase
+       > sh: line 1: security: command not found
+       > Makefile:569: *** multiple target patterns.  Stop.
+       For full logs, run 'nix-store -l /nix/store/3pnry3hcgmaznhv0w9s280nhjk0g0bnd-local-ai-2.6.1.drv'.
+#+end_example
+
+This [[https://github.com/NixOS/nix/issues/705][issue]] shows I should be able to add =darwin.security_tool= as a dependency
+and this should fix it.  However it appears that =darwin.security_tool= no
+longer exists.
+
+#+begin_example
+error:
+       … while calling the 'derivationStrict' builtin
+
+         at /builtin/derivation.nix:9:12: (source not available)
+
+       … while evaluating derivation 'local-ai-2.6.1'
+         whose name attribute is located at /nix/store/11zbgb8j7wnnccbbjcq0q556h28g7p4r-source/pkgs/stdenv/generic/make-derivation.nix:352:7
+
+       … while evaluating attribute 'buildInputs' of derivation 'local-ai-2.6.1'
+
+         at /nix/store/11zbgb8j7wnnccbbjcq0q556h28g7p4r-source/pkgs/stdenv/generic/make-derivation.nix:399:7:
+
+          398|       depsHostHost                = elemAt (elemAt dependencies 1) 0;
+          399|       buildInputs                 = elemAt (elemAt dependencies 1) 1;
+             |       ^
+          400|       depsTargetTarget            = elemAt (elemAt dependencies 2) 0;
+
+       error: attribute 'security_tool' missing
+
+       at /nix/store/g2rgj98w7dkiccynyfar9vbz2mw4h2sm-source/derivation.nix:121:11:
+
+          120|
+          121|   ]) ++ [ darwin.security_tool ];
+             |           ^
+          122| in
+#+end_example
+
+The best I've been able to find about this is [[https://github.com/NixOS/nixpkgs/pull/47676][nixpkgs#47676]] wherein the path is
+hard coded (I think Nix or Flakes is doing things to the path to prevent
+"impure" builds) because =security_tool= was removed due to a problem introduced
+back in macOS Mojave.  I verified it was removed from my instance with the code
+below.  I did have to actually install =nixpkgs= as =nixpkgs= (funny, but it was
+previously installed as =unstable= for me).
+
+#+begin_src shell :results output
+nix eval \
+    --impure \
+    --expr "let pkgs = import <nixpkgs> {}; in pkgs.lib.attrNames pkgs.darwin"
+#+end_src
+
+#+RESULTS:
+: [ "CF" "CarbonHeaders" "CommonCrypto" "CoreSymbolication" "Csu" "DarwinTools" "ICU" "IOKit" "Libc" "Libinfo" "Libm" "Libnotify" "Librpcsvc" "Libsystem" "LibsystemCross" "PowerManagement" "Security" "adv_cmds" "apple_sdk" "apple_sdk_10_12" "apple_sdk_11_0" "architecture" "autoSignDarwinBinariesHook" "basic_cmds" "binutils" "binutils-unwrapped" "binutilsDualAs" "binutilsDualAs-unwrapped" "binutilsNoLibc" "bootstrap_cmds" "bsdmake" "builder" "callPackage" "cctools" "cctools-apple" "cctools-llvm" "cctools-port" "cf-private" "checkReexportsHook" "configd" "configdHeaders" "copyfile" "darwin-stubs" "developer_cmds" "discrete-scroll" "diskdev_cmds" "ditto" "dtrace" "dyld" "eap8021x" "file_cmds" "hfs" "hfsHeaders" "insert_dylib" "ios-deploy" "iosSdkPkgs" "iproute2mac" "launchd" "libauto" "libcharset" "libclosure" "libdispatch" "libiconv" "libmalloc" "libobjc" "libplatform" "libpthread" "libresolv" "libresolvHeaders" "libtapi" "libunwind" "libutil" "libutilHeaders" "linux-builder" "linux-builder-x86_64" "locale" "lsusb" "mDNSResponder" "maloader" "moltenvk" "network_cmds" "newScope" "objc4" "opencflite" "openwith" "override" "overrideDerivation" "overrideScope" "packages" "postLinkSignHook" "ppp" "print-reexports" "ps" "removefile" "rewrite-tbd" "shell_cmds" "signingUtils" "sigtool" "stdenvNoCF" "stubs" "sudo" "swift-corelibs-foundation" "system_cmds" "text_cmds" "top" "trash" "xattr" "xcode" "xcode_10_1" "xcode_10_2" "xcode_10_2_1" "xcode_10_3" "xcode_11" "xcode_11_1" "xcode_11_2" "xcode_11_3_1" "xcode_11_4" "xcode_11_5" "xcode_11_6" "xcode_11_7" "xcode_12" "xcode_12_0_1" "xcode_12_1" "xcode_12_2" "xcode_12_3" "xcode_12_4" "xcode_12_5" "xcode_12_5_1" "xcode_13" "xcode_13_1" "xcode_13_2" "xcode_13_3" "xcode_13_3_1" "xcode_13_4" "xcode_13_4_1" "xcode_14" "xcode_14_1" "xcode_15" "xcode_15_1" "xcode_8_1" "xcode_8_2" "xcode_9_1" "xcode_9_2" "xcode_9_3" "xcode_9_4" "xcode_9_4_1" "xnu" ]
+
+Nary a =security_tool= to be found.  This is good to know in the future though,
+if I want to search for other packages.  It doesn't play nice with =grep=
+though, since it's all on one line.  I'll have to figure that out another day.
+
+While technically this will make the flake part of this
+impure, I don't know that we must mark it as such.  First and foremost I want
+this working as a derivation so I can submit it back to =nixpkgs=.  Then maybe
+smarter people than me can help maintain it.
+
+Let's look at the error again, from =security= not being found:
+
+#+begin_example
+@nix { "action": "setPhase", "phase": "unpackPhase" }
+Running phase: unpackPhase
+unpacking source archive /nix/store/karj5hshnspfjr59mijbd7mjpiph523n-source
+source root is source
+@nix { "action": "setPhase", "phase": "patchPhase" }
+Running phase: patchPhase
+@nix { "action": "setPhase", "phase": "updateAutotoolsGnuConfigScriptsPhase" }
+Running phase: updateAutotoolsGnuConfigScriptsPhase
+@nix { "action": "setPhase", "phase": "configurePhase" }
+Running phase: configurePhase
+@nix { "action": "setPhase", "phase": "buildPhase" }
+Running phase: buildPhase
+sh: line 1: security: command not found
+Makefile:569: *** multiple target patterns.  Stop.
+#+end_example
+
+All I get is that in a =Makefile= on line 569, stuff went bad.  The =Makefile=
+in =LocalAI= doesn't go to line 569 (only 558).  That said, I can find calls to
+=security= in there.  Great!  So all we need to do is use the handy
+=substituteInPlace= I see used in lots of places (and in the ticket where the
+path is hardcoded).  Is it still a hack if it is highly reproducible?  We do
+already have a =postPatch= which uses =sed=, and I'm good with doing that too.
+
+#+begin_src nix :results none
+  postPatch =
+    let
+      cp = "cp -r --no-preserve=mode,ownership";
+    in
+    ''
+      sed -i Makefile \
+        -e 's;git clone.*go-llama-ggml$;${cp} ${go-llama-ggml} sources/go-llama-ggml;' \
+        -e 's;git clone.*go-ggml-transformers$;${cp} ${go-ggml-transformers} sources/go-ggml-transformers;' \
+        -e 's;git clone.*gpt4all$;${cp} ${gpt4all} sources/gpt4all;' \
+        -e 's;git clone.*go-piper$;${cp} ${go-piper} sources/go-piper;' \
+        -e 's;git clone.*go-rwkv$;${cp} ${go-rwkv} sources/go-rwkv;' \
+        -e 's;git clone.*whisper\.cpp$;${cp} ${whisper} sources/whisper\.cpp;' \
+        -e 's;git clone.*go-bert$;${cp} ${go-bert} sources/go-bert;' \
+        -e 's;git clone.*diffusion$;${cp} ${go-stable-diffusion} sources/go-stable-diffusion;' \
+        -e 's;git clone.*go-tiny-dream$;${cp} ${go-tiny-dream} sources/go-tiny-dream;' \
+        -e 's, && git checkout.*,,g' \
+        -e '/mod download/ d' \
+
+      sed -i backend/cpp/llama/Makefile \
+        -e 's;git clone.*llama\.cpp$;${cp} ${llama_cpp'} llama\.cpp;' \
+        -e 's, && git checkout.*,,g' \
+
+    ''
+  ;
+#+end_src
+
+Becomes:
+
+#+begin_src nix :results none
+  postPatch =
+    let
+      cp = "cp -r --no-preserve=mode,ownership";
+    in
+    ''
+      sed -i Makefile \
+        -e 's;security;/usr/bin/security;' \
+        -e 's;git clone.*go-llama-ggml$;${cp} ${go-llama-ggml} sources/go-llama-ggml;' \
+        -e 's;git clone.*go-ggml-transformers$;${cp} ${go-ggml-transformers} sources/go-ggml-transformers;' \
+        -e 's;git clone.*gpt4all$;${cp} ${gpt4all} sources/gpt4all;' \
+        -e 's;git clone.*go-piper$;${cp} ${go-piper} sources/go-piper;' \
+        -e 's;git clone.*go-rwkv$;${cp} ${go-rwkv} sources/go-rwkv;' \
+        -e 's;git clone.*whisper\.cpp$;${cp} ${whisper} sources/whisper\.cpp;' \
+        -e 's;git clone.*go-bert$;${cp} ${go-bert} sources/go-bert;' \
+        -e 's;git clone.*diffusion$;${cp} ${go-stable-diffusion} sources/go-stable-diffusion;' \
+        -e 's;git clone.*go-tiny-dream$;${cp} ${go-tiny-dream} sources/go-tiny-dream;' \
+        -e 's, && git checkout.*,,g' \
+        -e '/mod download/ d' \
+
+      sed -i backend/cpp/llama/Makefile \
+        -e 's;git clone.*llama\.cpp$;${cp} ${llama_cpp'} llama\.cpp;' \
+        -e 's, && git checkout.*,,g' \
+
+    ''
+  ;
+#+end_src
+
+My =security: command not found= error is now gone, but the => Makefile:569: ***
+multiple target patterns.  Stop.= is still present.  I thought was just a
+general notification of an error, but it looks to be its own error.  From some
+reading around, it sounds like this comes up when errant colons or spaces wind
+up in a =Makefile= - =Makefiles= _require_ tabs, because reasons.  I don't think
+I've done anything to introduce spaces.  I do wonder if the colons in the
+=GRPC_BACKENDS= is to blame.  They are in a quoted string, but shell scripts are
+notorious for quoting issues.  Let's try it real quick:
+
+#+begin_src nix :results none
+  buildPhase = ''
+    mkdir sources
+    make \
+      VERSION=v${version} \
+      BUILD_TYPE=${buildType} \
+      GRPC_BACKENDS="\
+${go-llama-ggml},\
+${go-ggml-transformers},\
+${llama_cpp},\
+${gpt4all},\
+${go-piper},\
+${go-rwkv},\
+${whisper},\
+${go-bert},\
+${go-stable-diffusion},\
+${go-tiny-dream}\
+" \
+      build
+  '';
+#+end_src
+
+This gives me:
+
+#+begin_example
+error: builder for '/nix/store/1s2rp5m9vyfd52m9b19xkiyfsqjhl25d-local-ai-2.6.1.drv' failed with exit code 2;
+       last 10 log lines:
+       > make[1]: Entering directory '/private/tmp/nix-build-local-ai-2.6.1.drv-0/source/backend/cpp/llama'
+       > cp -r --no-preserve=mode,ownership /nix/store/02fcbxwp8x4nzlhj9rqvnf7m09kvsxlr-llama_cpp_src llama.cpp
+       > if [ -z "6f9939d119b2d004c264952eb510bd106455531e" ]; then \
+       > 	exit 1; \
+       > fi
+       > cd llama.cpp
+       > make[1]: Leaving directory '/private/tmp/nix-build-local-ai-2.6.1.drv-0/source/backend/cpp/llama'
+       > git clone --recurse-submodules https://github.com/go-skynet/go-llama.cpp sources/go-llama
+       > make: git: No such file or directory
+       > make: *** [Makefile:236: sources/go-llama] Error 127
+       For full logs, run 'nix-store -l /nix/store/1s2rp5m9vyfd52m9b19xkiyfsqjhl25d-local-ai-2.6.1.drv'.
+#+end_example
+
+Which is a new problem on a =Makfile=.  I don't know if this is progress or not.
+But now I know which =Makefile= is having an issue.  Unfortunately, =go-llama=
+is the repository I attempted to remove, and it's being built.  Perhaps my
+=GRPC_BACKENDS= value is being rejected, and instead of producing an error, it
+assumes "everything".  That sounds likely to me.
+
+I found =GRPC_BACKENDS= in the =LocalAI= =Makefile= and it has this:
+
+#+begin_src makefile :results none :exports code
+ALL_GRPC_BACKENDS=backend-assets/grpc/langchain-huggingface backend-assets/grpc/falcon-ggml backend-assets/grpc/bert-embeddings backend-assets/grpc/llama backend-assets/grpc/llama-cpp backend-assets/grpc/llama-ggml backend-assets/grpc/gpt4all backend-assets/grpc/dolly backend-assets/grpc/gpt2 backend-assets/grpc/gptj backend-assets/grpc/gptneox backend-assets/grpc/mpt backend-assets/grpc/replit backend-assets/grpc/starcoder backend-assets/grpc/rwkv backend-assets/grpc/whisper $(OPTIONAL_GRPC)
+GRPC_BACKENDS?=$(ALL_GRPC_BACKENDS) $(OPTIONAL_GRPC)
+#+end_src
+
+Which does _not_ use the colon syntax.  It's space-separated directories.  Let's
+do this:
+
+#+begin_src nix :results none
+  buildPhase = ''
+    mkdir sources
+    make \
+      VERSION=v${version} \
+      BUILD_TYPE=${buildType} \
+      GRPC_BACKENDS='\
+${go-llama-ggml} \
+${go-ggml-transformers} \
+${llama_cpp} \
+${gpt4all} \
+${go-piper} \
+${go-rwkv} \
+${whisper} \
+${go-bert} \
+${go-stable-diffusion} \
+${go-tiny-dream}\
+' \
+      build
+  '';
+#+end_src
+
+Same error as before.  Let's just put the source of =go-llama= back in - maybe
+some preparation expects it to be there whether it's built or not.
+
+Now I get:
+
+#+begin_example
+error: builder for '/nix/store/wa99h3s4kqlfbr8i56hahk025jh9791a-local-ai-2.6.1.drv' failed with exit code 2;
+       last 10 log lines:
+       > go mod edit -replace github.com/ggerganov/whisper.cpp=/private/tmp/nix-build-local-ai-2.6.1.drv-0/source/sources/whisper.cpp
+       > go mod edit -replace github.com/ggerganov/whisper.cpp/bindings/go=/private/tmp/nix-build-local-ai-2.6.1.drv-0/source/sources/whisper.cpp/bindings/go
+       > go mod edit -replace github.com/go-skynet/go-bert.cpp=/private/tmp/nix-build-local-ai-2.6.1.drv-0/source/sources/go-bert
+       > go mod edit -replace github.com/mudler/go-stable-diffusion=/private/tmp/nix-build-local-ai-2.6.1.drv-0/source/sources/go-stable-diffusion
+       > go mod edit -replace github.com/M0Rf30/go-tiny-dream=/private/tmp/nix-build-local-ai-2.6.1.drv-0/source/sources/go-tiny-dream
+       > go mod edit -replace github.com/mudler/go-piper=/private/tmp/nix-build-local-ai-2.6.1.drv-0/source/sources/go-piper
+       > touch prepare-sources
+       > touch prepare
+       > make: *** No rule to make target '\
+       > /nix/store/n4imdq0vr97l1dyj1frmln4rn712bq8m-source', needed by 'grpcs'.  Stop.
+       For full logs, run 'nix-store -l /nix/store/wa99h3s4kqlfbr8i56hahk025jh9791a-local-ai-2.6.1.drv'.
+#+end_example
+
+Which is very likely because I snuck in changing the ="= to ='= in hopes of
+avoiding any sort of shell quoting issues, but then =bash= doesn't like the
+backslash-linebreak pattern in that particular kind of string because reasons.
+I can never keep this stuff straight in my head.
+
+Back to double-quotes:
+
+#+begin_example
+warning: Git tree '/Users/logan/dev/LocalAI' is dirty
+error: builder for '/nix/store/qlrdwmyx59db3nk7blf8v8b00c40sqzw-local-ai-2.6.1.drv' failed with exit code 2;
+       last 10 log lines:
+       > go: downloading go.opentelemetry.io/otel/trace v1.19.0
+       > go: downloading github.com/go-logr/stdr v1.2.2
+       > go: downloading gopkg.in/fsnotify.v1 v1.4.7
+       > go: downloading golang.org/x/net v0.17.0
+       > go: downloading google.golang.org/genproto/googleapis/rpc v0.0.0-20230822172742-b8732ec3820d
+       > go: downloading github.com/shoenig/go-m1cpu v0.1.6
+       > go: downloading github.com/golang/protobuf v1.5.3
+       > go: downloading golang.org/x/text v0.13.0
+       > assets.go:5:12: pattern backend-assets/*: no matching files found
+       > make: *** [Makefile:307: build] Error 1
+       For full logs, run 'nix-store -l /nix/store/qlrdwmyx59db3nk7blf8v8b00c40sqzw-local-ai-2.6.1.drv'.
+#+end_example
+
+I think this might actually be progress.  Just for the hell of it, I created a
+patch from the [[https://github.com/mudler/LocalAI/issues/1560#issuecomment-1890859859][LocalAI#1560]] recommendation (this ticket is getting a lot of
+mileage for me).  A new run produces the same results, so at least I haven't
+made it worse in some observable way yet.  This is how I added it:
+
+#+begin_src nix :results none
+  patches = [
+    ./darwin-coreml.patch
+  ];
+#+end_src
+
+And the patch file:
+
+#+begin_src diff :results none
+diff --git a/Makefile b/Makefile
+index 6afc644..4414eaa 100644
+--- a/Makefile
++++ b/Makefile
+@@ -112,7 +112,7 @@ ifeq ($(BUILD_TYPE),hipblas)
+ endif
+
+ ifeq ($(BUILD_TYPE),metal)
+-	CGO_LDFLAGS+=-framework Foundation -framework Metal -framework MetalKit -framework MetalPerformanceShaders
++	CGO_LDFLAGS+=-framework Foundation -framework Metal -framework MetalKit -framework MetalPerformanceShaders -framework CoreML
+ 	export LLAMA_METAL=1
+ 	export WHISPER_METAL=1
+ endif
+#+end_src
+
+One of the things I don't care for here is that it's not obvious if that patch
+actually got applied correctly.  Like I don't know if the =patches= section got
+evaluated at all.  I can add this to my derivation:
+
+#+begin_src nix :results none
+  asdf = [];
+#+end_src
+
+And it still parses/validates correctly.  So I have no idea if I made a typo or
+if =patches= was a special attribute from a bygone era, or maybe it worked but I
+just haven't gotten far enough to observe it yet.  I know there are ways to
+search the Nix store for _built_ packages, but not for transient stuff that
+errored out.
+
+Okay, so back to the error I had before.  Line 307 of =Makefile= is this:
+
+#+begin_src makefile :results none
+	mkdir -p release
+#+end_src
+
+Which is probably not what blew up.  The whole block is this:
+
+#+begin_src makefile :results none
+dist: build
+	mkdir -p release
+	cp $(BINARY_NAME) release/$(BINARY_NAME)-$(BUILD_ID)-$(OS)-$(ARCH)
+#+end_src
+
+I don't know how well line numbers in =Makefiles= can be trusted.  They are a C
+tool, and line numbers in C can often not be trusted because of preprocessor
+hell we all suffer from past sins.
+
+Looks like the == issue exists as [[https://github.com/mudler/LocalAI/issues/1407][LocalAI#1407]] but there is no resolution there
+other than "lol use Docker".  But the "failed in compiling backend-assets" gives
+me a _little_ more to go off of there.  What lays down that directory?  I see a
+lot of things that reference =backend-assets=, but nothing that actually says
+"here it is".
+
+This is making me suspect, once again, that =GRPC_BACKENDS= is not being
+respected properly.  I've made some changes, so let's take out the override of
+=GRPC_BACKENDS= for now and see if maybe some of the steps above moved us
+forward.
+
+I'm back at the original issue with =ld: library not found for -lcblas=.  I
+don't know why I didn't do this earlier, or didn't notice it earlier, but
+there's a direct mention of this in [[https://github.com/mudler/LocalAI/issues/713][LocalAI#713]].  One of the recommendations is
+to use =LLAMA_METAL=1= with =make build=.
+
+So now I have:
+
+#+begin_src nix :results none
+  buildPhase = ''
+    mkdir sources
+    make \
+      VERSION=v${version} \
+      BUILD_TYPE=${buildType} \
+      LLAMA_METAL=1 \
+      build
+  '';
+#+end_src
+
+But it's still the same error.  Well, it was worth a shot.
+
+Let's go back to the "try just one thing" and see if we can build _one_ backend.
+
+#+begin_src nix :results none
+  buildPhase = ''
+    mkdir sources
+    make \
+      VERSION=v${version} \
+      BUILD_TYPE=${buildType} \
+      LLAMA_METAL=1 \
+      GRPC_BACKENDS=${llama_cpp} \
+      build
+  '';
+#+end_src
+
+Now we're back at this:
+
+#+begin_example
+       > assets.go:5:12: pattern backend-assets/*: no matching files found
+       > make: *** [Makefile:307: build] Error 1
+#+end_example
+
+So setting this value to _known working values_ causes a problem here.  I don't
+understand what it wants.
+
+I'm starting to lose hope here.  I don't really know how to move forward with
+the wherewithal I have left in me.  I am peering at things like
+https://github.com/nixified-ai/flake which looks even more raw than =LocalAI=.
+I'm also thinking that maybe I've reached into an awkward place here.  Nix can
+handle all of the build/packaging things.  So why do we need to piggyback on
+someone else's orchestrated build service which might be making assumptions
+about where stuff is on my Mac and such.  What if I just did each of the
+services that =LocalAI= uses individually, and create a =NixOS= configuration
+for all of them?  That's actually starting to sound really tempting, and I bet I
+could find some prior Nix flake for something like =stable-diffusion-webui=.
+Hey [[https://github.com/virchau13/automatic1111-webui-nix][look at that]].
+
+** Building on macOS (stable-diffusion-webui)
+:PROPERTIES:
+:CUSTOM_ID: today's-adventure:-building-a-suite-of-machine-learning-servers--building-on-macos-stable-diffusion-webui
+:END:
+
+Getting =stable-diffusion-webui= stood up on macOS took a total of about 5
+minutes using https://github.com/virchau13/automatic1111-webui-nix.  It isn't a
+pure/proper nix solution, but this is a huge start.  From this, I can imagine
+automatically pulling down and configuring models from =huggingface= or whatever
+we want, plus using SHA verification.
+
+-----
+
+That was fun!  I can generate images on battery in about a minute.  I'm now
+confronted with some choices.  I can continue to run this on my Macbook Pro (M1
+Pro), or call it good and move on to making this run on NixOS, and putting it on
+a dedicated server.  I have to admit that it's fun to play with on my laptop but
+it will carry more utility on a dedicated server (even if that server is
+slower - I don't know if it will be).  Likely I will pursue the server
+configuration.  Before that, I'd like to improve this derivation.  I'd like to
+get the models automatically downloaded and consumed just by listing their names
+or URLs.
+
+*** Improving the derivation
+:PROPERTIES:
+:CUSTOM_ID: today's-adventure:-building-a-suite-of-machine-learning-servers--building-on-macos-stable-diffusion-webui--improving-the-derivation
+:END:
+
+The first thing I would improve on this is...
+
+I'll pick this back up once I'm done playing with Stable Diffusion itself.
+There is much to learn here!

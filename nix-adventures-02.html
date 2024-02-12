@@ -1,0 +1,2603 @@
+<div id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#what-is-this">1. What is this?</a></li>
+<li><a href="#today's-adventure:-building-a-suite-of-machine-learning-servers">2. Today&rsquo;s adventure: Building a Suite of Machine Learning Servers</a>
+<ul>
+<li><a href="#today's-adventure:-building-a-suite-of-machine-learning-servers--building-on-macos-localai">2.1. Building on macOS (LocalAI)</a></li>
+<li><a href="#today's-adventure:-building-a-suite-of-machine-learning-servers--building-on-macos-stable-diffusion-webui">2.2. Building on macOS (stable-diffusion-webui)</a>
+<ul>
+<li><a href="#today's-adventure:-building-a-suite-of-machine-learning-servers--building-on-macos-stable-diffusion-webui--improving-the-derivation">2.2.1. Improving the derivation</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+---
+categories: nix
+date: 2024-02-11
+layout: default
+title: Nix Adventures (part 2 of ?)
+---
+<div id="outline-container-what-is-this" class="outline-2">
+<h2 id="what-is-this"><span class="section-number-2">1.</span> What is this?</h2>
+<div class="outline-text-2" id="text-what-is-this">
+<p>
+See <a href="./nix-adventures-01.html">Nix Adventures Part 1</a> for the introduction for all of this.
+</p>
+</div>
+</div>
+<div id="outline-container-today's-adventure:-building-a-suite-of-machine-learning-servers" class="outline-2">
+<h2 id="today's-adventure:-building-a-suite-of-machine-learning-servers"><span class="section-number-2">2.</span> Today&rsquo;s adventure: Building a Suite of Machine Learning Servers</h2>
+<div class="outline-text-2" id="text-today's-adventure:-building-a-suite-of-machine-learning-servers">
+<p>
+I want to get a machine learning platform setup in my local network.  I love the
+power of the Internet and I hate how dependent we are upon it, and the lack of
+privacy and control we have as a result.  But with lots of spare time anyone can
+setup their own servers with this stuff.  <a href="https://localai.io">LocalAI</a> looks good for this.  Cool
+kids can tell me if there&rsquo;s something better.
+</p>
+
+<p>
+I want to setup LocalAI on my local network, but first I need to <span class="underline">build</span> it.  I
+know it comes with a Docker image but Docker images, in my experience, are very
+frail and do not age well.  Maybe it has something to do with the <code>apt-get
+update</code> or equivalent that&rsquo;s at the start of every image in existence.  This is
+where Nix shines, fortunately, and more so with Nix Flakes.  A quick reminder:
+Nix Flakes uses a <code>flake.lock</code> file which has the pinned information needed to
+make a perfect copy of the constructed software under any circumstance.
+</p>
+</div>
+<div id="outline-container-today's-adventure:-building-a-suite-of-machine-learning-servers--building-on-macos-localai" class="outline-3">
+<h3 id="today's-adventure:-building-a-suite-of-machine-learning-servers--building-on-macos-localai"><span class="section-number-3">2.1.</span> Building on macOS (LocalAI)</h3>
+<div class="outline-text-3" id="text-today's-adventure:-building-a-suite-of-machine-learning-servers--building-on-macos-localai">
+<p>
+I thought perhaps, that maybe building on macOS wouldn&rsquo;t be so bad.  I&rsquo;ve done
+some native builds recently using Nix to bootstrap the environment in some
+cases, and in others to build the tool entirely.  I set out initially to build
+using a bootstrapped environment (<code>devShell</code>, in Nix vernacular) and use
+LocalAI&rsquo;s <code>make build</code> to get it going.  I got pretty far with it, I think, but
+some of the sub dependencies started to become a problem.  I think this should
+be a proper Nix derivation.  I&rsquo;ll go back and post my results here.
+</p>
+
+<p>
+I don&rsquo;t <span class="underline">need</span> this to be on macOS, but it&rsquo;s easier for me if I can.
+Additionally I have the Podman setup from the last episode of this series.  But
+it&rsquo;s 2024 and I more or less have very precise control of my ecosystem.  I
+should be able to do this, so we&rsquo;re going to burn some cycles on it.
+</p>
+
+<p>
+I did, by the way, get one of my old machines plugged in (I think this is one
+gifted to me from the illustrious Tom Sears, but they all look the same to me
+from behind - the way I like them).  As I&rsquo;ve been working on this, I have a
+backburner thought about eventually moving my results to this machine.  It
+involves setting up a bootstrapped environment.  I&rsquo;ll either need to use a hard
+drive enclosure to write to the file, or perhaps Nix has some sort of installer
+I can use.  As I write this, I think I prefer the former over the latter,
+because it removes interaction on my part.  Just write to disk and plug it in,
+just like I did last episode for the Raspberry Pi.
+</p>
+
+<p>
+Getting this working via a <code>devShell</code> as my first approach, using Nix Flakes.
+While I could get the requisite packages installed, I did have an issue with
+platforms.  From my reading, this is an <a href="https://github.com/NixOS/nix/issues/3843">apparent problem with Nix Flakes</a>, and
+how the authors say it isn&rsquo;t production ready, in spite of many of us using it
+in a production sense (I can&rsquo;t find the post again yet, but I saw it!).  Flakes
+filled a vital missing piece in Nix - the ability to lock down packages and
+ensure a specific state.  Not every part of it was completely designed through.
+Because of this, we have things like <code>devShells.aarch64-darwin</code>, <code>flake-utils</code>,
+and <code>forAllSystems</code>.  The first is the &ldquo;ugh - I have to do this for each
+platform?&rdquo;.  The latter two are attempts to address that - <a href="https://ayats.org/blog/no-flake-utils/">both with problems</a>
+that will slowly make a Nix expert out of anyone trying to actually <span class="underline">use</span> them
+with any success.  I don&rsquo;t consider myself at that level, and I don&rsquo;t want my
+doctorate in Nix to be &ldquo;I can write a <code>flake.nix</code> without looking at someone&rsquo;s
+blog&rdquo;, impressive of a feat that may be.
+</p>
+
+<p>
+This is my latest incantation:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-nix"><span style="color: #51afef;">{</span>
+  <span style="color: #dcafe9;">description</span> = <span style="color: #7bc275;">"A devShell for LocalAI."</span>;
+
+  <span style="color: #dcafe9;">inputs</span> = <span style="color: #C57BDB;">{</span>
+    <span style="color: #dcafe9;">nixpkgs.url</span> = <span style="color: #7bc275;">"github:nixos/nixpkgs/nixos-unstable"</span>;
+  <span style="color: #C57BDB;">}</span>;
+  <span style="color: #dcafe9;">outputs</span> = inputs@<span style="color: #C57BDB;">{</span> flake-parts, nixpkgs, ... <span style="color: #C57BDB;">}</span>:
+    <span style="color: #51afef;">let</span>
+      <span style="color: #dcafe9;">forAllSystems</span> = function:
+      nixpkgs.lib.genAttrs <span style="color: #C57BDB;">[</span>
+        <span style="color: #7bc275;">"aarch64-darwin"</span>
+      <span style="color: #C57BDB;">]</span> <span style="color: #C57BDB;">(</span>system: function nixpkgs.legacyPackages.$<span style="color: #7bc275;">{</span>system<span style="color: #7bc275;">}</span><span style="color: #C57BDB;">)</span>;
+    <span style="color: #51afef;">in</span> <span style="color: #C57BDB;">{</span>
+      <span style="color: #dcafe9;">packages.default</span> = forAllSystems <span style="color: #7bc275;">(</span>pkgs: <span style="color: #a991f1;">[</span>
+        pkgs.abseil-cpp
+        pkgs.blas
+        pkgs.cmake
+        pkgs.go
+        pkgs.grpc
+        pkgs.libcxxabi
+        pkgs.openssl
+        pkgs.protobuf
+        pkgs.wget
+      <span style="color: #a991f1;">]</span><span style="color: #7bc275;">)</span>;
+      <span style="color: #dcafe9;">devShells.aarch64-darwin.default.packages</span> =
+        <span style="color: #7bc275;">(</span><span style="color: #51afef;">with</span> nixpkgs.darwin.apple_sdk.frameworks; <span style="color: #a991f1;">[</span>
+          <span style="color: #62686E;"># ] ++ pkgs.stdenv.isDarwin [</span>
+          <span style="color: #62686E;"># I have other examples using cf-private and this package is not a</span>
+          <span style="color: #62686E;"># formal framework but a workaround in Nix.  So it is kept for</span>
+          <span style="color: #62686E;"># reference while I still work on this.</span>
+          <span style="color: #62686E;"># pkgs.darwin.cf-private</span>
+          Accelerate
+          CoreFoundation
+          MetalKit
+          MetalPerformanceShaders
+          Security
+        <span style="color: #a991f1;">]</span><span style="color: #7bc275;">)</span>;
+    <span style="color: #C57BDB;">}</span>;
+<span style="color: #51afef;">}</span>
+</pre>
+</div>
+
+<p>
+But it complains about <code>devShells.aarch64-darwin.default.packages</code> &ldquo;is not a
+derivation or path&rdquo;.  Okay.  Let&rsquo;s just stop being fancy for a moment and do
+this with a hardcoded platform.  Then maybe we can dial that back in.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-nix"><span style="color: #51afef;">{</span>
+  <span style="color: #dcafe9;">description</span> = <span style="color: #7bc275;">"A devShell for LocalAI."</span>;
+
+  <span style="color: #dcafe9;">inputs</span> = <span style="color: #C57BDB;">{</span>
+    <span style="color: #dcafe9;">nixpkgs.url</span> = <span style="color: #7bc275;">"github:nixos/nixpkgs/nixos-unstable"</span>;
+  <span style="color: #C57BDB;">}</span>;
+  <span style="color: #dcafe9;">outputs</span> = inputs@<span style="color: #C57BDB;">{</span> flake-parts, nixpkgs, ... <span style="color: #C57BDB;">}</span>:
+    <span style="color: #51afef;">let</span>
+      <span style="color: #dcafe9;">forAllSystems</span> = function:
+      nixpkgs.lib.genAttrs <span style="color: #C57BDB;">[</span>
+        <span style="color: #7bc275;">"aarch64-darwin"</span>
+      <span style="color: #C57BDB;">]</span> <span style="color: #C57BDB;">(</span>system: function nixpkgs.legacyPackages.$<span style="color: #7bc275;">{</span>system<span style="color: #7bc275;">}</span><span style="color: #C57BDB;">)</span>;
+    <span style="color: #51afef;">in</span> <span style="color: #C57BDB;">{</span>
+      <span style="color: #dcafe9;">packages.default</span> = forAllSystems <span style="color: #7bc275;">(</span>pkgs: <span style="color: #a991f1;">[</span>
+        pkgs.abseil-cpp
+        pkgs.blas
+        pkgs.cmake
+        pkgs.go
+        pkgs.grpc
+        pkgs.libcxxabi
+        pkgs.openssl
+        pkgs.protobuf
+        pkgs.wget
+      <span style="color: #a991f1;">]</span> ++ <span style="color: #a991f1;">(</span><span style="color: #51afef;">with</span> nixpkgs.darwin.apple_sdk.frameworks; <span style="color: #51afef;">[</span>
+          Accelerate
+          CoreFoundation
+          MetalKit
+          MetalPerformanceShaders
+          Security
+      <span style="color: #51afef;">]</span><span style="color: #a991f1;">)</span><span style="color: #7bc275;">)</span>;
+    <span style="color: #C57BDB;">}</span>;
+    <span style="color: #62686E;"># Sadness awaits.</span>
+    <span style="color: #62686E;">#   devShells.aarch64-darwin.default.packages =</span>
+    <span style="color: #62686E;">#     (with nixpkgs.darwin.apple_sdk.frameworks; [</span>
+    <span style="color: #62686E;">#       # ] ++ pkgs.stdenv.isDarwin [</span>
+    <span style="color: #62686E;">#       # I have other examples using cf-private and this package is not a</span>
+    <span style="color: #62686E;">#       # formal framework but a workaround in Nix.  So it is kept for</span>
+    <span style="color: #62686E;">#       # reference while I still work on this.</span>
+    <span style="color: #62686E;">#       # pkgs.darwin.cf-private</span>
+    <span style="color: #62686E;">#       Accelerate</span>
+    <span style="color: #62686E;">#       CoreFoundation</span>
+    <span style="color: #62686E;">#       MetalKit</span>
+    <span style="color: #62686E;">#       MetalPerformanceShaders</span>
+    <span style="color: #62686E;">#       Security</span>
+    <span style="color: #62686E;">#     ]);</span>
+    <span style="color: #62686E;"># };</span>
+<span style="color: #51afef;">}</span>
+</pre>
+</div>
+
+<p>
+This gives back:
+</p>
+
+<pre class="example" id="org9476e27">
+error: flake 'git+file:///Users/logan/dev/LocalAI' does not provide attribute 'devShells.aarch64-darwin.default', 'devShell.aarch64-darwin', 'packages.aarch64-darwin.default' or 'defaultPackage.aarch64-darwin'
+</pre>
+
+<p>
+Which I thought was the whole point of the <code>forAllSystems</code>.  Maybe it just
+expects a <code>devShell</code> but isn&rsquo;t communicating that to me very well.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-nix"><span style="color: #51afef;">{</span>
+  <span style="color: #dcafe9;">description</span> = <span style="color: #7bc275;">"A devShell for LocalAI."</span>;
+
+  <span style="color: #dcafe9;">inputs</span> = <span style="color: #C57BDB;">{</span>
+    <span style="color: #dcafe9;">nixpkgs.url</span> = <span style="color: #7bc275;">"github:nixos/nixpkgs/nixos-unstable"</span>;
+  <span style="color: #C57BDB;">}</span>;
+  <span style="color: #dcafe9;">outputs</span> = inputs@<span style="color: #C57BDB;">{</span> flake-parts, nixpkgs, ... <span style="color: #C57BDB;">}</span>:
+    <span style="color: #51afef;">let</span>
+      <span style="color: #dcafe9;">forAllSystems</span> = function:
+      nixpkgs.lib.genAttrs <span style="color: #C57BDB;">[</span>
+        <span style="color: #7bc275;">"aarch64-darwin"</span>
+      <span style="color: #C57BDB;">]</span> <span style="color: #C57BDB;">(</span>system: function nixpkgs.legacyPackages.$<span style="color: #7bc275;">{</span>system<span style="color: #7bc275;">}</span><span style="color: #C57BDB;">)</span>;
+    <span style="color: #51afef;">in</span> <span style="color: #C57BDB;">{</span>
+      <span style="color: #dcafe9;">devShell.default</span> = forAllSystems <span style="color: #7bc275;">(</span>pkgs: <span style="color: #a991f1;">[</span>
+        pkgs.abseil-cpp
+        pkgs.blas
+        pkgs.cmake
+        pkgs.go
+        pkgs.grpc
+        pkgs.libcxxabi
+        pkgs.openssl
+        pkgs.protobuf
+        pkgs.wget
+      <span style="color: #a991f1;">]</span> ++ <span style="color: #a991f1;">(</span><span style="color: #51afef;">with</span> nixpkgs.darwin.apple_sdk.frameworks; <span style="color: #51afef;">[</span>
+          Accelerate
+          CoreFoundation
+          MetalKit
+          MetalPerformanceShaders
+          Security
+      <span style="color: #51afef;">]</span><span style="color: #a991f1;">)</span><span style="color: #7bc275;">)</span>;
+    <span style="color: #C57BDB;">}</span>;
+    <span style="color: #62686E;"># Sadness awaits.</span>
+    <span style="color: #62686E;">#   devShells.aarch64-darwin.default.packages =</span>
+    <span style="color: #62686E;">#     (with nixpkgs.darwin.apple_sdk.frameworks; [</span>
+    <span style="color: #62686E;">#       # ] ++ pkgs.stdenv.isDarwin [</span>
+    <span style="color: #62686E;">#       # I have other examples using cf-private and this package is not a</span>
+    <span style="color: #62686E;">#       # formal framework but a workaround in Nix.  So it is kept for</span>
+    <span style="color: #62686E;">#       # reference while I still work on this.</span>
+    <span style="color: #62686E;">#       # pkgs.darwin.cf-private</span>
+    <span style="color: #62686E;">#       Accelerate</span>
+    <span style="color: #62686E;">#       CoreFoundation</span>
+    <span style="color: #62686E;">#       MetalKit</span>
+    <span style="color: #62686E;">#       MetalPerformanceShaders</span>
+    <span style="color: #62686E;">#       Security</span>
+    <span style="color: #62686E;">#     ]);</span>
+    <span style="color: #62686E;"># };</span>
+<span style="color: #51afef;">}</span>
+</pre>
+</div>
+
+<p>
+Now the error is even more misleading:
+</p>
+
+<pre class="example" id="orgb9b441f">
+error: flake 'git+file:///Users/logan/dev/LocalAI' does not provide attribute 'devShells.aarch64-darwin.default', 'devShell.aarch64-darwin', 'packages.aarch64-darwin.default' or 'defaultPackage.aarch64-darwin'
+       Did you mean devShell?
+</pre>
+
+<p>
+Why yes, I did.  In fact, I have <code>devShell</code> already!  Ugh.  Okay, let&rsquo;s just
+throw out all of the <code>forAllsystems</code> stuff.  It&rsquo;s making things more painful
+than helpful.
+</p>
+
+<p>
+Upon removing <code>forAllSystems</code>, I wind up with the smaller:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-nix"><span style="color: #51afef;">{</span>
+  <span style="color: #dcafe9;">description</span> = <span style="color: #7bc275;">"A devShell for LocalAI."</span>;
+
+  <span style="color: #dcafe9;">inputs</span> = <span style="color: #C57BDB;">{</span>
+    <span style="color: #dcafe9;">nixpkgs.url</span> = <span style="color: #7bc275;">"github:nixos/nixpkgs/nixos-unstable"</span>;
+  <span style="color: #C57BDB;">}</span>;
+  <span style="color: #dcafe9;">outputs</span> = inputs@<span style="color: #C57BDB;">{</span> flake-parts, nixpkgs, ... <span style="color: #C57BDB;">}</span>:
+    <span style="color: #51afef;">let</span>
+      <span style="color: #dcafe9;">pkgs</span> = nixpkgs;
+    <span style="color: #51afef;">in</span> <span style="color: #C57BDB;">{</span>
+      <span style="color: #dcafe9;">devShells.aarch64-darwin.default</span> = <span style="color: #7bc275;">{</span>
+        <span style="color: #dcafe9;">packages</span> = <span style="color: #a991f1;">[</span>
+        pkgs.abseil-cpp
+        pkgs.blas
+        pkgs.cmake
+        pkgs.go
+        pkgs.grpc
+        pkgs.libcxxabi
+        pkgs.openssl
+        pkgs.protobuf
+        pkgs.wget
+      <span style="color: #a991f1;">]</span> ++
+        <span style="color: #a991f1;">(</span><span style="color: #51afef;">with</span> nixpkgs.darwin.apple_sdk.frameworks; <span style="color: #51afef;">[</span>
+          <span style="color: #62686E;"># ] ++ pkgs.stdenv.isDarwin [</span>
+          <span style="color: #62686E;"># I have other examples using cf-private and this package is not a</span>
+          <span style="color: #62686E;"># formal framework but a workaround in Nix.  So it is kept for</span>
+          <span style="color: #62686E;"># reference while I still work on this.</span>
+          <span style="color: #62686E;"># pkgs.darwin.cf-private</span>
+          Accelerate
+          CoreFoundation
+          MetalKit
+          MetalPerformanceShaders
+          Security
+        <span style="color: #51afef;">]</span><span style="color: #a991f1;">)</span>;
+      <span style="color: #7bc275;">}</span>;
+    <span style="color: #C57BDB;">}</span>;
+<span style="color: #51afef;">}</span>
+</pre>
+</div>
+
+<p>
+And that gives:
+</p>
+
+<pre class="example" id="org60c3b2b">
+error: flake 'git+file:///Users/logan/dev/LocalAI' does not provide attribute 'devShells.aarch64-darwin.default', 'devShell.aarch64-darwin', 'packages.aarch64-darwin.default' or 'defaultPackage.aarch64-darwin'
+       Did you mean devShells?
+</pre>
+
+<p>
+I&rsquo;m literally providing the aforementioned attributes, so what gives here?
+</p>
+
+<p>
+Maybe it&rsquo;s got something to do with the object not being defined ahead of time?
+I never know with Nix on this.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-nix"><span style="color: #51afef;">{</span>
+  <span style="color: #dcafe9;">description</span> = <span style="color: #7bc275;">"A devShell for LocalAI."</span>;
+
+  <span style="color: #dcafe9;">inputs</span> = <span style="color: #C57BDB;">{</span>
+    <span style="color: #dcafe9;">nixpkgs.url</span> = <span style="color: #7bc275;">"github:nixos/nixpkgs/nixos-unstable"</span>;
+  <span style="color: #C57BDB;">}</span>;
+  <span style="color: #dcafe9;">outputs</span> = inputs@<span style="color: #C57BDB;">{</span> flake-parts, nixpkgs, ... <span style="color: #C57BDB;">}</span>:
+    <span style="color: #51afef;">let</span>
+      <span style="color: #dcafe9;">pkgs</span> = nixpkgs;
+    <span style="color: #51afef;">in</span> <span style="color: #C57BDB;">{</span>
+      <span style="color: #dcafe9;">devShells.aarch64-darwin.default</span> = <span style="color: #7bc275;">{</span>
+        <span style="color: #dcafe9;">packages</span> = <span style="color: #a991f1;">[</span>
+          pkgs.abseil-cpp
+          pkgs.blas
+          pkgs.cmake
+          pkgs.go
+          pkgs.grpc
+          pkgs.libcxxabi
+          pkgs.openssl
+          pkgs.protobuf
+          pkgs.wget
+        <span style="color: #a991f1;">]</span> ++
+        <span style="color: #a991f1;">(</span><span style="color: #51afef;">with</span> nixpkgs.darwin.apple_sdk.frameworks; <span style="color: #51afef;">[</span>
+          <span style="color: #62686E;"># ] ++ pkgs.stdenv.isDarwin [</span>
+          <span style="color: #62686E;"># I have other examples using cf-private and this package is not a</span>
+          <span style="color: #62686E;"># formal framework but a workaround in Nix.  So it is kept for</span>
+          <span style="color: #62686E;"># reference while I still work on this.</span>
+          <span style="color: #62686E;"># pkgs.darwin.cf-private</span>
+          Accelerate
+          CoreFoundation
+          MetalKit
+          MetalPerformanceShaders
+          Security
+        <span style="color: #51afef;">]</span><span style="color: #a991f1;">)</span>;
+      <span style="color: #7bc275;">}</span>;
+    <span style="color: #C57BDB;">}</span>;
+<span style="color: #51afef;">}</span>
+</pre>
+</div>
+
+<pre class="example" id="org69b70a6">
+error: flake output attribute 'devShells.aarch64-darwin.default' is not a derivation or path
+</pre>
+
+<p>
+Which makes no sense to me since this is breaking the Law of Demeter <span class="underline">less</span> than
+before.
+</p>
+
+<p>
+This is where I break down and go hunting for a bare bones example.  The
+<a href="https://nixos.wiki/wiki/Flakes">NixOS wiki</a> seems to be the most authoritative documentation I can find, and it
+shows no examples - just the equivalent of &ldquo;etc&rdquo;.  Telling me that I do
+<code>devShells."&lt;system&gt;".default = derivation;</code> doesn&rsquo;t actually tell me anything
+if I don&rsquo;t know what <code>derivation</code> looks like.  And apparently setting that to
+just anything doesn&rsquo;t grant me error messages that would guide me closer to a
+correct answer.
+</p>
+
+<p>
+<a href="https://devenv.sh/guides/using-with-flakes/#modifying-your-flakenix-file">devenv.sh</a> has an example though:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-nix"><span style="color: #51afef;">{</span>
+  <span style="color: #dcafe9;">inputs</span> = <span style="color: #C57BDB;">{</span>
+    <span style="color: #dcafe9;">nixpkgs.url</span> = <span style="color: #7bc275;">"github:NixOS/nixpkgs/nixos-23.05"</span>;
+    <span style="color: #dcafe9;">devenv.url</span> = <span style="color: #7bc275;">"github:cachix/devenv"</span>;
+  <span style="color: #C57BDB;">}</span>;
+
+  <span style="color: #dcafe9;">nixConfig</span> = <span style="color: #C57BDB;">{</span>
+    <span style="color: #dcafe9;">extra-trusted-public-keys</span> = <span style="color: #7bc275;">"devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZ</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">Lr6cv/Hm9XgU50cw="</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">;</span>
+    <span style="color: #dcafe9;">extra-substituters</span> = <span style="color: #7bc275;">"https://devenv.cachix.org"</span>;
+  <span style="color: #C57BDB;">}</span>;
+
+  <span style="color: #dcafe9;">outputs</span> = <span style="color: #C57BDB;">{</span> self, nixpkgs, devenv, ... <span style="color: #C57BDB;">}</span> @ inputs:
+    <span style="color: #51afef;">let</span>
+      <span style="color: #dcafe9;">pkgs</span> = nixpkgs.legacyPackages.<span style="color: #7bc275;">"x86_64-linux"</span>;
+    <span style="color: #51afef;">in</span>
+    <span style="color: #C57BDB;">{</span>
+      <span style="color: #dcafe9;">devShell.x86_64-linux</span> = devenv.lib.mkShell <span style="color: #7bc275;">{</span>
+        <span style="color: #51afef;">inherit</span> inputs pkgs;
+        <span style="color: #dcafe9;">modules</span> = <span style="color: #a991f1;">[</span>
+          <span style="color: #51afef;">(</span><span style="color: #C57BDB;">{</span> pkgs, config, ... <span style="color: #C57BDB;">}</span>: <span style="color: #C57BDB;">{</span>
+            <span style="color: #62686E;"># This is your devenv configuration</span>
+            <span style="color: #dcafe9;">packages</span> = <span style="color: #7bc275;">[</span> pkgs.hello <span style="color: #7bc275;">]</span>;
+
+            <span style="color: #dcafe9;">enterShell</span> = <span style="color: #7bc275;">''</span>
+<span style="color: #7bc275;">              hello</span>
+<span style="color: #7bc275;">            ''</span>;
+
+            <span style="color: #dcafe9;">processes.run.exec</span> = <span style="color: #7bc275;">"hello"</span>;
+          <span style="color: #C57BDB;">}</span><span style="color: #51afef;">)</span>
+        <span style="color: #a991f1;">]</span>;
+      <span style="color: #7bc275;">}</span>;
+    <span style="color: #C57BDB;">}</span>;
+<span style="color: #51afef;">}</span>
+</pre>
+</div>
+
+<p>
+Okay so I need to call <code>mkShell</code>?  This is using this <code>devenv</code> library, which I
+didn&rsquo;t think I needed.  Let&rsquo;s see if we can do this with the more standard
+<code>lib.mkShell</code>.  The problem here is I didn&rsquo;t know it needed to be some object
+emitted from <code>mkShell</code> in the first place.
+</p>
+
+<p>
+My attempts to use <code>nixpkgs.lib.mkShell</code> failed.  So did <code>lib.mkShell</code>.  Wow it
+would be nice if this information was readily available.  I read some blog posts
+again, and skip some because they lean hard on <code>flake-utils</code>.  Eventually I find
+<a href="https://www.softwarefactory-project.io/reproducible-shell-environments-via-nix-flakes.html">an example</a> where they use <code>pkgs.mkShell</code>.  Oh so it&rsquo;s a non-package in the
+packages object.  Obviously.
+</p>
+
+<p>
+Trying again.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-nix"><span style="color: #51afef;">{</span>
+  <span style="color: #dcafe9;">description</span> = <span style="color: #7bc275;">"A devShell for LocalAI."</span>;
+
+  <span style="color: #dcafe9;">inputs</span> = <span style="color: #C57BDB;">{</span>
+    <span style="color: #dcafe9;">nixpkgs.url</span> = <span style="color: #7bc275;">"github:nixos/nixpkgs/nixos-unstable"</span>;
+  <span style="color: #C57BDB;">}</span>;
+  <span style="color: #dcafe9;">outputs</span> = inputs@<span style="color: #C57BDB;">{</span> flake-parts, nixpkgs, ... <span style="color: #C57BDB;">}</span>:
+    <span style="color: #51afef;">let</span>
+      <span style="color: #dcafe9;">pkgs</span> = nixpkgs;
+    <span style="color: #51afef;">in</span> <span style="color: #C57BDB;">{</span>
+      <span style="color: #dcafe9;">devShells.aarch64-darwin.default</span> = pkgs.mkShell <span style="color: #7bc275;">{</span>
+        <span style="color: #dcafe9;">packages</span> = <span style="color: #a991f1;">[</span>
+          pkgs.abseil-cpp
+          pkgs.blas
+          pkgs.cmake
+          pkgs.go
+          pkgs.grpc
+          pkgs.libcxxabi
+          pkgs.openssl
+          pkgs.protobuf
+          pkgs.wget
+        <span style="color: #a991f1;">]</span> ++
+        <span style="color: #a991f1;">(</span><span style="color: #51afef;">with</span> nixpkgs.darwin.apple_sdk.frameworks; <span style="color: #51afef;">[</span>
+          <span style="color: #62686E;"># ] ++ pkgs.stdenv.isDarwin [</span>
+          <span style="color: #62686E;"># I have other examples using cf-private and this package is not a</span>
+          <span style="color: #62686E;"># formal framework but a workaround in Nix.  So it is kept for</span>
+          <span style="color: #62686E;"># reference while I still work on this.</span>
+          <span style="color: #62686E;"># pkgs.darwin.cf-private</span>
+          Accelerate
+          CoreFoundation
+          MetalKit
+          MetalPerformanceShaders
+          Security
+        <span style="color: #51afef;">]</span><span style="color: #a991f1;">)</span>;
+      <span style="color: #7bc275;">}</span>;
+    <span style="color: #C57BDB;">}</span>;
+<span style="color: #51afef;">}</span>
+</pre>
+</div>
+
+<pre class="example" id="org6972763">
+error: attribute 'mkShell' missing
+
+       at /nix/store/43jbd73hvig4skvdhdvci6xnlrfaaqk2-source/flake.nix:11:42:
+
+           10|     in {
+           11|       devShells.aarch64-darwin.default = pkgs.mkShell {
+</pre>
+
+<p>
+And yet the example I found is:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-nix"><span style="color: #51afef;">{</span>
+  <span style="color: #dcafe9;">description</span> = <span style="color: #7bc275;">"My-project build environment"</span>;
+  <span style="color: #dcafe9;">nixConfig.bash-prompt</span> = <span style="color: #7bc275;">"[nix(my-project)] "</span>;
+  <span style="color: #dcafe9;">inputs</span> = <span style="color: #C57BDB;">{</span> <span style="color: #dcafe9;">nixpkgs.url</span> = <span style="color: #7bc275;">"github:nixos/nixpkgs/22.11"</span>; <span style="color: #C57BDB;">}</span>;
+
+  <span style="color: #dcafe9;">outputs</span> = <span style="color: #C57BDB;">{</span> self, nixpkgs <span style="color: #C57BDB;">}</span>:
+    <span style="color: #51afef;">let</span>
+      <span style="color: #dcafe9;">pkgs</span> = nixpkgs.legacyPackages.x86_64-linux.pkgs;
+      <span style="color: #dcafe9;">fooScript</span> = pkgs.writeScriptBin <span style="color: #7bc275;">"foo.sh"</span> <span style="color: #7bc275;">''</span>
+<span style="color: #7bc275;">        #!/bin/sh</span>
+<span style="color: #7bc275;">        echo $FOO</span>
+<span style="color: #7bc275;">      ''</span>;
+    <span style="color: #51afef;">in</span> <span style="color: #C57BDB;">{</span>
+      <span style="color: #dcafe9;">devShells.x86_64-linux.default</span> = pkgs.mkShell <span style="color: #7bc275;">{</span>
+        <span style="color: #dcafe9;">name</span> = <span style="color: #7bc275;">"My-project build environment"</span>;
+        <span style="color: #dcafe9;">buildInputs</span> = <span style="color: #a991f1;">[</span>
+          pkgs.python39
+          pkgs.python39Packages.tox
+          pkgs.python39Packages.flake8
+          pkgs.python39Packages.requests
+          pkgs.python39Packages.ipython
+          fooScript
+        <span style="color: #a991f1;">]</span>;
+        <span style="color: #dcafe9;">shellHook</span> = <span style="color: #7bc275;">''</span>
+<span style="color: #7bc275;">          echo "Welcome in $name"</span>
+<span style="color: #7bc275;">          export FOO="BAR"</span>
+<span style="color: #7bc275;">        ''</span>;
+      <span style="color: #7bc275;">}</span>;
+    <span style="color: #C57BDB;">}</span>;
+<span style="color: #51afef;">}</span>
+</pre>
+</div>
+
+<p>
+Oh, well this isn&rsquo;t one-to-one because I didn&rsquo;t do the <code>legacyPackages</code> thing
+because of a different example I was probably cribbing from.
+</p>
+
+<p>
+My relevant line is:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-nix">      <span style="color: #dcafe9;">pkgs</span> = nixpkgs.legacyPackage.aarch64-darwin.pkgs;
+</pre>
+</div>
+
+<p>
+Which gives me:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-nix"><span style="color: #51afef;">{</span>
+  <span style="color: #dcafe9;">description</span> = <span style="color: #7bc275;">"A devShell for LocalAI."</span>;
+
+  <span style="color: #dcafe9;">inputs</span> = <span style="color: #C57BDB;">{</span>
+    <span style="color: #dcafe9;">nixpkgs.url</span> = <span style="color: #7bc275;">"github:nixos/nixpkgs/nixos-unstable"</span>;
+  <span style="color: #C57BDB;">}</span>;
+  <span style="color: #dcafe9;">outputs</span> = inputs@<span style="color: #C57BDB;">{</span> flake-parts, nixpkgs, ... <span style="color: #C57BDB;">}</span>:
+    <span style="color: #51afef;">let</span>
+      <span style="color: #dcafe9;">pkgs</span> = nixpkgs.legacyPackages.aarch64-darwin.pkgs;
+    <span style="color: #51afef;">in</span> <span style="color: #C57BDB;">{</span>
+      <span style="color: #dcafe9;">devShells.aarch64-darwin.default</span> = pkgs.mkShell <span style="color: #7bc275;">{</span>
+        <span style="color: #dcafe9;">packages</span> = <span style="color: #a991f1;">[</span>
+          pkgs.abseil-cpp
+          pkgs.blas
+          pkgs.cmake
+          pkgs.go
+          pkgs.grpc
+          pkgs.libcxxabi
+          pkgs.openssl
+          pkgs.protobuf
+          pkgs.wget
+        <span style="color: #a991f1;">]</span> ++
+        <span style="color: #a991f1;">(</span><span style="color: #51afef;">with</span> nixpkgs.darwin.apple_sdk.frameworks; <span style="color: #51afef;">[</span>
+          <span style="color: #62686E;"># ] ++ pkgs.stdenv.isDarwin [</span>
+          <span style="color: #62686E;"># I have other examples using cf-private and this package is not a</span>
+          <span style="color: #62686E;"># formal framework but a workaround in Nix.  So it is kept for</span>
+          <span style="color: #62686E;"># reference while I still work on this.</span>
+          <span style="color: #62686E;"># pkgs.darwin.cf-private</span>
+          Accelerate
+          CoreFoundation
+          MetalKit
+          MetalPerformanceShaders
+          Security
+        <span style="color: #51afef;">]</span><span style="color: #a991f1;">)</span>;
+      <span style="color: #7bc275;">}</span>;
+    <span style="color: #C57BDB;">}</span>;
+<span style="color: #51afef;">}</span>
+</pre>
+</div>
+
+<p>
+This run takes a lot longer, which is progress!
+</p>
+
+<pre class="example" id="org3bb4150">
+error:
+       … while calling the 'derivationStrict' builtin
+
+         at /builtin/derivation.nix:9:12: (source not available)
+
+       … while evaluating derivation 'nix-shell'
+         whose name attribute is located at /nix/store/11zbgb8j7wnnccbbjcq0q556h28g7p4r-source/pkgs/stdenv/generic/make-derivation.nix:352:7
+
+       … while evaluating attribute 'nativeBuildInputs' of derivation 'nix-shell'
+
+         at /nix/store/11zbgb8j7wnnccbbjcq0q556h28g7p4r-source/pkgs/stdenv/generic/make-derivation.nix:396:7:
+
+          395|       depsBuildBuild              = elemAt (elemAt dependencies 0) 0;
+          396|       nativeBuildInputs           = elemAt (elemAt dependencies 0) 1;
+             |       ^
+          397|       depsBuildTarget             = elemAt (elemAt dependencies 0) 2;
+
+       error: attribute 'darwin' missing
+
+       at /nix/store/w8plgb1pyr6w6rglbq5vpq714bff9w7m-source/flake.nix:23:15:
+
+           22|         ] ++
+           23|         (with nixpkgs.darwin.apple_sdk.frameworks; [
+             |               ^
+           24|           # ] ++ pkgs.stdenv.isDarwin [
+</pre>
+
+<p>
+Okay, I think this makes sense.  I&rsquo;m not using <code>nixpkgs</code> directly but some stuff
+under <code>legacyPackages</code> which is like <code>nixpkgs</code> but platform specific or platform
+<span class="underline">enabled</span>&#x2026;?  Either way, I should make it consistent.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-nix"><span style="color: #51afef;">{</span>
+  <span style="color: #dcafe9;">description</span> = <span style="color: #7bc275;">"A devShell for LocalAI."</span>;
+
+  <span style="color: #dcafe9;">inputs</span> = <span style="color: #C57BDB;">{</span>
+    <span style="color: #dcafe9;">nixpkgs.url</span> = <span style="color: #7bc275;">"github:nixos/nixpkgs/nixos-unstable"</span>;
+  <span style="color: #C57BDB;">}</span>;
+  <span style="color: #dcafe9;">outputs</span> = inputs@<span style="color: #C57BDB;">{</span> flake-parts, nixpkgs, ... <span style="color: #C57BDB;">}</span>:
+    <span style="color: #51afef;">let</span>
+      <span style="color: #dcafe9;">pkgs</span> = nixpkgs.legacyPackages.aarch64-darwin.pkgs;
+    <span style="color: #51afef;">in</span> <span style="color: #C57BDB;">{</span>
+      <span style="color: #dcafe9;">devShells.aarch64-darwin.default</span> = pkgs.mkShell <span style="color: #7bc275;">{</span>
+        <span style="color: #dcafe9;">packages</span> = <span style="color: #a991f1;">[</span>
+          pkgs.abseil-cpp
+          pkgs.blas
+          pkgs.cmake
+          pkgs.go
+          pkgs.grpc
+          pkgs.libcxxabi
+          pkgs.openssl
+          pkgs.protobuf
+          pkgs.wget
+        <span style="color: #a991f1;">]</span> ++
+        <span style="color: #a991f1;">(</span><span style="color: #51afef;">with</span> pkgs.darwin.apple_sdk.frameworks; <span style="color: #51afef;">[</span>
+          <span style="color: #62686E;"># ] ++ pkgs.stdenv.isDarwin [</span>
+          <span style="color: #62686E;"># I have other examples using cf-private and this package is not a</span>
+          <span style="color: #62686E;"># formal framework but a workaround in Nix.  So it is kept for</span>
+          <span style="color: #62686E;"># reference while I still work on this.</span>
+          <span style="color: #62686E;"># pkgs.darwin.cf-private</span>
+          Accelerate
+          CoreFoundation
+          MetalKit
+          MetalPerformanceShaders
+          Security
+        <span style="color: #51afef;">]</span><span style="color: #a991f1;">)</span>;
+      <span style="color: #7bc275;">}</span>;
+    <span style="color: #C57BDB;">}</span>;
+<span style="color: #51afef;">}</span>
+</pre>
+</div>
+
+<p>
+And that&#x2026; worked?  I get a non-zero exit code, so that&rsquo;s something.
+</p>
+
+<p>
+A side thought I&rsquo;ve had while I&rsquo;ve been working on this - I&rsquo;ve been doing this
+via a <code>devShell</code> setup and really what I think I want to do is make this a
+proper derivation using <code>mkDerivation</code>.  But this is still progress and I have
+learned much about Nix Flakes along the way.  And frustration.
+</p>
+
+<p>
+At some point I would like to get this more platform agnostic in its settings.
+I just want to express the general tools, and how each platform deviates in its
+packages or settings.  Perhaps that could be done with a simple <code>let ... in</code>
+construct, but it would still require adding new platforms explicitly.
+</p>
+
+<p>
+Now with a <code>make clean; make build</code> I get:
+</p>
+
+<pre class="example" id="org5af861c">
+CMake Error at /nix/store/slgfvfhi4nbdms9h7p13rp998ls191az-cmake-3.27.8/share/cmake-3.27/Modules/CMakeTestCXXCompiler.cmake:60 (message):
+  The C++ compiler
+
+    "/nix/store/2k44jw0kwqnymimzfwq1p53s59rvbvzr-clang-wrapper-16.0.6/bin/clang++"
+
+  is not able to compile a simple test program.
+
+  It fails with the following output:
+
+    Change Dir: '/Users/logan/dev/LocalAI/sources/gpt4all/gpt4all-bindings/golang/buildllm/CMakeFiles/CMakeScratch/TryCompile-V81wvy'
+
+    Run Build Command(s): /nix/store/slgfvfhi4nbdms9h7p13rp998ls191az-cmake-3.27.8/bin/cmake -E env VERBOSE=1 /nix/store/842p7sln6lmwixwqaacdikczlshisqrw-gnumake-4.4.1/bin/make -f Makefile cmTC_85df6/fast
+    make[2]: Entering directory '/Users/logan/dev/LocalAI/sources/gpt4all/gpt4all-bindings/golang/buildllm/CMakeFiles/CMakeScratch/TryCompile-V81wvy'
+    /nix/store/842p7sln6lmwixwqaacdikczlshisqrw-gnumake-4.4.1/bin/make  -f CMakeFiles/cmTC_85df6.dir/build.make CMakeFiles/cmTC_85df6.dir/build
+    make[3]: Entering directory '/Users/logan/dev/LocalAI/sources/gpt4all/gpt4all-bindings/golang/buildllm/CMakeFiles/CMakeScratch/TryCompile-V81wvy'
+    Building CXX object CMakeFiles/cmTC_85df6.dir/testCXXCompiler.cxx.o
+    /nix/store/2k44jw0kwqnymimzfwq1p53s59rvbvzr-clang-wrapper-16.0.6/bin/clang++   -arch arm64 -arch x86_64 -isysroot /nix/store/p5f3cn5izi1h1a67r35npfgazkl8fr5g-xcodebuild-0.1.2-pre/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.0.sdk -mmacosx-version-min=11.0 -MD -MT CMakeFiles/cmTC_85df6.dir/testCXXCompiler.cxx.o -MF CMakeFiles/cmTC_85df6.dir/testCXXCompiler.cxx.o.d -o CMakeFiles/cmTC_85df6.dir/testCXXCompiler.cxx.o -c /Users/logan/dev/LocalAI/sources/gpt4all/gpt4all-bindings/golang/buildllm/CMakeFiles/CMakeScratch/TryCompile-V81wvy/testCXXCompiler.cxx
+    error: unknown target CPU 'armv8.3-a+crypto+sha2+aes+crc+fp16+lse+simd+ras+rdm+rcpc'
+    note: valid target CPU values are: nocona, core2, penryn, bonnell, atom, silvermont, slm, goldmont, goldmont-plus, tremont, nehalem, corei7, westmere, sandybridge, corei7-avx, ivybridge, core-avx-i, haswell, core-avx2, broadwell, skylake, skylake-avx512, skx, cascadelake, cooperlake, cannonlake, icelake-client, rocketlake, icelake-server, tigerlake, sapphirerapids, alderlake, raptorlake, meteorlake, sierraforest, grandridge, graniterapids, emeraldrapids, knl, knm, k8, athlon64, athlon-fx, opteron, k8-sse3, athlon64-sse3, opteron-sse3, amdfam10, barcelona, btver1, btver2, bdver1, bdver2, bdver3, bdver4, znver1, znver2, znver3, znver4, x86-64, x86-64-v2, x86-64-v3, x86-64-v4
+    make[3]: *** [CMakeFiles/cmTC_85df6.dir/build.make:79: CMakeFiles/cmTC_85df6.dir/testCXXCompiler.cxx.o] Error 1
+    make[3]: Leaving directory '/Users/logan/dev/LocalAI/sources/gpt4all/gpt4all-bindings/golang/buildllm/CMakeFiles/CMakeScratch/TryCompile-V81wvy'
+    make[2]: *** [Makefile:127: cmTC_85df6/fast] Error 2
+    make[2]: Leaving directory '/Users/logan/dev/LocalAI/sources/gpt4all/gpt4all-bindings/golang/buildllm/CMakeFiles/CMakeScratch/TryCompile-V81wvy'
+</pre>
+
+<p>
+<code>armv8.3</code> certainly isn&rsquo;t in that big list of lakes.
+</p>
+
+<p>
+Some reading I have done indicates that this can come up when there is a
+mismatch on Apple Silicon machines between compilers that emit <code>x86_64</code> binaries
+and <code>aarch64</code>.  I don&rsquo;t believe that is the case here, since the paths make
+sense in Nix, I haven&rsquo;t had trouble compiling anything else, and I can verify
+from the stack that everything seems to be using the Nix based tools.  But I can
+offer no other path forward.
+</p>
+
+<p>
+I did muck around in the <code>Makefile</code> of the submodule in question and wasn&rsquo;t able
+to find anything that would point toward using the wrong platform or whatnot.
+It&rsquo;s kind of hard to track, because <code>make</code> assumes a lot of C-isms if targets
+are left out.  While I did learn C long ago, I know there is much to it that I
+don&rsquo;t know (like all of the linker bits), and those depths await me in a foreign
+project&rsquo;s <code>Makefile</code>.  Not a dive I want to do today.
+</p>
+
+<p>
+I&rsquo;d like to try making a proper derivation of out of this.  This way, I can
+build the program from top to bottom using Nix, and also any sort of patches I
+can do will be retained.  Otherwise I&rsquo;ll have to just pay close attention to the
+modifications I make to various files.  One such would be the <code>clean</code> <code>make</code>
+target.  I can&rsquo;t have it clean the other repository it needs without it wiping
+the changes I made to said repository.  With Nix, I can just specify that there
+should be a patch done, and then that patch makes its way into git/editor
+history - a much safer place.
+</p>
+
+<p>
+I did notice that one can specify the entire derivation from within the
+<code>flake.nix</code>, though generally that should go into another file.  I will call
+this file <code>derivation.nix</code>, and later I will see if there are any established
+conventions - or even better: a convention that fast-tracks the project onto
+<code>nixpkgs</code>.
+</p>
+
+<hr />
+
+<p>
+One thing that is hard to show in this format is the rabbit holes I go down for
+linking and documenting.  I make a statement, and then I say &ldquo;actually is that
+correct?&rdquo;.  I do some searching or deeper reads, find out I was wrong, and then
+sometimes even I find out that there&rsquo;s a way better path forward.  Given this
+project was started more than a week ago from <span class="timestamp-wrapper"><span class="timestamp">[2024-01-30 Tue]</span></span>, this
+<a href="https://github.com/NixOS/nixpkgs/issues/269582#issuecomment-1909046618">comment</a> has the derivation!  I&rsquo;d read this before and that was not present.
+Let&rsquo;s grab theirs and see what we can do.
+</p>
+
+<p>
+This is the original:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-nix"><span style="color: #51afef;">{</span> stdenv
+, lib
+, fetchFromGitHub
+, ncurses
+, abseil-cpp
+, protobuf
+, grpc
+, openssl
+, openblas
+, cmake
+, buildGoModule
+, pkg-config
+, cudaPackages
+, makeWrapper
+, runCommand
+, buildType ? <span style="color: #7bc275;">""</span>
+<span style="color: #51afef;">}</span>:
+<span style="color: #51afef;">let</span>
+  <span style="color: #dcafe9;">go-llama</span> = fetchFromGitHub <span style="color: #51afef;">{</span>
+    <span style="color: #dcafe9;">owner</span> = <span style="color: #7bc275;">"go-skynet"</span>;
+    <span style="color: #dcafe9;">repo</span> = <span style="color: #7bc275;">"go-llama.cpp"</span>;
+    <span style="color: #dcafe9;">rev</span> = <span style="color: #7bc275;">"aeba71ee842819da681ea537e78846dc75949ac0"</span>;
+    <span style="color: #dcafe9;">hash</span> = <span style="color: #7bc275;">"sha256-ELoaJg7wOHloQws+do6TZUo7zOxUP0E85v80BlpUOJA="</span>;
+    <span style="color: #dcafe9;">fetchSubmodules</span> = <span style="color: #C57BDB;">true</span>;
+  <span style="color: #51afef;">}</span>;
+
+  <span style="color: #dcafe9;">go-llama-ggml</span> = fetchFromGitHub <span style="color: #51afef;">{</span>
+    <span style="color: #dcafe9;">owner</span> = <span style="color: #7bc275;">"go-skynet"</span>;
+    <span style="color: #dcafe9;">repo</span> = <span style="color: #7bc275;">"go-llama.cpp"</span>;
+    <span style="color: #dcafe9;">rev</span> = <span style="color: #7bc275;">"50cee7712066d9e38306eccadcfbb44ea87df4b7"</span>;
+    <span style="color: #dcafe9;">hash</span> = <span style="color: #7bc275;">"sha256-5qwUSg56fyHk5x8NgwLrgl+9Ibl2GTBP1Aq5sAvTs+s="</span>;
+    <span style="color: #dcafe9;">fetchSubmodules</span> = <span style="color: #C57BDB;">true</span>;
+  <span style="color: #51afef;">}</span>;
+
+  <span style="color: #dcafe9;">llama_cpp</span> = fetchFromGitHub <span style="color: #51afef;">{</span>
+    <span style="color: #dcafe9;">owner</span> = <span style="color: #7bc275;">"ggerganov"</span>;
+    <span style="color: #dcafe9;">repo</span> = <span style="color: #7bc275;">"llama.cpp"</span>;
+    <span style="color: #dcafe9;">rev</span> = <span style="color: #7bc275;">"6f9939d119b2d004c264952eb510bd106455531e"</span>;
+    <span style="color: #dcafe9;">hash</span> = <span style="color: #7bc275;">"sha256-TfSD+ZR8TR6xhfOjMfpvcfQXCRhRnvzcNXQOYaaWzVU="</span>;
+    <span style="color: #dcafe9;">fetchSubmodules</span> = <span style="color: #C57BDB;">true</span>;
+  <span style="color: #51afef;">}</span>;
+
+  <span style="color: #dcafe9;">llama_cpp'</span> = runCommand <span style="color: #7bc275;">"llama_cpp_src"</span> <span style="color: #51afef;">{</span> <span style="color: #51afef;">}</span> <span style="color: #7bc275;">''</span>
+<span style="color: #7bc275;">    cp -r --no-preserve=mode,ownership </span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>llama_cpp<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;"> $out</span>
+<span style="color: #7bc275;">    sed -i $out/CMakeLists.txt \</span>
+<span style="color: #7bc275;">      -e 's;pkg_check_modules(DepBLAS REQUIRED openblas);pkg_check_modules(DepBL</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">AS REQUIRED openblas64);'</span>
+<span style="color: #7bc275;">  ''</span>;
+
+  <span style="color: #dcafe9;">go-ggml-transformers</span> = fetchFromGitHub <span style="color: #51afef;">{</span>
+    <span style="color: #dcafe9;">owner</span> = <span style="color: #7bc275;">"go-skynet"</span>;
+    <span style="color: #dcafe9;">repo</span> = <span style="color: #7bc275;">"go-ggml-transformers.cpp"</span>;
+    <span style="color: #dcafe9;">rev</span> = <span style="color: #7bc275;">"ffb09d7dd71e2cbc6c5d7d05357d230eea6f369a"</span>;
+    <span style="color: #dcafe9;">hash</span> = <span style="color: #7bc275;">"sha256-WdCj6cfs98HvG3jnA6CWsOtACjMkhSmrKw9weHkLQQ4="</span>;
+    <span style="color: #dcafe9;">fetchSubmodules</span> = <span style="color: #C57BDB;">true</span>;
+  <span style="color: #51afef;">}</span>;
+
+  <span style="color: #dcafe9;">gpt4all</span> = fetchFromGitHub <span style="color: #51afef;">{</span>
+    <span style="color: #dcafe9;">owner</span> = <span style="color: #7bc275;">"nomic-ai"</span>;
+    <span style="color: #dcafe9;">repo</span> = <span style="color: #7bc275;">"gpt4all"</span>;
+    <span style="color: #dcafe9;">rev</span> = <span style="color: #7bc275;">"27a8b020c36b0df8f8b82a252d261cda47cf44b8"</span>;
+    <span style="color: #dcafe9;">hash</span> = <span style="color: #7bc275;">"sha256-djq1eK6ncvhkO3MNDgasDBUY/7WWcmZt/GJsHAulLdI="</span>;
+    <span style="color: #dcafe9;">fetchSubmodules</span> = <span style="color: #C57BDB;">true</span>;
+  <span style="color: #51afef;">}</span>;
+
+  <span style="color: #dcafe9;">go-piper</span> = fetchFromGitHub <span style="color: #51afef;">{</span>
+    <span style="color: #dcafe9;">owner</span> = <span style="color: #7bc275;">"mudler"</span>;
+    <span style="color: #dcafe9;">repo</span> = <span style="color: #7bc275;">"go-piper"</span>;
+    <span style="color: #dcafe9;">rev</span> = <span style="color: #7bc275;">"d6b6275ba037dabdba4a8b65dfdf6b2a73a67f07"</span>;
+    <span style="color: #dcafe9;">hash</span> = <span style="color: #7bc275;">"sha256-p589giBsEPsoR+RQU7qfGfpfqpTdBI51lvnLs4DmE0Y="</span>;
+    <span style="color: #dcafe9;">fetchSubmodules</span> = <span style="color: #C57BDB;">true</span>;
+  <span style="color: #51afef;">}</span>;
+
+  <span style="color: #dcafe9;">go-rwkv</span> = fetchFromGitHub <span style="color: #51afef;">{</span>
+    <span style="color: #dcafe9;">owner</span> = <span style="color: #7bc275;">"donomii"</span>;
+    <span style="color: #dcafe9;">repo</span> = <span style="color: #7bc275;">"go-rwkv.cpp"</span>;
+    <span style="color: #dcafe9;">rev</span> = <span style="color: #7bc275;">"633c5a3485c403cb2520693dc0991a25dace9f0f"</span>;
+    <span style="color: #dcafe9;">hash</span> = <span style="color: #7bc275;">"sha256-BECmBLbtAh5pdZZz0NBLbt+BX2TaC2NjHYwSEEAFPlI="</span>;
+    <span style="color: #dcafe9;">fetchSubmodules</span> = <span style="color: #C57BDB;">true</span>;
+  <span style="color: #51afef;">}</span>;
+
+  <span style="color: #dcafe9;">whisper</span> = fetchFromGitHub <span style="color: #51afef;">{</span>
+    <span style="color: #dcafe9;">owner</span> = <span style="color: #7bc275;">"ggerganov"</span>;
+    <span style="color: #dcafe9;">repo</span> = <span style="color: #7bc275;">"whisper.cpp"</span>;
+    <span style="color: #dcafe9;">rev</span> = <span style="color: #7bc275;">"9286d3f584240ba58bd44a1bd1e85141579c78d4"</span>;
+    <span style="color: #dcafe9;">hash</span> = <span style="color: #7bc275;">"sha256-hLPtfJVYiopnSdDqu9n/k9Avb4ibgbjmrVr81BTWW/w="</span>;
+    <span style="color: #dcafe9;">fetchSubmodules</span> = <span style="color: #C57BDB;">true</span>;
+  <span style="color: #51afef;">}</span>;
+
+  <span style="color: #dcafe9;">go-bert</span> = fetchFromGitHub <span style="color: #51afef;">{</span>
+    <span style="color: #dcafe9;">owner</span> = <span style="color: #7bc275;">"go-skynet"</span>;
+    <span style="color: #dcafe9;">repo</span> = <span style="color: #7bc275;">"go-bert.cpp"</span>;
+    <span style="color: #dcafe9;">rev</span> = <span style="color: #7bc275;">"6abe312cded14042f6b7c3cd8edf082713334a4d"</span>;
+    <span style="color: #dcafe9;">hash</span> = <span style="color: #7bc275;">"sha256-lh9cvXc032Eq31kysxFOkRd0zPjsCznRl0tzg9P2ygo="</span>;
+    <span style="color: #dcafe9;">fetchSubmodules</span> = <span style="color: #C57BDB;">true</span>;
+  <span style="color: #51afef;">}</span>;
+
+  <span style="color: #dcafe9;">go-stable-diffusion</span> = fetchFromGitHub <span style="color: #51afef;">{</span>
+    <span style="color: #dcafe9;">owner</span> = <span style="color: #7bc275;">"mudler"</span>;
+    <span style="color: #dcafe9;">repo</span> = <span style="color: #7bc275;">"go-stable-diffusion"</span>;
+    <span style="color: #dcafe9;">rev</span> = <span style="color: #7bc275;">"902db5f066fd137697e3b69d0fa10d4782bd2c2f"</span>;
+    <span style="color: #dcafe9;">hash</span> = <span style="color: #7bc275;">"sha256-MbVYeWQF/aJNsg2NpTMVx5tD31BK5pQ8Zg92uoWRkcU="</span>;
+    <span style="color: #dcafe9;">fetchSubmodules</span> = <span style="color: #C57BDB;">true</span>;
+  <span style="color: #51afef;">}</span>;
+
+  <span style="color: #dcafe9;">go-tiny-dream</span> = fetchFromGitHub <span style="color: #51afef;">{</span>
+    <span style="color: #dcafe9;">owner</span> = <span style="color: #7bc275;">"M0Rf30"</span>;
+    <span style="color: #dcafe9;">repo</span> = <span style="color: #7bc275;">"go-tiny-dream"</span>;
+    <span style="color: #dcafe9;">rev</span> = <span style="color: #7bc275;">"772a9c0d9aaf768290e63cca3c904fe69faf677a"</span>;
+    <span style="color: #dcafe9;">hash</span> = <span style="color: #7bc275;">"sha256-r+wzFIjaI6cxAm/eXN3q8LRZZz+lE5EA4lCTk5+ZnIY="</span>;
+    <span style="color: #dcafe9;">fetchSubmodules</span> = <span style="color: #C57BDB;">true</span>;
+  <span style="color: #51afef;">}</span>;
+
+<span style="color: #51afef;">in</span>
+buildGoModule <span style="color: #51afef;">rec</span> <span style="color: #51afef;">{</span>
+  <span style="color: #dcafe9;">pname</span> = <span style="color: #7bc275;">"local-ai"</span>;
+  <span style="color: #dcafe9;">version</span> = <span style="color: #7bc275;">"2.6.1"</span>;
+
+  <span style="color: #dcafe9;">src</span> = fetchFromGitHub <span style="color: #C57BDB;">{</span>
+    <span style="color: #dcafe9;">owner</span> = <span style="color: #7bc275;">"go-skynet"</span>;
+    <span style="color: #dcafe9;">repo</span> = <span style="color: #7bc275;">"LocalAI"</span>;
+    <span style="color: #dcafe9;">rev</span> = <span style="color: #7bc275;">"v</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #7bc275; font-weight: bold;">{</span>version<span style="color: #7bc275; font-weight: bold;">}</span>";
+    <span style="color: #dcafe9;">hash</span> = <span style="color: #7bc275;">"sha256-xGbrNbHQpl9Tdh5w+Csx7mhkMDBF8JgGtIVvgOu0XWs="</span>;
+  <span style="color: #C57BDB;">}</span>;
+
+  <span style="color: #dcafe9;">vendorHash</span> = <span style="color: #7bc275;">"sha256-WUgDyRzShftJ15yumlvcSN0rUx8ytQPQGAO37AxMHeA="</span>;
+
+  <span style="color: #62686E;"># Workaround for</span>
+  <span style="color: #62686E;"># `cc1plus: error: '-Wformat-security' ignored without '-Wformat' [-Werror=for</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">mat-security]`</span>
+  <span style="color: #62686E;"># when building jtreg</span>
+  <span style="color: #dcafe9;">env.NIX_CFLAGS_COMPILE</span> = <span style="color: #7bc275;">"-Wformat"</span>;
+
+  <span style="color: #dcafe9;">postPatch</span> =
+    <span style="color: #51afef;">let</span>
+      <span style="color: #dcafe9;">cp</span> = <span style="color: #7bc275;">"cp -r --no-preserve=mode,ownership"</span>;
+    <span style="color: #51afef;">in</span>
+    <span style="color: #7bc275;">''</span>
+<span style="color: #7bc275;">      sed -i Makefile \</span>
+<span style="color: #7bc275;">        -e 's;git clone.*go-llama$;</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>cp<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;"> </span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>go-llama<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;"> sources/go-llama;' \</span>
+<span style="color: #7bc275;">        -e 's;git clone.*go-llama-ggml$;</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>cp<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;"> </span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>go-llama-ggml<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;"> sources/go-llama-</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">ggml;' \</span>
+<span style="color: #7bc275;">        -e 's;git clone.*go-ggml-transformers$;</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>cp<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;"> </span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>go-ggml-transformers<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;"> sou</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">rces/go-ggml-transformers;' \</span>
+<span style="color: #7bc275;">        -e 's;git clone.*gpt4all$;</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>cp<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;"> </span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>gpt4all<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;"> sources/gpt4all;' \</span>
+<span style="color: #7bc275;">        -e 's;git clone.*go-piper$;</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>cp<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;"> </span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>go-piper<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;"> sources/go-piper;' \</span>
+<span style="color: #7bc275;">        -e 's;git clone.*go-rwkv$;</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>cp<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;"> </span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>go-rwkv<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;"> sources/go-rwkv;' \</span>
+<span style="color: #7bc275;">        -e 's;git clone.*whisper\.cpp$;</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>cp<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;"> </span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>whisper<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;"> sources/whisper\.cpp;' \</span>
+<span style="color: #7bc275;">        -e 's;git clone.*go-bert$;</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>cp<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;"> </span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>go-bert<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;"> sources/go-bert;' \</span>
+<span style="color: #7bc275;">        -e 's;git clone.*diffusion$;</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>cp<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;"> </span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>go-stable-diffusion<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;"> sources/go-stab</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">le-diffusion;' \</span>
+<span style="color: #7bc275;">        -e 's;git clone.*go-tiny-dream$;</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>cp<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;"> </span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>go-tiny-dream<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;"> sources/go-tiny-d</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">ream;' \</span>
+<span style="color: #7bc275;">        -e 's, &amp;&amp; git checkout.*,,g' \</span>
+<span style="color: #7bc275;">        -e '/mod download/ d' \</span>
+
+<span style="color: #7bc275;">      sed -i backend/cpp/llama/Makefile \</span>
+<span style="color: #7bc275;">        -e 's;git clone.*llama\.cpp$;</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>cp<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;"> </span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>llama_cpp'<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;"> llama\.cpp;' \</span>
+<span style="color: #7bc275;">        -e 's, &amp;&amp; git checkout.*,,g' \</span>
+
+<span style="color: #7bc275;">    ''</span>
+  ;
+
+  <span style="color: #dcafe9;">modBuildPhase</span> = <span style="color: #7bc275;">''</span>
+<span style="color: #7bc275;">    mkdir sources</span>
+<span style="color: #7bc275;">    make prepare-sources</span>
+<span style="color: #7bc275;">    go mod tidy -v</span>
+<span style="color: #7bc275;">  ''</span>;
+
+  <span style="color: #dcafe9;">proxyVendor</span> = <span style="color: #C57BDB;">true</span>;
+
+  <span style="color: #dcafe9;">buildPhase</span> = <span style="color: #7bc275;">''</span>
+<span style="color: #7bc275;">    mkdir sources</span>
+<span style="color: #7bc275;">    make \</span>
+<span style="color: #7bc275;">      VERSION=v</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>version<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;"> \</span>
+<span style="color: #7bc275;">      BUILD_TYPE=</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>buildType<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;"> \</span>
+<span style="color: #7bc275;">      build</span>
+<span style="color: #7bc275;">  ''</span>;
+
+  <span style="color: #dcafe9;">installPhase</span> = <span style="color: #7bc275;">''</span>
+<span style="color: #7bc275;">    install -Dt $out/bin </span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>pname<span style="color: #C57BDB; font-weight: bold;">}</span>
+<span style="color: #7bc275;">  ''</span>;
+
+  <span style="color: #dcafe9;">buildInputs</span> = <span style="color: #C57BDB;">[</span>
+    abseil-cpp
+    protobuf
+    grpc
+    openssl
+  <span style="color: #C57BDB;">]</span>
+  ++ lib.optional <span style="color: #C57BDB;">(</span>buildType == <span style="color: #7bc275;">"cublas"</span><span style="color: #C57BDB;">)</span> cudaPackages.cudatoolkit
+  ++ lib.optional <span style="color: #C57BDB;">(</span>buildType == <span style="color: #7bc275;">"openblas"</span><span style="color: #C57BDB;">)</span> openblas.dev
+  ;
+
+  <span style="color: #62686E;"># patching rpath with patchelf doens't work. The execuable</span>
+  <span style="color: #62686E;"># raises an segmentation fault</span>
+  <span style="color: #dcafe9;">postFixup</span> = lib.optionalString <span style="color: #C57BDB;">(</span>buildType == <span style="color: #7bc275;">"cublas"</span><span style="color: #C57BDB;">)</span> <span style="color: #7bc275;">''</span>
+<span style="color: #7bc275;">    wrapProgram $out/bin/</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>pname<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;"> \</span>
+<span style="color: #7bc275;">      --prefix LD_LIBRARY_PATH : "</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>cudaPackages.libcublas<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;">/lib:</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>cudaPackages.c<span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">uda_cudart</span><span style="color: #C57BDB; background-color: #1c1f24; font-weight: bold;">}</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">/lib:/run/opengl-driver/lib"</span>
+<span style="color: #7bc275;">  ''</span>
+  + lib.optionalString <span style="color: #C57BDB;">(</span>buildType == <span style="color: #7bc275;">"openblas"</span><span style="color: #C57BDB;">)</span> <span style="color: #7bc275;">''</span>
+<span style="color: #7bc275;">    wrapProgram $out/bin/</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>pname<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;"> \</span>
+<span style="color: #7bc275;">      --prefix LD_LIBRARY_PATH : "</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>openblas<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;">/lib"</span>
+<span style="color: #7bc275;">  ''</span>;
+
+  <span style="color: #dcafe9;">nativeBuildInputs</span> = <span style="color: #C57BDB;">[</span>
+    ncurses
+    cmake
+    makeWrapper
+  <span style="color: #C57BDB;">]</span>
+  ++ lib.optional <span style="color: #C57BDB;">(</span>buildType == <span style="color: #7bc275;">"openblas"</span><span style="color: #C57BDB;">)</span> pkg-config
+  ++ lib.optional <span style="color: #C57BDB;">(</span>buildType == <span style="color: #7bc275;">"cublas"</span><span style="color: #C57BDB;">)</span> cudaPackages.cuda_nvcc
+  ;
+<span style="color: #51afef;">}</span>
+</pre>
+</div>
+
+<p>
+I modified it to accept some macOS libraries.  I don&rsquo;t know if it works yet.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-nix"><span style="color: #51afef;">{</span> stdenv
+, darwin
+, lib
+, fetchFromGitHub
+, ncurses
+, abseil-cpp
+, protobuf
+, grpc
+, openssl
+, openblas
+, cmake
+, buildGoModule
+, pkg-config
+, cudaPackages
+, makeWrapper
+, runCommand
+, buildType ? <span style="color: #7bc275;">""</span>
+<span style="color: #51afef;">}</span>:
+<span style="color: #51afef;">let</span>
+  <span style="color: #dcafe9;">go-llama</span> = fetchFromGitHub <span style="color: #51afef;">{</span>
+    <span style="color: #dcafe9;">owner</span> = <span style="color: #7bc275;">"go-skynet"</span>;
+    <span style="color: #dcafe9;">repo</span> = <span style="color: #7bc275;">"go-llama.cpp"</span>;
+    <span style="color: #dcafe9;">rev</span> = <span style="color: #7bc275;">"aeba71ee842819da681ea537e78846dc75949ac0"</span>;
+    <span style="color: #dcafe9;">hash</span> = <span style="color: #7bc275;">"sha256-ELoaJg7wOHloQws+do6TZUo7zOxUP0E85v80BlpUOJA="</span>;
+    <span style="color: #dcafe9;">fetchSubmodules</span> = <span style="color: #C57BDB;">true</span>;
+  <span style="color: #51afef;">}</span>;
+
+  <span style="color: #dcafe9;">go-llama-ggml</span> = fetchFromGitHub <span style="color: #51afef;">{</span>
+    <span style="color: #dcafe9;">owner</span> = <span style="color: #7bc275;">"go-skynet"</span>;
+    <span style="color: #dcafe9;">repo</span> = <span style="color: #7bc275;">"go-llama.cpp"</span>;
+    <span style="color: #dcafe9;">rev</span> = <span style="color: #7bc275;">"50cee7712066d9e38306eccadcfbb44ea87df4b7"</span>;
+    <span style="color: #dcafe9;">hash</span> = <span style="color: #7bc275;">"sha256-5qwUSg56fyHk5x8NgwLrgl+9Ibl2GTBP1Aq5sAvTs+s="</span>;
+    <span style="color: #dcafe9;">fetchSubmodules</span> = <span style="color: #C57BDB;">true</span>;
+  <span style="color: #51afef;">}</span>;
+
+  <span style="color: #dcafe9;">llama_cpp</span> = fetchFromGitHub <span style="color: #51afef;">{</span>
+    <span style="color: #dcafe9;">owner</span> = <span style="color: #7bc275;">"ggerganov"</span>;
+    <span style="color: #dcafe9;">repo</span> = <span style="color: #7bc275;">"llama.cpp"</span>;
+    <span style="color: #dcafe9;">rev</span> = <span style="color: #7bc275;">"6f9939d119b2d004c264952eb510bd106455531e"</span>;
+    <span style="color: #dcafe9;">hash</span> = <span style="color: #7bc275;">"sha256-TfSD+ZR8TR6xhfOjMfpvcfQXCRhRnvzcNXQOYaaWzVU="</span>;
+    <span style="color: #dcafe9;">fetchSubmodules</span> = <span style="color: #C57BDB;">true</span>;
+  <span style="color: #51afef;">}</span>;
+
+  <span style="color: #dcafe9;">llama_cpp'</span> = runCommand <span style="color: #7bc275;">"llama_cpp_src"</span> <span style="color: #51afef;">{</span> <span style="color: #51afef;">}</span> <span style="color: #7bc275;">''</span>
+<span style="color: #7bc275;">    cp -r --no-preserve=mode,ownership </span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>llama_cpp<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;"> $out</span>
+<span style="color: #7bc275;">    sed -i $out/CMakeLists.txt \</span>
+<span style="color: #7bc275;">      -e 's;pkg_check_modules(DepBLAS REQUIRED openblas);pkg_check_modules(DepBL</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">AS REQUIRED openblas64);'</span>
+<span style="color: #7bc275;">  ''</span>;
+
+  <span style="color: #dcafe9;">go-ggml-transformers</span> = fetchFromGitHub <span style="color: #51afef;">{</span>
+    <span style="color: #dcafe9;">owner</span> = <span style="color: #7bc275;">"go-skynet"</span>;
+    <span style="color: #dcafe9;">repo</span> = <span style="color: #7bc275;">"go-ggml-transformers.cpp"</span>;
+    <span style="color: #dcafe9;">rev</span> = <span style="color: #7bc275;">"ffb09d7dd71e2cbc6c5d7d05357d230eea6f369a"</span>;
+    <span style="color: #dcafe9;">hash</span> = <span style="color: #7bc275;">"sha256-WdCj6cfs98HvG3jnA6CWsOtACjMkhSmrKw9weHkLQQ4="</span>;
+    <span style="color: #dcafe9;">fetchSubmodules</span> = <span style="color: #C57BDB;">true</span>;
+  <span style="color: #51afef;">}</span>;
+
+  <span style="color: #dcafe9;">gpt4all</span> = fetchFromGitHub <span style="color: #51afef;">{</span>
+    <span style="color: #dcafe9;">owner</span> = <span style="color: #7bc275;">"nomic-ai"</span>;
+    <span style="color: #dcafe9;">repo</span> = <span style="color: #7bc275;">"gpt4all"</span>;
+    <span style="color: #dcafe9;">rev</span> = <span style="color: #7bc275;">"27a8b020c36b0df8f8b82a252d261cda47cf44b8"</span>;
+    <span style="color: #dcafe9;">hash</span> = <span style="color: #7bc275;">"sha256-djq1eK6ncvhkO3MNDgasDBUY/7WWcmZt/GJsHAulLdI="</span>;
+    <span style="color: #dcafe9;">fetchSubmodules</span> = <span style="color: #C57BDB;">true</span>;
+  <span style="color: #51afef;">}</span>;
+
+  <span style="color: #dcafe9;">go-piper</span> = fetchFromGitHub <span style="color: #51afef;">{</span>
+    <span style="color: #dcafe9;">owner</span> = <span style="color: #7bc275;">"mudler"</span>;
+    <span style="color: #dcafe9;">repo</span> = <span style="color: #7bc275;">"go-piper"</span>;
+    <span style="color: #dcafe9;">rev</span> = <span style="color: #7bc275;">"d6b6275ba037dabdba4a8b65dfdf6b2a73a67f07"</span>;
+    <span style="color: #dcafe9;">hash</span> = <span style="color: #7bc275;">"sha256-p589giBsEPsoR+RQU7qfGfpfqpTdBI51lvnLs4DmE0Y="</span>;
+    <span style="color: #dcafe9;">fetchSubmodules</span> = <span style="color: #C57BDB;">true</span>;
+  <span style="color: #51afef;">}</span>;
+
+  <span style="color: #dcafe9;">go-rwkv</span> = fetchFromGitHub <span style="color: #51afef;">{</span>
+    <span style="color: #dcafe9;">owner</span> = <span style="color: #7bc275;">"donomii"</span>;
+    <span style="color: #dcafe9;">repo</span> = <span style="color: #7bc275;">"go-rwkv.cpp"</span>;
+    <span style="color: #dcafe9;">rev</span> = <span style="color: #7bc275;">"633c5a3485c403cb2520693dc0991a25dace9f0f"</span>;
+    <span style="color: #dcafe9;">hash</span> = <span style="color: #7bc275;">"sha256-BECmBLbtAh5pdZZz0NBLbt+BX2TaC2NjHYwSEEAFPlI="</span>;
+    <span style="color: #dcafe9;">fetchSubmodules</span> = <span style="color: #C57BDB;">true</span>;
+  <span style="color: #51afef;">}</span>;
+
+  <span style="color: #dcafe9;">whisper</span> = fetchFromGitHub <span style="color: #51afef;">{</span>
+    <span style="color: #dcafe9;">owner</span> = <span style="color: #7bc275;">"ggerganov"</span>;
+    <span style="color: #dcafe9;">repo</span> = <span style="color: #7bc275;">"whisper.cpp"</span>;
+    <span style="color: #dcafe9;">rev</span> = <span style="color: #7bc275;">"9286d3f584240ba58bd44a1bd1e85141579c78d4"</span>;
+    <span style="color: #dcafe9;">hash</span> = <span style="color: #7bc275;">"sha256-hLPtfJVYiopnSdDqu9n/k9Avb4ibgbjmrVr81BTWW/w="</span>;
+    <span style="color: #dcafe9;">fetchSubmodules</span> = <span style="color: #C57BDB;">true</span>;
+  <span style="color: #51afef;">}</span>;
+
+  <span style="color: #dcafe9;">go-bert</span> = fetchFromGitHub <span style="color: #51afef;">{</span>
+    <span style="color: #dcafe9;">owner</span> = <span style="color: #7bc275;">"go-skynet"</span>;
+    <span style="color: #dcafe9;">repo</span> = <span style="color: #7bc275;">"go-bert.cpp"</span>;
+    <span style="color: #dcafe9;">rev</span> = <span style="color: #7bc275;">"6abe312cded14042f6b7c3cd8edf082713334a4d"</span>;
+    <span style="color: #dcafe9;">hash</span> = <span style="color: #7bc275;">"sha256-lh9cvXc032Eq31kysxFOkRd0zPjsCznRl0tzg9P2ygo="</span>;
+    <span style="color: #dcafe9;">fetchSubmodules</span> = <span style="color: #C57BDB;">true</span>;
+  <span style="color: #51afef;">}</span>;
+
+  <span style="color: #dcafe9;">go-stable-diffusion</span> = fetchFromGitHub <span style="color: #51afef;">{</span>
+    <span style="color: #dcafe9;">owner</span> = <span style="color: #7bc275;">"mudler"</span>;
+    <span style="color: #dcafe9;">repo</span> = <span style="color: #7bc275;">"go-stable-diffusion"</span>;
+    <span style="color: #dcafe9;">rev</span> = <span style="color: #7bc275;">"902db5f066fd137697e3b69d0fa10d4782bd2c2f"</span>;
+    <span style="color: #dcafe9;">hash</span> = <span style="color: #7bc275;">"sha256-MbVYeWQF/aJNsg2NpTMVx5tD31BK5pQ8Zg92uoWRkcU="</span>;
+    <span style="color: #dcafe9;">fetchSubmodules</span> = <span style="color: #C57BDB;">true</span>;
+  <span style="color: #51afef;">}</span>;
+
+  <span style="color: #dcafe9;">go-tiny-dream</span> = fetchFromGitHub <span style="color: #51afef;">{</span>
+    <span style="color: #dcafe9;">owner</span> = <span style="color: #7bc275;">"M0Rf30"</span>;
+    <span style="color: #dcafe9;">repo</span> = <span style="color: #7bc275;">"go-tiny-dream"</span>;
+    <span style="color: #dcafe9;">rev</span> = <span style="color: #7bc275;">"772a9c0d9aaf768290e63cca3c904fe69faf677a"</span>;
+    <span style="color: #dcafe9;">hash</span> = <span style="color: #7bc275;">"sha256-r+wzFIjaI6cxAm/eXN3q8LRZZz+lE5EA4lCTk5+ZnIY="</span>;
+    <span style="color: #dcafe9;">fetchSubmodules</span> = <span style="color: #C57BDB;">true</span>;
+  <span style="color: #51afef;">}</span>;
+
+<span style="color: #51afef;">in</span>
+buildGoModule <span style="color: #51afef;">rec</span> <span style="color: #51afef;">{</span>
+  <span style="color: #dcafe9;">pname</span> = <span style="color: #7bc275;">"local-ai"</span>;
+  <span style="color: #dcafe9;">version</span> = <span style="color: #7bc275;">"2.6.1"</span>;
+
+  <span style="color: #dcafe9;">src</span> = fetchFromGitHub <span style="color: #C57BDB;">{</span>
+    <span style="color: #dcafe9;">owner</span> = <span style="color: #7bc275;">"go-skynet"</span>;
+    <span style="color: #dcafe9;">repo</span> = <span style="color: #7bc275;">"LocalAI"</span>;
+    <span style="color: #dcafe9;">rev</span> = <span style="color: #7bc275;">"v</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #7bc275; font-weight: bold;">{</span>version<span style="color: #7bc275; font-weight: bold;">}</span>";
+    <span style="color: #dcafe9;">hash</span> = <span style="color: #7bc275;">"sha256-xGbrNbHQpl9Tdh5w+Csx7mhkMDBF8JgGtIVvgOu0XWs="</span>;
+  <span style="color: #C57BDB;">}</span>;
+
+  <span style="color: #dcafe9;">vendorHash</span> = <span style="color: #7bc275;">"sha256-WUgDyRzShftJ15yumlvcSN0rUx8ytQPQGAO37AxMHeA="</span>;
+
+  <span style="color: #62686E;"># Workaround for</span>
+  <span style="color: #62686E;"># `cc1plus: error: '-Wformat-security' ignored without '-Wformat' [-Werror=for</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">mat-security]`</span>
+  <span style="color: #62686E;"># when building jtreg</span>
+  <span style="color: #dcafe9;">env.NIX_CFLAGS_COMPILE</span> = <span style="color: #7bc275;">"-Wformat"</span>;
+
+  <span style="color: #dcafe9;">postPatch</span> =
+    <span style="color: #51afef;">let</span>
+      <span style="color: #dcafe9;">cp</span> = <span style="color: #7bc275;">"cp -r --no-preserve=mode,ownership"</span>;
+    <span style="color: #51afef;">in</span>
+    <span style="color: #7bc275;">''</span>
+<span style="color: #7bc275;">      sed -i Makefile \</span>
+<span style="color: #7bc275;">        -e 's;git clone.*go-llama$;</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>cp<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;"> </span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>go-llama<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;"> sources/go-llama;' \</span>
+<span style="color: #7bc275;">        -e 's;git clone.*go-llama-ggml$;</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>cp<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;"> </span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>go-llama-ggml<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;"> sources/go-llama-</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">ggml;' \</span>
+<span style="color: #7bc275;">        -e 's;git clone.*go-ggml-transformers$;</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>cp<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;"> </span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>go-ggml-transformers<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;"> sou</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">rces/go-ggml-transformers;' \</span>
+<span style="color: #7bc275;">        -e 's;git clone.*gpt4all$;</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>cp<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;"> </span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>gpt4all<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;"> sources/gpt4all;' \</span>
+<span style="color: #7bc275;">        -e 's;git clone.*go-piper$;</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>cp<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;"> </span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>go-piper<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;"> sources/go-piper;' \</span>
+<span style="color: #7bc275;">        -e 's;git clone.*go-rwkv$;</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>cp<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;"> </span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>go-rwkv<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;"> sources/go-rwkv;' \</span>
+<span style="color: #7bc275;">        -e 's;git clone.*whisper\.cpp$;</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>cp<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;"> </span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>whisper<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;"> sources/whisper\.cpp;' \</span>
+<span style="color: #7bc275;">        -e 's;git clone.*go-bert$;</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>cp<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;"> </span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>go-bert<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;"> sources/go-bert;' \</span>
+<span style="color: #7bc275;">        -e 's;git clone.*diffusion$;</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>cp<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;"> </span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>go-stable-diffusion<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;"> sources/go-stab</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">le-diffusion;' \</span>
+<span style="color: #7bc275;">        -e 's;git clone.*go-tiny-dream$;</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>cp<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;"> </span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>go-tiny-dream<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;"> sources/go-tiny-d</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">ream;' \</span>
+<span style="color: #7bc275;">        -e 's, &amp;&amp; git checkout.*,,g' \</span>
+<span style="color: #7bc275;">        -e '/mod download/ d' \</span>
+
+<span style="color: #7bc275;">      sed -i backend/cpp/llama/Makefile \</span>
+<span style="color: #7bc275;">        -e 's;git clone.*llama\.cpp$;</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>cp<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;"> </span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>llama_cpp'<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;"> llama\.cpp;' \</span>
+<span style="color: #7bc275;">        -e 's, &amp;&amp; git checkout.*,,g' \</span>
+
+<span style="color: #7bc275;">    ''</span>
+  ;
+
+  <span style="color: #dcafe9;">modBuildPhase</span> = <span style="color: #7bc275;">''</span>
+<span style="color: #7bc275;">    mkdir sources</span>
+<span style="color: #7bc275;">    make prepare-sources</span>
+<span style="color: #7bc275;">    go mod tidy -v</span>
+<span style="color: #7bc275;">  ''</span>;
+
+  <span style="color: #dcafe9;">proxyVendor</span> = <span style="color: #C57BDB;">true</span>;
+
+  <span style="color: #dcafe9;">buildPhase</span> = <span style="color: #7bc275;">''</span>
+<span style="color: #7bc275;">    mkdir sources</span>
+<span style="color: #7bc275;">    make \</span>
+<span style="color: #7bc275;">      VERSION=v</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>version<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;"> \</span>
+<span style="color: #7bc275;">      BUILD_TYPE=</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>buildType<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;"> \</span>
+<span style="color: #7bc275;">      build</span>
+<span style="color: #7bc275;">  ''</span>;
+
+  <span style="color: #dcafe9;">installPhase</span> = <span style="color: #7bc275;">''</span>
+<span style="color: #7bc275;">    install -Dt $out/bin </span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>pname<span style="color: #C57BDB; font-weight: bold;">}</span>
+<span style="color: #7bc275;">  ''</span>;
+
+  <span style="color: #dcafe9;">buildInputs</span> = <span style="color: #C57BDB;">[</span>
+    abseil-cpp
+    protobuf
+    grpc
+    openssl
+  <span style="color: #C57BDB;">]</span>
+  ++ lib.optional <span style="color: #C57BDB;">(</span>buildType == <span style="color: #7bc275;">"cublas"</span><span style="color: #C57BDB;">)</span> cudaPackages.cudatoolkit
+  ++ lib.optional <span style="color: #C57BDB;">(</span>buildType == <span style="color: #7bc275;">"openblas"</span><span style="color: #C57BDB;">)</span> openblas.dev
+  ;
+
+  <span style="color: #62686E;"># patching rpath with patchelf doens't work. The execuable</span>
+  <span style="color: #62686E;"># raises an segmentation fault</span>
+  <span style="color: #dcafe9;">postFixup</span> = lib.optionalString <span style="color: #C57BDB;">(</span>buildType == <span style="color: #7bc275;">"cublas"</span><span style="color: #C57BDB;">)</span> <span style="color: #7bc275;">''</span>
+<span style="color: #7bc275;">    wrapProgram $out/bin/</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>pname<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;"> \</span>
+<span style="color: #7bc275;">      --prefix LD_LIBRARY_PATH : "</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>cudaPackages.libcublas<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;">/lib:</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>cudaPackages.c<span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">uda_cudart</span><span style="color: #C57BDB; background-color: #1c1f24; font-weight: bold;">}</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">/lib:/run/opengl-driver/lib"</span>
+<span style="color: #7bc275;">  ''</span>
+  + lib.optionalString <span style="color: #C57BDB;">(</span>buildType == <span style="color: #7bc275;">"openblas"</span><span style="color: #C57BDB;">)</span> <span style="color: #7bc275;">''</span>
+<span style="color: #7bc275;">    wrapProgram $out/bin/</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>pname<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;"> \</span>
+<span style="color: #7bc275;">      --prefix LD_LIBRARY_PATH : "</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>openblas<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;">/lib"</span>
+<span style="color: #7bc275;">  ''</span>;
+
+  <span style="color: #dcafe9;">nativeBuildInputs</span> = <span style="color: #C57BDB;">[</span>
+    ncurses
+    cmake
+    makeWrapper
+  <span style="color: #C57BDB;">]</span>
+  ++ lib.optional <span style="color: #C57BDB;">(</span>buildType == <span style="color: #7bc275;">"openblas"</span><span style="color: #C57BDB;">)</span> pkg-config
+  ++ lib.optional <span style="color: #C57BDB;">(</span>buildType == <span style="color: #7bc275;">"cublas"</span><span style="color: #C57BDB;">)</span> cudaPackages.cuda_nvcc
+  ++ lib.optional <span style="color: #C57BDB;">(</span>stdenv.isDarwin<span style="color: #C57BDB;">)</span>
+    <span style="color: #C57BDB;">(</span><span style="color: #51afef;">with</span> darwin.apple_sdk.frameworks; <span style="color: #7bc275;">[</span>
+      Accelerate
+      CoreFoundation
+      MetalKit
+      MetalPerformanceShaders
+      Security
+    <span style="color: #7bc275;">]</span><span style="color: #C57BDB;">)</span>
+  ;
+<span style="color: #51afef;">}</span>
+</pre>
+</div>
+
+<p>
+I had to do some more digging about the anatomy of a Nix Flake.  Thus far, my
+builds have &ldquo;succeeded&rdquo; but finish in about a second or two, and the <code>result</code>
+that comes from it is about 6K in size - vastly smaller than I expected, which
+makes me think something is very wrong.
+</p>
+
+<p>
+I can define an &ldquo;app&rdquo; thusly:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-nix"><span style="color: #dcafe9;">apps.aarch64-darwin.localai</span> = <span style="color: #51afef;">{</span>
+  <span style="color: #dcafe9;">type</span> = <span style="color: #7bc275;">"app"</span>;
+  <span style="color: #dcafe9;">program</span> = <span style="color: #7bc275;">"local-ai"</span>;
+<span style="color: #51afef;">}</span>;
+</pre>
+</div>
+
+<p>
+And this is adjacent to <code>packages</code> and <code>devShells</code>.  But this is wrong and the
+documentation about Nix Flakes doesn&rsquo;t tell me what structure the value of the
+<code>apps</code> entry should contain.  When I try to do <code>nix run '.#local-ai'</code>, I get:
+</p>
+
+<pre class="example" id="org9ac228b">
+error: app program 'local-ai' is not in the Nix store
+</pre>
+
+<p>
+All I have for documentation is that the value must be a <code>&lt;store-path&gt;</code>,
+whatever that means.  Clearly it isn&rsquo;t a relative path to the file, as relative
+to the <code>bin</code> or whatever output directory the build machinery for the repository
+is using.  Reading up on the store path in Nix doesn&rsquo;t yield anything
+meaningful.  I need an example.  What do you want?  An absolute path?  Relative?
+Are there helpers since I don&rsquo;t know what the absolute path will be since it&rsquo;s
+got a bunch of generated cruft in it?  Frustration mounts.  I just look at
+<code>nixpkgs</code> for some arbitrary package.
+</p>
+
+<p>
+In some <a href="https://github.com/NixOS/nixpkgs/blob/master/pkgs/applications/audio/airwave/default.nix">arbitrary sample</a> I found <code>$out</code> used in <code>postInstall</code>, which looks
+promising.  I see the derivation I cribbed has the following:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-nix"><span style="color: #dcafe9;">installPhase</span> = <span style="color: #7bc275;">''</span>
+<span style="color: #7bc275;">  install -Dt $out/bin </span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>pname<span style="color: #51afef; font-weight: bold;">}</span>
+'';
+</pre>
+</div>
+
+<p>
+Okay good, so it installs under <code>$out/bin</code> a binary named <code>${pname}</code> which
+resolves to <code>local-ai</code>.  I got this from the derivation:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-nix">  <span style="color: #dcafe9;">pname</span> = <span style="color: #7bc275;">"local-ai"</span>;
+</pre>
+</div>
+
+<p>
+I tried changing <code>program</code> to <code>local-ai</code> (was <code>localai</code>), but still no joy.
+None of this has told me what should go into the <code>&lt;store-path&gt;</code>.  I suppose I
+know the name of the executable, but not its <span class="underline">path</span>.
+</p>
+
+<p>
+I stumbled across <a href="https://dev.to/dooygoy/flake-my-life-how-do-nix-flakes-work-2foe">Flake my life - how do nix flakes work?</a> which captures another
+user&rsquo;s attempt at grasping what is actually going on here and struggling
+immensely.  I have found kin.
+</p>
+
+<p>
+The official Flake documentation has this:
+</p>
+
+<pre class="example" id="org9db82b9">
+When output apps.&lt;system&gt;.myapp is not defined, nix run myapp runs &lt;packages or
+legacyPackages.&lt;system&gt;.myapp&gt;/bin/&lt;myapp.meta.mainProgram or myapp.pname or
+myapp.name (the non-version part)&gt;
+</pre>
+
+<p>
+Okay, so I just commented out my <code>apps</code> declaration. Now I&rsquo;m using <code>nix run .</code>
+with <code>packages.aarch64-darwin.default = ./derivation.nix</code> (note it&rsquo;s <code>default</code>
+instead of <code>localai</code> as it was before).
+</p>
+
+<p>
+But still:
+</p>
+
+<pre class="example" id="org066d7e9">
+error: attribute 'packages.aarch64-darwin.default.type' does not exist
+</pre>
+
+<p>
+The nix docs have:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-nix"><span style="color: #62686E;"># </span><span style="color: #62686E;">Executed by `nix build .`</span>
+packages.<span style="color: #7bc275;">"&lt;system&gt;"</span>.<span style="color: #dcafe9;">default</span> = <span style="color: #C57BDB;">derivation</span>;
+</pre>
+</div>
+
+<p>
+I did find a some documentation on <code>store-path</code> by the way:
+</p>
+
+<pre class="example" id="org304dcd1">
+&lt;store-path&gt; is a /nix/store.. path
+</pre>
+
+<p>
+Which I already knew and still have <span class="underline">no idea what should go into the <code>path</code>
+field</span>.
+</p>
+
+<p>
+Looking for the <code>type</code> error is indicative that even the <code>packages</code> entry must
+be some specific type of value and whatever comes out of <code>mkDerivation</code> isn&rsquo;t
+it.  That, or the result from <code>mkDerivation</code> needs to actually be executed.
+From a programming perspective, I think this kind of makes sense.
+</p>
+
+<p>
+I flail some more.  I vaguely remembered <code>callPackage</code>, and found out it&rsquo;s
+<a href="https://nixos.org/guides/nix-pills/callpackage-design-pattern">exactly what I want and documented as such kind of</a>.
+</p>
+
+<p>
+My <code>packages</code> becomes:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-nix"><span style="color: #dcafe9;">packages.aarch64-darwin.default</span> = pkgs.callPackage <span style="color: #a991f1;">./derivation.nix</span>  <span style="color: #51afef;">{}</span>;
+</pre>
+</div>
+
+<p>
+Now when I run it, I&rsquo;m seeing a bunch of download activity.  Result!  Or at
+least progress!
+</p>
+
+<p>
+Moments later I see:
+</p>
+
+<pre class="example" id="org5cd8c0a">
+error: builder for '/nix/store/ik0a8kblr1w76iamyv40qimacbd2pdpg-local-ai-2.6.1.drv' failed with exit code 2;
+       last 10 log lines:
+       &gt; make[5]: Leaving directory '/private/tmp/nix-build-local-ai-2.6.1.drv-0/source/sources/go-ggml-transformers/build'
+       &gt; make[4]: *** [CMakeFiles/Makefile2:343: src/CMakeFiles/ggml.dir/all] Error 2
+       &gt; make[4]: Leaving directory '/private/tmp/nix-build-local-ai-2.6.1.drv-0/source/sources/go-ggml-transformers/build'
+       &gt; make[3]: *** [CMakeFiles/Makefile2:350: src/CMakeFiles/ggml.dir/rule] Error 2
+       &gt; make[3]: Leaving directory '/private/tmp/nix-build-local-ai-2.6.1.drv-0/source/sources/go-ggml-transformers/build'
+       &gt; make[2]: *** [Makefile:179: ggml] Error 2
+       &gt; make[2]: Leaving directory '/private/tmp/nix-build-local-ai-2.6.1.drv-0/source/sources/go-ggml-transformers/build'
+       &gt; make[1]: *** [Makefile:150: ggml.o] Error 2
+       &gt; make[1]: Leaving directory '/private/tmp/nix-build-local-ai-2.6.1.drv-0/source/sources/go-ggml-transformers'
+       &gt; make: *** [Makefile:226: sources/go-ggml-transformers/libtransformers.a] Error 2
+       For full logs, run 'nix-store -l /nix/store/ik0a8kblr1w76iamyv40qimacbd2pdpg-local-ai-2.6.1.drv'.
+</pre>
+
+<p>
+The logs:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh">nix-store -l /nix/store/ik0a8kblr1w76iamyv40qimacbd2pdpg-local-ai-2.6.1.drv
+</pre>
+</div>
+
+<p>
+Notably:
+</p>
+
+<pre class="example" id="orge3ac6b6">
+[1m/tmp/nix-build-local-ai-2.6.1.drv-0/source/sources/go-ggml-transformers/ggml.cpp/src/ggml.c:227:10: [0m[0;1;31mfatal error: [0m[1m'Accelerate/Accelerate.h' file not found[0m
+#include &lt;Accelerate/Accelerate.h&gt;
+[0;1;32m         ^~~~~~~~~~~~~~~~~~~~~~~~~
+</pre>
+
+<p>
+This is something I&rsquo;ve seen from earlier fiddling - it&rsquo;s missing the
+<code>Accelerate</code> Apple framework headers.  I thought my earlier addition to
+<code>nativeBuildInputs</code> covered this.  This is the relevant snippet from that:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-nix">  <span style="color: #dcafe9;">nativeBuildInputs</span> = <span style="color: #51afef;">[</span>
+    ncurses
+    cmake
+    makeWrapper
+  <span style="color: #51afef;">]</span>
+  ++ lib.optional <span style="color: #51afef;">(</span>buildType == <span style="color: #7bc275;">"openblas"</span><span style="color: #51afef;">)</span> pkg-config
+  ++ lib.optional <span style="color: #51afef;">(</span>buildType == <span style="color: #7bc275;">"cublas"</span><span style="color: #51afef;">)</span> cudaPackages.cuda_nvcc
+  ++ lib.optional <span style="color: #51afef;">(</span>stdenv.isDarwin<span style="color: #51afef;">)</span>
+    <span style="color: #51afef;">(</span><span style="color: #51afef;">with</span> darwin.apple_sdk.frameworks; <span style="color: #C57BDB;">[</span>
+      Accelerate
+      CoreFoundation
+      MetalKit
+      MetalPerformanceShaders
+      Security
+    <span style="color: #C57BDB;">]</span><span style="color: #51afef;">)</span>
+  ;
+</pre>
+</div>
+
+<p>
+Maybe something weird is going on with <code>stdenv.isDarwin</code>.  I&rsquo;ll do what I&rsquo;ve
+done with <code>flake.nix</code> itself: Just remove the conditional/smart parts.  Those
+can go back in once I have something functional.
+</p>
+
+<p>
+That then becomes this:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-nix">  <span style="color: #dcafe9;">nativeBuildInputs</span> = <span style="color: #51afef;">[</span>
+    ncurses
+    cmake
+    makeWrapper
+  <span style="color: #51afef;">]</span>
+    ++ <span style="color: #51afef;">(</span><span style="color: #51afef;">with</span> darwin.apple_sdk.frameworks; <span style="color: #C57BDB;">[</span>
+      Accelerate
+      CoreFoundation
+      MetalKit
+      MetalPerformanceShaders
+      Security
+    <span style="color: #C57BDB;">]</span><span style="color: #51afef;">)</span>
+  ++ lib.optional <span style="color: #51afef;">(</span>buildType == <span style="color: #7bc275;">"openblas"</span><span style="color: #51afef;">)</span> pkg-config
+  ++ lib.optional <span style="color: #51afef;">(</span>buildType == <span style="color: #7bc275;">"cublas"</span><span style="color: #51afef;">)</span> cudaPackages.cuda_nvcc
+  ;
+</pre>
+</div>
+
+<p>
+I get the same error in the same location.  Okay - is <code>nativeBuildInputs</code> not
+the right place to put this?  I figure that since they are headers for natively
+built libraries, they must be&#x2026; native?  Let&rsquo;s just put it in <code>buildInputs</code>
+instead.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-nix">  <span style="color: #dcafe9;">buildInputs</span> = <span style="color: #51afef;">[</span>
+    abseil-cpp
+    protobuf
+    grpc
+    openssl
+  <span style="color: #51afef;">]</span>
+    ++ <span style="color: #51afef;">(</span><span style="color: #51afef;">with</span> darwin.apple_sdk.frameworks; <span style="color: #C57BDB;">[</span>
+      Accelerate
+      CoreFoundation
+      MetalKit
+      MetalPerformanceShaders
+      Security
+    <span style="color: #C57BDB;">]</span><span style="color: #51afef;">)</span>
+  ++ lib.optional <span style="color: #51afef;">(</span>buildType == <span style="color: #7bc275;">"cublas"</span><span style="color: #51afef;">)</span> cudaPackages.cudatoolkit
+  ++ lib.optional <span style="color: #51afef;">(</span>buildType == <span style="color: #7bc275;">"openblas"</span><span style="color: #51afef;">)</span> openblas.dev
+  ;
+</pre>
+</div>
+
+<p>
+But still no joy.
+</p>
+
+<pre class="example" id="orgc1d3cb5">
+ar src libtransformers.a replit.o gptj.o mpt.o gptneox.o starcoder.o gpt2.o dolly.o  falcon.o  ggml.o common-ggml.o common.o
+make[1]: Leaving directory '/private/tmp/nix-build-local-ai-2.6.1.drv-0/source/sources/go-ggml-transformers'
+make: git: No such file or directory
+CGO_LDFLAGS="-lcblas -framework Accelerate" C_INCLUDE_PATH=/private/tmp/nix-build-local-ai-2.6.1.drv-0/source/sources/go-ggml-transformers LIBRARY_PATH=/private/tmp/nix-build-local-ai-2.6.1.drv-0/source/sources/go-ggml-transformers \
+go build -ldflags "-X "github.com/go-skynet/LocalAI/internal.Version=v2.6.1" -X "github.com/go-skynet/LocalAI/internal.Commit="" -tags "" -o backend-assets/grpc/falcon-ggml ./backend/go/llm/falcon-ggml/
+# github.com/go-skynet/go-ggml-transformers.cpp
+replit.cpp:65:50: warning: format specifies type 'int' but the argument has type 'value_type' (aka 'unsigned long') [-Wformat]
+# github.com/go-skynet/LocalAI/backend/go/llm/falcon-ggml
+/nix/store/z6p2j8shdwi74kbm86jwdh03vxq91l0q-go-1.21.5/share/go/pkg/tool/darwin_arm64/link: running clang++ failed: exit status 1
+ld: library not found for -lcblas
+clang-16: error: linker command failed with exit code 1 (use -v to see invocation)
+</pre>
+
+<p>
+I think the <code>git: No such file or directory</code> is an ignorable error.  This is
+mostly because the build process proceeds.  See the <code>go build</code> that comes
+afterwards for evidence of that.
+</p>
+
+<p>
+The notable part is:
+</p>
+
+<pre class="example" id="org63c9b3a">
+ld: library not found for -lcblas
+</pre>
+
+<p>
+<code>cblas</code>, <code>cublas</code>, or <code>openblas</code> (whatever it is really called) is missing.  I
+recall the <code>optional</code> sections in the <code>buildInputs</code> and <code>nativeBuildInputs</code>
+alike had this:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-nix"><span style="color: #62686E;"># </span><span style="color: #62686E;">buildInputs</span>
+  ++ lib.optional <span style="color: #51afef;">(</span>buildType == <span style="color: #7bc275;">"cublas"</span><span style="color: #51afef;">)</span> cudaPackages.cudatoolkit
+  ++ lib.optional <span style="color: #51afef;">(</span>buildType == <span style="color: #7bc275;">"openblas"</span><span style="color: #51afef;">)</span> openblas.dev
+<span style="color: #62686E;"># </span><span style="color: #62686E;">nativeBuildInputs</span>
+  ++ lib.optional <span style="color: #51afef;">(</span>buildType == <span style="color: #7bc275;">"openblas"</span><span style="color: #51afef;">)</span> pkg-config
+  ++ lib.optional <span style="color: #51afef;">(</span>buildType == <span style="color: #7bc275;">"cublas"</span><span style="color: #51afef;">)</span> cudaPackages.cuda_nvcc
+</pre>
+</div>
+
+<p>
+<code>buildType</code> is a parameter for the derivation, but I don&rsquo;t know how to set it.
+The original code I yanked this from has this in its <code>overlay.nix</code>:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-nix">    <span style="color: #dcafe9;">local-ai</span> = callPackage <span style="color: #a991f1;">./local-ai</span> <span style="color: #51afef;">{</span> <span style="color: #51afef;">}</span>;
+    <span style="color: #dcafe9;">local-ai-cublas</span> = callPackage <span style="color: #a991f1;">./local-ai</span> <span style="color: #51afef;">{</span> <span style="color: #dcafe9;">buildType</span> = <span style="color: #7bc275;">"cublas"</span>; <span style="color: #51afef;">}</span>;
+    <span style="color: #dcafe9;">local-ai-openblas</span> = callPackage <span style="color: #a991f1;">./local-ai</span> <span style="color: #51afef;">{</span> <span style="color: #dcafe9;">buildType</span> = <span style="color: #7bc275;">"openblas"</span>; <span style="color: #51afef;">}</span>;
+</pre>
+</div>
+
+<p>
+But as we found out earlier, <code>callPackage</code> has some magic that makes it pull
+variables from, well, anywhere maybe?
+</p>
+
+<p>
+From checking <code>man nix build</code>, I see there is an <code>--arg</code> and <code>--attr</code> that looks
+promising.  I could also just use three different packages (perhaps even one
+additional one for <code>metal</code> which is for Apple systems (something I ran into when
+poking around the <code>Makefiles</code> earlier).  Let&rsquo;s try just making more packages.
+In some ways it offends my sense ergonomics to just have more things instead of
+properly parameterizing them, but then again something must be chosen at some
+point.  I wish it were more automatic, but I don&rsquo;t understand the nature of the
+<code>cblas</code> stuff enough to make a decision there.
+</p>
+
+<p>
+So now in my <code>flake.nix</code> I have:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-nix">      <span style="color: #dcafe9;">packages.aarch64-darwin.default</span> = pkgs.callPackage <span style="color: #a991f1;">./derivation.nix</span>  <span style="color: #51afef;">{}</span>;
+      <span style="color: #dcafe9;">packages.aarch64-darwin.local-ai</span> = pkgs.callPackage <span style="color: #a991f1;">./derivation.nix</span> <span style="color: #51afef;">{</span> <span style="color: #51afef;">}</span>;
+      <span style="color: #dcafe9;">packages.aarch64-darwin.local-ai-cublas</span> = pkgs.callPackage
+        <span style="color: #a991f1;">./derivation.nix</span> <span style="color: #51afef;">{</span> <span style="color: #dcafe9;">buildType</span> = <span style="color: #7bc275;">"cublas"</span>; <span style="color: #51afef;">}</span>;
+      <span style="color: #dcafe9;">packages.aarch64-darwin.local-ai-openblas</span> = pkgs.callPackage
+        <span style="color: #a991f1;">./derivation.nix</span> <span style="color: #51afef;">{</span> <span style="color: #dcafe9;">buildType</span> = <span style="color: #7bc275;">"openblas"</span>; <span style="color: #51afef;">}</span>;
+      <span style="color: #dcafe9;">packages.aarch64-darwin.local-ai-metal</span> = pkgs.callPackage
+        <span style="color: #a991f1;">./derivation.nix</span> <span style="color: #51afef;">{</span> <span style="color: #dcafe9;">buildType</span> = <span style="color: #7bc275;">"metal"</span>; <span style="color: #51afef;">}</span>;
+</pre>
+</div>
+
+<p>
+As an aside, I noticed the original code just imports <code>./local-ai</code> instead of
+<code>./local-ai.nix</code> but it could also be <code>./local-ai/default.nix</code> (which it is in
+this case).  I really like that Node.js does this, and seeing Nix do it too is
+displeasing to me.  I&rsquo;d really rather just avoid confusion, and I&rsquo;m especially
+disliking of short-hand that adds confusion or &ldquo;one more thing to remember&rdquo;
+which I will definitely forget when I&rsquo;m maintaining infrastructure with Nix 10
+years later and something newer and shiner has come out to grab all of my
+attention.  There&rsquo;s a lot of language cruft in my head, and it&rsquo;s difficult to
+track it all.  Adding a <code>.nix</code> won&rsquo;t give anyone carpal tunnel.
+</p>
+
+<p>
+So now I do:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh">nix run <span style="color: #7bc275;">'.#local-ai-metal'</span>
+</pre>
+</div>
+
+<p>
+And I have the same error as before.  I don&rsquo;t think <code>buildType</code> supports <code>metal</code>
+in the derivation yet.
+</p>
+
+<p>
+The <code>wrapProgram</code> section in <code>postFixup</code> has references to <code>cublas</code> and
+<code>openblas</code> that I haven&rsquo;t covered for <code>metal</code> yet.  I don&rsquo;t know what the
+library path should be.  With some fancy searching, I found the <a href="https://github.com/NixOS/nixpkgs/blob/7ba3caea70556bb6691f0ed0792c2ac89393018b/pkgs/applications/editors/neovim/neovide/default.nix#L86-L102">neovim nix
+package</a> has this:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-nix">  <span style="color: #dcafe9;">postFixup</span> = <span style="color: #51afef;">let</span>
+    <span style="color: #dcafe9;">libPath</span> = lib.makeLibraryPath <span style="color: #51afef;">(</span><span style="color: #C57BDB;">[</span>
+      libglvnd
+      libxkbcommon
+      xorg.libXcursor
+      xorg.libXext
+      xorg.libXrandr
+      xorg.libXi
+    <span style="color: #C57BDB;">]</span> ++ lib.optionals enableWayland <span style="color: #C57BDB;">[</span> wayland <span style="color: #C57BDB;">]</span><span style="color: #51afef;">)</span>;
+  <span style="color: #51afef;">in</span> <span style="color: #7bc275;">''</span>
+<span style="color: #7bc275;">      # library skia embeds the path to its sources</span>
+<span style="color: #7bc275;">      remove-references-to -t "$SKIA_SOURCE_DIR" \</span>
+<span style="color: #7bc275;">        $out/bin/neovide</span>
+
+<span style="color: #7bc275;">      wrapProgram $out/bin/neovide \</span>
+<span style="color: #7bc275;">        --prefix LD_LIBRARY_PATH : </span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>libPath<span style="color: #51afef; font-weight: bold;">}</span>
+<span style="color: #7bc275;">    ''</span>;
+</pre>
+</div>
+
+<p>
+So some combination of <code>makeLibraryPath</code> seems like the way to go.  This is what
+I have adapted:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-nix">  <span style="color: #dcafe9;">postFixup</span> = <span style="color: #51afef;">let</span>
+    <span style="color: #dcafe9;">lib-path</span> = lib.makeLibraryPath <span style="color: #51afef;">(</span><span style="color: #C57BDB;">[</span>
+      abseil-cpp
+      protobuf
+      grpc
+      openssl
+    <span style="color: #C57BDB;">]</span> ++ lib.optional <span style="color: #C57BDB;">(</span>buildType == <span style="color: #7bc275;">"metal"</span><span style="color: #C57BDB;">)</span>
+      <span style="color: #C57BDB;">(</span><span style="color: #51afef;">with</span> darwin.apple_sdk.frameworks; <span style="color: #7bc275;">[</span>
+        Accelerate
+        CoreFoundation
+        MetalKit
+        MetalPerformanceShaders
+        Security
+      <span style="color: #7bc275;">]</span><span style="color: #C57BDB;">)</span>
+    <span style="color: #51afef;">)</span>
+    ;
+  <span style="color: #51afef;">in</span> lib.optionalString <span style="color: #51afef;">(</span>buildType == <span style="color: #7bc275;">"cublas"</span><span style="color: #51afef;">)</span> <span style="color: #7bc275;">''</span>
+<span style="color: #7bc275;">    wrapProgram $out/bin/</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>pname<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;"> \</span>
+<span style="color: #7bc275;">      --prefix LD_LIBRARY_PATH : "</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>cudaPackages.libcublas<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;">/lib:</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>cudaPackages.c<span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">uda_cudart</span><span style="color: #51afef; background-color: #1c1f24; font-weight: bold;">}</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">/lib:/run/opengl-driver/lib"</span>
+<span style="color: #7bc275;">  ''</span>
+  + lib.optionalString <span style="color: #51afef;">(</span>buildType == <span style="color: #7bc275;">"metal"</span><span style="color: #51afef;">)</span> <span style="color: #7bc275;">''</span>
+<span style="color: #7bc275;">    wrapProgram $out/bin/</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>pname<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;"> \</span>
+<span style="color: #7bc275;">      --prefix LD_LIBRARY_PATH : "</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>lib-path<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;">"</span>
+<span style="color: #7bc275;">  ''</span>
+  + lib.optionalString <span style="color: #51afef;">(</span>buildType == <span style="color: #7bc275;">"openblas"</span><span style="color: #51afef;">)</span> <span style="color: #7bc275;">''</span>
+<span style="color: #7bc275;">    wrapProgram $out/bin/</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>pname<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;"> \</span>
+<span style="color: #7bc275;">      --prefix LD_LIBRARY_PATH : "</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>openblas<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;">/lib"</span>
+<span style="color: #7bc275;">  ''</span>
+  ;
+</pre>
+</div>
+
+<p>
+Another aside: Note the trailing <code>;</code> which I see a lot of Nix authors doing, and
+I&rsquo;ve done in some of my independent code that requires <code>;</code> as a &ldquo;full stop&rdquo; in
+many languages.  The <code>;</code> is generally useless in my opinion, and only serves as
+noise in the commit history.  It becomes more difficult to do a <code>git blame</code> when
+unrelated lines are updated from a commit just because it had to move a
+delimiter or hard-stop.
+</p>
+
+<p>
+I ran into:
+</p>
+
+<pre class="example" id="org665c04b">
+          197|   # raises an segmentation fault
+          198|   postFixup = let
+             |   ^
+          199|     lib-path = lib.makeLibraryPath ([
+
+       error: cannot coerce a list to a string
+</pre>
+
+<p>
+Is that from&#x2026; <code>makeLibraryPath</code>?  I&rsquo;ll just take it out.
+</p>
+
+<p>
+That leaves me with:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-nix">  <span style="color: #dcafe9;">postFixup</span> = <span style="color: #51afef;">let</span>
+    <span style="color: #62686E;"># lib-path = lib.makeLibraryPath ([</span>
+    <span style="color: #62686E;"># ] ++ lib.optional (buildType == "metal")</span>
+    <span style="color: #62686E;">#   (with darwin.apple_sdk.frameworks; [</span>
+    <span style="color: #62686E;">#     Accelerate</span>
+    <span style="color: #62686E;">#     CoreFoundation</span>
+    <span style="color: #62686E;">#     MetalKit</span>
+    <span style="color: #62686E;">#     MetalPerformanceShaders</span>
+    <span style="color: #62686E;">#     Security</span>
+    <span style="color: #62686E;">#   ])</span>
+    <span style="color: #62686E;"># )</span>
+    <span style="color: #62686E;"># ;</span>
+  <span style="color: #51afef;">in</span> lib.optionalString <span style="color: #51afef;">(</span>buildType == <span style="color: #7bc275;">"cublas"</span><span style="color: #51afef;">)</span> <span style="color: #7bc275;">''</span>
+<span style="color: #7bc275;">    wrapProgram $out/bin/</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>pname<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;"> \</span>
+<span style="color: #7bc275;">      --prefix LD_LIBRARY_PATH : "</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>cudaPackages.libcublas<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;">/lib:</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>cudaPackages.c<span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">uda_cudart</span><span style="color: #51afef; background-color: #1c1f24; font-weight: bold;">}</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">/lib:/run/opengl-driver/lib"</span>
+<span style="color: #7bc275;">  ''</span>
+  + lib.optionalString <span style="color: #51afef;">(</span>buildType == <span style="color: #7bc275;">"metal"</span><span style="color: #51afef;">)</span> <span style="color: #7bc275;">''</span>
+<span style="color: #7bc275;">    wrapProgram $out/bin/</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>pname<span style="color: #51afef; font-weight: bold;">}</span>
+<span style="color: #7bc275;">  ''</span>
+  + lib.optionalString <span style="color: #51afef;">(</span>buildType == <span style="color: #7bc275;">"openblas"</span><span style="color: #51afef;">)</span> <span style="color: #7bc275;">''</span>
+<span style="color: #7bc275;">    wrapProgram $out/bin/</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>pname<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;"> \</span>
+<span style="color: #7bc275;">      --prefix LD_LIBRARY_PATH : "</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>openblas<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;">/lib"</span>
+<span style="color: #7bc275;">  ''</span>
+  ;
+</pre>
+</div>
+
+<p>
+And the error persists, which is not surprising.  I did find an issue where
+<a href="https://github.com/mudler/LocalAI/issues/1560#issuecomment-1890859859">other frameworks are mentioned</a>.  Those should be added to the list.  I&rsquo;ve copied
+this list around for a while.  It&rsquo;s going into a variable now, at the top of the
+derivation.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-nix">  <span style="color: #dcafe9;">darwin-frameworks</span> = <span style="color: #51afef;">(</span><span style="color: #51afef;">with</span> darwin.apple_sdk.frameworks; <span style="color: #C57BDB;">[</span>
+    Accelerate
+    CoreFoundation
+    CoreML
+    MetalKit
+    MetalPerformanceShaders
+    Security
+  <span style="color: #C57BDB;">]</span><span style="color: #51afef;">)</span>;
+</pre>
+</div>
+
+<p>
+Here&rsquo;s the whole file, with modifications to use the new framework:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-nix"><span style="color: #51afef;">{</span> stdenv
+, darwin
+, lib
+, fetchFromGitHub
+, ncurses
+, abseil-cpp
+, protobuf
+, grpc
+, openssl
+, openblas
+, cmake
+, buildGoModule
+, pkg-config
+, cudaPackages
+, makeWrapper
+, runCommand
+, buildType ? <span style="color: #7bc275;">""</span>
+<span style="color: #51afef;">}</span>:
+<span style="color: #51afef;">let</span>
+  <span style="color: #dcafe9;">go-llama</span> = fetchFromGitHub <span style="color: #51afef;">{</span>
+    <span style="color: #dcafe9;">owner</span> = <span style="color: #7bc275;">"go-skynet"</span>;
+    <span style="color: #dcafe9;">repo</span> = <span style="color: #7bc275;">"go-llama.cpp"</span>;
+    <span style="color: #dcafe9;">rev</span> = <span style="color: #7bc275;">"aeba71ee842819da681ea537e78846dc75949ac0"</span>;
+    <span style="color: #dcafe9;">hash</span> = <span style="color: #7bc275;">"sha256-ELoaJg7wOHloQws+do6TZUo7zOxUP0E85v80BlpUOJA="</span>;
+    <span style="color: #dcafe9;">fetchSubmodules</span> = <span style="color: #C57BDB;">true</span>;
+  <span style="color: #51afef;">}</span>;
+
+  <span style="color: #dcafe9;">go-llama-ggml</span> = fetchFromGitHub <span style="color: #51afef;">{</span>
+    <span style="color: #dcafe9;">owner</span> = <span style="color: #7bc275;">"go-skynet"</span>;
+    <span style="color: #dcafe9;">repo</span> = <span style="color: #7bc275;">"go-llama.cpp"</span>;
+    <span style="color: #dcafe9;">rev</span> = <span style="color: #7bc275;">"50cee7712066d9e38306eccadcfbb44ea87df4b7"</span>;
+    <span style="color: #dcafe9;">hash</span> = <span style="color: #7bc275;">"sha256-5qwUSg56fyHk5x8NgwLrgl+9Ibl2GTBP1Aq5sAvTs+s="</span>;
+    <span style="color: #dcafe9;">fetchSubmodules</span> = <span style="color: #C57BDB;">true</span>;
+  <span style="color: #51afef;">}</span>;
+
+  <span style="color: #dcafe9;">llama_cpp</span> = fetchFromGitHub <span style="color: #51afef;">{</span>
+    <span style="color: #dcafe9;">owner</span> = <span style="color: #7bc275;">"ggerganov"</span>;
+    <span style="color: #dcafe9;">repo</span> = <span style="color: #7bc275;">"llama.cpp"</span>;
+    <span style="color: #dcafe9;">rev</span> = <span style="color: #7bc275;">"6f9939d119b2d004c264952eb510bd106455531e"</span>;
+    <span style="color: #dcafe9;">hash</span> = <span style="color: #7bc275;">"sha256-TfSD+ZR8TR6xhfOjMfpvcfQXCRhRnvzcNXQOYaaWzVU="</span>;
+    <span style="color: #dcafe9;">fetchSubmodules</span> = <span style="color: #C57BDB;">true</span>;
+  <span style="color: #51afef;">}</span>;
+
+  <span style="color: #dcafe9;">llama_cpp'</span> = runCommand <span style="color: #7bc275;">"llama_cpp_src"</span> <span style="color: #51afef;">{</span> <span style="color: #51afef;">}</span> <span style="color: #7bc275;">''</span>
+<span style="color: #7bc275;">    cp -r --no-preserve=mode,ownership </span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>llama_cpp<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;"> $out</span>
+<span style="color: #7bc275;">    sed -i $out/CMakeLists.txt \</span>
+<span style="color: #7bc275;">      -e 's;pkg_check_modules(DepBLAS REQUIRED openblas);pkg_check_modules(DepBL</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">AS REQUIRED openblas64);'</span>
+<span style="color: #7bc275;">  ''</span>;
+
+  <span style="color: #dcafe9;">go-ggml-transformers</span> = fetchFromGitHub <span style="color: #51afef;">{</span>
+    <span style="color: #dcafe9;">owner</span> = <span style="color: #7bc275;">"go-skynet"</span>;
+    <span style="color: #dcafe9;">repo</span> = <span style="color: #7bc275;">"go-ggml-transformers.cpp"</span>;
+    <span style="color: #dcafe9;">rev</span> = <span style="color: #7bc275;">"ffb09d7dd71e2cbc6c5d7d05357d230eea6f369a"</span>;
+    <span style="color: #dcafe9;">hash</span> = <span style="color: #7bc275;">"sha256-WdCj6cfs98HvG3jnA6CWsOtACjMkhSmrKw9weHkLQQ4="</span>;
+    <span style="color: #dcafe9;">fetchSubmodules</span> = <span style="color: #C57BDB;">true</span>;
+  <span style="color: #51afef;">}</span>;
+
+  <span style="color: #dcafe9;">gpt4all</span> = fetchFromGitHub <span style="color: #51afef;">{</span>
+    <span style="color: #dcafe9;">owner</span> = <span style="color: #7bc275;">"nomic-ai"</span>;
+    <span style="color: #dcafe9;">repo</span> = <span style="color: #7bc275;">"gpt4all"</span>;
+    <span style="color: #dcafe9;">rev</span> = <span style="color: #7bc275;">"27a8b020c36b0df8f8b82a252d261cda47cf44b8"</span>;
+    <span style="color: #dcafe9;">hash</span> = <span style="color: #7bc275;">"sha256-djq1eK6ncvhkO3MNDgasDBUY/7WWcmZt/GJsHAulLdI="</span>;
+    <span style="color: #dcafe9;">fetchSubmodules</span> = <span style="color: #C57BDB;">true</span>;
+  <span style="color: #51afef;">}</span>;
+
+  <span style="color: #dcafe9;">go-piper</span> = fetchFromGitHub <span style="color: #51afef;">{</span>
+    <span style="color: #dcafe9;">owner</span> = <span style="color: #7bc275;">"mudler"</span>;
+    <span style="color: #dcafe9;">repo</span> = <span style="color: #7bc275;">"go-piper"</span>;
+    <span style="color: #dcafe9;">rev</span> = <span style="color: #7bc275;">"d6b6275ba037dabdba4a8b65dfdf6b2a73a67f07"</span>;
+    <span style="color: #dcafe9;">hash</span> = <span style="color: #7bc275;">"sha256-p589giBsEPsoR+RQU7qfGfpfqpTdBI51lvnLs4DmE0Y="</span>;
+    <span style="color: #dcafe9;">fetchSubmodules</span> = <span style="color: #C57BDB;">true</span>;
+  <span style="color: #51afef;">}</span>;
+
+  <span style="color: #dcafe9;">go-rwkv</span> = fetchFromGitHub <span style="color: #51afef;">{</span>
+    <span style="color: #dcafe9;">owner</span> = <span style="color: #7bc275;">"donomii"</span>;
+    <span style="color: #dcafe9;">repo</span> = <span style="color: #7bc275;">"go-rwkv.cpp"</span>;
+    <span style="color: #dcafe9;">rev</span> = <span style="color: #7bc275;">"633c5a3485c403cb2520693dc0991a25dace9f0f"</span>;
+    <span style="color: #dcafe9;">hash</span> = <span style="color: #7bc275;">"sha256-BECmBLbtAh5pdZZz0NBLbt+BX2TaC2NjHYwSEEAFPlI="</span>;
+    <span style="color: #dcafe9;">fetchSubmodules</span> = <span style="color: #C57BDB;">true</span>;
+  <span style="color: #51afef;">}</span>;
+
+  <span style="color: #dcafe9;">whisper</span> = fetchFromGitHub <span style="color: #51afef;">{</span>
+    <span style="color: #dcafe9;">owner</span> = <span style="color: #7bc275;">"ggerganov"</span>;
+    <span style="color: #dcafe9;">repo</span> = <span style="color: #7bc275;">"whisper.cpp"</span>;
+    <span style="color: #dcafe9;">rev</span> = <span style="color: #7bc275;">"9286d3f584240ba58bd44a1bd1e85141579c78d4"</span>;
+    <span style="color: #dcafe9;">hash</span> = <span style="color: #7bc275;">"sha256-hLPtfJVYiopnSdDqu9n/k9Avb4ibgbjmrVr81BTWW/w="</span>;
+    <span style="color: #dcafe9;">fetchSubmodules</span> = <span style="color: #C57BDB;">true</span>;
+  <span style="color: #51afef;">}</span>;
+
+  <span style="color: #dcafe9;">go-bert</span> = fetchFromGitHub <span style="color: #51afef;">{</span>
+    <span style="color: #dcafe9;">owner</span> = <span style="color: #7bc275;">"go-skynet"</span>;
+    <span style="color: #dcafe9;">repo</span> = <span style="color: #7bc275;">"go-bert.cpp"</span>;
+    <span style="color: #dcafe9;">rev</span> = <span style="color: #7bc275;">"6abe312cded14042f6b7c3cd8edf082713334a4d"</span>;
+    <span style="color: #dcafe9;">hash</span> = <span style="color: #7bc275;">"sha256-lh9cvXc032Eq31kysxFOkRd0zPjsCznRl0tzg9P2ygo="</span>;
+    <span style="color: #dcafe9;">fetchSubmodules</span> = <span style="color: #C57BDB;">true</span>;
+  <span style="color: #51afef;">}</span>;
+
+  <span style="color: #dcafe9;">go-stable-diffusion</span> = fetchFromGitHub <span style="color: #51afef;">{</span>
+    <span style="color: #dcafe9;">owner</span> = <span style="color: #7bc275;">"mudler"</span>;
+    <span style="color: #dcafe9;">repo</span> = <span style="color: #7bc275;">"go-stable-diffusion"</span>;
+    <span style="color: #dcafe9;">rev</span> = <span style="color: #7bc275;">"902db5f066fd137697e3b69d0fa10d4782bd2c2f"</span>;
+    <span style="color: #dcafe9;">hash</span> = <span style="color: #7bc275;">"sha256-MbVYeWQF/aJNsg2NpTMVx5tD31BK5pQ8Zg92uoWRkcU="</span>;
+    <span style="color: #dcafe9;">fetchSubmodules</span> = <span style="color: #C57BDB;">true</span>;
+  <span style="color: #51afef;">}</span>;
+
+  <span style="color: #dcafe9;">go-tiny-dream</span> = fetchFromGitHub <span style="color: #51afef;">{</span>
+    <span style="color: #dcafe9;">owner</span> = <span style="color: #7bc275;">"M0Rf30"</span>;
+    <span style="color: #dcafe9;">repo</span> = <span style="color: #7bc275;">"go-tiny-dream"</span>;
+    <span style="color: #dcafe9;">rev</span> = <span style="color: #7bc275;">"772a9c0d9aaf768290e63cca3c904fe69faf677a"</span>;
+    <span style="color: #dcafe9;">hash</span> = <span style="color: #7bc275;">"sha256-r+wzFIjaI6cxAm/eXN3q8LRZZz+lE5EA4lCTk5+ZnIY="</span>;
+    <span style="color: #dcafe9;">fetchSubmodules</span> = <span style="color: #C57BDB;">true</span>;
+  <span style="color: #51afef;">}</span>;
+  <span style="color: #dcafe9;">darwin-frameworks</span> = <span style="color: #51afef;">(</span><span style="color: #51afef;">with</span> darwin.apple_sdk.frameworks; <span style="color: #C57BDB;">[</span>
+    Accelerate
+    CoreFoundation
+    CoreML
+    MetalKit
+    MetalPerformanceShaders
+    Security
+  <span style="color: #C57BDB;">]</span><span style="color: #51afef;">)</span>;
+<span style="color: #51afef;">in</span>
+buildGoModule <span style="color: #51afef;">rec</span> <span style="color: #51afef;">{</span>
+  <span style="color: #dcafe9;">pname</span> = <span style="color: #7bc275;">"local-ai"</span>;
+  <span style="color: #dcafe9;">version</span> = <span style="color: #7bc275;">"2.6.1"</span>;
+
+  <span style="color: #dcafe9;">src</span> = fetchFromGitHub <span style="color: #C57BDB;">{</span>
+    <span style="color: #dcafe9;">owner</span> = <span style="color: #7bc275;">"go-skynet"</span>;
+    <span style="color: #dcafe9;">repo</span> = <span style="color: #7bc275;">"LocalAI"</span>;
+    <span style="color: #dcafe9;">rev</span> = <span style="color: #7bc275;">"v</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #7bc275; font-weight: bold;">{</span>version<span style="color: #7bc275; font-weight: bold;">}</span>";
+    <span style="color: #dcafe9;">hash</span> = <span style="color: #7bc275;">"sha256-xGbrNbHQpl9Tdh5w+Csx7mhkMDBF8JgGtIVvgOu0XWs="</span>;
+  <span style="color: #C57BDB;">}</span>;
+
+  <span style="color: #dcafe9;">vendorHash</span> = <span style="color: #7bc275;">"sha256-WUgDyRzShftJ15yumlvcSN0rUx8ytQPQGAO37AxMHeA="</span>;
+
+  <span style="color: #62686E;"># Workaround for</span>
+  <span style="color: #62686E;"># `cc1plus: error: '-Wformat-security' ignored without '-Wformat' [-Werror=for</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">mat-security]`</span>
+  <span style="color: #62686E;"># when building jtreg</span>
+  <span style="color: #dcafe9;">env.NIX_CFLAGS_COMPILE</span> = <span style="color: #7bc275;">"-Wformat"</span>;
+
+  <span style="color: #dcafe9;">postPatch</span> =
+    <span style="color: #51afef;">let</span>
+      <span style="color: #dcafe9;">cp</span> = <span style="color: #7bc275;">"cp -r --no-preserve=mode,ownership"</span>;
+    <span style="color: #51afef;">in</span>
+    <span style="color: #7bc275;">''</span>
+<span style="color: #7bc275;">      sed -i Makefile \</span>
+<span style="color: #7bc275;">        -e 's;git clone.*go-llama$;</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>cp<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;"> </span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>go-llama<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;"> sources/go-llama;' \</span>
+<span style="color: #7bc275;">        -e 's;git clone.*go-llama-ggml$;</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>cp<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;"> </span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>go-llama-ggml<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;"> sources/go-llama-</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">ggml;' \</span>
+<span style="color: #7bc275;">        -e 's;git clone.*go-ggml-transformers$;</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>cp<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;"> </span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>go-ggml-transformers<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;"> sou</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">rces/go-ggml-transformers;' \</span>
+<span style="color: #7bc275;">        -e 's;git clone.*gpt4all$;</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>cp<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;"> </span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>gpt4all<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;"> sources/gpt4all;' \</span>
+<span style="color: #7bc275;">        -e 's;git clone.*go-piper$;</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>cp<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;"> </span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>go-piper<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;"> sources/go-piper;' \</span>
+<span style="color: #7bc275;">        -e 's;git clone.*go-rwkv$;</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>cp<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;"> </span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>go-rwkv<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;"> sources/go-rwkv;' \</span>
+<span style="color: #7bc275;">        -e 's;git clone.*whisper\.cpp$;</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>cp<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;"> </span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>whisper<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;"> sources/whisper\.cpp;' \</span>
+<span style="color: #7bc275;">        -e 's;git clone.*go-bert$;</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>cp<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;"> </span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>go-bert<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;"> sources/go-bert;' \</span>
+<span style="color: #7bc275;">        -e 's;git clone.*diffusion$;</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>cp<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;"> </span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>go-stable-diffusion<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;"> sources/go-stab</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">le-diffusion;' \</span>
+<span style="color: #7bc275;">        -e 's;git clone.*go-tiny-dream$;</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>cp<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;"> </span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>go-tiny-dream<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;"> sources/go-tiny-d</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">ream;' \</span>
+<span style="color: #7bc275;">        -e 's, &amp;&amp; git checkout.*,,g' \</span>
+<span style="color: #7bc275;">        -e '/mod download/ d' \</span>
+
+<span style="color: #7bc275;">      sed -i backend/cpp/llama/Makefile \</span>
+<span style="color: #7bc275;">        -e 's;git clone.*llama\.cpp$;</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>cp<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;"> </span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>llama_cpp'<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;"> llama\.cpp;' \</span>
+<span style="color: #7bc275;">        -e 's, &amp;&amp; git checkout.*,,g' \</span>
+
+<span style="color: #7bc275;">    ''</span>
+  ;
+
+  <span style="color: #dcafe9;">modBuildPhase</span> = <span style="color: #7bc275;">''</span>
+<span style="color: #7bc275;">    mkdir sources</span>
+<span style="color: #7bc275;">    make prepare-sources</span>
+<span style="color: #7bc275;">    go mod tidy -v</span>
+<span style="color: #7bc275;">  ''</span>;
+
+  <span style="color: #dcafe9;">proxyVendor</span> = <span style="color: #C57BDB;">true</span>;
+
+  <span style="color: #dcafe9;">buildPhase</span> = <span style="color: #7bc275;">''</span>
+<span style="color: #7bc275;">    mkdir sources</span>
+<span style="color: #7bc275;">    make \</span>
+<span style="color: #7bc275;">      VERSION=v</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>version<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;"> \</span>
+<span style="color: #7bc275;">      BUILD_TYPE=</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>buildType<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;"> \</span>
+<span style="color: #7bc275;">      build</span>
+<span style="color: #7bc275;">  ''</span>;
+
+  <span style="color: #dcafe9;">installPhase</span> = <span style="color: #7bc275;">''</span>
+<span style="color: #7bc275;">    install -Dt $out/bin </span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>pname<span style="color: #C57BDB; font-weight: bold;">}</span>
+<span style="color: #7bc275;">  ''</span>;
+
+  <span style="color: #dcafe9;">buildInputs</span> = <span style="color: #C57BDB;">[</span>
+    abseil-cpp
+    protobuf
+    grpc
+    openssl
+  <span style="color: #C57BDB;">]</span>
+  ++ lib.optional <span style="color: #C57BDB;">(</span>buildType == <span style="color: #7bc275;">"cublas"</span><span style="color: #C57BDB;">)</span> cudaPackages.cudatoolkit
+  ++ lib.optional <span style="color: #C57BDB;">(</span>buildType == <span style="color: #7bc275;">"metal"</span><span style="color: #C57BDB;">)</span> darwin-frameworks
+  ++ lib.optional <span style="color: #C57BDB;">(</span>buildType == <span style="color: #7bc275;">"openblas"</span><span style="color: #C57BDB;">)</span> openblas.dev
+  ;
+
+  <span style="color: #62686E;"># patching rpath with patchelf doens't work. The execuable</span>
+  <span style="color: #62686E;"># raises an segmentation fault</span>
+  <span style="color: #dcafe9;">postFixup</span> = <span style="color: #51afef;">let</span>
+    <span style="color: #62686E;"># lib-path = lib.makeLibraryPath ([</span>
+    <span style="color: #62686E;"># ] ++ lib.optional (buildType == "metal") darwin-frameworks</span>
+    <span style="color: #62686E;"># )</span>
+    <span style="color: #62686E;"># ;</span>
+  <span style="color: #51afef;">in</span> lib.optionalString <span style="color: #C57BDB;">(</span>buildType == <span style="color: #7bc275;">"cublas"</span><span style="color: #C57BDB;">)</span> <span style="color: #7bc275;">''</span>
+<span style="color: #7bc275;">    wrapProgram $out/bin/</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>pname<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;"> \</span>
+<span style="color: #7bc275;">      --prefix LD_LIBRARY_PATH : "</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>cudaPackages.libcublas<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;">/lib:</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>cudaPackages.c<span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">uda_cudart</span><span style="color: #C57BDB; background-color: #1c1f24; font-weight: bold;">}</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">/lib:/run/opengl-driver/lib"</span>
+<span style="color: #7bc275;">  ''</span>
+  + lib.optionalString <span style="color: #C57BDB;">(</span>buildType == <span style="color: #7bc275;">"metal"</span><span style="color: #C57BDB;">)</span> <span style="color: #7bc275;">''</span>
+<span style="color: #7bc275;">    wrapProgram $out/bin/</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>pname<span style="color: #C57BDB; font-weight: bold;">}</span>
+<span style="color: #7bc275;">  ''</span>
+  + lib.optionalString <span style="color: #C57BDB;">(</span>buildType == <span style="color: #7bc275;">"openblas"</span><span style="color: #C57BDB;">)</span> <span style="color: #7bc275;">''</span>
+<span style="color: #7bc275;">    wrapProgram $out/bin/</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>pname<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;"> \</span>
+<span style="color: #7bc275;">      --prefix LD_LIBRARY_PATH : "</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #C57BDB; font-weight: bold;">{</span>openblas<span style="color: #C57BDB; font-weight: bold;">}</span><span style="color: #7bc275;">/lib"</span>
+<span style="color: #7bc275;">  ''</span>
+  ;
+
+  <span style="color: #dcafe9;">nativeBuildInputs</span> = <span style="color: #C57BDB;">[</span>
+    ncurses
+    cmake
+    makeWrapper
+  <span style="color: #C57BDB;">]</span>
+  ++ lib.optional <span style="color: #C57BDB;">(</span>buildType == <span style="color: #7bc275;">"openblas"</span><span style="color: #C57BDB;">)</span> pkg-config
+  ++ lib.optional <span style="color: #C57BDB;">(</span>buildType == <span style="color: #7bc275;">"metal"</span><span style="color: #C57BDB;">)</span> darwin-frameworks
+  ++ lib.optional <span style="color: #C57BDB;">(</span>buildType == <span style="color: #7bc275;">"cublas"</span><span style="color: #C57BDB;">)</span> cudaPackages.cuda_nvcc
+  ;
+<span style="color: #51afef;">}</span>
+</pre>
+</div>
+
+<p>
+The only material change is that I&rsquo;ve added the <code>CoreML</code> framework, which stands
+a chance of standing in for the <code>cblas</code> stuff.
+</p>
+
+<p>
+Another run produces the same error once again.  Okay, how do I get this <code>cblas</code>
+thing setup, or do I need to take it out somewhere?
+</p>
+
+<p>
+From that same issue, I see a <a href="https://github.com/mudler/LocalAI/issues/1560#issuecomment-1912502699">comment</a> mentioning that <code>falcon-ggml</code> is
+deprecated and there are means to <a href="https://localai.io/basics/build/#build-only-a-single-backend">exclude</a> that &ldquo;backend&rdquo; from the build, or at
+least only build the ones I want.  I can&rsquo;t find mention of <code>falcon-ggml</code> in the
+derivation, but from reading the <a href="https://github.com/mudler/LocalAI/issues/1126">linked issue</a>, I can find that the thing being
+deprecated is <code>go-llama</code> and I guess <code>falcon-ggml</code> goes along for the ride.  I
+don&rsquo;t really know what happens if I start pulling out these &ldquo;backends&rdquo; but I
+guess a build is better than nothing.  I&rsquo;ll just prune one at a time until I get
+what I want.  Excluding them is done via building up the list of backends (if
+explicitly declared) is by setting the <code>GRPC_BACKENDS</code> environment variable when
+running <code>make build</code>.  I found an <a href="https://github.com/mudler/LocalAI/blob/16cebf0390927929380961cbbd8397d1c8008afd/Dockerfile#L16">example</a> which shows that backends are
+separated by commas, and the name and path are separated by a colon.   For now,
+I will manually build this.
+</p>
+
+<p>
+I get this new <code>buildPhase</code>:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-nix">  <span style="color: #dcafe9;">buildPhase</span> = <span style="color: #7bc275;">''</span>
+<span style="color: #7bc275;">    mkdir sources</span>
+<span style="color: #7bc275;">    make \</span>
+<span style="color: #7bc275;">      VERSION=v</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>version<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;"> \</span>
+<span style="color: #7bc275;">      BUILD_TYPE=</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>buildType<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;"> \</span>
+<span style="color: #7bc275;">      GRPC_BACKENDS="\</span>
+<span style="color: #7bc275;">go-llama-ggml:</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>go-llama-ggml<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;">,\</span>
+<span style="color: #7bc275;">go-ggml-transformers:</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>go-ggml-transformers<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;">,\</span>
+<span style="color: #7bc275;">llama_cpp:</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>llama_cpp<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;">,\</span>
+<span style="color: #7bc275;">gpt4all:</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>gpt4all<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;">,\</span>
+<span style="color: #7bc275;">go-piper:</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>go-piper<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;">,\</span>
+<span style="color: #7bc275;">go-rwkv:</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>go-rwkv<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;">,\</span>
+<span style="color: #7bc275;">whisper:</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>whisper<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;">,\</span>
+<span style="color: #7bc275;">go-bert:</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>go-bert<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;">,\</span>
+<span style="color: #7bc275;">go-stable-diffusion:</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>go-stable-diffusion<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;">,\</span>
+<span style="color: #7bc275;">go-tiny-dream:</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>go-tiny-dream<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;">\</span>
+<span style="color: #7bc275;">" \</span>
+<span style="color: #7bc275;">      build</span>
+<span style="color: #7bc275;">  ''</span>;
+</pre>
+</div>
+
+<p>
+The references come from <code>fetchFromGitHub</code> in the <code>let...in</code>, but also
+<code>postPatch</code> uses those references as paths like this:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-nix">  <span style="color: #dcafe9;">postPatch</span> =
+    <span style="color: #51afef;">let</span>
+      <span style="color: #dcafe9;">cp</span> = <span style="color: #7bc275;">"cp -r --no-preserve=mode,ownership"</span>;
+    <span style="color: #51afef;">in</span>
+    <span style="color: #7bc275;">''</span>
+<span style="color: #7bc275;">      sed -i Makefile \</span>
+<span style="color: #7bc275;">        -e 's;git clone.*go-llama-ggml$;</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>cp<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;"> </span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>go-llama-ggml<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;"> sources/go-llama-</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">ggml;' \</span>
+<span style="color: #7bc275;">        -e 's;git clone.*go-ggml-transformers$;</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>cp<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;"> </span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>go-ggml-transformers<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;"> sou</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">rces/go-ggml-transformers;' \</span>
+<span style="color: #7bc275;">        # ad nauseam</span>
+<span style="color: #7bc275;">    ''</span>
+      ;
+</pre>
+</div>
+
+<p>
+Now I get:
+</p>
+
+<pre class="example" id="org2ab9bb5">
+error: builder for '/nix/store/3pnry3hcgmaznhv0w9s280nhjk0g0bnd-local-ai-2.6.1.drv' failed with exit code 2;
+       last 9 log lines:
+       &gt; Running phase: unpackPhase
+       &gt; unpacking source archive /nix/store/karj5hshnspfjr59mijbd7mjpiph523n-source
+       &gt; source root is source
+       &gt; Running phase: patchPhase
+       &gt; Running phase: updateAutotoolsGnuConfigScriptsPhase
+       &gt; Running phase: configurePhase
+       &gt; Running phase: buildPhase
+       &gt; sh: line 1: security: command not found
+       &gt; Makefile:569: *** multiple target patterns.  Stop.
+       For full logs, run 'nix-store -l /nix/store/3pnry3hcgmaznhv0w9s280nhjk0g0bnd-local-ai-2.6.1.drv'.
+</pre>
+
+<p>
+This <a href="https://github.com/NixOS/nix/issues/705">issue</a> shows I should be able to add <code>darwin.security_tool</code> as a dependency
+and this should fix it.  However it appears that <code>darwin.security_tool</code> no
+longer exists.
+</p>
+
+<pre class="example" id="org5d5d1ac">
+error:
+       … while calling the 'derivationStrict' builtin
+
+         at /builtin/derivation.nix:9:12: (source not available)
+
+       … while evaluating derivation 'local-ai-2.6.1'
+         whose name attribute is located at /nix/store/11zbgb8j7wnnccbbjcq0q556h28g7p4r-source/pkgs/stdenv/generic/make-derivation.nix:352:7
+
+       … while evaluating attribute 'buildInputs' of derivation 'local-ai-2.6.1'
+
+         at /nix/store/11zbgb8j7wnnccbbjcq0q556h28g7p4r-source/pkgs/stdenv/generic/make-derivation.nix:399:7:
+
+          398|       depsHostHost                = elemAt (elemAt dependencies 1) 0;
+          399|       buildInputs                 = elemAt (elemAt dependencies 1) 1;
+             |       ^
+          400|       depsTargetTarget            = elemAt (elemAt dependencies 2) 0;
+
+       error: attribute 'security_tool' missing
+
+       at /nix/store/g2rgj98w7dkiccynyfar9vbz2mw4h2sm-source/derivation.nix:121:11:
+
+          120|
+          121|   ]) ++ [ darwin.security_tool ];
+             |           ^
+          122| in
+</pre>
+
+<p>
+The best I&rsquo;ve been able to find about this is <a href="https://github.com/NixOS/nixpkgs/pull/47676">nixpkgs#47676</a> wherein the path is
+hard coded (I think Nix or Flakes is doing things to the path to prevent
+&ldquo;impure&rdquo; builds) because <code>security_tool</code> was removed due to a problem introduced
+back in macOS Mojave.  I verified it was removed from my instance with the code
+below.  I did have to actually install <code>nixpkgs</code> as <code>nixpkgs</code> (funny, but it was
+previously installed as <code>unstable</code> for me).
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">nix eval <span style="color: #7bc275;">\</span>
+    --impure <span style="color: #7bc275;">\</span>
+    --expr <span style="color: #7bc275;">"let pkgs = import &lt;nixpkgs&gt; {}; in pkgs.lib.attrNames pkgs.darwin"</span>
+</pre>
+</div>
+
+<p>
+Nary a <code>security_tool</code> to be found.  This is good to know in the future though,
+if I want to search for other packages.  It doesn&rsquo;t play nice with <code>grep</code>
+though, since it&rsquo;s all on one line.  I&rsquo;ll have to figure that out another day.
+</p>
+
+<p>
+While technically this will make the flake part of this
+impure, I don&rsquo;t know that we must mark it as such.  First and foremost I want
+this working as a derivation so I can submit it back to <code>nixpkgs</code>.  Then maybe
+smarter people than me can help maintain it.
+</p>
+
+<p>
+Let&rsquo;s look at the error again, from <code>security</code> not being found:
+</p>
+
+<pre class="example" id="org36672b7">
+@nix { "action": "setPhase", "phase": "unpackPhase" }
+Running phase: unpackPhase
+unpacking source archive /nix/store/karj5hshnspfjr59mijbd7mjpiph523n-source
+source root is source
+@nix { "action": "setPhase", "phase": "patchPhase" }
+Running phase: patchPhase
+@nix { "action": "setPhase", "phase": "updateAutotoolsGnuConfigScriptsPhase" }
+Running phase: updateAutotoolsGnuConfigScriptsPhase
+@nix { "action": "setPhase", "phase": "configurePhase" }
+Running phase: configurePhase
+@nix { "action": "setPhase", "phase": "buildPhase" }
+Running phase: buildPhase
+sh: line 1: security: command not found
+Makefile:569: *** multiple target patterns.  Stop.
+</pre>
+
+<p>
+All I get is that in a <code>Makefile</code> on line 569, stuff went bad.  The <code>Makefile</code>
+in <code>LocalAI</code> doesn&rsquo;t go to line 569 (only 558).  That said, I can find calls to
+<code>security</code> in there.  Great!  So all we need to do is use the handy
+<code>substituteInPlace</code> I see used in lots of places (and in the ticket where the
+path is hardcoded).  Is it still a hack if it is highly reproducible?  We do
+already have a <code>postPatch</code> which uses <code>sed</code>, and I&rsquo;m good with doing that too.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-nix">  <span style="color: #dcafe9;">postPatch</span> =
+    <span style="color: #51afef;">let</span>
+      <span style="color: #dcafe9;">cp</span> = <span style="color: #7bc275;">"cp -r --no-preserve=mode,ownership"</span>;
+    <span style="color: #51afef;">in</span>
+    <span style="color: #7bc275;">''</span>
+<span style="color: #7bc275;">      sed -i Makefile \</span>
+<span style="color: #7bc275;">        -e 's;git clone.*go-llama-ggml$;</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>cp<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;"> </span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>go-llama-ggml<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;"> sources/go-llama-</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">ggml;' \</span>
+<span style="color: #7bc275;">        -e 's;git clone.*go-ggml-transformers$;</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>cp<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;"> </span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>go-ggml-transformers<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;"> sou</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">rces/go-ggml-transformers;' \</span>
+<span style="color: #7bc275;">        -e 's;git clone.*gpt4all$;</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>cp<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;"> </span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>gpt4all<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;"> sources/gpt4all;' \</span>
+<span style="color: #7bc275;">        -e 's;git clone.*go-piper$;</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>cp<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;"> </span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>go-piper<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;"> sources/go-piper;' \</span>
+<span style="color: #7bc275;">        -e 's;git clone.*go-rwkv$;</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>cp<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;"> </span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>go-rwkv<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;"> sources/go-rwkv;' \</span>
+<span style="color: #7bc275;">        -e 's;git clone.*whisper\.cpp$;</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>cp<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;"> </span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>whisper<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;"> sources/whisper\.cpp;' \</span>
+<span style="color: #7bc275;">        -e 's;git clone.*go-bert$;</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>cp<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;"> </span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>go-bert<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;"> sources/go-bert;' \</span>
+<span style="color: #7bc275;">        -e 's;git clone.*diffusion$;</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>cp<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;"> </span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>go-stable-diffusion<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;"> sources/go-stab</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">le-diffusion;' \</span>
+<span style="color: #7bc275;">        -e 's;git clone.*go-tiny-dream$;</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>cp<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;"> </span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>go-tiny-dream<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;"> sources/go-tiny-d</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">ream;' \</span>
+<span style="color: #7bc275;">        -e 's, &amp;&amp; git checkout.*,,g' \</span>
+<span style="color: #7bc275;">        -e '/mod download/ d' \</span>
+
+<span style="color: #7bc275;">      sed -i backend/cpp/llama/Makefile \</span>
+<span style="color: #7bc275;">        -e 's;git clone.*llama\.cpp$;</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>cp<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;"> </span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>llama_cpp'<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;"> llama\.cpp;' \</span>
+<span style="color: #7bc275;">        -e 's, &amp;&amp; git checkout.*,,g' \</span>
+
+<span style="color: #7bc275;">    ''</span>
+  ;
+</pre>
+</div>
+
+<p>
+Becomes:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-nix">  <span style="color: #dcafe9;">postPatch</span> =
+    <span style="color: #51afef;">let</span>
+      <span style="color: #dcafe9;">cp</span> = <span style="color: #7bc275;">"cp -r --no-preserve=mode,ownership"</span>;
+    <span style="color: #51afef;">in</span>
+    <span style="color: #7bc275;">''</span>
+<span style="color: #7bc275;">      sed -i Makefile \</span>
+<span style="color: #7bc275;">        -e 's;security;/usr/bin/security;' \</span>
+<span style="color: #7bc275;">        -e 's;git clone.*go-llama-ggml$;</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>cp<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;"> </span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>go-llama-ggml<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;"> sources/go-llama-</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">ggml;' \</span>
+<span style="color: #7bc275;">        -e 's;git clone.*go-ggml-transformers$;</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>cp<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;"> </span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>go-ggml-transformers<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;"> sou</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">rces/go-ggml-transformers;' \</span>
+<span style="color: #7bc275;">        -e 's;git clone.*gpt4all$;</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>cp<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;"> </span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>gpt4all<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;"> sources/gpt4all;' \</span>
+<span style="color: #7bc275;">        -e 's;git clone.*go-piper$;</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>cp<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;"> </span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>go-piper<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;"> sources/go-piper;' \</span>
+<span style="color: #7bc275;">        -e 's;git clone.*go-rwkv$;</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>cp<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;"> </span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>go-rwkv<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;"> sources/go-rwkv;' \</span>
+<span style="color: #7bc275;">        -e 's;git clone.*whisper\.cpp$;</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>cp<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;"> </span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>whisper<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;"> sources/whisper\.cpp;' \</span>
+<span style="color: #7bc275;">        -e 's;git clone.*go-bert$;</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>cp<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;"> </span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>go-bert<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;"> sources/go-bert;' \</span>
+<span style="color: #7bc275;">        -e 's;git clone.*diffusion$;</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>cp<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;"> </span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>go-stable-diffusion<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;"> sources/go-stab</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">le-diffusion;' \</span>
+<span style="color: #7bc275;">        -e 's;git clone.*go-tiny-dream$;</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>cp<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;"> </span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>go-tiny-dream<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;"> sources/go-tiny-d</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">ream;' \</span>
+<span style="color: #7bc275;">        -e 's, &amp;&amp; git checkout.*,,g' \</span>
+<span style="color: #7bc275;">        -e '/mod download/ d' \</span>
+
+<span style="color: #7bc275;">      sed -i backend/cpp/llama/Makefile \</span>
+<span style="color: #7bc275;">        -e 's;git clone.*llama\.cpp$;</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>cp<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;"> </span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>llama_cpp'<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;"> llama\.cpp;' \</span>
+<span style="color: #7bc275;">        -e 's, &amp;&amp; git checkout.*,,g' \</span>
+
+<span style="color: #7bc275;">    ''</span>
+  ;
+</pre>
+</div>
+
+<p>
+My <code>security: command not found</code> error is now gone, but the <code>&gt; Makefile:569: ***
+multiple target patterns.  Stop.</code> is still present.  I thought was just a
+general notification of an error, but it looks to be its own error.  From some
+reading around, it sounds like this comes up when errant colons or spaces wind
+up in a <code>Makefile</code> - <code>Makefiles</code> <span class="underline">require</span> tabs, because reasons.  I don&rsquo;t think
+I&rsquo;ve done anything to introduce spaces.  I do wonder if the colons in the
+<code>GRPC_BACKENDS</code> is to blame.  They are in a quoted string, but shell scripts are
+notorious for quoting issues.  Let&rsquo;s try it real quick:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-nix">  <span style="color: #dcafe9;">buildPhase</span> = <span style="color: #7bc275;">''</span>
+<span style="color: #7bc275;">    mkdir sources</span>
+<span style="color: #7bc275;">    make \</span>
+<span style="color: #7bc275;">      VERSION=v</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>version<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;"> \</span>
+<span style="color: #7bc275;">      BUILD_TYPE=</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>buildType<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;"> \</span>
+<span style="color: #7bc275;">      GRPC_BACKENDS="\</span>
+<span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>go-llama-ggml<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;">,\</span>
+<span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>go-ggml-transformers<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;">,\</span>
+<span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>llama_cpp<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;">,\</span>
+<span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>gpt4all<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;">,\</span>
+<span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>go-piper<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;">,\</span>
+<span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>go-rwkv<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;">,\</span>
+<span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>whisper<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;">,\</span>
+<span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>go-bert<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;">,\</span>
+<span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>go-stable-diffusion<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;">,\</span>
+<span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>go-tiny-dream<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;">\</span>
+<span style="color: #7bc275;">" \</span>
+<span style="color: #7bc275;">      build</span>
+<span style="color: #7bc275;">  ''</span>;
+</pre>
+</div>
+
+<p>
+This gives me:
+</p>
+
+<pre class="example" id="org8643aac">
+error: builder for '/nix/store/1s2rp5m9vyfd52m9b19xkiyfsqjhl25d-local-ai-2.6.1.drv' failed with exit code 2;
+       last 10 log lines:
+       &gt; make[1]: Entering directory '/private/tmp/nix-build-local-ai-2.6.1.drv-0/source/backend/cpp/llama'
+       &gt; cp -r --no-preserve=mode,ownership /nix/store/02fcbxwp8x4nzlhj9rqvnf7m09kvsxlr-llama_cpp_src llama.cpp
+       &gt; if [ -z "6f9939d119b2d004c264952eb510bd106455531e" ]; then \
+       &gt; 	exit 1; \
+       &gt; fi
+       &gt; cd llama.cpp
+       &gt; make[1]: Leaving directory '/private/tmp/nix-build-local-ai-2.6.1.drv-0/source/backend/cpp/llama'
+       &gt; git clone --recurse-submodules https://github.com/go-skynet/go-llama.cpp sources/go-llama
+       &gt; make: git: No such file or directory
+       &gt; make: *** [Makefile:236: sources/go-llama] Error 127
+       For full logs, run 'nix-store -l /nix/store/1s2rp5m9vyfd52m9b19xkiyfsqjhl25d-local-ai-2.6.1.drv'.
+</pre>
+
+<p>
+Which is a new problem on a <code>Makfile</code>.  I don&rsquo;t know if this is progress or not.
+But now I know which <code>Makefile</code> is having an issue.  Unfortunately, <code>go-llama</code>
+is the repository I attempted to remove, and it&rsquo;s being built.  Perhaps my
+<code>GRPC_BACKENDS</code> value is being rejected, and instead of producing an error, it
+assumes &ldquo;everything&rdquo;.  That sounds likely to me.
+</p>
+
+<p>
+I found <code>GRPC_BACKENDS</code> in the <code>LocalAI</code> <code>Makefile</code> and it has this:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-makefile"><span style="color: #dcafe9;">ALL_GRPC_BACKENDS</span>=backend-assets/grpc/langchain-huggingface backend-assets/grpc/<span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">falcon-ggml backend-assets/grpc/bert-embeddings backend-assets/grpc/llama backend-assets/grpc/llama-cpp backend-assets/grpc/llama-ggml backend-assets/grpc/gpt4all backend-assets/grpc/dolly backend-assets/grpc/gpt2 backend-assets/grpc/gptj backend-assets/grpc/gptneox backend-assets/grpc/mpt backend-assets/grpc/replit backend-assets/grpc/starcoder backend-assets/grpc/rwkv backend-assets/grpc/whisper $</span><span style="color: #51afef; background-color: #1c1f24; font-weight: bold;">(</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">OPTIONAL_GRPC</span><span style="color: #51afef; background-color: #1c1f24; font-weight: bold;">)</span>
+<span style="color: #dcafe9;">GRPC_BACKENDS?</span>=$<span style="color: #51afef;">(</span><span style="color: #dcafe9;">ALL_GRPC_BACKENDS</span><span style="color: #51afef;">)</span> $<span style="color: #51afef;">(</span><span style="color: #dcafe9;">OPTIONAL_GRPC</span><span style="color: #51afef;">)</span>
+</pre>
+</div>
+
+<p>
+Which does <span class="underline">not</span> use the colon syntax.  It&rsquo;s space-separated directories.  Let&rsquo;s
+do this:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-nix">  <span style="color: #dcafe9;">buildPhase</span> = <span style="color: #7bc275;">''</span>
+<span style="color: #7bc275;">    mkdir sources</span>
+<span style="color: #7bc275;">    make \</span>
+<span style="color: #7bc275;">      VERSION=v</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>version<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;"> \</span>
+<span style="color: #7bc275;">      BUILD_TYPE=</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>buildType<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;"> \</span>
+<span style="color: #7bc275;">      GRPC_BACKENDS='\</span>
+<span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>go-llama-ggml<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;"> \</span>
+<span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>go-ggml-transformers<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;"> \</span>
+<span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>llama_cpp<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;"> \</span>
+<span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>gpt4all<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;"> \</span>
+<span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>go-piper<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;"> \</span>
+<span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>go-rwkv<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;"> \</span>
+<span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>whisper<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;"> \</span>
+<span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>go-bert<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;"> \</span>
+<span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>go-stable-diffusion<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;"> \</span>
+<span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>go-tiny-dream<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;">\</span>
+<span style="color: #7bc275;">' \</span>
+<span style="color: #7bc275;">      build</span>
+<span style="color: #7bc275;">  ''</span>;
+</pre>
+</div>
+
+<p>
+Same error as before.  Let&rsquo;s just put the source of <code>go-llama</code> back in - maybe
+some preparation expects it to be there whether it&rsquo;s built or not.
+</p>
+
+<p>
+Now I get:
+</p>
+
+<pre class="example" id="org1a232c4">
+error: builder for '/nix/store/wa99h3s4kqlfbr8i56hahk025jh9791a-local-ai-2.6.1.drv' failed with exit code 2;
+       last 10 log lines:
+       &gt; go mod edit -replace github.com/ggerganov/whisper.cpp=/private/tmp/nix-build-local-ai-2.6.1.drv-0/source/sources/whisper.cpp
+       &gt; go mod edit -replace github.com/ggerganov/whisper.cpp/bindings/go=/private/tmp/nix-build-local-ai-2.6.1.drv-0/source/sources/whisper.cpp/bindings/go
+       &gt; go mod edit -replace github.com/go-skynet/go-bert.cpp=/private/tmp/nix-build-local-ai-2.6.1.drv-0/source/sources/go-bert
+       &gt; go mod edit -replace github.com/mudler/go-stable-diffusion=/private/tmp/nix-build-local-ai-2.6.1.drv-0/source/sources/go-stable-diffusion
+       &gt; go mod edit -replace github.com/M0Rf30/go-tiny-dream=/private/tmp/nix-build-local-ai-2.6.1.drv-0/source/sources/go-tiny-dream
+       &gt; go mod edit -replace github.com/mudler/go-piper=/private/tmp/nix-build-local-ai-2.6.1.drv-0/source/sources/go-piper
+       &gt; touch prepare-sources
+       &gt; touch prepare
+       &gt; make: *** No rule to make target '\
+       &gt; /nix/store/n4imdq0vr97l1dyj1frmln4rn712bq8m-source', needed by 'grpcs'.  Stop.
+       For full logs, run 'nix-store -l /nix/store/wa99h3s4kqlfbr8i56hahk025jh9791a-local-ai-2.6.1.drv'.
+</pre>
+
+<p>
+Which is very likely because I snuck in changing the <code>"</code> to <code>'</code> in hopes of
+avoiding any sort of shell quoting issues, but then <code>bash</code> doesn&rsquo;t like the
+backslash-linebreak pattern in that particular kind of string because reasons.
+I can never keep this stuff straight in my head.
+</p>
+
+<p>
+Back to double-quotes:
+</p>
+
+<pre class="example" id="org333d5b8">
+warning: Git tree '/Users/logan/dev/LocalAI' is dirty
+error: builder for '/nix/store/qlrdwmyx59db3nk7blf8v8b00c40sqzw-local-ai-2.6.1.drv' failed with exit code 2;
+       last 10 log lines:
+       &gt; go: downloading go.opentelemetry.io/otel/trace v1.19.0
+       &gt; go: downloading github.com/go-logr/stdr v1.2.2
+       &gt; go: downloading gopkg.in/fsnotify.v1 v1.4.7
+       &gt; go: downloading golang.org/x/net v0.17.0
+       &gt; go: downloading google.golang.org/genproto/googleapis/rpc v0.0.0-20230822172742-b8732ec3820d
+       &gt; go: downloading github.com/shoenig/go-m1cpu v0.1.6
+       &gt; go: downloading github.com/golang/protobuf v1.5.3
+       &gt; go: downloading golang.org/x/text v0.13.0
+       &gt; assets.go:5:12: pattern backend-assets/*: no matching files found
+       &gt; make: *** [Makefile:307: build] Error 1
+       For full logs, run 'nix-store -l /nix/store/qlrdwmyx59db3nk7blf8v8b00c40sqzw-local-ai-2.6.1.drv'.
+</pre>
+
+<p>
+I think this might actually be progress.  Just for the hell of it, I created a
+patch from the <a href="https://github.com/mudler/LocalAI/issues/1560#issuecomment-1890859859">LocalAI#1560</a> recommendation (this ticket is getting a lot of
+mileage for me).  A new run produces the same results, so at least I haven&rsquo;t
+made it worse in some observable way yet.  This is how I added it:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-nix">  <span style="color: #dcafe9;">patches</span> = <span style="color: #51afef;">[</span>
+    <span style="color: #a991f1;">./darwin-coreml.patch</span>
+  <span style="color: #51afef;">]</span>;
+</pre>
+</div>
+
+<p>
+And the patch file:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-diff"><span style="color: #5cEfFF;">diff --git a/Makefile b/Makefile</span>
+<span style="color: #5cEfFF;">index 6afc644..4414eaa 100644</span>
+<span style="color: #5cEfFF;">--- </span><span style="color: #51afef;">a/Makefile</span>
+<span style="color: #5cEfFF;">+++ </span><span style="color: #51afef;">b/Makefile</span>
+<span style="color: #a991f1;">@@ -112,7 +112,7 @@</span><span style="color: #5cEfFF;"> ifeq ($(BUILD_TYPE),hipblas)</span>
+<span style="color: #a4aab6;"> endif</span>
+
+<span style="color: #a4aab6;"> ifeq ($(BUILD_TYPE),metal)</span>
+<span style="color: #aa2222; background-color: #23272e;">-</span><span style="color: #ff665c; background-color: #23272e;"> CGO_LDFLAGS+=-framework Foundation -framework Metal -framework MetalKit -framework MetalPerformanceShaders</span>
+<span style="color: #22aa22; background-color: #2a2e38;">+</span><span style="color: #7bc275; background-color: #2a2e38;"> CGO_LDFLAGS+=-framework Foundation -framework Metal -framework MetalKit -framework MetalPerformanceShaders </span><span style="color: #7bc275; background-color: #2a2e38;">-framework CoreML</span>
+<span style="color: #a4aab6;">  export LLAMA_METAL=1</span>
+<span style="color: #a4aab6;">  export WHISPER_METAL=1</span>
+ endif
+</pre>
+</div>
+
+<p>
+One of the things I don&rsquo;t care for here is that it&rsquo;s not obvious if that patch
+actually got applied correctly.  Like I don&rsquo;t know if the <code>patches</code> section got
+evaluated at all.  I can add this to my derivation:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-nix">  <span style="color: #dcafe9;">asdf</span> = <span style="color: #51afef;">[]</span>;
+</pre>
+</div>
+
+<p>
+And it still parses/validates correctly.  So I have no idea if I made a typo or
+if <code>patches</code> was a special attribute from a bygone era, or maybe it worked but I
+just haven&rsquo;t gotten far enough to observe it yet.  I know there are ways to
+search the Nix store for <span class="underline">built</span> packages, but not for transient stuff that
+errored out.
+</p>
+
+<p>
+Okay, so back to the error I had before.  Line 307 of <code>Makefile</code> is this:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-makefile"><span style="color: #484854; background-color: #23272e;">  </span>mkdir -p release
+</pre>
+</div>
+
+<p>
+Which is probably not what blew up.  The whole block is this:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-makefile"><span style="color: #51afef;">dist</span>: build
+<span style="color: #484854; background-color: #23272e;">  </span>mkdir -p release
+<span style="color: #484854; background-color: #23272e;">  </span>cp $<span style="color: #51afef;">(</span><span style="color: #dcafe9;">BINARY_NAME</span><span style="color: #51afef;">)</span> release/$<span style="color: #51afef;">(</span><span style="color: #dcafe9;">BINARY_NAME</span><span style="color: #51afef;">)</span>-$<span style="color: #51afef;">(</span><span style="color: #dcafe9;">BUILD_ID</span><span style="color: #51afef;">)</span>-$<span style="color: #51afef;">(</span><span style="color: #dcafe9;">OS</span><span style="color: #51afef;">)</span>-$<span style="color: #51afef;">(</span><span style="color: #dcafe9;">ARCH</span><span style="color: #51afef;">)</span>
+</pre>
+</div>
+
+<p>
+I don&rsquo;t know how well line numbers in <code>Makefiles</code> can be trusted.  They are a C
+tool, and line numbers in C can often not be trusted because of preprocessor
+hell we all suffer from past sins.
+</p>
+
+<p>
+Looks like the <code>= issue exists as [[https://github.com/mudler/LocalAI/issues/1407][LocalAI#1407]] but there is no resolution there
+other than "lol use Docker".  But the "failed in compiling backend-assets" gives
+me a _little_ more to go off of there.  What lays down that directory?  I see a
+lot of things that reference =backend-assets</code>, but nothing that actually says
+&ldquo;here it is&rdquo;.
+</p>
+
+<p>
+This is making me suspect, once again, that <code>GRPC_BACKENDS</code> is not being
+respected properly.  I&rsquo;ve made some changes, so let&rsquo;s take out the override of
+<code>GRPC_BACKENDS</code> for now and see if maybe some of the steps above moved us
+forward.
+</p>
+
+<p>
+I&rsquo;m back at the original issue with <code>ld: library not found for -lcblas</code>.  I
+don&rsquo;t know why I didn&rsquo;t do this earlier, or didn&rsquo;t notice it earlier, but
+there&rsquo;s a direct mention of this in <a href="https://github.com/mudler/LocalAI/issues/713">LocalAI#713</a>.  One of the recommendations is
+to use <code>LLAMA_METAL=1</code> with <code>make build</code>.
+</p>
+
+<p>
+So now I have:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-nix">  <span style="color: #dcafe9;">buildPhase</span> = <span style="color: #7bc275;">''</span>
+<span style="color: #7bc275;">    mkdir sources</span>
+<span style="color: #7bc275;">    make \</span>
+<span style="color: #7bc275;">      VERSION=v</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>version<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;"> \</span>
+<span style="color: #7bc275;">      BUILD_TYPE=</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>buildType<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;"> \</span>
+<span style="color: #7bc275;">      LLAMA_METAL=1 \</span>
+<span style="color: #7bc275;">      build</span>
+<span style="color: #7bc275;">  ''</span>;
+</pre>
+</div>
+
+<p>
+But it&rsquo;s still the same error.  Well, it was worth a shot.
+</p>
+
+<p>
+Let&rsquo;s go back to the &ldquo;try just one thing&rdquo; and see if we can build <span class="underline">one</span> backend.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-nix">  <span style="color: #dcafe9;">buildPhase</span> = <span style="color: #7bc275;">''</span>
+<span style="color: #7bc275;">    mkdir sources</span>
+<span style="color: #7bc275;">    make \</span>
+<span style="color: #7bc275;">      VERSION=v</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>version<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;"> \</span>
+<span style="color: #7bc275;">      BUILD_TYPE=</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>buildType<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;"> \</span>
+<span style="color: #7bc275;">      LLAMA_METAL=1 \</span>
+<span style="color: #7bc275;">      GRPC_BACKENDS=</span><span style="color: #C57BDB; font-weight: bold;">$</span><span style="color: #51afef; font-weight: bold;">{</span>llama_cpp<span style="color: #51afef; font-weight: bold;">}</span><span style="color: #7bc275;"> \</span>
+<span style="color: #7bc275;">      build</span>
+<span style="color: #7bc275;">  ''</span>;
+</pre>
+</div>
+
+<p>
+Now we&rsquo;re back at this:
+</p>
+
+<pre class="example" id="org5019e2f">
+       &gt; assets.go:5:12: pattern backend-assets/*: no matching files found
+       &gt; make: *** [Makefile:307: build] Error 1
+</pre>
+
+<p>
+So setting this value to <span class="underline">known working values</span> causes a problem here.  I don&rsquo;t
+understand what it wants.
+</p>
+
+<p>
+I&rsquo;m starting to lose hope here.  I don&rsquo;t really know how to move forward with
+the wherewithal I have left in me.  I am peering at things like
+<a href="https://github.com/nixified-ai/flake">https://github.com/nixified-ai/flake</a> which looks even more raw than <code>LocalAI</code>.
+I&rsquo;m also thinking that maybe I&rsquo;ve reached into an awkward place here.  Nix can
+handle all of the build/packaging things.  So why do we need to piggyback on
+someone else&rsquo;s orchestrated build service which might be making assumptions
+about where stuff is on my Mac and such.  What if I just did each of the
+services that <code>LocalAI</code> uses individually, and create a <code>NixOS</code> configuration
+for all of them?  That&rsquo;s actually starting to sound really tempting, and I bet I
+could find some prior Nix flake for something like <code>stable-diffusion-webui</code>.
+Hey <a href="https://github.com/virchau13/automatic1111-webui-nix">look at that</a>.
+</p>
+</div>
+</div>
+<div id="outline-container-today's-adventure:-building-a-suite-of-machine-learning-servers--building-on-macos-stable-diffusion-webui" class="outline-3">
+<h3 id="today's-adventure:-building-a-suite-of-machine-learning-servers--building-on-macos-stable-diffusion-webui"><span class="section-number-3">2.2.</span> Building on macOS (stable-diffusion-webui)</h3>
+<div class="outline-text-3" id="text-today's-adventure:-building-a-suite-of-machine-learning-servers--building-on-macos-stable-diffusion-webui">
+<p>
+Getting <code>stable-diffusion-webui</code> stood up on macOS took a total of about 5
+minutes using <a href="https://github.com/virchau13/automatic1111-webui-nix">https://github.com/virchau13/automatic1111-webui-nix</a>.  It isn&rsquo;t a
+pure/proper nix solution, but this is a huge start.  From this, I can imagine
+automatically pulling down and configuring models from <code>huggingface</code> or whatever
+we want, plus using SHA verification.
+</p>
+
+<hr />
+
+<p>
+That was fun!  I can generate images on battery in about a minute.  I&rsquo;m now
+confronted with some choices.  I can continue to run this on my Macbook Pro (M1
+Pro), or call it good and move on to making this run on NixOS, and putting it on
+a dedicated server.  I have to admit that it&rsquo;s fun to play with on my laptop but
+it will carry more utility on a dedicated server (even if that server is
+slower - I don&rsquo;t know if it will be).  Likely I will pursue the server
+configuration.  Before that, I&rsquo;d like to improve this derivation.  I&rsquo;d like to
+get the models automatically downloaded and consumed just by listing their names
+or URLs.
+</p>
+</div>
+<div id="outline-container-today's-adventure:-building-a-suite-of-machine-learning-servers--building-on-macos-stable-diffusion-webui--improving-the-derivation" class="outline-4">
+<h4 id="today's-adventure:-building-a-suite-of-machine-learning-servers--building-on-macos-stable-diffusion-webui--improving-the-derivation"><span class="section-number-4">2.2.1.</span> Improving the derivation</h4>
+<div class="outline-text-4" id="text-today's-adventure:-building-a-suite-of-machine-learning-servers--building-on-macos-stable-diffusion-webui--improving-the-derivation">
+<p>
+The first thing I would improve on this is&#x2026;
+</p>
+
+<p>
+I&rsquo;ll pick this back up once I&rsquo;m done playing with Stable Diffusion itself.
+There is much to learn here!
+</p>
+</div>
+</div>
+</div>
+</div>

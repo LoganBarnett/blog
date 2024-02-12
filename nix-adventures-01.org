@@ -1,9 +1,10 @@
 #+BEGIN_EXPORT html
 ---
 categories: nix
-date: 2023-12-22
+date: 2024-02-11
 layout: default
-title: Nix Adventures (part 1 of ?)
+title: Nix Adventures part 1
+parent: nix-adventures.org
 ---
 #+END_EXPORT
 
@@ -13,9 +14,11 @@ title: Nix Adventures (part 1 of ?)
 #+date:      <2023-12-22 Fri>
 #+language:  en
 #+file_tags:
-#+tags:
+#+tags:      nix
 #+auto_id:   t
-#+options:   toc:t
+#+toc:       headlines 3
+
+Nix Adventures part 1!
 
 * What is this?
 :PROPERTIES:
