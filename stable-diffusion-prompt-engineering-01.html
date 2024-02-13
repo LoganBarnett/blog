@@ -128,7 +128,7 @@ more details until satisfaction is reached.
 </p>
 
 
-<div id="org63df022" class="figure">
+<div id="org4ce186a" class="figure">
 <p><img src="./assets/draw-the-owl01.jpeg" alt="draw-the-owl01.jpeg" />
 </p>
 </div>
@@ -183,7 +183,7 @@ for us.  This is that function:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-emacs-lisp" id="org1a464ce"><span style="color: #51afef;">(</span><span style="color: #51afef;">defun</span> <span style="color: #5cEfFF;">org-babel-block</span> <span style="color: #C57BDB;">(</span>block, args
+<pre class="src src-emacs-lisp" id="orgede508a"><span style="color: #51afef;">(</span><span style="color: #51afef;">defun</span> <span style="color: #5cEfFF;">org-babel-block</span> <span style="color: #C57BDB;">(</span>block, args
   <span style="color: #7bc275;">(</span>save-excursion
     <span style="color: #a991f1;">(</span><span style="color: #a991f1;">goto-char</span>
     <span style="color: #51afef;">(</span><span style="color: #a991f1;">org-babel-find-named-block</span> block<span style="color: #51afef;">)</span><span style="color: #a991f1;">)</span>
@@ -198,7 +198,7 @@ And something to catch the missing blocks:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-emacs-lisp" id="orgdf0e72f"><span style="color: #51afef;">(</span><span style="color: #a991f1;">message</span> <span style="color: #7bc275;">"Error: The '</span><span style="color: #a991f1;">block</span><span style="color: #7bc275;">' parameter was not provided for org-babel-block."</span><span style="color: #51afef;">)</span>
+<pre class="src src-emacs-lisp" id="orgf067a17"><span style="color: #51afef;">(</span><span style="color: #a991f1;">message</span> <span style="color: #7bc275;">"Error: The '</span><span style="color: #a991f1;">block</span><span style="color: #7bc275;">' parameter was not provided for org-babel-block."</span><span style="color: #51afef;">)</span>
 </pre>
 </div>
 </div>
@@ -231,7 +231,7 @@ up correctly in the <code>/docs</code> URL.  I should clean this up soon.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-python" id="orgbb96dd0"><span style="color: #51afef;">import</span> urllib.request
+<pre class="src src-python" id="org3e77dee"><span style="color: #51afef;">import</span> urllib.request
 <span style="color: #51afef;">import</span> base64
 <span style="color: #51afef;">import</span> json
 <span style="color: #51afef;">import</span> time
@@ -260,7 +260,7 @@ up correctly in the <code>/docs</code> URL.  I should clean this up soon.
 </div>
 
 
-<div id="org58f9e70" class="figure">
+<div id="org52f0c1a" class="figure">
 <p><img src="./test-0.png" alt="test-0.png" />
 </p>
 </div>
@@ -270,7 +270,7 @@ up correctly in the <code>/docs</code> URL.  I should clean this up soon.
 <h5 id="prompt-engineering--generated--generating-images---the-code--making-api-calls---a-reusable-block">Making API Calls - A Reusable Block</h5>
 <div class="outline-text-5" id="text-prompt-engineering--generated--generating-images---the-code--making-api-calls---a-reusable-block">
 <div class="org-src-container">
-<pre class="src src-python" id="org31915de"><span style="color: #51afef;">import</span> urllib.request
+<pre class="src src-python" id="orgf1a520a"><span style="color: #51afef;">import</span> urllib.request
 <span style="color: #51afef;">import</span> base64
 <span style="color: #51afef;">import</span> json
 <span style="color: #51afef;">import</span> time
@@ -316,22 +316,22 @@ could serve as good reference though.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-text" id="orga3cbc42">dreamscape
+<pre class="src src-text" id="orgb80e216">dreamscape
 </pre>
 </div>
 
 <div class="org-src-container">
-<pre class="src src-text" id="orgffe5440">man
+<pre class="src src-text" id="orgcad9cdc">man
 </pre>
 </div>
 
 <div class="org-src-container">
-<pre class="src src-text" id="orged38a3c">woman
+<pre class="src src-text" id="org9554750">woman
 </pre>
 </div>
 
 <div class="org-src-container">
-<pre class="src src-text" id="orgd63a92c">city or village or landscape
+<pre class="src src-text" id="orgb84183b">city or village or landscape
 </pre>
 </div>
 
@@ -340,7 +340,7 @@ The seed will be:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-text" id="org33502cc">503043532
+<pre class="src src-text" id="org2d1b81c">503043532
 </pre>
 </div>
 
@@ -349,7 +349,7 @@ Our default sample size will be:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-text" id="org6d50ab1">20
+<pre class="src src-text" id="orgc52dfa3">20
 </pre>
 </div>
 
@@ -358,7 +358,7 @@ Our default model will be:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-text" id="org84053a9">endjourneyXL_v11
+<pre class="src src-text" id="org6a4d6b9">endjourneyXL_v11
 </pre>
 </div>
 
@@ -367,22 +367,22 @@ Our default sampling method will be:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-text" id="org7b9d793">dpm2pp_2m_karras
+<pre class="src src-text" id="org2813d73">dpm2pp_2m_karras
 </pre>
 </div>
 
 <div class="org-src-container">
-<pre class="src src-text" id="orga29671a">512
+<pre class="src src-text" id="orge3fb3f3">512
 </pre>
 </div>
 
 <div class="org-src-container">
-<pre class="src src-text" id="orgaffef3a">512
+<pre class="src src-text" id="org76c3c22">512
 </pre>
 </div>
 
 <div class="org-src-container">
-<pre class="src src-text" id="orgb1fa626">7
+<pre class="src src-text" id="org166fb67">7
 </pre>
 </div>
 
@@ -391,7 +391,7 @@ The base URL for the <code>stable-diffusion-webui</code> server is:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-text" id="org5a2dd13">http://localhost:7860
+<pre class="src src-text" id="orgd78e20a">http://localhost:7860
 </pre>
 </div>
 </div>
@@ -414,7 +414,7 @@ As described in <a href="#prompt-engineering--sample-prompts">Sample Prompts</a>
 </p>
 
 <p>
-<a id="org9ecfc19"></a>
+<a id="orgd933f68"></a>
 </p>
 
 <div class="org-src-container">
@@ -425,12 +425,25 @@ As described in <a href="#prompt-engineering--sample-prompts">Sample Prompts</a>
 </pre>
 </div>
 
+
+
+<div id="org70fc3c4" class="figure">
+<p><img src="./dreamscape-0.png" alt="dreamscape-0.png" />
+</p>
+</div>
+
 <div class="org-src-container">
 <pre class="src src-emacs-lisp"><span style="color: #51afef;">(</span><span style="color: #51afef;">org-sbe</span> text-to-image
   <span style="color: #C57BDB;">(</span>file_out prompt-base-2<span style="color: #C57BDB;">)</span>
   <span style="color: #C57BDB;">(</span>prompt prompt-base-2<span style="color: #C57BDB;">)</span>
  <span style="color: #51afef;">)</span>
 </pre>
+</div>
+
+
+<div id="orgae6a87d" class="figure">
+<p><img src="./man-0.png" alt="man-0.png" />
+</p>
 </div>
 
 <div class="org-src-container">
@@ -441,12 +454,24 @@ As described in <a href="#prompt-engineering--sample-prompts">Sample Prompts</a>
 </pre>
 </div>
 
+
+<div id="org624e1a7" class="figure">
+<p><img src="./woman-0.png" alt="woman-0.png" />
+</p>
+</div>
+
 <div class="org-src-container">
 <pre class="src src-emacs-lisp"><span style="color: #51afef;">(</span><span style="color: #51afef;">org-sbe</span> text-to-image
   <span style="color: #C57BDB;">(</span>file_out prompt-base-4<span style="color: #C57BDB;">)</span>
   <span style="color: #C57BDB;">(</span>prompt prompt-base-4<span style="color: #C57BDB;">)</span>
  <span style="color: #51afef;">)</span>
 </pre>
+</div>
+
+
+<div id="org8fa646c" class="figure">
+<p><img src="./city or village or landscape-0.png" alt="city or village or landscape-0.png" />
+</p>
 </div>
 </div>
 </div>
@@ -533,7 +558,7 @@ the case of the woman, I effectively have a separate image for each run.
 </div>
 
 
-<div id="org7a5a371" class="figure">
+<div id="orga7475f8" class="figure">
 <p><img src="./dreamscape-low-samples-0.png" alt="dreamscape-low-samples-0.png" />
 </p>
 </div>
@@ -548,7 +573,7 @@ the case of the woman, I effectively have a separate image for each run.
 </div>
 
 
-<div id="orgf128b5e" class="figure">
+<div id="orge231905" class="figure">
 <p><img src="./man-low-samples-0.png" alt="man-low-samples-0.png" />
 </p>
 </div>
@@ -563,7 +588,7 @@ the case of the woman, I effectively have a separate image for each run.
 </div>
 
 
-<div id="org250cae7" class="figure">
+<div id="org4cc8d00" class="figure">
 <p><img src="./woman-low-samples-0.png" alt="woman-low-samples-0.png" />
 </p>
 </div>
@@ -578,7 +603,7 @@ the case of the woman, I effectively have a separate image for each run.
 </div>
 
 
-<div id="org3ea0eab" class="figure">
+<div id="orga260c45" class="figure">
 <p><img src="./city or village or landscape-low-samples-0.png" alt="city or village or landscape-low-samples-0.png" />
 </p>
 </div>
@@ -597,7 +622,7 @@ the case of the woman, I effectively have a separate image for each run.
 </div>
 
 
-<div id="orgf436cbe" class="figure">
+<div id="org53a302d" class="figure">
 <p><img src="./dreamscape-high-samples-0.png" alt="dreamscape-high-samples-0.png" />
 </p>
 </div>
@@ -612,7 +637,7 @@ the case of the woman, I effectively have a separate image for each run.
 </div>
 
 
-<div id="org55c8620" class="figure">
+<div id="orgae5a44d" class="figure">
 <p><img src="./man-high-samples-0.png" alt="man-high-samples-0.png" />
 </p>
 </div>
@@ -627,7 +652,7 @@ the case of the woman, I effectively have a separate image for each run.
 </div>
 
 
-<div id="orgbf71a50" class="figure">
+<div id="org1645cf6" class="figure">
 <p><img src="./woman-high-samples-0.png" alt="woman-high-samples-0.png" />
 </p>
 </div>
@@ -642,7 +667,7 @@ the case of the woman, I effectively have a separate image for each run.
 </div>
 
 
-<div id="org6782891" class="figure">
+<div id="orge9c8b28" class="figure">
 <p><img src="./city or village or landscape-high-samples-0.png" alt="city or village or landscape-high-samples-0.png" />
 </p>
 </div>
@@ -661,7 +686,7 @@ the case of the woman, I effectively have a separate image for each run.
 </div>
 
 
-<div id="orgd6f3467" class="figure">
+<div id="org5f1457c" class="figure">
 <p><img src="./dreamscape-very-high-samples-0.png" alt="dreamscape-very-high-samples-0.png" />
 </p>
 </div>
@@ -676,7 +701,7 @@ the case of the woman, I effectively have a separate image for each run.
 </div>
 
 
-<div id="org9007a13" class="figure">
+<div id="org75e945c" class="figure">
 <p><img src="./man-very-high-samples-0.png" alt="man-very-high-samples-0.png" />
 </p>
 </div>
@@ -691,7 +716,7 @@ the case of the woman, I effectively have a separate image for each run.
 </div>
 
 
-<div id="orga4dde96" class="figure">
+<div id="orga0d4ecb" class="figure">
 <p><img src="./woman-very-high-samples-0.png" alt="woman-very-high-samples-0.png" />
 </p>
 </div>
@@ -706,7 +731,7 @@ the case of the woman, I effectively have a separate image for each run.
 </div>
 
 
-<div id="org1e1f503" class="figure">
+<div id="org4fb2f29" class="figure">
 <p><img src="./city or village or landscape-very-high-samples-0.png" alt="city or village or landscape-very-high-samples-0.png" />
 </p>
 </div>
@@ -797,7 +822,7 @@ things that aren&rsquo;t blue, and the hair might remain not-blue.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-text" id="orga86a6af"> blue hair
+<pre class="src src-text" id="org9f6f6cb"> blue hair
 </pre>
 </div>
 
@@ -810,7 +835,7 @@ things that aren&rsquo;t blue, and the hair might remain not-blue.
 </div>
 
 
-<div id="orgb2977dd" class="figure">
+<div id="orga3dfab5" class="figure">
 <p><img src="./dreamscape-word-salad-blue-hair-0.png" alt="dreamscape-word-salad-blue-hair-0.png" />
 </p>
 </div>
@@ -824,7 +849,7 @@ things that aren&rsquo;t blue, and the hair might remain not-blue.
 </div>
 
 
-<div id="org4ae6154" class="figure">
+<div id="org9cf1654" class="figure">
 <p><img src="./man-word-salad-blue-hair-0.png" alt="man-word-salad-blue-hair-0.png" />
 </p>
 </div>
@@ -839,7 +864,7 @@ things that aren&rsquo;t blue, and the hair might remain not-blue.
 </div>
 
 
-<div id="orgfe0e7d3" class="figure">
+<div id="org1a984b2" class="figure">
 <p><img src="./woman-word-salad-blue-hair-0.png" alt="woman-word-salad-blue-hair-0.png" />
 </p>
 </div>
@@ -853,7 +878,7 @@ things that aren&rsquo;t blue, and the hair might remain not-blue.
 </div>
 
 
-<div id="org734570a" class="figure">
+<div id="orgd8113a5" class="figure">
 <p><img src="./city or village or landscape-word-salad-blue-hair-0.png" alt="city or village or landscape-word-salad-blue-hair-0.png" />
 </p>
 </div>
@@ -869,7 +894,7 @@ things that aren&rsquo;t blue, and the hair might remain not-blue.
 </div>
 
 
-<div id="orgc01acac" class="figure">
+<div id="org12f5eb3" class="figure">
 <p><img src="./woman-word-salad-blue-hair-0.png" alt="woman-word-salad-blue-hair-0.png" />
 </p>
 </div>
@@ -886,7 +911,7 @@ on a man, or any colored hair on a man.  Let&rsquo;s try it with an additional p
 </p>
 
 <div class="org-src-container">
-<pre class="src src-text" id="org0701223">, blue hair, red tie
+<pre class="src src-text" id="org2884946">, blue hair, red tie
 </pre>
 </div>
 
@@ -899,7 +924,7 @@ on a man, or any colored hair on a man.  Let&rsquo;s try it with an additional p
 </div>
 
 
-<div id="orgc49f71d" class="figure">
+<div id="org064ba03" class="figure">
 <p><img src="./dreamscape-word-salad-blue-hair-extra-0.png" alt="dreamscape-word-salad-blue-hair-extra-0.png" />
 </p>
 </div>
@@ -913,7 +938,7 @@ on a man, or any colored hair on a man.  Let&rsquo;s try it with an additional p
 </div>
 
 
-<div id="org275ab22" class="figure">
+<div id="org1eca667" class="figure">
 <p><img src="./man-word-salad-blue-hair-extra-0.png" alt="man-word-salad-blue-hair-extra-0.png" />
 </p>
 </div>
@@ -928,7 +953,7 @@ on a man, or any colored hair on a man.  Let&rsquo;s try it with an additional p
 </div>
 
 
-<div id="org3f4a27b" class="figure">
+<div id="org83d16bc" class="figure">
 <p><img src="./woman-word-salad-blue-hair-extra-0.png" alt="woman-word-salad-blue-hair-extra-0.png" />
 </p>
 </div>
@@ -942,7 +967,7 @@ on a man, or any colored hair on a man.  Let&rsquo;s try it with an additional p
 </div>
 
 
-<div id="org8dcb2ac" class="figure">
+<div id="orgd482d5f" class="figure">
 <p><img src="./city or village or landscape-word-salad-blue-hair-extra-0.png" alt="city or village or landscape-word-salad-blue-hair-extra-0.png" />
 </p>
 </div>
@@ -953,7 +978,7 @@ more complicated and add another color.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-text" id="orgae15cf4">, blue hair, red tie, a green house on a hill
+<pre class="src src-text" id="orgc6b0723">, blue hair, red tie, a green house on a hill
 </pre>
 </div>
 
@@ -966,7 +991,7 @@ more complicated and add another color.
 </div>
 
 
-<div id="orga13b39c" class="figure">
+<div id="orgf600caf" class="figure">
 <p><img src="./dreamscapeword-salad-blue-hair-red-tie-green-house-hill-0.png" alt="dreamscapeword-salad-blue-hair-red-tie-green-house-hill-0.png" />
 </p>
 </div>
@@ -980,7 +1005,7 @@ more complicated and add another color.
 </div>
 
 
-<div id="org9881bf6" class="figure">
+<div id="org318c099" class="figure">
 <p><img src="./manword-salad-blue-hair-red-tie-green-house-hill-0.png" alt="manword-salad-blue-hair-red-tie-green-house-hill-0.png" />
 </p>
 </div>
@@ -995,7 +1020,7 @@ more complicated and add another color.
 </div>
 
 
-<div id="orgdec68ab" class="figure">
+<div id="org06c353c" class="figure">
 <p><img src="./womanword-salad-blue-hair-red-tie-green-house-hill-0.png" alt="womanword-salad-blue-hair-red-tie-green-house-hill-0.png" />
 </p>
 </div>
@@ -1009,7 +1034,7 @@ more complicated and add another color.
 </div>
 
 
-<div id="orgd4c7785" class="figure">
+<div id="org20dcee2" class="figure">
 <p><img src="./city or village or landscapeword-salad-blue-hair-red-tie-green-house-hill-0.png" alt="city or village or landscapeword-salad-blue-hair-red-tie-green-house-hill-0.png" />
 </p>
 </div>
@@ -1057,7 +1082,7 @@ sure how this is done yet.</li>
 <h6 id="prompt-engineering--inputs--tokens--swapped-tokens--blending-with-steps">Blending with Steps</h6>
 <div class="outline-text-6" id="text-prompt-engineering--inputs--tokens--swapped-tokens--blending-with-steps">
 <div class="org-src-container">
-<pre class="src src-text" id="org34266bc">, forest
+<pre class="src src-text" id="org7548681">, forest
 </pre>
 </div>
 
@@ -1071,7 +1096,7 @@ sure how this is done yet.</li>
 </div>
 
 
-<div id="org9bff3b2" class="figure">
+<div id="orga2975f7" class="figure">
 <p><img src="./dreamscape-blending-steps-forest-0.png" alt="dreamscape-blending-steps-forest-0.png" />
 </p>
 </div>
@@ -1085,7 +1110,7 @@ sure how this is done yet.</li>
 </div>
 
 
-<div id="orgeb10262" class="figure">
+<div id="org607cebf" class="figure">
 <p><img src="./man-blending-steps-forest-0.png" alt="man-blending-steps-forest-0.png" />
 </p>
 </div>
@@ -1099,7 +1124,7 @@ sure how this is done yet.</li>
 </div>
 
 
-<div id="orgc27ed8f" class="figure">
+<div id="orga2cab91" class="figure">
 <p><img src="./woman-blending-steps-forest-0.png" alt="woman-blending-steps-forest-0.png" />
 </p>
 </div>
@@ -1114,7 +1139,7 @@ sure how this is done yet.</li>
 </div>
 
 
-<div id="org1ea3a3c" class="figure">
+<div id="orgad5ad09" class="figure">
 <p><img src="./city or village or landscape-blending-steps-forest-0.png" alt="city or village or landscape-blending-steps-forest-0.png" />
 </p>
 </div>
@@ -1124,7 +1149,7 @@ Now let&rsquo;s do something that makes perfect sense: Make a forest of candy ca
 </p>
 
 <div class="org-src-container">
-<pre class="src src-text" id="org0116fa9">, [forest:candy-canes:5]
+<pre class="src src-text" id="org4e1aea9">, [forest:candy-canes:5]
 </pre>
 </div>
 
@@ -1138,7 +1163,7 @@ Now let&rsquo;s do something that makes perfect sense: Make a forest of candy ca
 </div>
 
 
-<div id="orga9c75c5" class="figure">
+<div id="orge0561c4" class="figure">
 <p><img src="./dreamscape-blending-steps-forest-of-candy-canes-0.png" alt="dreamscape-blending-steps-forest-of-candy-canes-0.png" />
 </p>
 </div>
@@ -1152,7 +1177,7 @@ Now let&rsquo;s do something that makes perfect sense: Make a forest of candy ca
 </div>
 
 
-<div id="orge03ad3d" class="figure">
+<div id="org4880ec2" class="figure">
 <p><img src="./man-blending-steps-forest-of-candy-canes-0.png" alt="man-blending-steps-forest-of-candy-canes-0.png" />
 </p>
 </div>
@@ -1167,7 +1192,7 @@ Now let&rsquo;s do something that makes perfect sense: Make a forest of candy ca
 </div>
 
 
-<div id="org488c4ce" class="figure">
+<div id="org3b0fed3" class="figure">
 <p><img src="./woman-blending-steps-forest-of-candy-canes-0.png" alt="woman-blending-steps-forest-of-candy-canes-0.png" />
 </p>
 </div>
@@ -1181,7 +1206,7 @@ Now let&rsquo;s do something that makes perfect sense: Make a forest of candy ca
 </div>
 
 
-<div id="org4f8babe" class="figure">
+<div id="orgee97b2e" class="figure">
 <p><img src="./city or village or landscape-blending-steps-forest-of-candy-canes-0.png" alt="city or village or landscape-blending-steps-forest-of-candy-canes-0.png" />
 </p>
 </div>
@@ -1198,7 +1223,7 @@ alternating instead of stepped.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-text" id="org5e10779">, [forest|candy canes]
+<pre class="src src-text" id="org53851b3">, [forest|candy canes]
 </pre>
 </div>
 
@@ -1211,7 +1236,7 @@ alternating instead of stepped.
 </div>
 
 
-<div id="orgef6a2e9" class="figure">
+<div id="org9e63690" class="figure">
 <p><img src="./dreamscape-alternating-steps-forest-of-candy-canes-0.png" alt="dreamscape-alternating-steps-forest-of-candy-canes-0.png" />
 </p>
 </div>
@@ -1225,7 +1250,7 @@ alternating instead of stepped.
 </div>
 
 
-<div id="org94c0c46" class="figure">
+<div id="org617c023" class="figure">
 <p><img src="./man-alternating-steps-forest-of-candy-canes-0.png" alt="man-alternating-steps-forest-of-candy-canes-0.png" />
 </p>
 </div>
@@ -1239,7 +1264,7 @@ alternating instead of stepped.
 </div>
 
 
-<div id="org6113406" class="figure">
+<div id="org43966df" class="figure">
 <p><img src="./woman-alternating-steps-forest-of-candy-canes-0.png" alt="woman-alternating-steps-forest-of-candy-canes-0.png" />
 </p>
 </div>
@@ -1253,7 +1278,7 @@ alternating instead of stepped.
 </div>
 
 
-<div id="orge9f136f" class="figure">
+<div id="org55eb054" class="figure">
 <p><img src="./city or village or landscape-alternating-steps-forest-of-candy-canes-0.png" alt="city or village or landscape-alternating-steps-forest-of-candy-canes-0.png" />
 </p>
 </div>

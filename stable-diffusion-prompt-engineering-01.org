@@ -334,7 +334,7 @@ As described in [[Sample Prompts]], our base is as follows:
 
 <<prompt-base-1>>
 
-#+begin_src emacs-lisp :results value raw :cache yes
+#+begin_src emacs-lisp :results value raw :cache yes :exports both
 (org-sbe text-to-image
   (file_out prompt-base-1)
   (prompt prompt-base-1)
@@ -342,37 +342,37 @@ As described in [[Sample Prompts]], our base is as follows:
 #+end_src
 
 
-#+RESULTS[aaebefc06b142de9620bb80bb2f61a50fe5a2997]:
+#+RESULTS[60cafb40345d0619387bc1610927a0da6f45f561]:
 [[file:./dreamscape-0.png]]
 
-#+begin_src emacs-lisp :results value raw :cache yes
+#+begin_src emacs-lisp :results value raw :cache yes :exports both
 (org-sbe text-to-image
   (file_out prompt-base-2)
   (prompt prompt-base-2)
  )
 #+end_src
 
-#+RESULTS[ea5e54db3058033701dc08c62e8731becaa6c7dc]:
+#+RESULTS[9296208581c80e9dfb1a716dbfef430376273ecb]:
 [[file:./man-0.png]]
 
-#+begin_src emacs-lisp :results value raw :cache yes
+#+begin_src emacs-lisp :results value raw :cache yes :exports both
 (org-sbe text-to-image
   (file_out prompt-base-3)
   (prompt prompt-base-3)
  )
 #+end_src
 
-#+RESULTS[42f7d8770240bf7ce7927b4901932214b8160377]:
+#+RESULTS[86df2b3c831f267588555020f550b05d2b45e09b]:
 [[file:./woman-0.png]]
 
-#+begin_src emacs-lisp :results value raw :cache yes
+#+begin_src emacs-lisp :results value raw :cache yes :exports both
 (org-sbe text-to-image
   (file_out prompt-base-4)
   (prompt prompt-base-4)
  )
 #+end_src
 
-#+RESULTS[03ac0a74654cd7115083fdd6e0a297d1da6733d8]:
+#+RESULTS[3a1c42835f041245c58f0e6cffefae074473a1cf]:
 [[file:./city or village or landscape-0.png]]
 
 *** Seed
