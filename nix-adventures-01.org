@@ -1458,25 +1458,40 @@ put together for giving me a one-and-only-one search:
 #+begin_src shell :results none :exports code
 #!/usr/bin/env bash
 
-set -euo pipefail
+# Can't use -u here because empty arrays are "unset" according to some kind of
+# Bashism, and figuring out the incantation to work around it has not been
+# fruitful.  See
+# https://stackoverflow.com/questions/7577052/bash-empty-array-expansion-with-set-u
+# for some of those details.
+set -eo pipefail
 
 IFS=$'\n'
 result=( $(system_profiler SPStorageDataType -json \
   | jq -r \
       '.SPStorageDataType.[]
-        | select(.physical_drive.protocol == "Secure Digital")
+        | select(
+           .physical_drive.protocol == "Secure Digital" or
+           .physical_drive.protocol == "USB"
+        )
         | .bsd_name' \
   | sed -E 's/s[0-9]+//'
 ) )
 unset IFS
 count="${#result[*]}"
-if [[ $count != 1 ]]; then
-  echo "Error: $result has $count results but we expect exactly 1." 1>&2
+if [[ $count != '1' || ${result[0]} == '' ]]; then
+  echo "Error: '$result' has $count results but we expect exactly 1 non-empty \
+result." 1>&2
   exit 1
 else
   echo -n $result
 fi
 #+end_src
+
+Update: I thought I could safely add =set -euo pipefail= to polish up my script
+and no further testing was needing, but it turned out it needed some updating.
+This is the final result I was able to come to.  Bash seems to only really
+thrive with the most trivial of scripts, and it takes so little to start pulling
+out some nasty stuff.
 
 I tested with 1 device and 4 devices, and got the results I wanted.
 
@@ -1634,8 +1649,8 @@ This leaves me with a final script for =sd-card-dev-find.sh= of:
 #+begin_src shell :results none :exports code
 #!/usr/bin/env bash
 ##
-# Finds the device file for the attached SD card (eg. /dev/disk4).  It will
-# assume /dev as a relative directory to make consumption easier.
+# Finds the device file for the attached SD card (eg. /dev/disk4) or USB drive.
+# It will assume /dev as a relative directory to make consumption easier.
 #
 # This has a non-zero exit code if more than one disk is found, or no disks are
 # found.
@@ -1649,8 +1664,8 @@ while true; do
       cat <<EOH
 Usage: $0
 
-Finds the device file for the attached SD card (eg. /dev/disk4).  It will
-assume /dev as a relative directory to make consumption easier.
+Finds the device file for the attached SD card (eg. /dev/disk4) or USB drive.
+It will assume /dev as a relative directory to make consumption easier.
 EOH
       exit
       ;;
@@ -1659,22 +1674,29 @@ EOH
 done
 
 IFS=$'\n'
-result=$(
+sd_results=$(
   system_profiler SPCardReaderDataType -json \
     | jq -r \
       '.SPCardReaderDataType[]._items[].bsd_name'
 )
-array=( $result )
+usb_results=$(
+  system_profiler SPUSBDataType -json \
+    | jq -r \
+      '.. | select(.bsd_name? and .volumes?).bsd_name'
+)
 unset IFS
-count="${#array[*]}"
+array=( "${sd_results[@]}""${usb_results[@]}" )
+count="${#array[@]}"
 if [[ $count != 1 ]]; then
-  echo "Error: Query result '$result' has $count results but we expect exactly \
+  echo "Error: Query result '${array[@]}' has $count results but we expect exactly \
 1." 1>&2
   exit 1
 else
-  echo -n $result
+  echo -n "${array[@]}"
 fi
 #+end_src
+
+Update: I added the capability to also check for USB drives.
 
 Which also includes =-h= / =--help= and a comment describing how it works.  It
 might seem obvious, and it is, but that's because it's fresh.  I've made life

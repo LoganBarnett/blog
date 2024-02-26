@@ -209,7 +209,7 @@ I try to mount my disk with invocations such as these:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-shell" id="org73cf0ef"><span style="color: #FCCE7B;">sudo</span> fuse-ext2 /dev/disk4s1 /Volumes/4s1
+<pre class="src src-shell" id="org2a2044a"><span style="color: #FCCE7B;">sudo</span> fuse-ext2 /dev/disk4s1 /Volumes/4s1
 <span style="color: #FCCE7B;">sudo</span> fuse-ext2 /dev/disk4s2 /Volumes/4s2
 </pre>
 </div>
@@ -250,7 +250,7 @@ normal runtime.  I attempt to mount again with:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-shell" id="org22babb0"><span style="color: #FCCE7B;">sudo</span> fuse-ext2 /dev/disk4s2 /Volumes/4s2
+<pre class="src src-shell" id="orgd4eb2b2"><span style="color: #FCCE7B;">sudo</span> fuse-ext2 /dev/disk4s2 /Volumes/4s2
 </pre>
 </div>
 
@@ -278,7 +278,7 @@ here.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-shell" id="org5d90ed0"><span style="color: #FCCE7B;">sudo</span> <span style="color: #FCCE7B;">mkdir</span> /Volumes/4s2
+<pre class="src src-shell" id="org6d3ad4b"><span style="color: #FCCE7B;">sudo</span> <span style="color: #FCCE7B;">mkdir</span> /Volumes/4s2
 <span style="color: #FCCE7B;">sudo</span> fuse-ext2 /dev/disk4s2 /Volumes/4s2
 </pre>
 </div>
@@ -299,7 +299,7 @@ I try:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-shell" id="org49afdb3"><span style="color: #FCCE7B;">sudo</span> mount -t fuse-ext2 /dev/disk4s2 /Volumes/4s2
+<pre class="src src-shell" id="org057cb74"><span style="color: #FCCE7B;">sudo</span> mount -t fuse-ext2 /dev/disk4s2 /Volumes/4s2
 </pre>
 </div>
 
@@ -317,7 +317,7 @@ me <span class="underline">something</span> of relevance:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-shell" id="org7984e68"><span style="color: #FCCE7B;">ls</span> /Library/Filesystems
+<pre class="src src-shell" id="org386c515"><span style="color: #FCCE7B;">ls</span> /Library/Filesystems
 </pre>
 </div>
 
@@ -333,7 +333,7 @@ So I try this modified <code>mount</code>:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-shell" id="org4835a0c"><span style="color: #FCCE7B;">sudo</span> mount -t macfuse.fs /dev/disk4s2 /Volumes/4s2
+<pre class="src src-shell" id="org4ea5fcf"><span style="color: #FCCE7B;">sudo</span> mount -t macfuse.fs /dev/disk4s2 /Volumes/4s2
 </pre>
 </div>
 
@@ -396,7 +396,7 @@ in order.  Oftentimes errors come from the user, not the software.  I find <code
 diskutil list</code> gives some good answers.
 </p>
 
-<pre class="example" id="org8e2edea">
+<pre class="example" id="org2dd28a5">
 &lt;snip&gt;
 /dev/disk6 (internal, physical):
    #:                       TYPE NAME                    SIZE       IDENTIFIER
@@ -413,7 +413,7 @@ confidence that I want to be mounting the &ldquo;2&rdquo; partition.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-shell" id="org34830af"><span style="color: #FCCE7B;">sudo</span> fuse-ext2 /dev/disk6s2 /Volumes/4s2
+<pre class="src src-shell" id="org7ae3435"><span style="color: #FCCE7B;">sudo</span> fuse-ext2 /dev/disk6s2 /Volumes/4s2
 </pre>
 </div>
 
@@ -422,7 +422,7 @@ I didn&rsquo;t rename the directory to a matching <code>6s2</code> because I jus
 something.  Results are promising and with a delay:
 </p>
 
-<pre class="example" id="org09d2d6b">
+<pre class="example" id="org8dede74">
 Mounting /dev/disk6s2 Read-Only.
 Use 'force' or 'rw+' options to enable Read-Write mode
 </pre>
@@ -432,7 +432,7 @@ And then:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-shell" id="org9fdf0c4"><span style="color: #FCCE7B;">ls</span> /Volumes/4s2
+<pre class="src src-shell" id="orgb27883e"><span style="color: #FCCE7B;">ls</span> /Volumes/4s2
 </pre>
 </div>
 
@@ -445,7 +445,7 @@ Now let&rsquo;s clean up the directory name, and make it read+write.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-shell" id="orgda21cd6"><span style="color: #FCCE7B;">sudo</span> umount /Volumes/4s2
+<pre class="src src-shell" id="org1b6a1ad"><span style="color: #FCCE7B;">sudo</span> umount /Volumes/4s2
 <span style="color: #FCCE7B;">sudo</span> <span style="color: #FCCE7B;">mv</span> /Volumes/<span style="color: #51afef;">{</span>4,6<span style="color: #51afef;">}</span>s2
 <span style="color: #FCCE7B;">sudo</span> fuse-ext2 -o rw+ /dev/disk6s2 /Volumes/4s2
 </pre>
@@ -466,7 +466,7 @@ The commands again, and note that now we&rsquo;re back to <code>disk4</code>:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-shell" id="org48b3d6d"><span style="color: #FCCE7B;">sudo</span> <span style="color: #FCCE7B;">mkdir</span> /Volumes/picard
+<pre class="src src-shell" id="orgd81326a"><span style="color: #FCCE7B;">sudo</span> <span style="color: #FCCE7B;">mkdir</span> /Volumes/picard
 <span style="color: #FCCE7B;">sudo</span> fuse-ext2 -o rw+ /dev/disk4s2 /Volumes/picard
 </pre>
 </div>
@@ -527,7 +527,7 @@ Okay, I&rsquo;m going to try really hard not to swear off computers forever.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-shell" id="orgd533ce9"><span style="color: #FCCE7B;">touch</span> /Volumes/FIRMWARE/ssh
+<pre class="src src-shell" id="orgf7d8a8d"><span style="color: #FCCE7B;">touch</span> /Volumes/FIRMWARE/ssh
 <span style="color: #FCCE7B;">echo</span> <span style="color: #7bc275;">"</span><span style="color: #a991f1;">$</span><span style="color: #dcafe9;">USER</span><span style="color: #7bc275;">:</span><span style="color: #C57BDB; font-weight: bold;">$(</span><span style="color: #C57BDB; font-weight: bold;">echo</span><span style="color: #C57BDB; font-weight: bold;"> 'lolno' | openssl passwd -stdin)</span><span style="color: #7bc275;">"</span> &gt; /Volumes/FIRMWARE/usercon<span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">f</span>
 </pre>
 </div>
@@ -537,7 +537,7 @@ The instructions use a <code>-6</code> argument, but that doesn&rsquo;t work for
 </p>
 
 <div class="org-src-container">
-<pre class="src src-shell" id="org7c9b994">openssl version
+<pre class="src src-shell" id="orgc1c9c37">openssl version
 </pre>
 </div>
 
@@ -551,7 +551,7 @@ Which I believe is the stock version running on my MacBook, based on:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-shell" id="org3c029cb"><span style="color: #C57BDB;">which</span> openssl
+<pre class="src src-shell" id="org32eeb36"><span style="color: #C57BDB;">which</span> openssl
 </pre>
 </div>
 
@@ -569,7 +569,7 @@ A quick check of the files shows they are there and in the desired state:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-shell" id="org46e79f0"><span style="color: #FCCE7B;">ls</span> /Volumes/FIRMWARE/ssh
+<pre class="src src-shell" id="org8280ef7"><span style="color: #FCCE7B;">ls</span> /Volumes/FIRMWARE/ssh
 <span style="color: #FCCE7B;">cat</span> /Volumes/FIRMWARE/userconf
 </pre>
 </div>
@@ -624,7 +624,7 @@ The command link invocation is provided in this <a href="https://apple.stackexch
 </p>
 
 <div class="org-src-container">
-<pre class="src src-shell" id="org42d2bed">dns-sd -Gv4v6 raspberrypi.local
+<pre class="src src-shell" id="orgf6f290b">dns-sd -Gv4v6 raspberrypi.local
 </pre>
 </div>
 
@@ -642,7 +642,7 @@ to see if the configuration files were removed on-boot.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-shell" id="org434ebfb"><span style="color: #FCCE7B;">ls</span> /Volumes/FIRMWARE | <span style="color: #FCCE7B;">grep</span> ssh
+<pre class="src src-shell" id="orgd3e2ea8"><span style="color: #FCCE7B;">ls</span> /Volumes/FIRMWARE | <span style="color: #FCCE7B;">grep</span> ssh
 <span style="color: #FCCE7B;">ls</span> /Volumes/FIRMWARE | <span style="color: #FCCE7B;">grep</span> userconf
 </pre>
 </div>
@@ -729,7 +729,7 @@ I used:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-shell" id="orgd4adb4b">wget https://downloads.raspberrypi.com/raspios_arm64/images/raspios_arm64-2023-1<span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">2-06/2023-12-05-raspios-bookworm-arm64.img.xz</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">\?</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">_gl</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">\=</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">1</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">\*</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">qvoa7r</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">\*</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">_ga</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">\*</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">MjYzMjA4NTA3LjE3MDMyMzk1Nzc.</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">\*</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">_ga_22FD70LWDS</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">\*</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">MTcwMzMzMTYzMi4yLjAuMTcwMzMzMTYzMi4wLjAuMA..</span>
+<pre class="src src-shell" id="org2cfe2cf">wget https://downloads.raspberrypi.com/raspios_arm64/images/raspios_arm64-2023-1<span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">2-06/2023-12-05-raspios-bookworm-arm64.img.xz</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">\?</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">_gl</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">\=</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">1</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">\*</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">qvoa7r</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">\*</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">_ga</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">\*</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">MjYzMjA4NTA3LjE3MDMyMzk1Nzc.</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">\*</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">_ga_22FD70LWDS</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">\*</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">MTcwMzMzMTYzMi4yLjAuMTcwMzMzMTYzMi4wLjAuMA..</span>
 <span style="color: #FCCE7B;">mv</span> <span style="color: #7bc275;">\</span>
   <span style="color: #7bc275;">'2023-12-05-raspios-bookworm-arm64.img.xz?_gl=1*qvoa7r*_ga*MjYzMjA4NTA3LjE3MDM</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">yMzk1Nzc.*_ga_22FD70LWDS*MTcwMzMzMTYzMi4yLjAuMTcwMzMzMTYzMi4wLjAuMA..'</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;"> </span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">\</span>
   2023-12-05-raspios-bookworm-arm64.img.xz
@@ -747,7 +747,7 @@ And then flashed the card with:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-shell" id="org162e821"><span style="color: #FCCE7B;">sudo</span> dd <span style="color: #dcafe9;">if</span>=2023-12-05-raspios-bookworm-arm64.img <span style="color: #dcafe9;">of</span>=/dev/disk4 <span style="color: #dcafe9;">bs</span>=1M <span style="color: #dcafe9;">status</span>=prog<span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">ress </span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">conv</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">=fsync</span>
+<pre class="src src-shell" id="orgfc1c896"><span style="color: #FCCE7B;">sudo</span> dd <span style="color: #dcafe9;">if</span>=2023-12-05-raspios-bookworm-arm64.img <span style="color: #dcafe9;">of</span>=/dev/disk4 <span style="color: #dcafe9;">bs</span>=1M <span style="color: #dcafe9;">status</span>=prog<span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">ress </span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">conv</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">=fsync</span>
 </pre>
 </div>
 </div>
@@ -785,7 +785,7 @@ In the Discourse, Sweenu states the Pi can be updated thusly:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-shell" id="orgcc55538">nix flake update
+<pre class="src src-shell" id="orgec0363c">nix flake update
 deploy <span style="color: #7bc275;">".#grunfeld"</span>
 </pre>
 </div>
@@ -800,7 +800,7 @@ so:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-shell" id="org6a874ca">nixos-generate --flake <span style="color: #7bc275;">'.#grunfeld'</span> --format sd-aarch64 --system aarch64-linux
+<pre class="src src-shell" id="org08cc13f">nixos-generate --flake <span style="color: #7bc275;">'.#grunfeld'</span> --format sd-aarch64 --system aarch64-linux
 unzstd -d <span style="color: #51afef;">{</span>the output path from the command above<span style="color: #51afef;">}</span> -o nixos-sd-image.img
 <span style="color: #FCCE7B;">sudo</span> dd <span style="color: #dcafe9;">if</span>=nixos-sd-image.img <span style="color: #dcafe9;">of</span>=/dev/sda <span style="color: #dcafe9;">bs</span>=64K <span style="color: #dcafe9;">status</span>=progress
 </pre>
@@ -881,7 +881,7 @@ into this <code>with-podman.sh</code> script:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-shell" id="orgd92b391"><span style="color: #62686E;">#</span><span style="color: #62686E;">!/usr/bin/</span><span style="color: #51afef;">env</span><span style="color: #62686E;"> bash</span>
+<pre class="src src-shell" id="orgee5d905"><span style="color: #62686E;">#</span><span style="color: #62686E;">!/usr/bin/</span><span style="color: #51afef;">env</span><span style="color: #62686E;"> bash</span>
 <span style="color: #C57BDB;">set</span> -euo pipefail
 <span style="color: #dcafe9;">container_name</span>=<span style="color: #7bc275;">"nix-run"</span>
 <span style="color: #dcafe9;">script</span>=<span style="color: #7bc275;">"</span><span style="color: #a991f1;">$</span><span style="color: #dcafe9;">@</span><span style="color: #7bc275;">"</span>
@@ -911,7 +911,7 @@ use thoughtlessly and I really like that.
 Here&rsquo;s an example run:
 </p>
 
-<pre class="example" id="org77a9250">
+<pre class="example" id="org1a4ac91">
 @ ./with-podman.sh ls -al
 Error: podman-machine-default: VM already exists
 Error: cannot start VM podman-machine-default: VM already running or starting
@@ -986,7 +986,7 @@ From <code>sweenu</code>&rsquo;s earlier invocations, I have adapted it to be:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-shell" id="org2bf3bd9">./with-podman.sh <span style="color: #7bc275;">"</span>
+<pre class="src src-shell" id="orgfea8761">./with-podman.sh <span style="color: #7bc275;">"</span>
 <span style="color: #7bc275;">nixos-generate --flake '.#iron' --format sd-aarch64 --system aarch64-linux;</span>
 <span style="color: #7bc275;">"</span>
 </pre>
@@ -996,7 +996,7 @@ From <code>sweenu</code>&rsquo;s earlier invocations, I have adapted it to be:
 Which outputs:
 </p>
 
-<pre class="example" id="org55a3533">
+<pre class="example" id="orgf910bf0">
 Error: crun: executable file `nixos-generate` not found in $PATH: No such file or directory: OCI runtime attempted to invoke a command that was not found
 Error: read unixpacket @-&gt;/proc/self/fd/13/attach: read: connection reset by peer
 </pre>
@@ -1013,7 +1013,7 @@ I tried a nix invocation I know to work:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-shell" id="org62c09cc">./with-podman.sh nix-channel --list
+<pre class="src src-shell" id="orgb414c33">./with-podman.sh nix-channel --list
 </pre>
 </div>
 
@@ -1022,7 +1022,7 @@ And I get:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-:exports" id="org0df5f0f">nixpkgs https://nixos.org/channels/nixpkgs-unstable
+<pre class="src src-:exports" id="org560773c">nixpkgs https://nixos.org/channels/nixpkgs-unstable
 </pre>
 </div>
 
@@ -1042,7 +1042,7 @@ it&rsquo;s not something that ships with <code>nixos</code>.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-shell" id="orgefcd8c8">./with-podman.sh <span style="color: #7bc275;">"</span>
+<pre class="src src-shell" id="orga1005d0">./with-podman.sh <span style="color: #7bc275;">"</span>
 <span style="color: #7bc275;">nix run github:nix-community/nixos-generators -- \</span>
 <span style="color: #7bc275;">  --flake '.#iron' --format sd-aarch64 --system aarch64-linux;</span>
 <span style="color: #7bc275;">"</span>
@@ -1053,7 +1053,7 @@ it&rsquo;s not something that ships with <code>nixos</code>.
 And I get:
 </p>
 
-<pre class="example" id="org1a3a456">
+<pre class="example" id="orge261df4">
 error: experimental Nix feature 'nix-command' is disabled; add '--extra-experimental-features nix-command' to enable it
 </pre>
 
@@ -1081,7 +1081,7 @@ issues.
 Now I see:
 </p>
 
-<pre class="example" id="org3113285">
+<pre class="example" id="orgc07391d">
 error: experimental Nix feature 'flakes' is disabled; add '--extra-experimental-features flakes' to enable it
 </pre>
 
@@ -1110,7 +1110,7 @@ I see a lot of stuff going on with the nix store - a sign of progress!
 But we end with:
 </p>
 
-<pre class="example" id="org26775bc">
+<pre class="example" id="orgbfd07ed">
 warning: Ignoring setting 'auto-allocate-uids' because experimental feature 'auto-allocate-uids' is not enabled
 warning: Ignoring setting 'impure-env' because experimental feature 'configurable-impure-env' is not enabled
 building '/nix/store/531cw9n4lxqx3w830ijackc5xffgz27k-nixos-generate.drv'...
@@ -1137,7 +1137,7 @@ PR&#x2026;?  Let&rsquo;s cook a new invocation:
 I get:
 </p>
 
-<pre class="example" id="orgcf7d059">
+<pre class="example" id="orgc800f5e">
 error: cannot find flake 'flake:awk' in the flake registries
 </pre>
 
@@ -1175,7 +1175,7 @@ Actually I try several things out, and eventually land on:
 I ran into:
 </p>
 
-<pre class="example" id="org11195bb">
+<pre class="example" id="org27633e0">
 path '/workdir/--flake' does not contain a 'flake.nix', searching up
 error: getting status of '/workdir/--flake': No such file or directory
 </pre>
@@ -1394,7 +1394,7 @@ configured in some other way that is not obvious to me.
 The error for the boot loader is this:
 </p>
 
-<pre class="example" id="orgc3c76af">
+<pre class="example" id="orgfd9e8ef">
 error: The option `system.build.installBootLoader' is defined multiple times while it's expected to be unique.
        Only one bootloader can be enabled at a time. This requirement has not
        been checked until NixOS 22.05. Earlier versions defaulted to the last
@@ -1409,7 +1409,7 @@ Unfortunately I don&rsquo;t have an error capture for <code>nix.registry</code>.
 The <code>nix.registry</code> error:
 </p>
 
-<pre class="example" id="org3aea4af">
+<pre class="example" id="orga217b02">
 error:
        … while calling the 'derivationStrict' builtin
 
@@ -1474,7 +1474,7 @@ I get no meaningful output, but no news is good news in the Unix world.  I see
 that my local directory gets an <code>result</code> file.  It&rsquo;s a symlink.
 </p>
 
-<pre class="example" id="org2e43fa2">
+<pre class="example" id="org8735add">
 result -&gt; /nix/store/dv21jmin4aqq4m0zvlbfbw2d6c1d47sr-nixos-sd-image-24.05.20231222.6df37dc-aarch64-linux.img
 </pre>
 </div>
@@ -1487,7 +1487,7 @@ I quickly discovered that the symlink is orphaned.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-shell" id="orgb41583f"><span style="color: #FCCE7B;">ls</span> -al $<span style="color: #51afef;">(</span>readlink result<span style="color: #51afef;">)</span> <span style="color: #e69055; font-weight: bold;">2</span>&gt;&amp;<span style="color: #e69055; font-weight: bold;">1</span>
+<pre class="src src-shell" id="orgec3c75c"><span style="color: #FCCE7B;">ls</span> -al $<span style="color: #51afef;">(</span>readlink result<span style="color: #51afef;">)</span> <span style="color: #e69055; font-weight: bold;">2</span>&gt;&amp;<span style="color: #e69055; font-weight: bold;">1</span>
 </pre>
 </div>
 
@@ -1612,7 +1612,7 @@ Excellent!  And the positive case?
 </pre>
 </div>
 
-<pre class="example" id="org4826e7b">
+<pre class="example" id="orgb31ae46">
 Class Name: CRawDiskImage
 Size Information:
 	Total Bytes: 2829352960
@@ -1765,26 +1765,43 @@ put together for giving me a one-and-only-one search:
 <div class="org-src-container">
 <pre class="src src-shell"><span style="color: #62686E;">#</span><span style="color: #62686E;">!/usr/bin/</span><span style="color: #51afef;">env</span><span style="color: #62686E;"> bash</span>
 
-<span style="color: #C57BDB;">set</span> -euo pipefail
+<span style="color: #62686E;"># </span><span style="color: #62686E;">Can't use -u here because empty arrays are "unset" according to some kind of</span>
+<span style="color: #62686E;"># </span><span style="color: #62686E;">Bashism, and figuring out the incantation to work around it has not been</span>
+<span style="color: #62686E;"># </span><span style="color: #62686E;">fruitful.  See</span>
+<span style="color: #62686E;"># </span><span style="color: #62686E;">https://stackoverflow.com/questions/7577052/bash-empty-array-expansion-with-se</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">t-u</span>
+<span style="color: #62686E;"># </span><span style="color: #62686E;">for some of those details.</span>
+<span style="color: #C57BDB;">set</span> -eo pipefail
 
 <span style="color: #dcafe9;">IFS</span>=$<span style="color: #7bc275;">'\n'</span>
 <span style="color: #dcafe9;">result</span>=<span style="color: #51afef;">(</span> $<span style="color: #C57BDB;">(</span>system_profiler SPStorageDataType -json <span style="color: #7bc275;">\</span>
   | jq -r <span style="color: #7bc275;">\</span>
       <span style="color: #7bc275;">'.SPStorageDataType.[]</span>
-<span style="color: #7bc275;">        | select(.physical_drive.protocol == "Secure Digital")</span>
+<span style="color: #7bc275;">        | select(</span>
+<span style="color: #7bc275;">           .physical_drive.protocol == "Secure Digital" or</span>
+<span style="color: #7bc275;">           .physical_drive.protocol == "USB"</span>
+<span style="color: #7bc275;">        )</span>
 <span style="color: #7bc275;">        | .bsd_name'</span> <span style="color: #7bc275;">\</span>
   | sed -E <span style="color: #7bc275;">'s/s[0-9]+//'</span>
 <span style="color: #C57BDB;">)</span> <span style="color: #51afef;">)</span>
 <span style="color: #C57BDB;">unset</span> IFS
 <span style="color: #dcafe9;">count</span>=<span style="color: #7bc275;">"</span><span style="color: #a991f1;">$</span><span style="color: #dcafe9;">{#result[*]}</span><span style="color: #7bc275;">"</span>
-<span style="color: #51afef;">if</span> <span style="color: #51afef;">[</span><span style="color: #C57BDB;">[</span> $<span style="color: #dcafe9;">count</span> != <span style="color: #e69055; font-weight: bold;">1</span> <span style="color: #C57BDB;">]</span><span style="color: #51afef;">]</span>; <span style="color: #51afef;">then</span>
-  <span style="color: #FCCE7B;">echo</span> <span style="color: #7bc275;">"Error: </span><span style="color: #a991f1;">$</span><span style="color: #dcafe9;">result</span><span style="color: #7bc275;"> has </span><span style="color: #a991f1;">$</span><span style="color: #dcafe9;">count</span><span style="color: #7bc275;"> results but we expect exactly 1."</span> <span style="color: #e69055; font-weight: bold;">1</span>&gt;&amp;<span style="color: #e69055; font-weight: bold;">2</span>
+<span style="color: #51afef;">if</span> <span style="color: #51afef;">[</span><span style="color: #C57BDB;">[</span> $<span style="color: #dcafe9;">count</span> != <span style="color: #7bc275;">'1'</span> || $<span style="color: #7bc275;">{</span><span style="color: #dcafe9;">result</span><span style="color: #a991f1;">[</span><span style="color: #e69055; font-weight: bold;">0</span><span style="color: #a991f1;">]</span><span style="color: #7bc275;">}</span> == <span style="color: #7bc275;">''</span> <span style="color: #C57BDB;">]</span><span style="color: #51afef;">]</span>; <span style="color: #51afef;">then</span>
+  <span style="color: #FCCE7B;">echo</span> <span style="color: #7bc275;">"Error: '</span><span style="color: #a991f1;">$</span><span style="color: #dcafe9;">result</span><span style="color: #7bc275;">' has </span><span style="color: #a991f1;">$</span><span style="color: #dcafe9;">count</span><span style="color: #7bc275;"> results but we expect exactly 1 non-empty \</span>
+<span style="color: #7bc275;">result."</span> <span style="color: #e69055; font-weight: bold;">1</span>&gt;&amp;<span style="color: #e69055; font-weight: bold;">2</span>
   <span style="color: #51afef;">exit</span> <span style="color: #e69055; font-weight: bold;">1</span>
 <span style="color: #51afef;">else</span>
   <span style="color: #FCCE7B;">echo</span> -n $<span style="color: #dcafe9;">result</span>
 <span style="color: #51afef;">fi</span>
 </pre>
 </div>
+
+<p>
+Update: I thought I could safely add <code>set -euo pipefail</code> to polish up my script
+and no further testing was needing, but it turned out it needed some updating.
+This is the final result I was able to come to.  Bash seems to only really
+thrive with the most trivial of scripts, and it takes so little to start pulling
+out some nasty stuff.
+</p>
 
 <p>
 I tested with 1 device and 4 devices, and got the results I wanted.
@@ -1863,8 +1880,8 @@ This leaves me with a final script for <code>sd-card-dev-find.sh</code> of:
 <div class="org-src-container">
 <pre class="src src-shell"><span style="color: #62686E;">#</span><span style="color: #62686E;">!/usr/bin/</span><span style="color: #51afef;">env</span><span style="color: #62686E;"> bash</span>
 <span style="color: #62686E;">##</span>
-<span style="color: #62686E;"># </span><span style="color: #62686E;">Finds the device file for the attached SD card (eg. /dev/disk4).  It will</span>
-<span style="color: #62686E;"># </span><span style="color: #62686E;">assume /dev as a relative directory to </span><span style="color: #62686E;">make</span><span style="color: #62686E;"> consumption easier.</span>
+<span style="color: #62686E;"># </span><span style="color: #62686E;">Finds the device file for the attached SD card (eg. /dev/disk4) or USB drive.</span>
+<span style="color: #62686E;"># </span><span style="color: #62686E;">It will assume /dev as a relative directory to </span><span style="color: #62686E;">make</span><span style="color: #62686E;"> consumption easier.</span>
 <span style="color: #62686E;">#</span>
 <span style="color: #62686E;"># </span><span style="color: #62686E;">This has a non-zero exit code if more than one disk is found, or no disks are</span>
 <span style="color: #62686E;"># </span><span style="color: #62686E;">found.</span>
@@ -1878,8 +1895,8 @@ This leaves me with a final script for <code>sd-card-dev-find.sh</code> of:
       <span style="color: #FCCE7B;">cat</span> &lt;&lt;EOH
 <span style="color: #7bc275;">Usage: $0</span>
 
-<span style="color: #7bc275;">Finds the device file for the attached SD card (eg. /dev/disk4).  It will</span>
-<span style="color: #7bc275;">assume /dev as a relative directory to </span><span style="color: #7bc275;">make</span><span style="color: #7bc275;"> consumption easier.</span>
+<span style="color: #7bc275;">Finds the device file for the attached SD card (eg. /dev/disk4) or USB drive.</span>
+<span style="color: #7bc275;">It will assume /dev as a relative directory to </span><span style="color: #7bc275;">make</span><span style="color: #7bc275;"> consumption easier.</span>
 <span style="color: #7bc275;">EOH</span>
       <span style="color: #51afef;">exit</span>
       ;;
@@ -1888,23 +1905,32 @@ This leaves me with a final script for <code>sd-card-dev-find.sh</code> of:
 <span style="color: #51afef;">done</span>
 
 <span style="color: #dcafe9;">IFS</span>=$<span style="color: #7bc275;">'\n'</span>
-<span style="color: #dcafe9;">result</span>=$<span style="color: #51afef;">(</span>
+<span style="color: #dcafe9;">sd_results</span>=$<span style="color: #51afef;">(</span>
   system_profiler SPCardReaderDataType -json <span style="color: #7bc275;">\</span>
     | jq -r <span style="color: #7bc275;">\</span>
       <span style="color: #7bc275;">'.SPCardReaderDataType[]._items[].bsd_name'</span>
 <span style="color: #51afef;">)</span>
-<span style="color: #dcafe9;">array</span>=<span style="color: #51afef;">(</span> $<span style="color: #dcafe9;">result</span> <span style="color: #51afef;">)</span>
+<span style="color: #dcafe9;">usb_results</span>=$<span style="color: #51afef;">(</span>
+  system_profiler SPUSBDataType -json <span style="color: #7bc275;">\</span>
+    | jq -r <span style="color: #7bc275;">\</span>
+      <span style="color: #7bc275;">'.. | select(.bsd_name? and .volumes?).bsd_name'</span>
+<span style="color: #51afef;">)</span>
 <span style="color: #C57BDB;">unset</span> IFS
-<span style="color: #dcafe9;">count</span>=<span style="color: #7bc275;">"</span><span style="color: #a991f1;">$</span><span style="color: #dcafe9;">{#array[*]}</span><span style="color: #7bc275;">"</span>
+<span style="color: #dcafe9;">array</span>=<span style="color: #51afef;">(</span> <span style="color: #7bc275;">"</span><span style="color: #a991f1;">$</span><span style="color: #dcafe9;">{sd_results[@]}</span><span style="color: #7bc275;">""</span><span style="color: #a991f1;">$</span><span style="color: #dcafe9;">{usb_results[@]}</span><span style="color: #7bc275;">"</span> <span style="color: #51afef;">)</span>
+<span style="color: #dcafe9;">count</span>=<span style="color: #7bc275;">"</span><span style="color: #a991f1;">$</span><span style="color: #dcafe9;">{#array[@]}</span><span style="color: #7bc275;">"</span>
 <span style="color: #51afef;">if</span> <span style="color: #51afef;">[</span><span style="color: #C57BDB;">[</span> $<span style="color: #dcafe9;">count</span> != <span style="color: #e69055; font-weight: bold;">1</span> <span style="color: #C57BDB;">]</span><span style="color: #51afef;">]</span>; <span style="color: #51afef;">then</span>
-  <span style="color: #FCCE7B;">echo</span> <span style="color: #7bc275;">"Error: Query result '</span><span style="color: #a991f1;">$</span><span style="color: #dcafe9;">result</span><span style="color: #7bc275;">' has </span><span style="color: #a991f1;">$</span><span style="color: #dcafe9;">count</span><span style="color: #7bc275;"> results but we expect exactly \</span>
+  <span style="color: #FCCE7B;">echo</span> <span style="color: #7bc275;">"Error: Query result '</span><span style="color: #a991f1;">$</span><span style="color: #dcafe9;">{array[@]}</span><span style="color: #7bc275;">' has </span><span style="color: #a991f1;">$</span><span style="color: #dcafe9;">count</span><span style="color: #7bc275;"> results but we expect exact</span><span style="color: #ff665c; background-color: #1c1f24; font-weight: bold;">ly \</span>
 <span style="color: #7bc275;">1."</span> <span style="color: #e69055; font-weight: bold;">1</span>&gt;&amp;<span style="color: #e69055; font-weight: bold;">2</span>
   <span style="color: #51afef;">exit</span> <span style="color: #e69055; font-weight: bold;">1</span>
 <span style="color: #51afef;">else</span>
-  <span style="color: #FCCE7B;">echo</span> -n $<span style="color: #dcafe9;">result</span>
+  <span style="color: #FCCE7B;">echo</span> -n <span style="color: #7bc275;">"</span><span style="color: #a991f1;">$</span><span style="color: #dcafe9;">{array[@]}</span><span style="color: #7bc275;">"</span>
 <span style="color: #51afef;">fi</span>
 </pre>
 </div>
+
+<p>
+Update: I added the capability to also check for USB drives.
+</p>
 
 <p>
 Which also includes <code>-h</code> / <code>--help</code> and a comment describing how it works.  It
@@ -2041,7 +2067,7 @@ interval.  The Bluetooth or WiFi radio, perhaps?  Either way, I have a working
 Pi!  Let&rsquo;s see if I can log in.
 </p>
 
-<pre class="example" id="org3eed850">
+<pre class="example" id="org1ab2fcf">
 $ ssh iron.proton
 The authenticity of host 'iron.proton (192.168.254.102)' can't be established.
 ED25519 key fingerprint is SHA256:E3b/T0lQiqItcIKbh2n6Wb/sOEV9nFbrVojJXlKmHrQ.
@@ -2059,7 +2085,7 @@ invocation shows the <code>initialPassword</code> field is good, but you won&rsq
 anything interesting here:
 </p>
 
-<pre class="example" id="orgb4add39">
+<pre class="example" id="org04334ef">
 [logan@iron:~]$ passwd
 Changing password for logan.
 Current password:
@@ -2072,7 +2098,7 @@ passwd: password updated successfully
 And then to see if I can use <code>sudo</code>:
 </p>
 
-<pre class="example" id="orgf4c7635">
+<pre class="example" id="org1dccafb">
 [logan@iron:~]$ sudo ls
 
 We trust you have received the usual lecture from the local System
