@@ -2586,24 +2586,16 @@ pure/proper nix solution, but this is a huge start.  From this, I can imagine
 automatically pulling down and configuring models from =huggingface= or whatever
 we want, plus using SHA verification.
 
------
-
 That was fun!  I can generate images on battery in about a minute.  I'm now
 confronted with some choices.  I can continue to run this on my Macbook Pro (M1
 Pro), or call it good and move on to making this run on NixOS, and putting it on
 a dedicated server.  I have to admit that it's fun to play with on my laptop but
 it will carry more utility on a dedicated server (even if that server is
-slower - I don't know if it will be).  Likely I will pursue the server
-configuration.  Before that, I'd like to improve this derivation.  I'd like to
-get the models automatically downloaded and consumed just by listing their names
-or URLs.
+slower - I don't know if it will be).  Next I will pursue the server
+configuration.  I'd like to improve this derivation too.  I can imagine getting
+the models automatically downloaded and consumed just by listing their names or
+URLs.
 
-*** Improving the derivation
-:PROPERTIES:
-:CUSTOM_ID: today's-adventure:-building-a-suite-of-machine-learning-servers--building-on-macos-stable-diffusion-webui--improving-the-derivation
-:END:
-
-The first thing I would improve on this is...
-
-I'll pick this back up once I'm done playing with Stable Diffusion itself.
-There is much to learn here!
+This has been a very big adventure, just to switch gears.  For working with
+=stable-diffusion-webui=, let's move that to the [[file:./nix-adventures-03.org][third Nix adventure]] in the
+series.
