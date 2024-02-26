@@ -1,0 +1,2942 @@
+#+BEGIN_EXPORT html
+---
+categories: nix
+date: 2024-02-16
+layout: default
+title: "Nix Adventures Part 2: Machine Learning Servers"
+parent: nix-adventures.org
+---
+#+END_EXPORT
+
+#+title:     Nix Adventures Part 3: stable-diffusion-webui
+#+author:    Logan Barnett
+#+email:     logustus@gmail.com
+#+date:      <2024-02-16 Fri>
+#+language:  en
+#+file_tags:
+#+tags:
+#+auto_id:   t
+#+toc:       headlines 3
+
+* What is this?
+:PROPERTIES:
+:CUSTOM_ID: what-is-this
+:END:
+
+See [[file:./nix-adventures-01.org][Nix Adventures Part 1]] for the introduction for all of this.
+
+* Adventure: Standing up a =stable-diffusion-webui= server on a new host
+:PROPERTIES:
+:CUSTOM_ID: adventure:-standing-up-a-=stable-diffusion-webui=-server-on-a-new-host
+:END:
+
+This is going to loosely be broken up into two parts:
+1. Build an =x86_64-linux= or =i686-linux= image for the new host.
+2. Improve upon the existing =stable-diffusion-webui= Nix Flakes setup such that
+   the server can be installed and configured via Nix itself.
+
+** Preparing the Host
+:PROPERTIES:
+:CUSTOM_ID: adventure:-standing-up-a-=stable-diffusion-webui=-server-on-a-new-host--preparing-the-host
+:END:
+
+Preparing the host entails getting cross compilation working on the host
+repository.  Since I've done that earlier for a Raspberry Pi image, I want this
+new host's base image to leverage that prior work.  As part of doing this, I
+expect to refactor the repository a bit such that reusable bits needn't be
+repeated, and there are clean, free standing modules that can be included a la
+carte for new hosts.
+
+I was tempted to call this a build repository, but that's not very accurate at
+all.  It does builds, yes, but building isn't really its purpose.  Its purpose
+is to declare the state of hosts on my network.  Depending on the state of the
+hosts, this could entail building.
+
+*** Refactor the Host repository
+:PROPERTIES:
+:CUSTOM_ID: adventure:-standing-up-a-=stable-diffusion-webui=-server-on-a-new-host--preparing-the-host--refactor-the-host-repository
+:END:
+
+On our [[file:./nix-adventures-01.org][last adventure]], I created a generator for a Raspberry Pi compatible image
+with this:
+
+#+begin_src nix :results none
+packages.aarch64-linux = {
+  iron = nixos-generators.nixosGenerate {
+    format = "sd-aarch64";
+    modules = [
+      ./iron-configuration.nix
+    ];
+    system = "aarch64-linux";
+  };
+};
+#+end_src
+
+I am going to try just adlibing in some things for an =x86_64-linux= platform
+instead, since it's going to an =x86-64= host and NixOS is Linux.  The code
+below will sit adjacent to the declaration for the =iron= host.  This host is
+called =lithium=.
+
+#+begin_src nix :results none
+packages.x86_64-linux = {
+  lithium = nixos-generators.nixosGenerate {
+    format = "sd-x86_64";
+    modules = [
+      ./lithium-configuration.nix
+    ];
+    system = "x86_64-linux";
+  };
+};
+#+end_src
+
+One thing I want to do is start refactoring bits that don't need to be specific
+to a given host.  One example is the configuration that declares my user and its
+SSH key.  This is that section of interest:
+
+#+begin_src nix :results none
+users.users = {
+  logan = {
+    # TODO: You can set an initial password for your user.
+    # If you do, you can skip setting a root password by passing
+    # '--no-root-passwd' to nixos-install.
+    # Be sure to change it (using passwd) after rebooting!
+    initialPassword = "lolno";
+    isNormalUser = true;
+    openssh.authorizedKeys.keys = [
+      "ssh-rsa AAAAB3NzaC1yD2EAAAADAQABAAACAQOx2dxH8oP1406bie6eO3HB6fin4NY01laNiWRqcNsrRl6/M6e80wiTnG9u0Walb3JXegyqrHKIlFgvcrn2Tg/y944akJ/XqrcLPn3vwTcCV6XGI/1hPdcN0V156pbbnTS/T9y9btO+QJvELOjT4dET6HixBeBpGhLM95cirOrJjT2C6VVBYTGdAu3eKwCeDsjQtfKOHp9Huv0c1i57Fb13iTU1u0+L2o+LMYpS8YNbcBOgzx9FyyjvA/KuEVcyt2raVpbJv6nOP9ynz7a1Ja3Y2tgQwC6XCMpgKYHDYxaJhJbWjv9cxwq4zSzBr8yrlDKooqvpp9fTdOBAWF4R2MI2wb01yaaTlqPDcATBl5+Xu+SvxYf9wBt6wFIbv0baf1WtDDE7u9d2K/MJhShK9p45AQPTbmoYw7fzeMQOLdZNdZdXIOHWd17IJi2T+WnnO9hL1x+M5uZUlFlk0jGu0NP/YmHuWjGxxL7AIO1hH2q7ZHq7tzM+8sV6tjfGePwALFXSBBSGn2czgtfKzEVRFHBQajPco0g9zFWvi5ZfmU4QAkWOrQQFLEYK4IE0e1gR9Dsnqdm5tiYkCdVlapbG9jWdIBAgOCMj2bBXn+YObCrbVHW4wNo5OR6nec+b6miCuG23ue/o5j2L64kE16n1+hGx/Bbm0Adif4vw8zXVhAmxvQ== logan@scandium"
+    ];
+    extraGroups = [
+      # Allow this user to sudo.
+      "wheel"
+    ];
+  };
+};
+#+end_src
+
+I can refactor this to a =logan.nix= by moving it to its own file and
+surrounding it with a function:
+
+#+begin_src nix :results none
+{ ... }: {
+  users.users = {
+    logan = {
+      # TODO: You can set an initial password for your user.
+      # If you do, you can skip setting a root password by passing
+      # '--no-root-passwd' to nixos-install.
+      # Be sure to change it (using passwd) after rebooting!
+      initialPassword = "lolno";
+      isNormalUser = true;
+      openssh.authorizedKeys.keys = [
+        "ssh-rsa AAAAB3NzaC1yD2EAAAADAQABAAACAQOx2dxH8oP1406bie6eO3HB6fin4NY01laNiWRqcNsrRl6/M6e80wiTnG9u0Walb3JXegyqrHKIlFgvcrn2Tg/y944akJ/XqrcLPn3vwTcCV6XGI/1hPdcN0V156pbbnTS/T9y9btO+QJvELOjT4dET6HixBeBpGhLM95cirOrJjT2C6VVBYTGdAu3eKwCeDsjQtfKOHp9Huv0c1i57Fb13iTU1u0+L2o+LMYpS8YNbcBOgzx9FyyjvA/KuEVcyt2raVpbJv6nOP9ynz7a1Ja3Y2tgQwC6XCMpgKYHDYxaJhJbWjv9cxwq4zSzBr8yrlDKooqvpp9fTdOBAWF4R2MI2wb01yaaTlqPDcATBl5+Xu+SvxYf9wBt6wFIbv0baf1WtDDE7u9d2K/MJhShK9p45AQPTbmoYw7fzeMQOLdZNdZdXIOHWd17IJi2T+WnnO9hL1x+M5uZUlFlk0jGu0NP/YmHuWjGxxL7AIO1hH2q7ZHq7tzM+8sV6tjfGePwALFXSBBSGn2czgtfKzEVRFHBQajPco0g9zFWvi5ZfmU4QAkWOrQQFLEYK4IE0e1gR9Dsnqdm5tiYkCdVlapbG9jWdIBAgOCMj2bBXn+YObCrbVHW4wNo5OR6nec+b6miCuG23ue/o5j2L64kE16n1+hGx/Bbm0Adif4vw8zXVhAmxvQ== logan@scandium"
+      ];
+      extraGroups = [
+        # Allow this user to sudo.
+        "wheel"
+      ];
+    };
+  };
+}
+#+end_src
+
+It needs to be a function because that's what's expected in the =modules= list.
+I've divined that by looking at the only module I have so far.  A common idiom
+I've seen in Nix is where there is a special API invoked, and that API provides
+all of the dependency injection for the function.  We don't need any of it here,
+so we can use =...= for the entirety of the argument list.
+
+And then include it in both places with:
+
+#+begin_src nix :results none
+packages.aarch64-linux = {
+  iron = nixos-generators.nixosGenerate {
+    format = "sd-aarch64";
+    modules = [
+      ./logan.nix
+      ./iron-configuration.nix
+    ];
+    system = "aarch64-linux";
+  };
+};
+packages.x86_64-linux = {
+  lithium = nixos-generators.nixosGenerate {
+    format = "sd-x86_64";
+    modules = [
+      ./logan.nix
+      ./lithium-configuration.nix
+    ];
+    system = "x86_64-linux";
+  };
+};
+#+end_src
+
+I can do the same thing with the =sshd= configuration.  The end result looks
+like this for =sshd.nix=:
+
+#+begin_src nix :results none
+{ ... }: {
+  # This setups a SSH server.
+  services.openssh = {
+    enable = true;
+    settings = {
+      # Forbid root login through SSH.
+      PermitRootLogin = "no";
+      # Use keys only. Remove if you want to SSH using password (not
+      # recommended).
+      PasswordAuthentication = false;
+    };
+  };
+}
+#+end_src
+
+With the host configuration expanding just a tad:
+
+#+begin_src nix :results none
+packages.aarch64-linux = {
+  iron = nixos-generators.nixosGenerate {
+    format = "sd-aarch64";
+    modules = [
+      ./logan.nix
+      ./sshd.nix
+      ./iron-configuration.nix
+    ];
+    system = "aarch64-linux";
+  };
+};
+packages.x86_64-linux = {
+  lithium = nixos-generators.nixosGenerate {
+    format = "sd-x86_64";
+    modules = [
+      ./logan.nix
+      ./sshd.nix
+      ./lithium-configuration.nix
+    ];
+    system = "x86_64-linux";
+  };
+};
+#+end_src
+
+At some point I might bundle a =std-linux-env.nix= or something similar that
+comes with all of these, because I never expect them to change.  I do like
+pulling in these modules a la carte for now.
+
+To get a start, I'll copy over some configuration from =iron-configuration.nix=
+and clean things up as I go.  My first material configuration for
+=lithium-configuration.nix= is this:
+
+#+begin_src nix :results none
+# This is the NixOS configuration for lithium.proton.  It is drawn from the
+# example here:
+# https://github.com/Misterio77/nix-starter-configs/blob/main/minimal/nixos/configuration.nix
+{
+  config,
+  inputs,
+  lib,
+  pkgs,
+  ...
+}: {
+  imports = [
+    ./hardware-configuration.nix
+  ];
+}
+#+end_src
+
+I noticed =hardware-configuration.nix= has this:
+
+#+begin_src nix :results none
+{
+  fileSystems."/" = {
+    # Must match what sd-image expects exactly.  This is found by trying to run
+    # anything and then encountering an error.
+    device = "/dev/disk/by-label/NIXOS_SD";
+    fsType = "ext4";
+  };
+  nixpkgs.hostPlatform = "aarch64-linux";
+}
+#+end_src
+
+The =aarch64-linux= declaration doesn't work for my =x86_64-linux= image I'm
+about to create.  But it's easy enough to make this a function and simply pass
+the =system= down into it.  The new version becomes:
+
+#+begin_src nix :results none
+##
+# Declares which file systems to use on the storage medium the host will boot
+# from.
+##
+{ system } : {
+  fileSystems."/" = {
+    # Must match what sd-image expects exactly.  This is found by trying to run
+    # anything and then encountering an error.
+    device = "/dev/disk/by-label/NIXOS_SD";
+    fsType = "ext4";
+  };
+  nixpkgs.hostPlatform = system;
+}
+#+end_src
+
+I may want to declare some swap space or something, but this is fine for now.
+Now I have to refactor the consuming code around it.  For good measure, I've
+renamed this =partitions.nix=.  My =lithium-configuration.nix= (which is still
+incomplete) now looks like this:
+
+#+begin_src nix :results none
+# This is the NixOS configuration for lithium.proton.  It is drawn from the
+# example here:
+# https://github.com/Misterio77/nix-starter-configs/blob/main/minimal/nixos/configuration.nix
+{
+  config,
+  inputs,
+  lib,
+  pkgs,
+  system,
+  ...
+}: {
+  imports = [
+    ./partitions.nix { inherit system; }
+  ];
+}
+#+end_src
+
+Notably, I've added the =system= variable and then passed it to =partitions.nix=
+(previously =hardware-configuration.nix=) as a variable of the same name.
+
+Now adding in other boilerplate, I get:
+
+#+begin_src nix :results none
+# This is the NixOS configuration for lithium.proton.  It is drawn from the
+# example here:
+# https://github.com/Misterio77/nix-starter-configs/blob/main/minimal/nixos/configuration.nix
+{
+  config,
+  inputs,
+  lib,
+  pkgs,
+  system,
+  ...
+}: {
+  imports = [
+    ./partitions.nix { inherit system; }
+  ];
+  # This will additionally add your inputs to the system's legacy channels.
+  # Making legacy nix commands consistent as well, awesome!
+  nix.nixPath = ["/etc/nix/path"];
+  environment.etc =
+    lib.mapAttrs'
+    (name: value: {
+      name = "nix/path/${name}";
+      value.source = value.flake;
+    })
+    config.nix.registry;
+  nix.settings = {
+    # Enable flakes and new 'nix' command.
+    experimental-features = "nix-command flakes";
+    # Deduplicate and optimize nix store.
+    auto-optimise-store = true;
+  };
+  # Hostname is not an FQDN.
+  networking.hostName = "lithium";
+  # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
+  system.stateVersion = "23.05";
+}
+#+end_src
+
+Some of these settings I can break out further.  I'm not even sure how much I
+want some of these, so breaking them out makes it easier for me to do so
+universally later.  I suspect the =nixPath= stuff might go at some point.  These
+aren't my comments and they feel very much like they are working around some
+rough edges of earlier days of Nix.
+
+My new =nix-path.nix=:
+#+begin_src nix :results none
+{ config, lib, ... }: {
+  # This will additionally add your inputs to the system's legacy channels.
+  # Making legacy nix commands consistent as well, awesome!
+  nix.nixPath = ["/etc/nix/path"];
+  environment.etc =
+    lib.mapAttrs'
+    (name: value: {
+      name = "nix/path/${name}";
+      value.source = value.flake;
+    })
+    config.nix.registry;
+}
+#+end_src
+
+A unoriginally named =nix.nix=:
+
+#+begin_src nix :results none
+{ ... }: {
+  nix.settings = {
+    # Enable flakes and new 'nix' command.
+    experimental-features = "nix-command flakes";
+    # Deduplicate and optimize nix store.
+    auto-optimise-store = true;
+  };
+}
+#+end_src
+
+
+
+My final =lithium-configuration.nix= looks like this:
+
+#+begin_src nix :results none
+# This is the NixOS configuration for lithium.proton.  It is drawn from the
+# example here:
+# https://github.com/Misterio77/nix-starter-configs/blob/main/minimal/nixos/configuration.nix
+{
+  inputs,
+  lib,
+  pkgs,
+  system,
+  ...
+}: {
+  imports = [
+    ./partitions.nix { inherit system; }
+  ];
+  # Hostname is not an FQDN.
+  networking.hostName = "lithium";
+  # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
+  system.stateVersion = "23.05";
+}
+#+end_src
+
+My hosts are now entirely composed, with the host configuration proper only
+having what is unique to each one.
+
+#+begin_src nix :results none
+packages.aarch64-linux = {
+  iron = nixos-generators.nixosGenerate {
+    format = "sd-aarch64";
+    modules = [
+      ./logan.nix
+      ./nix.nix
+      ./nix-path.nix
+      ./sshd.nix
+      ./iron-configuration.nix
+    ];
+    system = "aarch64-linux";
+  };
+};
+packages.x86_64-linux = {
+  lithium = nixos-generators.nixosGenerate {
+    format = "sd-x86_64";
+    modules = [
+      ./logan.nix
+      ./nix.nix
+      ./nix-path.nix
+      ./sshd.nix
+      ./lithium-configuration.nix
+    ];
+    system = "x86_64-linux";
+  };
+};
+#+end_src
+
+And now the real test:  To emit this to a disk.  I've spent the better part of a
+week playing with image generation using the majority of my laptop's RAM,
+draining it's battery, and doing everything on the CPU.  That is about to end!
+
+-----
+
+I found out some of my prior tools where I'd added =set -euo pipefail=  didn't
+work because in Bash, unsetting a variable and setting an empty array are
+actually the same thing.  I've made some adjustments to fix them.  In addition,
+I've added the capability to detect USB drives.  Before, it was just SD cards.
+The Bash scripts for these are getting sufficiently complex, and I will probably
+want to create a Rust program for some of these tasks soon.  My fluency in Nix
+is increasing and so I'm feeling better about using that as a starting point for
+distributing my Rust tools.
+
+*** Fixing all of the errors
+:PROPERTIES:
+:CUSTOM_ID: adventure:-standing-up-a-=stable-diffusion-webui=-server-on-a-new-host--preparing-the-host--fixing-all-of-the-errors
+:END:
+
+
+-----
+
+I've been trying to actually build the image with:
+
+#+begin_src shell :results none :exports code
+./image-create.sh --host lithium
+#+end_src
+
+But I'm getting this error:
+
+#+begin_example
+error: a 'x86_64-linux' with features {} is required to build '/nix/store/brgsnjl1jcsl775sjyiwi3h58pjnl0si-loopback.cfg.drv', but I am a 'aarch64-linux' with features {benchmark, big-parallel, nixos-test, uid-range}
+#+end_example
+
+[[https://github.com/nix-community/nixos-generators/issues/219][nixos-generators#219]] looks really promising, but my attempts have not
+been fruitful.
+
+So I've added this to the container script for =image-create.sh=:
+
+#+begin_src shell :results none :exports code
+echo 'extra-platforms = x86_64-linux aarch64-linux aarch64-darwin' >> /etc/nix/nix.conf
+#+end_src
+
+
+I tried a =nix flake update= and ran it again.  The =podman= VM doesn't always
+come up, and since I got this update it seems to be worse.  That's a little
+concerning.
+
+That said, I'm getting a somewhat new error, which could've been very easy to
+miss:
+
+#+begin_example
+error: a 'i686-linux' with features {} is required to build '/nix/store/k6q4p5b5zqgwd3kbpkgwganh76v4hbnk-x86_64-unknown-linux-gnu-pkg-config-wrapper-0.29.2.drv', but I am a 'aarch64-linux' with features {benchmark, big-parallel, nixos-test, uid-range}
+#+end_example
+
+The last thing I added was the =x86_64-linux= so I am guessing that is what it
+was looking for.
+
+If I update the =extra-platforms= to be:
+
+#+begin_src shell :results none :exports code
+echo 'extra-platforms = i686-linux x86_64-linux aarch64-linux aarch64-darwin' \
+  >> /etc/nix/nix.conf
+#+end_src
+
+I get:
+
+#+begin_example
+error: builder for '/nix/store/kvx0wrig78nibc3k0g4p1qd557fp9ivs-console-env.drv' failed with exit code 1;
+       last 3 log lines:
+       > qemu-x86_64-static: /nix/store/3rh4x7j32p5v0kmrm8vcqfd5vj626w9k-perl-5.38.2/bin/perl: Unable to find a guest_base to satisfy all guest address mapping requirements
+       >   0000000000000000-0000000000000fff
+       >   0000000000400000-000000000040401f
+       For full logs, run 'nix log /nix/store/kvx0wrig78nibc3k0g4p1qd557fp9ivs-console-env.drv'.
+#+end_example
+
+That led me to [[https://gitlab.com/qemu-project/qemu/-/issues/2082][qemu#2082]] and subsequently [[https://gitlab.com/qemu-project/qemu/-/issues/1255][qemu#1255]].  Based on 1255, I think j
+
+I've been pulling threads where I can here.  I've created a custom image which
+installs the =qemu= tools from another image:
+
+#+begin_src dockerfile :results none
+FROM multiarch/qemu-user-static:latest as qemu
+
+FROM nixos/nix
+
+COPY --from=qemu /usr/bin/qemu-* /usr/bin
+
+CMD ["sleep" "1"]
+#+end_src
+
+But I think this is wrong.  I understand that I need a container with qemu
+running on it, but why isn't that container a NixOS container?  I'm having
+trouble knowing/stipulating what's on the container without actually starting an
+interactive shell _like an animal_.
+
+Let's re-approach this.
+
+*** Direct builds
+:PROPERTIES:
+:CUSTOM_ID: adventure:-standing-up-a-=stable-diffusion-webui=-server-on-a-new-host--preparing-the-host--direct-builds
+:header: :dir ~/dev/proton-nix
+:header-args:shell: :prologue "exec 2>&1" :epilogue "true"
+:END:
+
+**** Struggle with the container
+:PROPERTIES:
+:CUSTOM_ID: adventure:-standing-up-a-=stable-diffusion-webui=-server-on-a-new-host--preparing-the-host--direct-builds--struggle-with-the-container
+:END:
+
+The [[https://nixos.wiki/wiki/Cheatsheet#Cross-compile_packages][Cross-compile packages]] section in this wiki article has something very
+promising:
+
+#+begin_quote
+The following command will cross compile the tinc package for the aarch64 CPU
+architecture from a different architecture (e.g. x86_64).
+#+end_quote
+
+#+begin_src shell :results none :exports code
+$ nix-build '<nixpkgs>' \
+  --arg crossSystem \
+  '(import <nixpkgs> {}).lib.systems.examples.aarch64-multiplatform' \
+  -A tinc
+#+end_src
+
+#+begin_quote
+You can add your own specifications, or look at existing ones, in
+nixpkgs/lib/systems/examples.nix.
+#+end_quote
+
+This seems to have taken my system over an hour to build, which is a little
+nutty but I suppose makes sense if there's an entire Linux build ecosystem it
+has to create from scratch.  I suppose that means that my local machine now has
+all of that stuff cached though.
+
+I thought I had read somewhere that =crossSystem= was deprecated, but I didn't
+capture that anywhere.  Something to keep in mind as we continue down this
+route.
+
+If I adapt that example to my build, I get:
+
+#+begin_src shell :results output :exports both :cache yes
+nix-build '<nixpkgs>' --arg crossSystem '.#lithium'
+#+end_src
+
+#+RESULTS[e3d9e442c3d571d3bfb675a60d73a2a6aec7a7ef]:
+: error: syntax error, unexpected '.'
+:
+:        at «string»:1:1:
+:
+:             1| .
+:              | ^
+
+I moved some stuff around - mostly flailing.  I have read before that the =.#=
+thing is Nix Flake specific syntax or notation, so perhaps I have to explicitly
+enable Flakes.  I thought I had that configured globally but my foray into
+=nix-darwin= may have stomped on my user-specific configuration.
+
+
+#+begin_src shell :results output :exports both :cache yes
+nix \
+  --extra-experimental-features nix-command \
+  --extra-experimental-features flakes \
+  build --arg crossSystem '.#lithium'
+#+end_src
+
+#+RESULTS[bc375ed355106fcf54f60e4a89f8b63b3eab4e52]:
+: error: syntax error, unexpected '.'
+:
+:        at «string»:1:1:
+:
+:             1| .
+:              | ^
+
+How did this work before?  Searching for this error yields nothing related.
+
+Eventually I tried:
+
+#+begin_src shell :results output :exports both :cache yes
+nix build '.#lithium'
+#+end_src
+
+#+RESULTS[541cad0f36dc04f36186ae1f17b8c037a6ae01cb]:
+: warning: Git tree '/Users/logan/dev/blog' is dirty
+: error: flake 'git+file:///Users/logan/dev/blog' does not provide attribute 'packages.aarch64-darwin.lithium', 'legacyPackages.aarch64-darwin.lithium' or 'lithium'
+
+Alright, I think this means that the =--arg crossSystem= was somehow fouling up
+further argument interpretation (or at least fouling up my understanding of how
+it's supposed to behave).  This new result is promising, and one I know how to
+address.  I have =lithium= declared under =aarch64-linux= which isn't going to
+work from this perspective.  One thing to keep in mind is the attribute sets I
+have in =outputs= is heavily predicated on the platform and architecture.  It
+needs to be under =aarch64-darwin= while I am building from this machine.
+
+An aside: When I started on this journey a while back with Flakes, I was a
+little shocked that I had to specify each platform + architecture combination I
+wanted to support.  I've come to realize though that Nix has a rich landscape
+with which I can compose or override build settings.  So in that way, it's
+pretty easy to specify which platforms are supported and have modules and such
+to achieve reuse.  Unfortunately it doesn't work with the unsupported platforms
+environment variable, but it does hold the promise that the build may not ever
+work.  I don't know if there's a way to communicate "this can never work" verses
+"it might work but I haven't explored that" or even "it should work but I don't
+have resources to verify that".
+
+#+begin_src shell :results output :exports both :cache yes
+nix build '.#lithium'
+#+end_src
+
+#+RESULTS[541cad0f36dc04f36186ae1f17b8c037a6ae01cb]:
+: warning: Git tree '/Users/logan/dev/proton-nix' is dirty
+: error: builder for '/nix/store/rc9flq697nllbfczwxxnaczk5fimsb0j-X-Restart-Triggers-systemd-binfmt.drv' failed with exit code 126;
+:        last 1 log lines:
+:        > /nix/store/5l50g7kzj7v0rdhshld1vx46rf2k5lf9-bash-5.2p26/bin/bash: /nix/store/5l50g7kzj7v0rdhshld1vx46rf2k5lf9-bash-5.2p26/bin/bash: cannot execute binary file
+:        For full logs, run 'nix log /nix/store/rc9flq697nllbfczwxxnaczk5fimsb0j-X-Restart-Triggers-systemd-binfmt.drv'.
+: error: 1 dependencies of derivation '/nix/store/grwhri94w0zj0srv4p58fsnlq7ivfylw-unit-systemd-binfmt.service.drv' failed to build
+: error: 1 dependencies of derivation '/nix/store/wxjwfw0836a7p26gk99c6sqhhl0nsnnv-system-units.drv' failed to build
+: error: 1 dependencies of derivation '/nix/store/1768yij62f1x6dslv007z6iwgq0pspy5-etc.drv' failed to build
+: error: 1 dependencies of derivation '/nix/store/ak7gyj97m24krqh5lxyn4zd0h1xpsk94-nixos-system-lithium-24.05.20240215.a4d4fe8.drv' failed to build
+: error: 1 dependencies of derivation '/nix/store/h41y504h42v0xrfq6i3z0m0j5di8jysm-closure-info.drv' failed to build
+: error: 1 dependencies of derivation '/nix/store/35ikws0vq9v4hvnagz2bdfrbmbpgqm41-efi-directory.drv' failed to build
+: error: 1 dependencies of derivation '/nix/store/xw22x1f04k37v1d2h3sarn726w49jk5p-isolinux.cfg-in.drv' failed to build
+: error: 1 dependencies of derivation '/nix/store/fa5rd5fwvc89rdij41klkhnmya7qsmgg-nixos.iso.drv' failed to build
+
+I noticed with my =nix.nix= module, =buildPlatform= is still =aarch64-linux= and
+so that needs correction to =aarch64-darwin=.
+
+#+begin_src shell :results output :exports both :cache yes
+nix build '.#lithium'
+#+end_src
+
+#+RESULTS[541cad0f36dc04f36186ae1f17b8c037a6ae01cb]:
+: warning: Git tree '/Users/logan/dev/proton-nix' is dirty
+: error: builder for '/nix/store/7cyzbdfc8d9ql30l1l15d72x11mdfmdf-etc-modprobe.d-nixos.conf.drv' failed with exit code 126;
+:        last 1 log lines:
+:        > /nix/store/5l50g7kzj7v0rdhshld1vx46rf2k5lf9-bash-5.2p26/bin/bash: /nix/store/5l50g7kzj7v0rdhshld1vx46rf2k5lf9-bash-5.2p26/bin/bash: cannot execute binary file
+:        For full logs, run 'nix log /nix/store/7cyzbdfc8d9ql30l1l15d72x11mdfmdf-etc-modprobe.d-nixos.conf.drv'.
+: error: builder for '/nix/store/kcfpzpaxv6zj431zfwz0rg1sy5j2din9-loopback.cfg.drv' failed with exit code 126;
+:        last 1 log lines:
+:        > /nix/store/5l50g7kzj7v0rdhshld1vx46rf2k5lf9-bash-5.2p26/bin/bash: /nix/store/5l50g7kzj7v0rdhshld1vx46rf2k5lf9-bash-5.2p26/bin/bash: cannot execute binary file
+:        For full logs, run 'nix log /nix/store/kcfpzpaxv6zj431zfwz0rg1sy5j2din9-loopback.cfg.drv'.
+: error: builder for '/nix/store/wq8pnjw6pxdpahk3dbhvwl40plf6bqq3-mounts.sh.drv' failed with exit code 126;
+:        last 1 log lines:
+:        > /nix/store/5l50g7kzj7v0rdhshld1vx46rf2k5lf9-bash-5.2p26/bin/bash: /nix/store/5l50g7kzj7v0rdhshld1vx46rf2k5lf9-bash-5.2p26/bin/bash: cannot execute binary file
+:        For full logs, run 'nix log /nix/store/wq8pnjw6pxdpahk3dbhvwl40plf6bqq3-mounts.sh.drv'.
+: error: builder for '/nix/store/zbm51nr0vm9gqh7cdn7zx74zp1m9k6ca-users-groups.json.drv' failed with exit code 126;
+:        last 1 log lines:
+:        > /nix/store/5l50g7kzj7v0rdhshld1vx46rf2k5lf9-bash-5.2p26/bin/bash: /nix/store/5l50g7kzj7v0rdhshld1vx46rf2k5lf9-bash-5.2p26/bin/bash: cannot execute binary file
+:        For full logs, run 'nix log /nix/store/zbm51nr0vm9gqh7cdn7zx74zp1m9k6ca-users-groups.json.drv'.
+: error: 1 dependencies of derivation '/nix/store/fa5rd5fwvc89rdij41klkhnmya7qsmgg-nixos.iso.drv' failed to build
+
+Per [[https://github.com/nix-community/nixos-generators/issues/187][nixos-generators#187]] I tried:
+
+#+begin_src shell :results output :cache yes :exports both
+nix build --builders 'ssh-ng://nix@yasmin.dse.in.tum.de x86_64-linux' '.#lithium'
+#+end_src
+
+#+RESULTS[31c7e120ff3bcc3aa173e64c0af450092ed4d9d1]:
+: warning: Git tree '/Users/logan/dev/proton-nix' is dirty
+: error: builder for '/nix/store/7cyzbdfc8d9ql30l1l15d72x11mdfmdf-etc-modprobe.d-nixos.conf.drv' failed with exit code 126;
+:        last 1 log lines:
+:        > /nix/store/5l50g7kzj7v0rdhshld1vx46rf2k5lf9-bash-5.2p26/bin/bash: /nix/store/5l50g7kzj7v0rdhshld1vx46rf2k5lf9-bash-5.2p26/bin/bash: cannot execute binary file
+:        For full logs, run 'nix log /nix/store/7cyzbdfc8d9ql30l1l15d72x11mdfmdf-etc-modprobe.d-nixos.conf.drv'.
+: error: builder for '/nix/store/kcfpzpaxv6zj431zfwz0rg1sy5j2din9-loopback.cfg.drv' failed with exit code 126;
+:        last 1 log lines:
+:        > /nix/store/5l50g7kzj7v0rdhshld1vx46rf2k5lf9-bash-5.2p26/bin/bash: /nix/store/5l50g7kzj7v0rdhshld1vx46rf2k5lf9-bash-5.2p26/bin/bash: cannot execute binary file
+:        For full logs, run 'nix log /nix/store/kcfpzpaxv6zj431zfwz0rg1sy5j2din9-loopback.cfg.drv'.
+: error: builder for '/nix/store/wq8pnjw6pxdpahk3dbhvwl40plf6bqq3-mounts.sh.drv' failed with exit code 126;
+:        last 1 log lines:
+:        > /nix/store/5l50g7kzj7v0rdhshld1vx46rf2k5lf9-bash-5.2p26/bin/bash: /nix/store/5l50g7kzj7v0rdhshld1vx46rf2k5lf9-bash-5.2p26/bin/bash: cannot execute binary file
+:        For full logs, run 'nix log /nix/store/wq8pnjw6pxdpahk3dbhvwl40plf6bqq3-mounts.sh.drv'.
+: error: builder for '/nix/store/zbm51nr0vm9gqh7cdn7zx74zp1m9k6ca-users-groups.json.drv' failed with exit code 126;
+:        last 1 log lines:
+:        > /nix/store/5l50g7kzj7v0rdhshld1vx46rf2k5lf9-bash-5.2p26/bin/bash: /nix/store/5l50g7kzj7v0rdhshld1vx46rf2k5lf9-bash-5.2p26/bin/bash: cannot execute binary file
+:        For full logs, run 'nix log /nix/store/zbm51nr0vm9gqh7cdn7zx74zp1m9k6ca-users-groups.json.drv'.
+: error: 1 dependencies of derivation '/nix/store/fa5rd5fwvc89rdij41klkhnmya7qsmgg-nixos.iso.drv' failed to build
+
+So no change.  I'm wracking my brain here to no effect.  Should I try to go back
+to the Docker container to do a build?  I felt like I had so little control over
+that environment that I would just be right back where I was.  My =nix=
+invocation hasn't made any material changes.
+
+This [[https://discourse.nixos.org/t/proper-way-to-build-a-remote-system-with-flakes/17661/12][post about making a remote build]] has a kind of promise to it:
+
+#+begin_quote
+just a small neat note,
+
+that your flake.nix and configuration.nix, doesn’t have to sit /etc/nixos/ ,
+they can be anywhere that is supported flake repo type (git/svn/mercurial), as
+flakes are hermetically sealed (AFAIUSI). A system configuration can be built
+from anywhere now allowing you to do funky things with the flake URI. However to
+switch to the configuration, you will need to be stoopid user (superuser).
+
+nix flake show github:nixinator/nothing/
+nixos-rebuild dry-activate --flake github:nixinator/nothing/#z620
+
+so you can build my ‘machine’. on yours. If that doesn’t blow new users minds,
+especially the infrastructure as code people… i don’t know want can.
+
+This post will probably prompt me to do some janitorial work on my configs… or
+‘nix shaving’ as we like to term it.
+
+flake makes truly sharable operating system configurations possible, which last
+time i looked has never been possible.
+
+However, hardware brings impurity, so my gfx card, network , containing that to
+impurity is something i’ve got to think about long term, but for a fleet of
+cattle, it’s a not really a problem.
+#+end_quote
+
+I don't think this works for me though because I need an _bootable image_ as the
+output.  Though it is great and this is one of the things that I really like
+about Nix.
+
+I have come across some things about customizing a docker image.  I could also
+just create a containerized-bootstrap configuration that gets loaded into the
+container at build time and use that to control the environment.  This doesn't
+feel like a good path to me.
+
+Out of desperation, I ran =image-create.sh= again.  Please don't think poorly of
+me.
+
+While I'm waiting for that to happen, one of the roadblocks I've encountered is
+the =binfmt= not being available on my machine.  I want to add that to the
+container somehow.
+
+I actually have to look up where the NixOS main Nix file is located.  This just
+goes to show where my entire existence with Nix is: Not on the main operating
+system but instead as a guest on macOS. The path is
+=/etc/nixos/configuration.nix=.
+
+And of course the VM won't start for =podman-machine=.  Great.
+
+I've tried removing the VM.  I've added a =devShells= to my =flake.nix= to
+ensure a specific version of =podman= and it looks like this:
+
+#+begin_src nix :results none
+...
+  outputs = { self, nixpkgs, nixos-generators, ... }:
+    let
+      # This should be more localized.
+      pkgs = nixpkgs.legacyPackages.aarch64-darwin;
+    in
+    {
+    crossSystem = true;
+    devShells.aarch64-darwin.default = pkgs.mkShell {
+      packages = [
+        pkgs.podman
+      ];
+    };
+    ...
+#+end_src
+
+And I know the =flake.lock= will get populated and lock the version in place.
+That way if I get it working, it should _stay_ working.  If I wanted to take it
+a step further, I'd drop in some configuration that would allow me to keep it
+separate from any potential system =podman= usage I would have.
+
+This had the effect of bumping me from =podman= =4.8.2= to =4.9.3=, but still no
+joy.  Now I must attempt the shameful thing I have seen others do: reboot.
+
+-----
+
+Well now I've restarted my +Windows+ macOS machine as a desperate maneuver to
+remove any sort of gremlins that might be keeping the VM from starting up.  It
+failed and my precious uptime was a pointless sacrifice.
+
+I found [[https://github.com/containers/podman/issues/20776][podman#20776]] and I recall folks using =qemu= on their systems directly,
+and not just in the container.  The layers are deep here.  I vaguely recall
+having to install =qemu= separately before.  Putting it into my =devShells=, I
+can see it's about a 1GB download.  Sheesh.  Another =podman machine init
+--log-level DEBUG= and a 600MB download later, it takes about two solid minutes
+for the VM to boot and do a lot of work, and then my local =podman= to connect.
+
+I kind of hope there's some caching to take advantage of there.
+
+There is!
+
+I had to fix some things in my =image-create.sh= script.  My in-house container
+was labeled =qemu-nix= when I meant to have it completely renamed to
+=qemu-nix-personal= to avoid any public naming collisions, but I hadn't gotten
+all of the references.
+
+I quickly run into this problem:
+
+#+begin_example
+Error: can only create exec sessions on running containers: container state improper
+#+end_example
+
+The Internet is full of "derp make sure the container is started" but how did
+this work before?  I did upgrade a minor point release.  SemVer strikes again,
+apparently.  Remember that SemVer promises that minor releases should not cause
+backward incompatible breaks.  If only intention alone were enough to ensure
+compatibility and stability (SemVer thinks it is).
+
+Oh I _do_ have =podman start= in my scripts.  I wrongly blamed SemVer, this
+time.  But it didn't work?  Checking back, I see:
+
+#+begin_example
+Container ID: nix-run
+#+end_example
+
+With the relevant code being:
+
+#+begin_src shell :results none :exports code
+container_name="nix-run"
+# ...snip...
+image_label='qemu-nix-personal'
+podman build -t qemu-nix-personal --file Dockerfile .
+podman container ls -a | grep $container_name > /dev/null || \
+        podman create -t --name $container_name -w /workdir \
+            -v $PWD:/workdir qemu-nix-personal
+container_id=$(podman start $container_name)
+echo "Container ID: $container_id"
+echo "Executing script:
+$script
+"
+#+end_src
+
+And =container_name= is =nix-run=.  How did the =container_name= become the
+=container_id=?  I do see a UUID-like identifier in the spew right next to
+=Container ID: ...= but I'm not sure what it's for.  A little extra logging:
+
+#+begin_src shell :results none
+image_label='qemu-nix-personal'
+podman build -t qemu-nix-personal --file Dockerfile .
+podman container ls -a | grep $container_name > /dev/null || \
+        podman create -t --name $container_name -w /workdir \
+            -v $PWD:/workdir qemu-nix-personal
+echo "Starting $container_name..."
+container_id=$(podman start $container_name)
+echo "Container ID: $container_id"
+echo "Executing script:
+$script
+"
+#+end_src
+
+This amounts to:
+
+#+begin_example
+Starting nix-run...
+Container ID: nix-run
+Executing script:
+<snip>
+Error: can only create exec sessions on running containers: container state improper
+nix-run
+#+end_example
+
+So it's not getting _transposed_ somehow.  I flailed around a lot at this point.
+Using =podman start= didn't make a lot of sense to me when I really tried to
+understand what was going on.  I changed the =podman start ... podman exec= into
+=podman run= and that works much better.
+
+I can see what's in =/usr/bin/qemu*= now.
+
+I can't see =/etc/nixos/configuration.nix= though.  This [[https://stackoverflow.com/a/43936744][Stack Overflow answer]]
+says the image isn't a Nix image but an Alpine image.  Sigh.  Another user
+shares some code to bootstrap a container like this with a Nix configuration:
+
+#+begin_src shell :results none :exports code
+git clone --branch release-17.03 https://github.com/nixos/nixpkgs $HOME/nixpkgs
+mkdir -p $HOME/nix-config
+nixos-generate-config --dir $HOME/nix-config
+
+nixos-install -I nixos-config=$HOME/nix-config/configuration.nix -I nixpkgs=$HOME/nixpkgs
+#+end_src
+
+But I need =NixOS= proper, because I need to control its configuration so I can
+use =binfmt=.
+
+I have to say that this has gotten pretty frustrating.  It's possible the
+problem is on my end but it's not obvious that it is.  I'm going in circles
+regarding how to kick off a build.  It kind of makes sense that I can't
+necessarily create an ISO image from =aarch64-darwin= if creating that ISO
+necessitates running some of the things it creates (mostly dependencies).  It's
+not just a single, static compilation.  This makes sense to me.  What I'm not
+understanding is the path forward.  Perhaps this simply cannot be accomplished
+on the wrong architecture, but that seems weird because I am seeing other people
+emit =aarch64= images and builds from =x86_64=.  I just can't find out how to go
+the other way.
+
+=qemu= and =binfmt= are the watchwords here, and yet I don't feel like I have
+the total control required to use them.  I'm not very familiar with the C build
+ecosystem and I get the impression if I knew more, this would make more sense to
+me.
+
+I can't set =binfmt= without an actual NixOS system of some kind because that
+requires both a Linux kernel setting and a NixOS-proper system itself running.
+Even with containers, I have neither of those.  The =nixos/nix= image is for
+running Nix and not NixOS, all on Alpine.  So using =binfmt= on the kernel level
+is out.  How important is that?  [[https://en.wikipedia.org/wiki/Binfmt_misc][The Wikipedia article on binfmt_misc]] shows it
+is simply part of the Linux kernel, and describes it as a sort of shebang for
+binary executables.  I can see if it is enabled by inspecting
+=/proc/sys/fs/binfmt_misc/status=, and there's also =/proc/sys/fs/binfmt_misc/*=
+which holds various individual formats.  Being set to =1= is enabled and =-1= is
+disabled.  I added this to my script in =image-create.sh=:
+
+#+begin_src shell :results none :exports code
+tail -n +1 /proc/sys/fs/binfmt_misc/*
+#+end_src
+
+I use =tail= because it prints the name of the file when multiple files are
+involved.  That way I should get a nice file-name + value combination.  But I
+get:
+
+#+begin_example
+tail: cannot open '/proc/sys/fs/binfmt_misc/*' for reading: No such file or directory
+#+end_example
+
+Of course I'm wondering why the =multiarch/qemu-user-static= image doesn't have
+this.  I check the [[https://github.com/multiarch/qemu-user-static][README]] and see the description:
+
+#+begin_example
+multiarch/qemu-user-static is to enable an execution of different
+multi-architecture containers by QEMU and binfmt_misc. Here are examples
+with Docker 3.
+#+end_example
+
+The =binfmt_misc= is right there.  I was going to install it via my =Dockerfile=
+and then it clicks:
+
+#+begin_src dockerfile :results none :exports code
+FROM multiarch/qemu-user-static:latest as qemu
+
+FROM nixos/nix
+
+COPY --from=qemu /usr/bin/qemu-* /usr/bin
+
+COPY . /workdir
+
+CMD ["sleep" "infinity"]
+#+end_src
+
+Oh right, I'm not running that image.  I'm running the =nix= image with some
+stuff yanked from =qemu-user-static=.  Maybe I can also copy the =binfmt_misc=
+files?  I know we're getting into kernel level stuff, and that's firmly
+_outside_ of container territory.  Still, it's just files... right?  Let's give
+it a shot.
+
+#+begin_src dockerfile :results none
+FROM multiarch/qemu-user-static:latest as qemu
+
+FROM nixos/nix
+
+COPY --from=qemu /usr/bin/qemu-* /usr/bin
+COPY --from=qemu /proc/sys/fs/binfmt_misc /proc/sys/fs/binfmt_misc
+
+COPY . /workdir
+
+CMD ["sleep" "infinity"]
+#+end_src
+
+And then I get:
+
+#+begin_example
+Error: building at STEP "COPY --from=qemu /proc/sys/fs/binfmt_misc
+/proc/sys/fs/binfmt_misc": checking on sources under
+"/var/home/core/.local/share/containers/storage/overlay/ab39a17dbb861445876ff08d6d13ccf9cf2617ec6a81696481b535301310c2a1/merged":
+copier: stat: "/proc/sys/fs/binfmt_misc": no such file or directory
+#+end_example
+
+Ugh.  Maybe I just need to read more.  A lot more.  That [[https://github.com/multiarch/qemu-user-static][qemu-user-static README]]
+has a lot of stuff in there I didn't understand well as I just jumped in.
+Apparently it has some kind of =from-to= notation I can use in the image name to
+get what I want.  The entities in this are architectures.  So I should be able
+to _from_ =aarch64= _to_ =x86_64=.  I just need to change the label from the
+lazy =latest= to =qemu-user-static:aarch65-x86_64=.  I probably don't even need
+to try copying the =binfmt_misc= files.
+
+#+begin_example
+Error: creating build container: initializing source
+docker://multiarch/qemu-user-static:aarch65-x86_64: reading manifest
+aarch65-x86_64 in docker.io/multiarch/qemu-user-static: manifest unknown
+#+end_example
+
+Alright.  Sure enough, I can't find an =aarch64= in the =from= portion anywhere
+in their [[https://hub.docker.com/r/multiarch/qemu-user-static/tags?page=1&name=aarch][Dockerhub tags]].  Well, the documentation says I can use
+=multiarch/qemu-user-static:$to_arch= so let's just try =x86_64=.
+
+#+begin_example
+[1/2] STEP 1/1: FROM multiarch/qemu-user-static:x86_64 AS qemu
+Resolving "multiarch/qemu-user-static" using unqualified-search registries (/etc/containers/registries.conf.d/999-podman-machine.conf)
+Trying to pull docker.io/multiarch/qemu-user-static:x86_64...
+Getting image source signatures
+Copying blob sha256:5822a1c91f704793666e9975a33f4041298b1221f5ac80aff67ea866300f64fa
+Copying config sha256:ad2074fe564f645bba6172cd06d2c49771431ed4009d6726bc2145510d4e911b
+Writing manifest to image destination
+WARNING: image platform (linux/amd64) does not match the expected platform (linux/arm64)
+--> ad2074fe564f
+[2/2] STEP 1/4: FROM nixos/nix
+[2/2] STEP 2/4: COPY --from=qemu /usr/bin/qemu-* /usr/bin
+Error: building at STEP "COPY --from=qemu /usr/bin/qemu-* /usr/bin": checking on sources under "/var/home/core/.local/share/containers/storage/overlay/3999e542bb3199035ee740da6a25a788e0a6263a38ce1fb80bd2b3222c88363f/merged": Rel: can't make  relative to /var/home/core/.local/share/containers/storage/overlay/3999e542bb3199035ee740da6a25a788e0a6263a38ce1fb80bd2b3222c88363f/merged; copier: stat: ["/usr/bin/qemu-*"]: no such file or directory
+#+end_example
+
+So it pulled the image, but the base image is the wrong architecture as =amd64=
+(and thus I expect nothing to work), and also the files I need are no longer
+present.
+
+From some reading in their issues, I find this [[https://github.com/multiarch/qemu-user-static/issues/111#issuecomment-647012621][comment]]:
+
+#+begin_quote
+Hi @Darshcg! This repository is for amd64/x86_64 hosts only (#77). For other
+host archs, you can use dbhi/qus:
+
+images are provided for each of seven host architectures officially supported by
+Docker, Inc. or built by official images: amd64, i386, arm64v8, arm32v7,
+arm32v6, s390x and ppc64le.
+#+end_quote
+
+I... why isn't that front-and-center on their README?  Why is this industry so
+allergic to writing things down?  After looking some more, it is [[https://github.com/multiarch/qemu-user-static?tab=readme-ov-file#supported-host-architectures][in the README]]
+but it's not presented early in the documentation.  I counted a quick 3 issues
+that all have the same problem.  My personal policy is to treat questions like
+those as opportunities to improve documentation.  Instead of fielding the
+occasional "why didn't you read the _entire_ document?" questions, just improve
+(by adding, rewording, or reorganizing) the documentation until the questions
+cease.  Apparently the "these are images that go from any architecture to any
+architecture" and then the fine print says "only if the from-architecture is
+x86_64 or amd64", one can understand why there is misunderstanding.  It's like
+how Microsoft claimed .NET was cross-platform back during its inception.  It
+runs on all versions of Windows!  See?  Cross-platform.
+
+The [[https://dbhi.github.io/qus/images.html][qus documentation]] on what images to use is not inspiring:
+
+#+begin_quote
+Manifests are provided for the following hosts: amd64, arm64v8, arm32v7,
+arm32v6, i386, s390x or ppc64le. That is, any of the target architectures
+provided by QEMU can be used on any of those hosts.
+#+end_quote
+
+No =x86_64=.  This seems to make the claim that they support everything that
+=qemu= does.  This would imply that =qemu= doesn't support =x86_64= as a
+destination, but other things I have come across suggests that's impossible
+(folks on =aarch64= claim to have =x86_64= compatibility).  [[https://github.com/dbhi/qus/issues/22][qus#22]] suggests this
+will work just fine though.  That said, I can't find the images on Dockerhub.
+
+I did some more digging around and came up with this as my =Dockerfile=:
+
+#+begin_src dockerfile :results none
+FROM nixos/nix
+
+COPY . /workdir
+
+CMD ["sleep" "infinity"]
+#+end_src
+
+Not much, yeah?  That's because I need to bootstrap the Podman VM with:
+
+#+begin_src shell :results none :exports code
+podman run --rm --privileged aptman/qus --static -- --persistent x86_64
+#+end_src
+
+Which I put into =with-podman.sh=.
+
+Now I get:
+
+#+begin_example
+error: builder for '/nix/store/23n6mw7qvl7w6c9pmgmwzi5gpwg0qjkl-stdenv-linux.drv' failed with exit code 1;
+       last 1 log lines:
+       > error: executing '/nix/store/xiicriwhj094ax7w50jzkmv32gzcdqkd-bash-5.2p26/bin/bash': Exec format error
+       For full logs, run 'nix log /nix/store/23n6mw7qvl7w6c9pmgmwzi5gpwg0qjkl-stdenv-linux.drv'.
+#+end_example
+
+I think maybe this is some progress?  I haven't gotten this specific error yet.
+Before it was =cannot execute binary file=.  So that makes me think at least
+some of the machinery I want is in place.
+
+**** darwin.linux-builder to the rescue
+:PROPERTIES:
+:CUSTOM_ID: adventure:-standing-up-a-=stable-diffusion-webui=-server-on-a-new-host--preparing-the-host--direct-builds--darwin.linux-builder-to-the-rescue
+:END:
+
+Then I found [[https://github.com/NixOS/nixpkgs/pull/238596][nixpkgs#238596]] and wait a second!  There's a =nixos/qemu-vm=...
+image?  I dug around and found [[https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/virtualisation/qemu-vm.nix][qemu-vm.nix]] and it has this as documentation:
+
+#+begin_src shell :results none :exports code
+# This module creates a virtual machine from the NixOS configuration.
+# Building the `config.system.build.vm' attribute gives you a command
+# that starts a KVM/QEMU VM running the NixOS configuration defined in
+# `config'. By default, the Nix store is shared read-only with the
+# host, which makes (re)building VMs very efficient.
+#+end_src
+
+This is manna from the =nixpkgs=!  Using this, I should be able to put the VM in
+the _exact_ state I want it to be in before I try anything (like running this
+builder).  I shouldn't need to use a container at all, in fact...  I basically
+can say "this is my build VM, and here's its configuration", which tucks nicely
+into the =flake.lock=.  This is exciting!  I don't know if it will work as a
+path forward, but it should help.  I should be able to pull in =qemu=
+derivations with ease.  I can set =binfmt=!  What an oasis to come upon.  My
+despair was palpable.
+
+-----
+
+I dove into the material for running this builder VM locally.  There's actually
+[[https://nixos.org/manual/nixpkgs/unstable/#sec-darwin-builder][official documentation on the darwin.linux-builder]] and via this
+[[https://nixcademy.com/2024/02/12/macos-linux-builder/][macOS Linux Builder]] post, I found out there's some settings I can use on
+=nix-darwin= that do a lot of the setup necessary to get it going, but it's more
+or less a one-liner.
+
+I don't have the exact order of things here, and unfortunately the VM is
+somewhat stateful.  I'll try to document what I can.  This is what builds the
+VM:
+
+#+begin_src shell :results none :exports code
+nix run nixpkgs#darwin.linux-builder
+#+end_src
+
+The VM being built is a somewhat manual step, but perhaps some other thing can
+realize it.  Keep in mind if anything changes or you attempt to build a
+different kind of VM, this can foul up the derivation.  Advice I have seen in
+multiple places (that I don't have on hand) says to "remove the VM" but provides
+no instructions.  I was able to do so with a =nix store gc=.  It's using a
+wrecking ball to drive a nail, but it does the job.  Perhaps better advice will
+become available.
+
+A builder in Nix is a special host which is configured to accept build commands
+from a different Nix host.  Essentially it gets used in NixOps (Nix Operations)
+type setups, where different kinds of builds for different architectures must be
+emitted, or multi-platform tests must be run.  The VM needs to be configured as
+a builder.  This means the VM needs to run SSH, expose it on a port, and have
+keys registered with it.  The =nix-darwin= module does all of this with the
+following settings:
+
+#+begin_src nix :results none
+nix = {
+  # There may be additional configuration in this attribute set.  This is the
+  # minimum for what we need here.
+  linux-builder.enable = true;
+  settings = {
+
+    experimental-features = [ "nix-command" "flakes" ];
+    # Action: Update to use your user as needed, in case you aren't also a Logan.
+    # Trust my user so we can open SSH on port 22 for using the Nix builder.
+    # It cannot be overridden as of 2024-02-18.  This is demanded in
+    # https://nixos.org/manual/nixpkgs/unstable/#sec-darwin-builder but
+    # explained here:
+    # https://github.com/Gabriella439/macos-builder?tab=readme-ov-file
+    extra-trusted-users = [ "logan" ];
+    # Trusting @admin is demanded by the darwin.linux-builder package.
+    trusted-users = [ "@admin" ];
+  };
+};
+#+end_src
+
+Performing the following will apply those settings:
+
+#+begin_src shell :results none :exports code
+nix run nix-darwin -- switch --flake ~/dev/dotfiles/nix
+#+end_src
+
+In addition, the =nix-darwin= module configures this via a =launchd= daemon.
+You can inspect the daemon here:
+
+#+begin_src shell :results output :cache yes :exports both :dir "/sudo:root@localhost:."
+sudo launchctl list org.nixos.linux-builder
+#+end_src
+
+#+RESULTS[05af8f2e26dbaf5f17504219461aad6840ae5dad]:
+: {
+: 	"LimitLoadToSessionType" = "System";
+: 	"Label" = "org.nixos.linux-builder";
+: 	"OnDemand" = false;
+: 	"LastExitStatus" = 0;
+: 	"PID" = 19592;
+: 	"Program" = "/bin/sh";
+: 	"ProgramArguments" = (
+: 		"/bin/sh";
+: 		"-c";
+: 		"/bin/wait4path /nix/store && exec /nix/store/sf0vk5w0clqmwp07p5m0w3lxl1sc150s-linux-builder-start";
+: 	);
+: };
+
+The PID may imply that it is already running?
+
+I ran into this error at some point.  I believe it is because somehow the VM
+changed as I described above.  I had gone through several different sets of
+instructions, so the changed-VM-issue is very likely.
+
+#+begin_example
+Formatting '/tmp/nix-vm.S35Kv5pSsw/store.img', fmt=qcow2 cluster_size=65536 extended_l2=off compression_type=zlib size=1561329664 backing_file=/nix/store/lyd8dji7qbsk3kp0fy7aiiv07igc1qz9-nix-store-image/nixos.qcow2 backing_fmt=qcow2 lazy_refcounts=off refcount_bits=16
+[    0.034887] armv8-pmu pmu: hw perfevents: failed to probe PMU!
+
+<<< NixOS Stage 1 >>>
+
+loading module virtio_balloon...
+loading module virtio_console...
+loading module virtio_rng...
+loading module dm_mod...
+running udev...
+Starting systemd-udevd version 255.2
+kbd_mode: KDSKBMODE: Inappropriate ioctl for device
+Gstarting device mapper and LVM...
+waiting for device /dev/disk/by-label/nixos to appear.......................
+Timed out waiting for device /dev/disk/by-label/nixos, trying to mount anyway.
+mounting /dev/disk/by-label/nixos on /...
+[   21.655501] /dev/disk/by-label/nixos: Can't open blockdev
+mount: mounting /dev/disk/by-label/nixos on /mnt-root/ failed: No such file or directory
+
+An error occurred in stage 1 of the boot process, which must mount the
+root filesystem on `/mnt-root' and then start stage 2.  Press one
+of the following keys:
+
+  r) to reboot immediately
+  *) to ignore the error and continue
+rRebooting...
+[   28.407770] reboot: Restarting system
+[    0.033519] armv8-pmu pmu: hw perfevents: failed to probe PMU!
+
+<<< NixOS Stage 1 >>>
+
+loading module virtio_balloon...
+loading module virtio_console...
+loading module virtio_rng...
+loading module dm_mod...
+running udev...
+Starting systemd-udevd version 255.2
+kbd_mode: KDSKBMODE: Inappropriate ioctl for device
+Gstarting device mapper and LVM...
+waiting for device /dev/disk/by-label/nixos to appear.......^C................
+Timed out waiting for device /dev/disk/by-label/nixos, trying to mount anyway.
+mounting /dev/disk/by-label/nixos on /...
+[   21.900472] /dev/disk/by-label/nixos: Can't open blockdev
+mount: mounting /dev/disk/by-label/nixos on /mnt-root/ failed: No such file or directory
+
+An error occurred in stage 1 of the boot process, which must mount the
+root filesystem on `/mnt-root' and then start stage 2.  Press one
+of the following keys:
+
+  r) to reboot immediately
+  *) to ignore the error and continue
+^C*Continuing...
+mount: can't find /mnt-root/ in /proc/mounts
+mounting certs on /etc/ssl/certs...
+checking /dev/disk/by-label/nix-store...
+fsck (busybox 1.36.1)
+[fsck.ext4 (1) -- /mnt-root/nix/.ro-store] fsck.ext4 -a /dev/disk/by-label/nix-store
+nix-store: clean, 46478/95424 files, 284784/381184 blocks
+mounting /dev/disk/by-label/nix-store on /nix/.ro-store...
+mounting shared on /tmp/shared...
+mounting xchg on /tmp/xchg...
+mounting keys on /var/keys...
+mounting overlay filesystem on /nix/store...
+BusyBox v1.36.1 () multi-call binary.
+
+Usage: switch_root [-c CONSOLE_DEV] NEW_ROOT NEW_INIT [ARGS]
+
+Free initramfs and switch to another root fs:
+chroot to NEW_ROOT, delete all in /, move NEW_ROOT to /,
+execute NEW_INIT. PID must be 1. NEW_ROOT must be a mountpoint.
+
+	-c DEV	Reopen stdio to DEV after switch
+[   50.120061] Kernel panic - not syncing: Attempted to kill init! exitcode=0x00000100
+[   50.120291] CPU: 0 PID: 1 Comm: switch_root Not tainted 6.1.78 #1-NixOS
+[   50.120547] Hardware name: linux,dummy-virt (DT)
+[   50.120738] Call trace:
+[   50.120845]  dump_backtrace+0xe0/0x134
+[   50.121005]  show_stack+0x20/0x2c
+[   50.121145]  dump_stack_lvl+0x64/0x80
+[   50.121309]  dump_stack+0x18/0x34
+[   50.121444]  panic+0x17c/0x350
+[   50.121579]  make_task_dead+0x0/0x190
+[   50.121733]  do_group_exit+0x3c/0xa0
+[   50.121887]  __wake_up_parent+0x0/0x40
+[   50.122040]  invoke_syscall+0x50/0x120
+[   50.122194]  el0_svc_common.constprop.0+0x4c/0xf4
+[   50.122384]  do_el0_svc+0x34/0xcc
+[   50.122521]  el0_svc+0x34/0xd4
+[   50.122651]  el0t_64_sync_handler+0x114/0x120
+[   50.122831]  el0t_64_sync+0x18c/0x190
+[   50.122983] Kernel Offset: 0x4ee1cc200000 from 0xffff800008000000
+[   50.123236] PHYS_OFFSET: 0xffff9a3c00000000
+[   50.123416] CPU features: 0x00000,00010091,66927723
+[   50.123673] Memory Limit: none
+[   50.123804] ---[ end Kernel panic - not syncing: Attempted to kill init! exitcode=0x00000100 ]---
+[1]    15699 terminated  nix run nixpkgs#darwin.linux-builder
+
+Terminate the process by using =ps= in another tab and issuing a normal =kill=
+to the qemu process.  =ps= without args or =grep= is sufficient.
+#+end_example
+
+When encountering this error, there is something wrong with the VM and it is
+stateful.  Advice is to "remove" the image, but no specific instructions are
+given.  Run =nix store gc= to clean it up.  This could be a documentation
+enhancement.  This would be good to contribute back to documentation.
+
+Now that I have what I think is an on-demand linux-builder service for macOS, I
+should be able to just build a VM image and Nix will take care of the rest.  I
+have seen advice that I might need to tune the VM for different resources, but I
+figure I can do that lazily.  All I really care about this point are halts.  The
+image building is a one-off for me.
+
+I don't know how to make sure the builder is present in a given build.  However
+I do know I'll need some additional tuning to make this work.  I've added this
+to my =darwin.nix= and applied it:
+
+#+begin_src nix  :results none
+  ...
+  nix = {
+    linux-builder = {
+      enable = true;
+      config = {
+        boot.binfmt.emulatedSystems = [ "x86_64-linux" ];
+      };
+    };
+  };
+  ...
+#+end_src
+
+I still see the issue:
+
+#+begin_example
+nix build '.#lithium'
+warning: Git tree '/Users/logan/dev/proton-nix' is dirty
+error: builder for '/nix/store/2kx4di5f5qjqhhvgy3k2zxcbrwxylgkl-builder.pl.drv' failed with exit code 126;
+       last 1 log lines:
+       > /nix/store/5l50g7kzj7v0rdhshld1vx46rf2k5lf9-bash-5.2p26/bin/bash: /nix/store/5l50g7kzj7v0rdhshld1vx46rf2k5lf9-bash-5.2p26/bin/bash: cannot execute binary file
+...
+#+end_example
+
+From my last =nix-darwin-switch= call, I don't think my changes got applied
+because the image wasn't touched as far as I can tell. I expected that to take
+a while longer but it was very quick.  Reading the blog earlier, I can see that
+I need to do a =nixos-rebuild= on that VM.  But it requires knowing its name
+first.  To get it, I ran:
+
+#+begin_src shell :results output :exports both :cache yes
+cat /etc/nix/machines | sed -E 's/- [a-zA-Z0-9=]+$/- secret-ssh-key-maybe/'
+#+end_src
+
+#+RESULTS[2cf59cef3beb69a938d04fe8e0c2a01318297f3e]:
+: ssh://builder@linux-builder aarch64-linux /etc/nix/builder_ed25519 1 1 kvm,benchmark,big-parallel - secret-ssh-key-maybe
+
+With this going through =sed= so I needn't worry about a key getting leaked if
+it happens to be a secret one.  I can see its name is =linux-builder=.  In
+hindsight, this is what I named it in the =darwin.nix=.  Great!  An adapted
+version of the configuration is:
+
+#+begin_src shell :results none :exports code
+nixos-rebuild switch \
+    --fast \
+    --target-host linux-builder \
+    --use-remote-sudo \
+    --use-substitutes
+#+end_src
+
+And this doesn't work because I'm on macOS where =nixos-rebuild= is not on my
+=PATH= because this isn't NixOS.  Perhaps I can just SSH to the host and run the
+command there, sans target arguments?
+
+#+begin_example
+$ ssh builder@linux-builder
+The authenticity of host 'linux-builder ([127.0.0.1]:31022)' can't be established.
+ED25519 key fingerprint is SHA256:73nCAX7tESRWJ4ZN8RkOlqB+0bgxKVmbNRUcFPbXMkE.
+This key is not known by any other names.
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+Warning: Permanently added 'linux-builder' (ED25519) to the list of known hosts.
+(builder@linux-builder) Password:
+#+end_example
+
+Close.  Trying with my username has the same result.  Perhaps I can bootstrap it
+like I did my Raspberry Pi earlier?
+
+I add this to the =config=, which becomes:
+
+#+begin_src nix :results none
+  nix = {
+    linux-builder = {
+      enable = true;
+      config = {
+        boot.binfmt.emulatedSystems = [ "x86_64-linux" ];
+        users.users = {
+          logan = {
+            # TODO: You can set an initial password for your user.
+            # If you do, you can skip setting a root password by passing
+            # '--no-root-passwd' to nixos-install.
+            # Be sure to change it (using passwd) after rebooting!
+            initialPassword = "lolno";
+            isNormalUser = true;
+            openssh.authorizedKeys.keys = [
+              "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQOx2dxH8oP1406bie6eO3HB6fin4NY01laNiWRqcNsrRl6/M6e80wiTnG9u0Walb3JXegyqrHKIlFgvcrn2Tg/y944akJ/XqrcLPn3vwTcCV6XGI/1hPdcN0V156pbbnTS/T9y9btO+QJvELOjT4dET6HixBeBpGhLM95cirOrJjT2C6VVBYTGdAu3eKwCeDsjQtfKOHp9Huv0c1i57Fb13iTU1u0+L2o+LMYpS8YNbcBOgzx9FyyjvA/KuEVcyt2raVpbJv6nOP9ynz7a1Ja3Y2tgQwC6XCMpgKYHDYxaJhJbWjv9cxwq4zSzBr8yrlDKooqvpp9fTdOBAWF4R2MI2wb01yaaTlqPDcATBl5+Xu+SvxYf9wBt6wFIbv0baf1WtDDE7u9d2K/MJhShK9p45AQPTbmoYw7fzeMQOLdZNdZdXIOHWd17IJi2T+WnnO9hL1x+M5uZUlFlk0jGu0NP/YmHuWjGxxL7AIO1hH2q7ZHq7tzM+8sV6tjfGePwALFXSBBSGn2czgtfKzEVRFHBQajPco0g9zFWvi5ZfmU4QAkWOrQQFLEYK4IE0e1gR9Dsnqdm5tiYkCdVlapbG9jWdIBAgOCMj2bBXn+YObCrbVHW4wNo5OR6nec+b6miCuG23ue/o5j2L64kE16n1+hGx/Bbm0Adif4vw8zXVhAmxvQ== logan@scandium"
+            ];
+            extraGroups = [
+              # Allow this user to sudo.
+              "wheel"
+            ];
+          };
+        };
+      };
+    };
+#+end_src
+
+And look at that:
+
+#+begin_example
+$ nix-darwin-switch
+warning: Git tree '/Users/logan/dev/dotfiles' is dirty
+building the system configuration...
+warning: Git tree '/Users/logan/dev/dotfiles' is dirty
+Password:
+user defaults...
+setting up user launchd services...
+Show the ~/Library folder...
+Set dock magnification...
+Set dock magnification size...
+Define dock icon function...
+Choose and order dock icons
+setting up /Applications/Nix Apps...
+setting up pam...
+applying patches...
+setting up /etc...
+system defaults...
+setting up launchd services...
+reloading service org.nixos.linux-builder
+reloading nix-daemon...
+waiting for nix-daemon
+configuring networking...
+configuring keyboard...
+Set disk image verification...
+Avoid creating .DS_Store files on network volumes...
+Set the warning before emptying the Trash...
+Require password immediately after sleep or screen saver begins...
+Allow apps from anywhere...
+
+$ ssh linux-builder
+
+[logan@nixos:~]$
+#+end_example
+
+I am tickled!  Let's get our bearings.  I have a NixOS VM running on macOS which
+is totally controlled via Nix and has a proper =configuration.nix=.  This allows
+me to do things I couldn't do before like set =binfmt.emulatedSystems=.  From
+there I should be able to build NixOS images for =x86_64-linux=.  My next steps
+are roughly:
+
+1. Verify I can compile and run =x86_64-linux= binaries.  This will allow me to
+   build an =x86_64-linux= image, since these images require running some of the
+   things being built.
+2. Indicate to =nixosGenerate= that the build is actually going to be run
+   against =linux-builder=.
+3. Generate the image.
+4. =dd= the image to the USB drive adapter (which has the lithium boot disk in
+   it).
+5. Slap the disk in the lithium machine.  Power it on, connect it on the
+   network (via a CAT 5 cable).
+6. SSH to the host to test login.
+7. Author a Nix configuration for =stable-diffusion-webui= that allows
+   configuration.
+8. Apply the configuration to =lithium=.
+9. Crank out ML generated images to my heart's content.
+
+Easy!
+
+Trying to get something going from my SSH session is proving difficult.  =nix=
+is not on my =PATH=, and =/nix/var/nix/profiles/per-user/= is empty.  This
+really is just a bare bones builder.  Well, let's treat it that way.  I should
+be able to declare an =x86_64-linux= package exists on the host, and then maybe
+run it.
+
+I wound up making this:
+
+#+begin_src nix :results none
+{
+  nixpkgs,
+  lib,
+  ...
+}: let
+  cross-architecture-test-pkgs = import nixpkgs {
+    system = "x86_64-linux";
+  };
+  linux-builder-pkgs = import nixpkgs {
+    system = "aarch64-linux";
+  };
+in {
+  boot.binfmt.emulatedSystems = [ "i686-linux" "x86_64-linux" ];
+  environment.systemPackages = [
+    linux-builder-pkgs.file
+    cross-architecture-test-pkgs.hello
+  ];
+  nixpkgs.buildPlatform = { system = "aarch64-linux"; };
+  users.users = {
+    logan = {
+      # TODO: You can set an initial password for your user.
+      # If you do, you can skip setting a root password by passing
+      # '--no-root-passwd' to nixos-install.
+      # Be sure to change it (using passwd) after rebooting!
+      initialPassword = "lolno";
+      isNormalUser = true;
+      openssh.authorizedKeys.keys = [
+        "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQOx2dxH8oP1406bie6eO3HB6fin4NY01laNiWRqcNsrRl6/M6e80wiTnG9u0Walb3JXegyqrHKIlFgvcrn2Tg/y944akJ/XqrcLPn3vwTcCV6XGI/1hPdcN0V156pbbnTS/T9y9btO+QJvELOjT4dET6HixBeBpGhLM95cirOrJjT2C6VVBYTGdAu3eKwCeDsjQtfKOHp9Huv0c1i57Fb13iTU1u0+L2o+LMYpS8YNbcBOgzx9FyyjvA/KuEVcyt2raVpbJv6nOP9ynz7a1Ja3Y2tgQwC6XCMpgKYHDYxaJhJbWjv9cxwq4zSzBr8yrlDKooqvpp9fTdOBAWF4R2MI2wb01yaaTlqPDcATBl5+Xu+SvxYf9wBt6wFIbv0baf1WtDDE7u9d2K/MJhShK9p45AQPTbmoYw7fzeMQOLdZNdZdXIOHWd17IJi2T+WnnO9hL1x+M5uZUlFlk0jGu0NP/YmHuWjGxxL7AIO1hH2q7ZHq7tzM+8sV6tjfGePwALFXSBBSGn2czgtfKzEVRFHBQajPco0g9zFWvi5ZfmU4QAkWOrQQFLEYK4IE0e1gR9Dsnqdm5tiYkCdVlapbG9jWdIBAgOCMj2bBXn+YObCrbVHW4wNo5OR6nec+b6miCuG23ue/o5j2L64kE16n1+hGx/Bbm0Adif4vw8zXVhAmxvQ== logan@scandium"
+      ];
+      extraGroups = [
+        # Allow this user to sudo.
+        "wheel"
+      ];
+    };
+  };
+  nix.settings = {
+    extra-platforms = [ "aarch64-linux" "i686-linux" "x86_64-linux" ];
+  };
+}
+#+end_src
+
+It took me a bit to get here.  The current point of interest is in the
+declaration of =linux-builder-pkgs= and =cross-architecture-test-pkgs=.  These
+are both using =nixpkgs= but from a different =system= setting.  The first is
+for the =linux-builder= itself, so it uses =aarch64-linux= (my physical
+architecture, but Linux instead of macOS / =darwin=).  The other is
+=x86_64-linux=.
+
+Once that got built, I was able to do this as a proof that I could produce and
+run different binaries:
+
+#+begin_example
+$ ssh linux-builder
+Last login: Wed Feb 21 06:55:28 2024 from 10.0.2.2
+
+[logan@nixos:~]$ hello
+Hello, world!
+
+[logan@nixos:~]$ file $(readlink -f $(which hello))
+/nix/store/63l345l7dgcfz789w1y93j1540czafqh-hello-2.12.1/bin/hello: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /nix/store/cyrrf49i2hm1w7vn2j945ic3rrzgxbqs-glibc-2.38-44/lib/ld-linux-x86-64.so.2, for GNU/Linux 3.10.0, not stripped
+#+end_example
+
+In the example above I run =hello= on the VM.  Then I identify the =hello=
+binary as being an =x86_64-linux= binary in spite of the fact that I'm running
+=aarch64-darwin= natively, and =aarch64-linux= on the VM.
+
+One thing to keep in mind that I sunk a lot of time into: The =nix store ping=
+[fn:nix-store-ping-info: There is also =nix store info=, but I don't know which
+is the preferred one - just that one is deprecated.  I cannot run =nix store
+info= on my host and attempts to enable it via =experimental-features= has
+failed for me.] is not very helpful in determining what's going on.  For the
+longest time, I had this:
+
+#+begin_src shell :results output :cache yes
+nix store ping --store 'ssh-ng://linux-builder'
+#+end_src
+
+#+RESULTS[1e63ec6d4dd5d87685780e1fdf9d01bfcd881418]:
+: Store URL: ssh-ng://linux-builder
+: [K[KVersion: 2.18.1
+: Trusted: 0
+
+I found this was due to me declaring =builders= in my =darwin.nix=.  The
+=builders= definition was out of sync with the actual configuration, and the
+=nix-darwin= =linux-builder= module is smart enough to populate everything from
+top to bottom.  You can help see what's going on with =/etc/nix/machines=.  The
+[[https://nixos.org/manual/nix/stable/advanced-topics/distributed-builds][remote builder documentation]] describes the format very well, and it is plain
+text.  What helped me figure this out was eventually running a =nix build= with
+=--builders= set to the entire line.
+
+Another critical part was also working with =linux-builder= configuration
+options that weren't fully propagated to the =buildMachines= settings.  I wound
+up having to add my own option (=protocol=) and stitching that together with
+[[https://github.com/LnL7/nix-darwin/pull/873][nix-darwin#873]] and [[https://github.com/LnL7/nix-darwin/pull/816][nix-darwin#816]], one of which was only two days old at my
+first approach ([2024-02-20 Tue]).  Here is the [[https://github.com/LoganBarnett/nix-darwin/tree/linux-builder-big-config][branch for all of them together]].
+
+#+begin_src shell :results none
+nix build \
+  '.#lithium' \
+  --builders 'ssh-ng://builder@linux-builder i686-linux,x86_64-linux,aarch64-linux /etc/nix/builder_ed25519 1 1 kvm,benchmark,big-parallel - lolno'
+#+end_src
+
+And I was able to observe transient status updates of sending build information
+to the remote builder (=linux-builder=).  Even with that, =nix store ping= still
+shows =Trusted: 0= so I guess this can't be relied upon.
+
+#+begin_src shell :results output :cache yes
+nix store ping --store 'ssh-ng://linux-builder'
+#+end_src
+
+#+RESULTS[1e63ec6d4dd5d87685780e1fdf9d01bfcd881418]:
+: Store URL: ssh-ng://linux-builder
+: [K[KVersion: 2.18.1
+: Trusted: 0
+
+**** Diving into the Nix store C++ code
+:PROPERTIES:
+:CUSTOM_ID: adventure:-standing-up-a-=stable-diffusion-webui=-server-on-a-new-host--preparing-the-host--direct-builds--diving-into-the-nix-store-c++-code
+:END:
+
+I went on a bit of a tangent trying to figure out what the deal was with
+=Trusted: 0= and I dove into the C++ code.  For posterity I've left it here, but
+the end result is that I didn't really learn anything solid.  It was difficult
+to follow as my C++ has atrophied and I never really picked up "industry" style
+C++, let alone kept up with the last 20 years of changes in practice since then.
+[[https://github.com/NixOS/nix/pull/3927][nix#3927]] (a pull request that is ~4 years old as of [2024-02-21 Wed]) would have
+probably kept me from having to do as much of a deep dive on all of this.  Maybe
+I can try out carrying through the requested changes sometime.
+
+-----
+
+So basically =ssh://= will never work, per the code in
+=src/libstore/legacy-ssh-store.cc=:
+
+#+begin_src c :results none :exports code
+/**
+ * The legacy ssh protocol doesn't support checking for trusted-user.
+ * Try using ssh-ng:// instead if you want to know.
+ */
+std::optional<TrustedFlag> isTrustedClient()
+{
+    return std::nullopt;
+}
+#+end_src
+
+More spelunking - I found =src/libstore/remote-store-connection.hh= declares
+=RemoteStore::Connection= which has a =remoteTrustsUs= field on it.  This is the
+field that describes what eventually comes back on the =nix store ping=
+invocation.  The _only_ place that gets set to an meaningful value is in
+=src/libstore/remote-store.cc= in =initConnection= as this:
+
+#+begin_src c :results none :exports code
+if (GET_PROTOCOL_MINOR(conn.daemonVersion) >= 35) {
+    conn.remoteTrustsUs = WorkerProto::Serialise<std::optional<TrustedFlag>>::read(*this, conn);
+} else {
+    // We don't know the answer; protocol to old.
+    conn.remoteTrustsUs = std::nullopt;
+}
+#+end_src
+
+This is basically an undocumented requirement for establishing trust.  Back from
+my earlier =ping=:
+
+#+begin_src shell :results output :cache yes
+nix store ping --store 'ssh-ng://linux-builder'
+#+end_src
+
+#+RESULTS[1e63ec6d4dd5d87685780e1fdf9d01bfcd881418]:
+: Store URL: ssh-ng://linux-builder
+: [K[KVersion: 2.18.1
+: Trusted: 0
+
+I have only =18= as my minor version and it wants 35 or more.  This seems off.
+The whole "minor" thing seems off.  I would expect a more sophisticated version
+check but I don't see it here.  Let's unpack this more.
+
+=GET_PROTOCOL_MAJOR= and =GET_PROTOCOL_MINOR= are defined as:
+
+#+begin_src c :results none :exports code
+#define GET_PROTOCOL_MAJOR(x) ((x) & 0xff00)
+#define GET_PROTOCOL_MINOR(x) ((x) & 0x00ff)
+#+end_src
+
+This just looks at the number and yanks off the first 16 bits or the last 16
+bits.  The value being inspected is =conn.daemonVersion=, which is defined in
+the same =RemoteStore::Connection= struct.
+
+#+begin_src c :results none :exports code
+/**
+ * Worker protocol version used for the connection.
+ *
+ * Despite its name, I think it is actually the maximum version both
+ * sides support. (If the maximum doesn't exist, we would fail to
+ * establish a connection and produce a value of this type.)
+ */
+WorkerProto::Version daemonVersion;
+#+end_src
+
+Near as I can tell, the entire version is just an integer.  It doesn't check for
+major versions or use "good" version checking because the code before it will
+throw errors if the major version is not aligned.  That still kind of implies a
+major version increase (and thus a minor version reset) would break this logic.
+
+Based on the masks, I think that there's just a 32bit integer being serialized
+and sent over the wire, and then they are using bit masks to split them into two
+numbers.
+
+Another part of this too is the =nullopt= I think is treated differently than
+not being trusted at all.  I don't recall where I spotted that but I will revise
+if I see it again.  My next lead is the =TrustedFlag=.
+
+**** Building the lithium image
+:PROPERTIES:
+:CUSTOM_ID: adventure:-standing-up-a-=stable-diffusion-webui=-server-on-a-new-host--preparing-the-host--direct-builds--building-the-lithium-image
+:END:
+
+Now we're back to trying to build the image directly.  My invocation is roughly:
+
+#+begin_src shell :results none
+nix build '.#lithium'
+#+end_src
+
+It takes a very long time.
+
+#+begin_example
+@ nix build '.#lithium'
+warning: Git tree '/Users/logan/dev/proton-nix' is dirty
+error: build of '/nix/store/cj68c90lfwmwb21szzzqwwizl4f4ah9v-libiberty-13.2.0.drv' on 'ssh-ng://builder@linux-builder' failed: builder for '/nix/store/cj68c90lfwmwb21szzzqwwizl4f4ah9v-libiberty-13.2.0.drv' failed with exit code 1;
+       last 1 log lines:
+       > error: executing '/nix/store/xiicriwhj094ax7w50jzkmv32gzcdqkd-bash-5.2p26/bin/bash': Exec format error
+       For full logs, run 'nix-store -l /nix/store/cj68c90lfwmwb21szzzqwwizl4f4ah9v-libiberty-13.2.0.drv'.
+error: builder for '/nix/store/cj68c90lfwmwb21szzzqwwizl4f4ah9v-libiberty-13.2.0.drv' failed with exit code 1
+error: 1 dependencies of derivation '/nix/store/8c8ihnblzigyyi2gnw9wcgb97jkjskwn-libgcc-x86_64-unknown-linux-gnu-13.2.0.drv' failed to build
+error: 1 dependencies of derivation '/nix/store/3wyv75x3v4ghpwvr9yhvpn1zkgjhdm6g-glibc-x86_64-unknown-linux-gnu-2.38-44.drv' failed to build
+error: 1 dependencies of derivation '/nix/store/9vqsbcczfi33w57kmyy8w38cmqq04qz4-x86_64-unknown-linux-gnu-gcc-wrapper-13.2.0.drv' failed to build
+error: 1 dependencies of derivation '/nix/store/3k5q46wkrhcw7g7q0qdc0pp486yfdb6v-stdenv-linux.drv' failed to build
+error: 1 dependencies of derivation '/nix/store/xkmz3vkvdkw2p8vr95qwmf3zd3hyq3gi-vim-x86_64-unknown-linux-gnu-9.1.0004.drv' failed to build
+error: 1 dependencies of derivation '/nix/store/9r1ms037gywc03iawf7wr3lg5xflq6q1-xxd-vim-x86_64-unknown-linux-gnu-9.1.0004.drv' failed to build
+error: 1 dependencies of derivation '/nix/store/d9b1ldsar1kkiqzz4wsz2gbzg2k4wrsc-stub-ld-x86_64-unknown-linux-musl.drv' failed to build
+error: 1 dependencies of derivation '/nix/store/h8ha70j2kfsgyga0pvfvs0pyds935m2k-nixos-tmpfiles.d.drv' failed to build
+error: 1 dependencies of derivation '/nix/store/9wlq85n4c053f1hppd2bkcvv5lli9506-tmpfiles.d.drv' failed to build
+error: 1 dependencies of derivation '/nix/store/jdphdpgciii1mlkjqqrf8w8cqb5k5gpf-etc.drv' failed to build
+error: 1 dependencies of derivation '/nix/store/x9d4gncb56wczwagcaw2lsfg2l3skbsb-nixos-system-lithium-24.05.20240218.b98a4e1.drv' failed to build
+error: 1 dependencies of derivation '/nix/store/sdppyws2y15v5chwhzcswsnfyzsac9p3-closure-info.drv' failed to build
+error: 1 dependencies of derivation '/nix/store/0ngpb04bfvm2jx5sf4sby922qwcggzan-efi-directory.drv' failed to build
+error: 1 dependencies of derivation '/nix/store/6f09jjmmpyi7waims49b2nizgbvisf5v-isolinux.cfg-in.drv' failed to build
+error: 1 dependencies of derivation '/nix/store/0y5xb00q266h183dxvclyf111l7abdv0-nixos.iso.drv' failed to build
+#+end_example
+
+
+Oh and my pull request was merged!
+
+-----
+
+I need to clean this up:  I made some changes in my =flake.nix= for my network
+repository (where I'm doing all of this work that isn't just trying to make a
+=linux-builder=).
+
+I think I had too many things for building the =linux-builder= from earlier
+attempts that was inside my network repository.  My =nix.nix= file is now:
+
+#+begin_src nix :results none
+{ system, buildPlatform }: {
+  nix.settings = {
+    experimental-features = "nix-command flakes";
+    auto-optimise-store = true;
+  };
+  nixpkgs = {
+    hostPlatform = { inherit system; };
+  };
+}
+#+end_src
+
+And even =buildPlatform= should be removed.  I got much further on the run:
+
+#+begin_example
+~/dev/proton-nix on main|●2✚8?6 logan@scandium 1 [14:24:29] 0s
+@ nix build '.#lithium'
+warning: Git tree '/Users/logan/dev/proton-nix' is dirty
+error: build of '/nix/store/4vkjwadzg9r4679rrgyaa99gnz4mwisv-dbus-1.drv' on 'ssh-ng://builder@linux-builder' failed: builder for '/nix/store/4vkjwadzg9r4679rrgyaa99gnz4mwisv-dbus-1.drv' failed with exit code 1;
+       last 3 log lines:
+       > qemu-x86_64: QEMU internal SIGSEGV {code=MAPERR, addr=0x20}
+       > /build/.attr-0l2nkwhif96f51f4amnlf414lhl4rv9vh8iffyp431v6s28gsr90: line 16:    28 Segmentation fault      (core dumped) grep -q '[^[:space:]]' "$out/system.conf"
+       > "/nix/store/fkq9rmmkf6x82qwz60qkbvx0ramxg5kd-dbus-1/system.conf" was generated incorrectly and is empty, try building again.
+       For full logs, run 'nix-store -l /nix/store/4vkjwadzg9r4679rrgyaa99gnz4mwisv-dbus-1.drv'.
+error: builder for '/nix/store/4vkjwadzg9r4679rrgyaa99gnz4mwisv-dbus-1.drv' failed with exit code 1
+error: 1 dependencies of derivation '/nix/store/3sg7jhsgclf3appqjqrlvvl3w18przd7-etc.drv' failed to build
+error: 1 dependencies of derivation '/nix/store/xn22jl3rfawfy3q11g61jz98gjwyc73p-nixos-system-lithium-24.05.20240218.b98a4e1.drv' failed to build
+error: 1 dependencies of derivation '/nix/store/f7afhxpy9zawz3l1dlql1nzkbh5s7r9l-closure-info.drv' failed to build
+error: 1 dependencies of derivation '/nix/store/nhbb7xqdvqcb1ywk4443lyykkfyn8w83-efi-directory.drv' failed to build
+error: 1 dependencies of derivation '/nix/store/8d9y0s3yh9acxpy5c97rv7jxci9jklzy-isolinux.cfg-in.drv' failed to build
+error: 1 dependencies of derivation '/nix/store/di2gnywrx9ifksjw4b8zlx3jh2zgm6w4-nixos.iso.drv' failed to build
+#+end_example
+
+I've heard the name DBus many times, but this is the first time I've been forced
+to reckon with it.  This is what I got from the [[https://www.freedesktop.org/wiki/Software/dbus/][main site]]:
+
+#+begin_quote
+D-Bus is a message bus system, a simple way for applications to talk to one
+another. In addition to interprocess communication, D-Bus helps coordinate
+process lifecycle; it makes it simple and reliable to code a "single instance"
+application or daemon, and to launch applications and daemons on demand when
+their services are needed.
+#+end_quote
+
+In addition, I found the error message in
+[[https://github.com/NixOS/nixpkgs/blob/05a08f896f13598e0e1409b01c103e9b0144d2ac/pkgs/development/libraries/dbus/make-dbus-conf.nix][nixpkgs#pkgs/development/libraries/dbus/make-dbus-conf.nix]].  The [[https://github.com/NixOS/nixpkgs/blame/05a08f896f13598e0e1409b01c103e9b0144d2ac/pkgs/development/libraries/dbus/make-dbus-conf.nix][blame]] shows the
+error handling added via
+[[https://github.com/NixOS/nixpkgs/commit/a6138b750e2998f67fccc0f8b08dd25b051da4dd][this commit]], and the commit message is:
+
+#+begin_quote
+makeDBusConf: fail if xsltproc generates empty files
+A few people have reported empty files in /etc/dbus-1 which can cause obscure issues.
+With this change, users can retry and get non-empty files.
+
+can be tested with
+`makeDBusConf { suidHelper = ""; serviceDirectories = []; }`
+
+and adding
+
+```
+    rm $out/session.conf
+    echo -n "" > $out/session.conf
+    # or
+    echo "" > $out/session.conf
+```
+#+end_quote
+
+Unfortunately, building again produces the exact same error (not surprising
+there).  I don't understand what high load would have to do with it, based on
+the comments I saw.  My system wasn't under high load.
+
+Based on looking at other folks' =configuration.nix= files, it makes me wonder
+if I'm running a little too bare bones.  I do have =sshd= running, but maybe I
+need more?  The Pi didn't need this.
+
+Looking at my Pi (=iron.proton=), I see:
+
+#+begin_example
+[logan@iron:~]$ cat /etc/systemd/system.conf
+[Manager]
+ManagerEnvironment=LOCALE_ARCHIVE='/run/current-system/sw/lib/locale/locale-archive' PATH='/nix/store/rv6q4vlvzqdhg1hhh38x65qjf7m2zhm6-zfs-user-2.2.2/bin:/nix/store/c7ridj401dp7g39c4y89nmag67np5744-xfsprogs-6.4.0-bin/bin:/nix/store/p1k3wkjkd84g980rf0ryzxzaxsr79w6l-dosfstools-4.2/bin:/nix/store/q8f410f6absndg70zc06mg114mx81qq3-mtools-4.0.43/bin:/nix/store/r0ak1lfz4nai2nfklm9rn2bwpik6xyfv-reiserfsprogs-3.6.27/bin:/nix/store/si1gm6gi82yvs8v6134fb6fncwdwcawz-ntfs3g-2022.10.3/bin:/nix/store/n83c11khj6dpngxkhlhv7l4scgbgmxxb-jfsutils-1.1.15/bin:/nix/store/z3dmw30pk8y4c37rg3f6mgz3fqh2xy34-f2fs-tools-1.16.0/bin:/nix/store/y97i9plwxkzvyzzj2w2bw9cggn8bz1r7-e2fsprogs-1.47.0-bin/bin:/nix/store/45y3b1inniswp5krd816s5ad98llsgvb-cifs-utils-7.0/bin:/nix/store/maswinc6x0zpa9nk737c51f6gzccjigz-btrfs-progs-6.6.3/bin:/nix/store/p1k3wkjkd84g980rf0ryzxzaxsr79w6l-dosfstools-4.2/bin:/nix/store/75jfmjkn5chksgn5y58srk5bqp47srjl-util-linux-minimal-2.39.2-bin/bin' TZDIR='/etc/zoneinfo'
+DefaultCPUAccounting=yes
+DefaultIOAccounting=yes
+DefaultBlockIOAccounting=yes
+DefaultIPAccounting=yes
+
+DefaultLimitCORE=infinity
+#+end_example
+
+So it got something during its generation.  I've done updates and changed how
+things are populated since then.  I suppose I could try again.
+
+#+begin_example
+@ nix build '.#iron'
+warning: Git tree '/Users/logan/dev/proton-nix' is dirty
+error: build of '/nix/store/ikk3ksnm1a0fv2yn55599w0bz7mvafac-kernel-modules.drv' on 'ssh-ng://builder@linux-builder' failed: error: getting status of '/nix/store/ajpqgdpg1bhr2bl2q99p5vw66f1ri0bv-linux-6.1.78': No such file or directory
+error: builder for '/nix/store/ikk3ksnm1a0fv2yn55599w0bz7mvafac-kernel-modules.drv' failed with exit code 1
+error: 1 dependencies of derivation '/nix/store/byq6aylsvxzn8sp1xh98h46zjf93ib62-nixos-system-iron-24.05.20240218.b98a4e1.drv' failed to build
+error: 1 dependencies of derivation '/nix/store/wjal9cfwl2322p485m8sgaax34vsgsj1-ext4-fs.img.zst.drv' failed to build
+error: 1 dependencies of derivation '/nix/store/82j5rvzpn2j5y09a65qlakmc7la9x8d5-nixos-sd-image-24.05.20240218.b98a4e1-aarch64-linux.img.drv' failed to build
+#+end_example
+
+Well, I broke it.  I wish I had some indication as to how I've broken it.  A
+mystery to me with Nix is trying to debug broken derivations.  I know there's a
+log, but oftentimes the log is exactly what I see here.
+
+That said, I learned I can repeat the =-v= argument several times like =ssh=
+has.  So I can do =-vvvv= for a forth level of verbosity.  With =-vvvv=, it's an
+enormous spew, and still not enough apparently:
+
+#+begin_example
+<huge snip>
+building of '/nix/store/yc4imxjj33scgyk0h1ajhdbs3ax0wsvg-zpool-sync-shutdown.drv^out' from .drv file: woken up
+building of '/nix/store/9q7f15hbrcs8a4kdgqvg5ricv1rj57w1-sshd.conf-settings.drv^out' from .drv file: trying to build
+locking path '/nix/store/diwbqs556c8wkc0jfb89pz4i3h4234c5-sshd.conf-settings'
+lock acquired on '/nix/store/diwbqs556c8wkc0jfb89pz4i3h4234c5-sshd.conf-settings.lock'
+removing invalid path '/nix/store/diwbqs556c8wkc0jfb89pz4i3h4234c5-sshd.conf-settings'
+considering building on remote machine 'ssh-ng://builder@linux-builder'
+hook reply is 'postpone'
+wait for a while
+lock released on '/nix/store/diwbqs556c8wkc0jfb89pz4i3h4234c5-sshd.conf-settings.lock'
+building of '/nix/store/yc4imxjj33scgyk0h1ajhdbs3ax0wsvg-zpool-sync-shutdown.drv^out' from .drv file: trying to build
+locking path '/nix/store/8sb3md4gcjkpnyjvlnd07g3k8gvlv8a3-zpool-sync-shutdown'
+lock acquired on '/nix/store/8sb3md4gcjkpnyjvlnd07g3k8gvlv8a3-zpool-sync-shutdown.lock'
+removing invalid path '/nix/store/8sb3md4gcjkpnyjvlnd07g3k8gvlv8a3-zpool-sync-shutdown'
+considering building on remote machine 'ssh-ng://builder@linux-builder'
+hook reply is 'postpone'
+wait for a while
+lock released on '/nix/store/8sb3md4gcjkpnyjvlnd07g3k8gvlv8a3-zpool-sync-shutdown.lock'
+waiting for the upload lock to 'ssh-ng://builder@linux-builder'...
+copying dependencies to 'ssh-ng://builder@linux-builder'...
+querying info about missing paths...
+copying 0 paths...
+querying info about missing paths...
+killing process 2938
+error: build of '/nix/store/ikk3ksnm1a0fv2yn55599w0bz7mvafac-kernel-modules.drv' on 'ssh-ng://builder@linux-builder' failed: error: getting status of '/nix/store/ajpqgdpg1bhr2bl2q99p5vw66f1ri0bv-linux-6.1.78': No such file or directory
+<lesser but still huge snip>
+#+end_example
+
+If I go up to 6...  I see no difference in output.
+
+I did find [[https://discourse.nixos.org/t/substituters-on-a-remote-builder-for-a-flake-causes-build-to-fail-with-no-such-file/32140][Substituters on a remote builder for a flake causes build to fail
+with “no such file”]] which seems very similar to my problem, but there's no
+assistance there, nor is there any clues as to permutations I can try.  I
+followed the post to [[https://github.com/NixOS/nixpkgs/issues/126141][nixpkgs#126141]] and read through it.  It sounds fixed, kind
+of?  I switched up my search terms a little () and found [[https://discourse.nixos.org/t/nix-flakes-nix-store-source-no-such-file-or-directory/17836/9][Nix flakes
+/nix/store/***-source no such file or directory]] and the fix for someone being a
+cleaning of the Nix store (with the posted command).  I tried it out:
+
+#+begin_example
+[logan@nixos:~]$ sudo nix-store --repair --verify --check-contents
+[sudo] password for logan:
+reading the Nix store...
+checking path existence...
+path '/nix/store/99rfnrws0zz4bv1m2c7favncqd2archk-kernel-modules' disappeared, but it still has valid referrers!
+copying path '/nix/store/99rfnrws0zz4bv1m2c7favncqd2archk-kernel-modules' from 'https://cache.nixos.org'...
+path '/nix/store/ajpqgdpg1bhr2bl2q99p5vw66f1ri0bv-linux-6.1.78' disappeared, but it still has valid referrers!
+copying path '/nix/store/ajpqgdpg1bhr2bl2q99p5vw66f1ri0bv-linux-6.1.78' from 'https://cache.nixos.org'...
+...
+#+end_example
+
+Okay those two modules are were I was seeing problems!  This seems very
+promising.  Then I see:
+
+#+begin_example
+error: cannot repair path '/nix/store/ib6nig1xpkb975mqrqbsg1sfj1x2lind-nix-store-image'
+path '/nix/store/kc9qgi31ii73064bpg8x95vmbhs2fqcv-login.pam' was modified! expected hash 'sha256:033bsp8yfri5vsja1ncj5avb07010w6nz5bw0kaid821b0jhwlbq', got 'sha256:0ip26j2h11n1kgkz36rl4akv694yz65hr72q4kv4b3lxcbi65b3p'
+copying path '/nix/store/kc9qgi31ii73064bpg8x95vmbhs2fqcv-login.pam' from 'https://cache.nixos.org'...
+path '/nix/store/myfrx2c9f91c41wd9yrg0c2z9d85qhjs-nix-store-image' was modified! expected hash 'sha256:0dykdqm04pcnmmp1k72vg96i56bi3041vxlpi4q6kmyqxa8db40p', got 'sha256:1bpn28kc9n32q1p59q1b6rsfngma4mjsnfxs0hqags410xh2s6zk'
+error: cannot repair path '/nix/store/myfrx2c9f91c41wd9yrg0c2z9d85qhjs-nix-store-image'
+path '/nix/store/vgh5kp5gc9zrxzm5pzq7mpyyd721iqdd-nix-store-image' was modified! expected hash 'sha256:09qsrvbc39vsb74svbfjnl6wwnvhawsj30y05d10w4h1svav0gkv', got 'sha256:0y37psc8sm48xvk5ral209801hhpm1lrd5bdcbwcala2kagkhmjs'
+error: cannot repair path '/nix/store/vgh5kp5gc9zrxzm5pzq7mpyyd721iqdd-nix-store-image'
+path '/nix/store/zdfn2mgvsyh7prh5d9bxgsvyi94mvsm8-nix-store-image' was modified! expected hash 'sha256:0anxffszglan61ys2wfj127w9z6gvp5c2k3cfripw6javm55n4w5', got 'sha256:1nkasy3fmmdxsyvbzq0fii2h7r985fmsbi1b05srik88jpw089iy'
+error: cannot repair path '/nix/store/zdfn2mgvsyh7prh5d9bxgsvyi94mvsm8-nix-store-image'
+warning: not all store errors were fixed
+#+end_example
+
+
+Uh oh.  Per [[https://discourse.nixos.org/t/nix-store-corrupted/9947][/nix/store corrupted]], I tried a =nix-gcollect-garbage= (I have no
+=nixos-rebuild= on my =PATH= for the VM).  That freed some 10GB or so of data.
+Then I ran the repair again, and it came back clean:
+
+#+begin_example
+[logan@nixos:~]$ sudo nix-store --repair --verify --check-contents
+reading the Nix store...
+checking path existence...
+checking link hashes...
+checking store hashes...
+#+end_example
+
+And then about 5 minutes later, it succeeds!
+
+#+begin_example
+$ nix build '.#iron'
+warning: Git tree '/Users/logan/dev/proton-nix' is dirty
+#+end_example
+
+Okay so now I have a baseline, working image, for a different system.
+
+#+begin_example
+$ ls -alh result
+lrwxr-xr-x 1 logan 99 Feb 24 17:32 result -> /nix/store/pxp6pv1mc71p6v65xz4kbivsxw1ry2hj-nixos-sd-image-24.05.20240218.b98a4e1-aarch64-linux.img
+$ ls -alh $(readlink -f result)/sd-image
+total 931M
+dr-xr-xr-x 3 root   96 Dec 31  1969 .
+dr-xr-xr-x 4 root  128 Dec 31  1969 ..
+-r--r--r-- 1 root 931M Dec 31  1969 nixos-sd-image-24.05.20240218.b98a4e1-aarch64-linux.img.zst
+#+end_example
+
+Not bad - just a gig.  But it's for the wrong system!  If I attempt to build
+=lithium= again, I get the same issue.
+
+Ugh, I've been ignoring this issue, primarily because I saw it spamming the
+build logs but everything seemed fine with it:
+
+#+begin_example
+qemu-x86_64: QEMU internal SIGSEGV {code=MAPERR, addr=0x20}
+#+end_example
+
+But I guess this is a real error.  I don't know why it was showing up for other
+things or how it could've impacted results there.  My first find is
+[[https://github.com/NixOS/nixpkgs/issues/69158][nixpkgs#69158]] wherein they say set =virtualisation.graphics = false= but I
+don't know where it goes.  Also the issue appears to no longer be reproducible.
+Out of desperation, I ran =nix flake update= on both systems.  Then realized
+that might not be the best to do since I didn't check to see if these two
+repositories even shared the same =nixpkgs= - they don't.  I put them both on
+=master=.  =proton-nix=, my network repository I'm building here, was the
+out-of-date one.
+
+Now I get:
+
+#+begin_example
+@ nix build '.#lithium'
+warning: Git tree '/Users/logan/dev/proton-nix' is dirty
+error: build of '/nix/store/cdklsyyhal5fa920yvm0r9wzk4lllrr8-lazy-options.json.drv' on 'ssh-ng://builder@linux-builder' failed: builder for '/nix/store/cdklsyyhal5fa920yvm0r9wzk4lllrr8-lazy-options.json.drv' failed with exit code 1;
+       last 7 log lines:
+       > qemu-x86_64: QEMU internal SIGSEGV {code=MAPERR, addr=0x20}
+       > /build/.attr-0l2nkwhif96f51f4amnlf414lhl4rv9vh8iffyp431v6s28gsr90: line 26:    10 Segmentation fault      (core dumped) /nix/store/62fm7r6175k2bgvhc19hn9bdhw90wa3n-nix-2.18.1/bin/nix-instantiate --show-trace --eval --json --strict --argstr libPath "$libPath" --argstr pkgsLibPath "$pkgsLibPath" --argstr nixosPath "$nixosPath" --arg modules "import $modulesPath" --argstr stateVersion "24.05" --argstr release "24.05" $nixosPath/lib/eval-cacheable-options.nix > $out
+       > Cacheable portion of option doc build failed.
+       > Usually this means that an option attribute that ends up in documentation (eg `default` or `description`) depends on the restricted module arguments `config` or `pkgs`.
+       >
+       > Rebuild your configuration with `--show-trace` to find the offending location. Remove the references to restricted arguments (eg by escaping their antiquotations or adding a `defaultText`) or disable the sandboxed build for the failing module by setting `meta.buildDocsInSandbox = false`.
+       >
+       For full logs, run 'nix-store -l /nix/store/cdklsyyhal5fa920yvm0r9wzk4lllrr8-lazy-options.json.drv'.
+error: builder for '/nix/store/cdklsyyhal5fa920yvm0r9wzk4lllrr8-lazy-options.json.drv' failed with exit code 1
+error: 1 dependencies of derivation '/nix/store/wj3kla5s3ag3x9vfkl7pb18w313z3n6d-options.json.drv' failed to build
+error: 1 dependencies of derivation '/nix/store/pwkwhixf6wxpgqlhk9x8q873a1k1swsx-nixos-configuration-reference-manpage.drv' failed to build
+error: 1 dependencies of derivation '/nix/store/igh3ckyrvacj4f5k3s9liclgci90wbnj-nixos-manual-html.drv' failed to build
+error: 1 dependencies of derivation '/nix/store/29l475x5bsgvlgbxdlsd3hldl7lnjc84-system-path.drv' failed to build
+error: 1 dependencies of derivation '/nix/store/r7l7nrdzfcxbn8rb4ygzzmbbdd8fkfbd-nixos-system-lithium-24.05.20240225.72804e7.drv' failed to build
+error: 1 dependencies of derivation '/nix/store/7qxsqifjb21cg0wjyh2ng86hcs2m169m-closure-info.drv' failed to build
+error: 1 dependencies of derivation '/nix/store/qwbg901jihiknccrslsmrm53dbv7l06d-efi-directory.drv' failed to build
+error: 1 dependencies of derivation '/nix/store/8fmi2kqr0mzilq8bamfmafxk255b3qcc-isolinux.cfg-in.drv' failed to build
+error: 1 dependencies of derivation '/nix/store/bwwqkqd3mmfl81pclgafjr5wln4i3s44-nixos.iso.drv' failed to build
+
+#+end_example
+
+I don't know if this is further or not, but I take it to be progress.  This is
+the second time I've come across [[https://discourse.nixos.org/t/how-do-i-get-a-shell-nix-with-cross-compiler-and-qemu/7658/2][suggestions]] that =callPackage= magically does
+the thing.  I did try refactoring to that earlier but ran into trouble with
+dependency injection and passing variables around.  I'll have to try again.
+Here's the quick refactor:
+
+#+begin_src nix :results none
+    packages.aarch64-darwin.iron = (pkgs.callPackage ./iron.nix {
+      inherit nixos-generators self;
+    });
+    packages.aarch64-darwin.lithium = (pkgs.callPackage ./lithium.nix {
+      inherit nixos-generators self;
+    });
+#+end_src
+
+And the before, for reference:
+
+#+begin_src nix :results none
+    packages.aarch64-darwin.iron = (pkgs.callPackage ./iron.nix {
+      inherit nixos-generators self;
+    });
+    packages.aarch64-darwin.lithium = (pkgs.callPackage ./lithium.nix {
+      inherit nixos-generators self;
+    });
+#+end_src
+
+And magically it does!  Also I had no trouble with the refactor this time.  I
+don't know what the difference is in my attempts.  Maybe the =inherit=?  I saw
+=lazy-options= fly by in the build output.  It's not something I can capture -
+Nix just rewrites the line.  It's taking a long time on =xscreensaver= and its
+dependencies, which I find a bit puzzling but I'm willing to let it go.  It got
+past that!  Sorry but we're doing the play by play.  Okay I'm wrong.  I'm going
+to stop watching this pot come to a boil.
+
+#+begin_example
+@ nix build '.#lithium'
+warning: Git tree '/Users/logan/dev/proton-nix' is dirty
+error: build of '/nix/store/84gjlw62njz86cbdq3gvdnhjbj6363rj-extra-utils.drv' on 'ssh-ng://builder@linux-builder' failed: builder for '/nix/store/84gjlw62njz86cbdq3gvdnhjbj6363rj-extra-utils.drv' failed with exit code 139;
+       last 10 log lines:
+       > patching /nix/store/r5y3v5cw94yrxks70j140k01na6ksxqa-extra-utils/lib/libattr.so.1...
+       > patching /nix/store/r5y3v5cw94yrxks70j140k01na6ksxqa-extra-utils/lib/libresolv.so.2...
+       > patching /nix/store/r5y3v5cw94yrxks70j140k01na6ksxqa-extra-utils/lib/libcrypto.so.3...
+       > patching /nix/store/r5y3v5cw94yrxks70j140k01na6ksxqa-extra-utils/lib/libdl.so.2...
+       > patching /nix/store/r5y3v5cw94yrxks70j140k01na6ksxqa-extra-utils/lib/libpam.so.0...
+       > patching /nix/store/r5y3v5cw94yrxks70j140k01na6ksxqa-extra-utils/lib/libgcrypt.so.20...
+       > testing patched programs...
+       > qemu-x86_64: QEMU internal SIGSEGV {code=MAPERR, addr=0x20}
+       > /build/.attr-0l2nkwhif96f51f4amnlf414lhl4rv9vh8iffyp431v6s28gsr90: line 113: 14022 Done                    $out/bin/ash -c 'echo hello world'
+       >      14023 Segmentation fault      (core dumped) | grep "hello world"
+       For full logs, run 'nix-store -l /nix/store/84gjlw62njz86cbdq3gvdnhjbj6363rj-extra-utils.drv'.
+error: builder for '/nix/store/84gjlw62njz86cbdq3gvdnhjbj6363rj-extra-utils.drv' failed with exit code 1
+error: 1 dependencies of derivation '/nix/store/h5amvj1wmvy9hq76hb3wxmj5ds5yid74-stage-1-init.sh.drv' failed to build
+error: 1 dependencies of derivation '/nix/store/w34whiss31s2wi23pjfp5kihk4vbhm42-initrd-linux-6.1.79.drv' failed to build
+error: 1 dependencies of derivation '/nix/store/bwwqkqd3mmfl81pclgafjr5wln4i3s44-nixos.iso.drv' failed to build
+#+end_example
+
+The dreaded =qemu= =SIGSEGV= again - I don't know if it just prints that if
+anything it's emulating has an error or not.  Considering that the build gets
+quite far and is clearly running things, but suddenly doesn't, tells me that
+something fishy is going on.  For funsies I ran it again.  It takes a couple of
+minutes doing things, but fails in the same place.  [[https://github.com/NixOS/nixpkgs/issues/60088][nixpkgs#60088]] states I can
+run =coredumpctl= with no special privileges to see recent core dumps.  And it
+works!  It's a big list but here's the latest:
+
+#+begin_example
+Sun 2024-02-25 02:30:33 UTC  1285 30001 30000 SIGSEGV none     /nix/store/ysikdn59kp6fmn2gh935shgx8ma8cr1l-qemu-8.2.1/bin/qemu-x86_64    -
+Sun 2024-02-25 02:40:05 UTC 18915 30001 30000 SIGSEGV none     /nix/store/ysikdn59kp6fmn2gh935shgx8ma8cr1l-qemu-8.2.1/bin/qemu-x86_64    -
+Sun 2024-02-25 02:49:50 UTC 33061 30001 30000 SIGSEGV none     /nix/store/ysikdn59kp6fmn2gh935shgx8ma8cr1l-qemu-8.2.1/bin/qemu-x86_64    -
+#+end_example
+
+This doesn't tell me much on its own.  This is all new to me, so someone with
+better operations chops will probably see this is boring.  =ulimit -c= is
+recommended to see if the core dumps would get clipped from a lack of size.
+
+#+begin_example
+[logan@nixos:~]$ ulimit -c
+unlimited
+#+end_example
+
+So we're good there.  The =none= above is referencing the core file, which is
+discouraging.  But running =coredump info= with no arguments seems to pick up
+the prior core dump.
+
+#+begin_example
+[logan@nixos:~]$ coredumpctl info
+           PID: 33061 (qemu-x86_64)
+           UID: 30001 (nixbld1)
+           GID: 30000 (nixbld)
+        Signal: 11 (SEGV)
+     Timestamp: Sun 2024-02-25 02:49:50 UTC (10min ago)
+  Command Line: /nix/store/ysikdn59kp6fmn2gh935shgx8ma8cr1l-qemu-8.2.1/bin/qemu-x86_64 -0 grep -- /nix/store/11b3chszacfr9liy829xqknzp3q88iji-gnugrep-3.11/bin/grep $'hello world'
+    Executable: /nix/store/ysikdn59kp6fmn2gh935shgx8ma8cr1l-qemu-8.2.1/bin/qemu-x86_64
+ Control Group: /system.slice/nix-daemon.service
+          Unit: nix-daemon.service
+         Slice: system.slice
+       Boot ID: b5f8013281994021ae0eee3327c3ea65
+    Machine ID: 7a2b258dc0504f08aad6645b40de04bf
+      Hostname: localhost
+       Storage: none
+       Message: Process 33061 (qemu-x86_64) of user 30001 terminated abnormally without generating a coredump.
+#+end_example
+
+"Something crashed" isn't very helpful.  I can see how this would be helpful in
+other circumstances, but not my current one.
+
+I can reproduce the segfault through my SSH session on the VM directly:
+
+#+begin_example
+[logan@nixos:~]$ /nix/store/11b3chszacfr9liy829xqknzp3q88iji-gnugrep-3.11/bin/grep --help
+qemu-x86_64: QEMU internal SIGSEGV {code=MAPERR, addr=0x20}
+Segmentation fault (core dumped)
+#+end_example
+
+Since I got the file there, let's take a look at it, but line wrapped:
+
+#+begin_example
+[logan@nixos:~]$ file /nix/store/11b3chszacfr9liy829xqknzp3q88iji-gnugrep-3.11/bin/grep
+/nix/store/11b3chszacfr9liy829xqknzp3q88iji-gnugrep-3.11/bin/grep: ELF 64-bit
+LSB executable, x86-64, version 1 (SYSV), dynamically linked, interpreter
+/nix/store/8mc30d49ghc8m5z96yz39srlhg5s9sjj-glibc-2.38-44/lib/ld-linux-x86-64.so.2,
+for GNU/Linux 3.10.0, not stripped
+#+end_example
+
+Now let's compare it to our pre-installed =hello= package from earlier:
+
+#+begin_example
+[logan@nixos:~]$ file $(readlink -f $(which hello))
+/nix/store/x42qkfvxxy17d2vk39010fcwacv5fb6j-hello-x86_64-unknown-linux-gnu-2.12.1/bin/hello:
+ELF 64-bit LSB executable, x86-64, version 1 (SYSV), dynamically linked,
+interpreter
+/nix/store/dkhhp26aj1s28b9hdy4y2d4qcmj1s6n5-glibc-x86_64-unknown-linux-gnu-2.38-44/lib/ld-linux-x86-64.so.2,
+for GNU/Linux 3.10.0, not stripped
+#+end_example
+
+Let's lay these one atop another so we can see how they differ, sans paths:
+
+#+begin_example
+grep  - ELF 64-bit LSB executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /nix/store/8mc30d49ghc8m5z96yz39srlhg5s9sjj-glibc-2.38-44/lib/ld-linux-x86-64.so.2, for GNU/Linux 3.10.0, not stripped
+hello - ELF 64-bit LSB executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /nix/store/dkhhp26aj1s28b9hdy4y2d4qcmj1s6n5-glibc-x86_64-unknown-linux-gnu-2.38-44/lib/ld-linux-x86-64.so.2, for GNU/Linux 3.10.0, not stripped
+#+end_example
+
+The material difference is:
+
+#+begin_example
+grep  - /nix/store/8mc30d49ghc8m5z96yz39srlhg5s9sjj-glibc-2.38-44/lib/ld-linux-x86-64.so.2
+hello - /nix/store/dkhhp26aj1s28b9hdy4y2d4qcmj1s6n5-glibc-x86_64-unknown-linux-gnu-2.38-44/lib/ld-linux-x86-64.so.2
+#+end_example
+
+So they are different versions of =glibc=, which seems wrong.  I've seen this
+kind of almost-platform notation before of =x86_64-unknown-linux-gnu=.  I recall
+seeing some documentation about it, but I didn't walk away knowing _when_ it
+would come up.  Apparently that time is now.  =hello= comes from this =nixpkgs=:
+
+#+begin_src nix :results none
+  linux-builder-pkgs = import nixpkgs {
+    system = "aarch64-linux";
+    crossSystem = {
+      config = "x86_64-unknown-linux-gnu";
+    };
+  };
+#+end_src
+
+So it makes sense that the =x86_64-unknown-linux-gnu= version of =glibc= was
+used.
+
+Let's modify the =callPackage= invocation to take a similar set of configured
+packages.  Before I had:
+
+#+begin_src nix :results none
+    packages.aarch64-darwin.lithium = (pkgs.callPackage ./lithium.nix {
+      inherit nixos-generators self;
+    });
+#+end_src
+
+Now I have:
+
+#+begin_src nix :results none
+    packages.aarch64-darwin.lithium = (pkgs.callPackage ./lithium.nix (let
+      linux-builder-pkgs = import nixpkgs {
+        system = "aarch64-linux";
+        crossSystem = {
+          config = "x86_64-unknown-linux-gnu";
+        };
+      };
+    in {
+      inherit nixos-generators self;
+      nixpkgs = linux-builder-pkgs;
+    }));
+#+end_src
+
+The =nixpkgs= part is a guess, because I think that's how it gets imported.
+When I run with this, I get the same error and also it just jumps in trying to
+build the same broken derivation as before.  I would expect this kind of change
+to be more fundamental and require many more packages to be rebuilt.  I did some
+digging, because I don't just want to guess.  I found an example in
+[[https://github.com/nix-community/nixos-generators/issues/172][nixos-generators#172]] which uses =pkgs= so I tried that, but still no joy.  I
+don't think I'm providing what's needed here, even if I feel like I'm on the
+right track.
+
+The pull request related to the ticket makes me think I'm actually not on the
+right track, because it looks like setting =pkgs= was removed from examples and
+it uses =system=.  So this _should_ all be taken care of already.  Why isn't it
+then?  I came across [[https://github.com/nix-community/nixos-generators/issues/257][nixos-generators#257]] which looks similar to my situation,
+but I'm already subscribed to it.
+
+Per [[https://github.com/nix-community/nixos-generators/issues/202#issuecomment-1376885675][nixos-generators#202]] I have:
+
+#+begin_example
+[logan@nixos:~]$ command cat /proc/sys/fs/binfmt_misc/x86_64-linux
+enabled
+interpreter /run/binfmt/x86_64-linux
+flags: P
+offset 0
+magic 7f454c4602010100000000000000000002003e00
+mask fffffffffffefe00fffffffffffffffffeffffff
+
+[logan@nixos:~]$ command cat /proc/sys/fs/binfmt_misc/i686-linux
+enabled
+interpreter /run/binfmt/i686-linux
+flags: P
+offset 0
+magic 7f454c4601010100000000000000000002000600
+mask fffffffffffefe00fffffffffffffffffeffffff
+#+end_example
+
+This also appears healthy:
+
+#+begin_example
+[logan@nixos:~]$ sudo systemctl status systemd-binfmt
+[sudo] password for logan:
+● systemd-binfmt.service - Set Up Additional Binary Formats
+     Loaded: loaded (/etc/systemd/system/systemd-binfmt.service; enabled; preset: enabled)
+    Drop-In: /nix/store/z6fx9sd33cbhr5q8dzj551vs24j20lhv-system-units/systemd-binfmt.service.d
+             └─overrides.conf
+     Active: active (exited) since Sun 2024-02-25 02:29:54 UTC; 1h 20min ago
+       Docs: man:systemd-binfmt.service(8)
+             man:binfmt.d(5)
+             https://docs.kernel.org/admin-guide/binfmt-misc.html
+             https://www.freedesktop.org/wiki/Software/systemd/APIFileSystems
+    Process: 586 ExecStart=/nix/store/m3snx62c90imgqqh2axpba6yvc3ycw9b-systemd-255.2/lib/systemd/systemd-binfmt (code=exited, status=0/SUCCESS)
+   Main PID: 586 (code=exited, status=0/SUCCESS)
+         IP: 0B in, 0B out
+        CPU: 3ms
+
+Feb 25 02:29:54 nixos systemd[1]: Starting Set Up Additional Binary Formats...
+Feb 25 02:29:54 nixos systemd[1]: Finished Set Up Additional Binary Formats.
+#+end_example
+
+Well now I've gone full circle back to [[https://ianthehenry.com/posts/how-to-learn-nix/cross-compilation/][Ian's blog]] which inspired me to write all
+of this (even if it was a different post).  Ian even breaks down a bit of the
+main [[https://ryantm.github.io/nixpkgs/stdenv/cross-compilation/][Cross Compilation document]] that seems both very detailed and very beyond
+me.  His breakdown did help a bit.  I know better understand the "magic" behind
+=callPackage= and its role in this whole cross compilation ordeal.
+
+I think I might need to sit on this a bit.  There's a few ideas that are
+bouncing around in my head:
+
+1. I might be assuming that =nixos-generate= is doing everything correctly but
+   it might not be.  There are some details hidden from me and I should check up
+   on it.  It might also just help me to understand the topic better.
+2. I could try more permutations of setting =pkgs= and =nixpkgs= until I get
+   what I want.  I can visit more platform things as well.
+3. I don't understand why I've gotten far with some packages but not others.  A
+   quick =wc -l= on =extra-utils/bin= shows that =grep= doesn't come first and
+   there are 400+ executables in there.  Why =grep=?  What made it not get
+   compiled correctly?  What made the other packages get compiled correctly?
+   Perhaps this is part of the "things needing to be cleaned up" that Ryan's
+   blog / cross compilation document alludes to.  It could also be that =grep=
+   is the first one that has its own tests, which is where this fails.
+   #+begin_example
+   [logan@nixos:~]$ ls /nix/store/r5y3v5cw94yrxks70j140k01na6ksxqa-extra-utils/bin | wc -l
+   424
+   #+end_example
+4. How can I do the equivalent of =--arg crossSystem= with Nix Flake?  My
+   understanding is that any =nix build= invocation using =--arg= is rejected or
+   ignored because it's impure.  I've had no luck on my searches.  This might
+   require spelunking in =nixpkgs=.  If I can see how it's set or where it's
+   read from, I could know where to put it.
+   a. I've had this complaint before, but now I put it in writing:  Nix and its
+      coconspirators (such as =nixpkgs=, Flakes, etc.) really need to have a
+      formal schema or type signature for their main means of consumption.  I
+      understand that some stuff is custom, or that other libraries may append
+      to the schema, but that's frankly a poor excuse not to have one.  I may
+      document it just because I'm so very tired searching for "nix
+      configuration.nix example" and turning up empty.  It would probably
+      require some immense searching on my part because I really don't know what
+      it is.  Maybe I can rely upon [[https://meta.wikimedia.org/wiki/Cunningham%27s_Law][Cunningham's Law]] by saying I have the right
+      schema and others will smugly correct me.  But I will be the smug one in
+      the end because I laid a Cunningham Trap - a term I just coined.
+
+-----
+
+I _can_ run other commands in there, such as =mv= and =vi=:
+
+#+begin_example
+[logan@nixos:~]$ /nix/store/r5y3v5cw94yrxks70j140k01na6ksxqa-extra-utils/bin/mv --help
+BusyBox v1.36.1 () multi-call binary.
+
+Usage: mv [-finT] SOURCE DEST
+or: mv [-fin] SOURCE... { -t DIRECTORY | DIRECTORY }
+
+Rename SOURCE to DEST, or move SOURCEs to DIRECTORY
+
+	-f	Don't prompt before overwriting
+	-i	Interactive, prompt before overwrite
+	-n	Don't overwrite an existing file
+	-T	Refuse to move if DEST is a directory
+	-t DIR	Move all SOURCEs into DIR
+
+[logan@nixos:~]$ /nix/store/r5y3v5cw94yrxks70j140k01na6ksxqa-extra-utils/bin/vi --help
+BusyBox v1.36.1 () multi-call binary.
+
+Usage: vi [-c CMD] [-R] [-H] [FILE]...
+
+Edit FILE
+
+	-c CMD	Initial command to run ($EXINIT and ~/.exrc also available)
+	-R	Read-only
+	-H	List available features
+
+#+end_example
+
+The =BusyBox v1.36.1 () multi-call binary.= is an interesting aspect to this.
+
+=grep= is under =gnu-grep= and not directly under =extra-utils=.  Also this is
+surprising to me:
+
+#+begin_example
+[logan@nixos:~]$ readlink -f /nix/store/r5y3v5cw94yrxks70j140k01na6ksxqa-extra-utils/bin/mv
+/nix/store/r5y3v5cw94yrxks70j140k01na6ksxqa-extra-utils/bin/busybox
+
+[logan@nixos:~]$ readlink -f /nix/store/r5y3v5cw94yrxks70j140k01na6ksxqa-extra-utils/bin/vi
+/nix/store/r5y3v5cw94yrxks70j140k01na6ksxqa-extra-utils/bin/busybox
+#+end_example
+
+This leads me to think that there's this binary wad of sorts called =busyboxy=
+that looks at =$0= and then figures out what executable it really wants to
+invoke, which seems pretty weird to me.  That said, much of this stuff looks
+like shell built-ins so I guess that makes a little bit of sense.  Meanwhile,
+=grep= is under =gnu-grep= and thus doesn't get the same benefit.
+
+#+begin_example
+[logan@nixos:~]$ file $(readlink -f /nix/store/r5y3v5cw94yrxks70j140k01na6ksxqa-extra-utils/bin/vi)
+/nix/store/r5y3v5cw94yrxks70j140k01na6ksxqa-extra-utils/bin/busybox: ELF 64-bit
+LSB executable, x86-64, version 1 (SYSV), dynamically linked, interpreter
+/nix/store/r5y3v5cw94yrxks70j140k01na6ksxqa-extra-utils/lib/ld-linux-x86-64.so.2,
+BuildID[sha1]=c44b890a362e4ca6825d6828834a79dd1d9120c7, for GNU/Linux 3.10.0,
+stripped
+#+end_example
+
+To compare the three now:
+
+#+begin_example
+vi    - /nix/store/r5y3v5cw94yrxks70j140k01na6ksxqa-extra-utils/lib/ld-linux-x86-64.so.2
+grep  - /nix/store/8mc30d49ghc8m5z96yz39srlhg5s9sjj-glibc-2.38-44/lib/ld-linux-x86-64.so.2
+hello - /nix/store/dkhhp26aj1s28b9hdy4y2d4qcmj1s6n5-glibc-x86_64-unknown-linux-gnu-2.38-44/lib/ld-linux-x86-64.so.2
+#+end_example
+
+So =extra-utils= is fine but =glibc= (no suffix) is not.
+
+I did some searching on =crossSystem= and it looks like it really can just be an
+attribute on =pkgs= derivation.  I've come to understand that =nixpkgs= is the
+generic, big blob of packages, whereas =pkgs= is the ready-to-use and configured
+_instance_ of a =nixpkgs=.  As such I've brought this back, with the added
+=linux-builder-pkgs.pkgsCross.gnu64=, which matches the known, working
+configuration used in =linux-builder= to make the cross-compiled and run =hello=
+package on there.
+
+#+begin_src nix :results none
+    packages.aarch64-darwin.lithium = (pkgs.callPackage ./lithium.nix (let
+      linux-builder-pkgs = import nixpkgs {
+        system = "x86_64";
+        crossSystem = {
+          config = "x86_64-unknown-linux-gnu";
+        };
+      };
+    in {
+      inherit nixos-generators self;
+      pkgs = linux-builder-pkgs.pkgsCross.gnu64;
+    }));
+#+end_src
+
+From that I get:
+
+#+begin_example
+@ nix build '.#lithium'
+warning: Git tree '/Users/logan/dev/proton-nix' is dirty
+error: build of '/nix/store/84gjlw62njz86cbdq3gvdnhjbj6363rj-extra-utils.drv' on 'ssh-ng://builder@linux-builder' failed: builder for '/nix/store/84gjlw62njz86cbdq3gvdnhjbj6363rj-extra-utils.drv' failed with exit code 139;
+       last 10 log lines:
+       > patching /nix/store/r5y3v5cw94yrxks70j140k01na6ksxqa-extra-utils/lib/libattr.so.1...
+       > patching /nix/store/r5y3v5cw94yrxks70j140k01na6ksxqa-extra-utils/lib/libresolv.so.2...
+       > patching /nix/store/r5y3v5cw94yrxks70j140k01na6ksxqa-extra-utils/lib/libcrypto.so.3...
+       > patching /nix/store/r5y3v5cw94yrxks70j140k01na6ksxqa-extra-utils/lib/libdl.so.2...
+       > patching /nix/store/r5y3v5cw94yrxks70j140k01na6ksxqa-extra-utils/lib/libpam.so.0...
+       > patching /nix/store/r5y3v5cw94yrxks70j140k01na6ksxqa-extra-utils/lib/libgcrypt.so.20...
+       > testing patched programs...
+       > qemu-x86_64: QEMU internal SIGSEGV {code=MAPERR, addr=0x20}
+       > /build/.attr-0l2nkwhif96f51f4amnlf414lhl4rv9vh8iffyp431v6s28gsr90: line 113: 14022 Done                    $out/bin/ash -c 'echo hello world'
+       >      14023 Segmentation fault      (core dumped) | grep "hello world"
+       For full logs, run 'nix-store -l /nix/store/84gjlw62njz86cbdq3gvdnhjbj6363rj-extra-utils.drv'.
+error: builder for '/nix/store/84gjlw62njz86cbdq3gvdnhjbj6363rj-extra-utils.drv' failed with exit code 1
+error: 1 dependencies of derivation '/nix/store/h5amvj1wmvy9hq76hb3wxmj5ds5yid74-stage-1-init.sh.drv' failed to build
+error: 1 dependencies of derivation '/nix/store/w34whiss31s2wi23pjfp5kihk4vbhm42-initrd-linux-6.1.79.drv' failed to build
+error: 1 dependencies of derivation '/nix/store/bwwqkqd3mmfl81pclgafjr5wln4i3s44-nixos.iso.drv' failed to build
+#+end_example
+
+Okay back to this error again.  Here's what's funny:  I can find and run =grep= now:
+
+#+begin_example
+[logan@nixos:~]$ file $(readlink -f /nix/store/r5y3v5cw94yrxks70j140k01na6ksxqa-extra-utils/bin/grep)
+/nix/store/r5y3v5cw94yrxks70j140k01na6ksxqa-extra-utils/bin/busybox: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /nix/store/r5y3v5cw94yrxks70j140k01na6ksxqa-extra-utils/lib/ld-linux-x86-64.so.2, BuildID[sha1]=c44b890a362e4ca6825d6828834a79dd1d9120c7, for GNU/Linux 3.10.0, stripped
+[logan@nixos:~]$ /nix/store/r5y3v5cw94yrxks70j140k01na6ksxqa-extra-utils/bin/grep --help
+BusyBox v1.36.1 () multi-call binary.
+
+Usage: grep [-HhnlLoqvsrRiwFE] [-m N] [-A|B|C N] { PATTERN | -e PATTERN... | -f FILE... } [FILE]...
+
+Search for PATTERN in FILEs (or stdin)
+
+	-H	Add 'filename:' prefix
+	-h	Do not add 'filename:' prefix
+	-n	Add 'line_no:' prefix
+	-l	Show only names of files that match
+	-L	Show only names of files that don't match
+	-c	Show only count of matching lines
+	-o	Show only the matching part of line
+	-q	Quiet. Return 0 if PATTERN is found, 1 otherwise
+	-v	Select non-matching lines
+	-s	Suppress open and read errors
+	-r	Recurse
+	-R	Recurse and dereference symlinks
+	-i	Ignore case
+	-w	Match whole words only
+	-x	Match whole lines only
+	-F	PATTERN is a literal (not regexp)
+	-E	PATTERN is an extended regexp
+	-m N	Match up to N times per file
+	-A N	Print N lines of trailing context
+	-B N	Print N lines of leading context
+	-C N	Same as '-A N -B N'
+	-e PTRN	Pattern to match
+	-f FILE	Read pattern from file
+#+end_example
+
+And it's using the =busybox= stuff, same as the other things in this package.
+
+The failure with =ash -c 'echo hello world'= is worth a look.
+
+#+begin_example
+[logan@nixos:~]$ ls /nix/store/r5y3v5cw94yrxks70j140k01na6ksxqa-extra-utils/bin/ash
+/nix/store/r5y3v5cw94yrxks70j140k01na6ksxqa-extra-utils/bin/ash
+
+[logan@nixos:~]$ /nix/store/r5y3v5cw94yrxks70j140k01na6ksxqa-extra-utils/bin/ash
+~ $
+
+[logan@nixos:~]$ /nix/store/r5y3v5cw94yrxks70j140k01na6ksxqa-extra-utils/bin/ash -c 'echo hello world'
+hello world
+
+[logan@nixos:~]$ file $(readlink -f /nix/store/r5y3v5cw94yrxks70j140k01na6ksxqa-extra-utils/bin/ash)
+/nix/store/r5y3v5cw94yrxks70j140k01na6ksxqa-extra-utils/bin/busybox: ELF 64-bit
+LSB executable, x86-64, version 1 (SYSV), dynamically linked, interpreter
+/nix/store/r5y3v5cw94yrxks70j140k01na6ksxqa-extra-utils/lib/ld-linux-x86-64.so.2,
+BuildID[sha1]=c44b890a362e4ca6825d6828834a79dd1d9120c7, for GNU/Linux 3.10.0,
+stripped
+
+#+end_example
+
+So I can enter the =ash= shell, and also run the exact same thing as the test
+and it works just fine.  Is it possible I'm not running the _same_ =ash=?  This
+one is also running =busybox=, so I shouldn't be surprised that it also works.
+I found the offending line in [[https://github.com/nixos/nixpkgs/tree/93e1c2d08467d1117ebac45689469613a9fe8453/nixos/modules/system/boot/stage-1.nix][nixpkgs/nixos/modules/system/boot/stage-1.nix]].
+Oh, I forgot the =grep= that's part of the same test line.  Okay let's try that
+all together:
+
+#+begin_example
+[logan@nixos:~]$ /nix/store/r5y3v5cw94yrxks70j140k01na6ksxqa-extra-utils/bin/ash -c 'echo hello world' | \
+  /nix/store/r5y3v5cw94yrxks70j140k01na6ksxqa-extra-utils/bin/grep "hello world"
+hello world
+#+end_example
+
+We're still functional here.  I tried the build again with =--keep-failed= and
+=--debug= but I can't see that the build was retained anywhere.  I did try to
+find the derivation file on =linux-builder= and came up empty:
+
+#+begin_example
+[logan@nixos:~]$ ls /nix/store/84gjlw62njz86cbdq3gvdnhjbj6363rj-extra-utils.drv
+ls: cannot access '/nix/store/84gjlw62njz86cbdq3gvdnhjbj6363rj-extra-utils.drv': No such file or directory
+#+end_example
+
+But on my macOS host that runs the builder VM:
+
+#+begin_example
+~/dev/proton-nix on main|✚9?5 logan@scandium 1 [13:22:19] 149s
+$ ls /nix/store/84gjlw62njz86cbdq3gvdnhjbj6363rj-extra-utils.drv
+/nix/store/84gjlw62njz86cbdq3gvdnhjbj6363rj-extra-utils.drv
+#+end_example
+
+Now wait a second.  This should be on =linux-builder=.  Why is it here?
+Highlighting the first line from the error:
+
+#+begin_example
+error: build of '/nix/store/84gjlw62njz86cbdq3gvdnhjbj6363rj-extra-utils.drv' on
+'ssh-ng://builder@linux-builder' failed: builder for
+'/nix/store/84gjlw62njz86cbdq3gvdnhjbj6363rj-extra-utils.drv' failed with exit
+code 139;
+#+end_example
+
+It says it is building =extra-utils= on =linux-builder=.  But =extra-utils= is a
+vast bundle of other packages.  Perhaps some of the packages got built on macOS?
+
+I can't really confirm that in any way.  I know the derivation information is
+just this big blob of attributes and has yet to be realized necessarily, so
+seeing the =.drv= on my macOS store and not on =linux-builder= isn't necessarily
+a smoking gun.
+
+I've been flailing at this point, and haven't documented all of the dead ends
+I've tried.  I found [[https://discourse.nixos.org/t/cross-build-x86-64-ami-on-aarch64-using-nixos-generators/39098/4][Cross Build x86_64-ami on aarch64 using nixos-generators]]
+which points to a =make-build-image=.  I confirmed that =nixos-generators= is
+using it, but under some more scrutiny I noticed that =iso= is not covered via
+=make-build-image=, so I decided to change my =format= to =raw= and try again.
+Now I'm back at the empty =system.conf= error from before.  But this time I have
+a debug output and did some inspecting.  Sure enough, =extra-utils= is built
+successfully.  So having this empty =system.conf= file is preferable than the
+prior error, probably.
+
+I have to admit that I'm really exhausted at this point.  I feel persistent
+stress.  I've sunk many hours into this over the course of many weeks.  External
+situations are becoming more demanding for my attention.  I just want to move
+on, and I'm considering abandoning this course.  I feel like I've seen other
+"working" configurations out there which must solve this problem somehow, but
+I'm also starting to think that everyone just bootstraps their system with the
+NixOS installer and then goes from there.  I did this with the Raspberry Pi
+though, so why I can't do it here is flabbergasting.
+
+Okay, that's my emotional dump.  Let's re-center and consider how to debug this
+problem with the =system.conf=.
+
+In the =make-dbus-conf.nix=  file, I see XSLT - XML based XML transformers.
+Ugh.  Looking back at the error:
+
+#+begin_example
+qemu-x86_64: QEMU internal SIGSEGV {code=MAPERR, addr=0x20}
+/build/.attr-0l2nkwhif96f51f4amnlf414lhl4rv9vh8iffyp431v6s28gsr90: line 16:    28 Segmentation fault      (core dumped) grep -q '[^[:space:]]' "$out/system.conf"
+"/nix/store/87r0l2r106hw8q7wa94klff0i809yx3v-dbus-1/system.conf" was generated incorrectly and is empty, try building again.
+#+end_example
+
+There's a segfault - not "=grep= returned non-zero".  We got a core dump.  I
+don't recall if it's the same core dump I was trying to view before.  I see:
+
+#+begin_example
+           PID: 140517 (qemu-x86_64)
+           UID: 30001 (nixbld1)
+           GID: 30000 (nixbld)
+        Signal: 11 (SEGV)
+     Timestamp: Sun 2024-02-25 07:45:42 UTC (16min ago)
+  Command Line: /nix/store/ysikdn59kp6fmn2gh935shgx8ma8cr1l-qemu-8.2.1/bin/qemu-x86_64 -0 grep -- /nix/store/11b3chszacfr9liy829xqknzp3q88iji-gnugrep-3.11/bin/grep -q $'[^[:space:]]' /nix/store/87r0l2r106hw8q7wa94klff0i809yx3v-dbus-1/system.conf
+    Executable: /nix/store/ysikdn59kp6fmn2gh935shgx8ma8cr1l-qemu-8.2.1/bin/qemu-x86_64
+ Control Group: /system.slice/nix-daemon.service
+          Unit: nix-daemon.service
+         Slice: system.slice
+       Boot ID: b5f8013281994021ae0eee3327c3ea65
+    Machine ID: 7a2b258dc0504f08aad6645b40de04bf
+      Hostname: localhost
+       Storage: none
+       Message: Process 140517 (qemu-x86_64) of user 30001 terminated abnormally without generating a coredump.
+#+end_example
+
+Note, =less= chopped off the word, and my typical muscle memory fails me there.
+But typing =-S= causes it to wrap the lines and I can see the full, exploded
+command now.  The command checks out, but that could've been concealing some
+issue.
+
+#+begin_example
+[logan@nixos:~]$ /nix/store/11b3chszacfr9liy829xqknzp3q88iji-gnugrep-3.11/bin/grep  --help
+qemu-x86_64: QEMU internal SIGSEGV {code=MAPERR, addr=0x20}
+Segmentation fault (core dumped)
+#+end_example
+
+Oh look, it's a =grep= I can't run.  Again.
+
+#+begin_example
+[logan@nixos:~]$ file /nix/store/11b3chszacfr9liy829xqknzp3q88iji-gnugrep-3.11/bin/grep
+/nix/store/11b3chszacfr9liy829xqknzp3q88iji-gnugrep-3.11/bin/grep: ELF 64-bit
+LSB executable, x86-64, version 1 (SYSV), dynamically linked, interpreter
+/nix/store/8mc30d49ghc8m5z96yz39srlhg5s9sjj-glibc-2.38-44/lib/ld-linux-x86-64.so.2,
+for GNU/Linux 3.10.0, not stripped
+#+end_example
+
+With the busted =glibc=.  So I read the error wrong initially.  It's not that
+the file is empty - well I don't know if it's empty but I suspect it's not.  The
+current problem is that =grep= segfaults.  I'm still flailing.  Adding
+=GC_DONT_GC=1= to the =nix build= invocation per [[https://github.com/NixOS/nix/issues/4246][nix#4246]] does nothing
+observably different.
+
+The file is =/pkgs/os-specific/linux/minimal-bootstrap/gnugrep/default.nix=.
+The "minimal bootstrap" part is interesting.  The commits adding this file
+doesn't really tell me anything about it, and there's no comments.  I imagine it
+was added for a reason, but as far as I know that reason was not a _good_
+reason.  It could be superstition for all I know.  It could be critical.
+Leaving behind a lack of documentation is akin to leaving behind a minefield,
+whose mine locations are undocumented.  The only way to clear them is to have
+something step on them.  I shall provide that foot today by replacing this
+mini-grep with the proper one.
+
+The [[https://github.com/loganbarnett/nixpkgs/blob/93e1c2d08467d1117ebac45689469613a9fe8453/pkgs/os-specific/linux/minimal-bootstrap/default.nix#L10-L12][parent]] has a comment at least:
+
+#+begin_src nix :results none
+  # Prevent using top-level attrs to protect against introducing dependency on
+  # non-bootstrap packages by mistake. Any top-level inputs must be explicitly
+  # declared here.
+#+end_src
+
+I also see:
+
+#+begin_src nix :results none
+    gcc-latest = callPackage ./gcc/latest.nix {
+      gcc = gcc8;
+      gnumake = gnumake-musl;
+      gnutar = gnutar-latest;
+      # FIXME: not sure why new gawk doesn't work
+      gawk = gawk-mes;
+    };
+#+end_src
+
+Repeated in a few places.  In what way does "new =gawk=" not work?  No
+additional information - the commit body is empty, with the title being:
+
+#+begin_quote
+minimal-bootstrap.gcc-latest: init at 13.2.0
+#+end_quote
+
+And that doesn't help me.  I understand this is probably part of a greater
+chain of commits but I haven't had a chance to chase all of it down.  There's
+just so much information out there and it's not strung together nicely for an
+outsider like myself to piece it all together.  But, I am getting there.
+
+I do feel like this is getting closer to the issue though.  =glibc= is different
+because it's using this minimal version.  Inspecting the =default.nix= for this
+=minimal-bootstrap= =gnugrep=, I see it's using something called =tinycc-mes=.
+I know that =musl= is for the [[https://musl.libc.org][musl-libc]] and that's the fancy new =libc=
+replacement that is super tiny and used by Alpine.  Some quick searching
+indicates that [[https://www.gnu.org/software/mes/][GNU Mes]] is a "Scheme interpreter and C compiler for bootstrapping
+the GNU System".  Okay that all makes sense to me.  But I don't want it.  I
+already have a fork of =nixpkgs=.  I want to feed it the same =glibc= my other
+=grep= is getting, bloat be damned.  I don't care if I have to literally build
+everything from scratch _so long as it works_.
+
+I spent some time trying to figure out how to point my local Flake at my local
+=nixpkgs= and eventually came across [[https://www.reddit.com/r/NixOS/comments/sk42mb/comment/hvizjhv/][this Reddit comment]] with the
+=path:/foo/bar= notation.  Now I have:
+
+#+begin_src nix :results none
+    nixpkgs.url = "path:/Users/logan/dev/nixpkgs";
+#+end_src
+
+This works with =nix flake update= but not the actual build:
+
+#+begin_example
+setting 'packages.aarch64-darwin.lithium.drvPath' to failed
+error:
+       … in the condition of the assert statement
+
+         at /nix/store/syirv6wi0cyhipaxq8c47l3fvm9aqdii-source/lib/customisation.nix:267:17:
+
+          266|     in commonAttrs // {
+          267|       drvPath = assert condition; drv.drvPath;
+             |                 ^
+          268|       outPath = assert condition; drv.outPath;
+
+       … while calling the 'seq' builtin
+
+         at /nix/store/syirv6wi0cyhipaxq8c47l3fvm9aqdii-source/lib/customisation.nix:58:32:
+
+           57|       newDrv = derivation (drv.drvAttrs // (f drv));
+           58|     in flip (extendDerivation (seq drv.drvPath true)) newDrv (
+             |                                ^
+           59|       { meta = drv.meta or {};
+
+       (stack trace truncated; use '--show-trace' to show the full trace)
+
+       error: A definition for option `environment.etc."nix/path/nixpkgs".source' is not of type `path'. Definition values:
+       - In `/nix/store/wszp622jc6l3gzsj7556ny2pwcxfl2mf-source/nix-path.nix': null
+#+end_example
+
+I give up and just point it to the GitHub fork, and I'll just commit+push every
+file change I must make.  Wow this is horrible ergonomics.  I understand that
+this is kind of what =overlays= are for, but I don't know how to overlay
+something that is built to be completely independent from the rest of =nixpkgs=.
+Maybe I should try that anyways.  But first, let's get it going the hard way.
+After another =nix flake update=, I get the same error.  Huh?  Maybe I do need
+to make this into an overlay.  From some quick poking around =nixkpkgs= itself,
+I might've made that into a bigger deal that it really is.  It looks like
+=minimal-bootstrap= is the package that gets added to =all-packages=.  So it
+really should work as an overlay, I think.
+
+As an aside, I've gone from about 100GB free on my main disk down to 11GB over
+the last couple of days.  I've heard about people saying their disk space is
+exhausted but I haven't encountered it yet.  I run =nix-collect-garbage= and I
+get back some 20GB.  Hmm.  I can account for another 18GB from miscellaneous
+activities.  I can breathe a little better at least.  I suspect a great deal of
+space is going to my own local copy of =nixpkgs=, which is a heavy pull for
+=git=.
+
+This is what I think will do it:
+
+#+begin_src nix :results none
+prev: final: {
+  minimal-bootstrap = prev.minimal-bootstrap.override {
+    gnugrep = prev.callPackage ./gnugrep {
+      bash = prev.minimal-bootstrap.bash_2_05;
+      gnumake = prev.minimal-bootstrap.gnumake;
+      tinycc = prev.tinycc-mes;
+    };
+  };
+}
+#+end_src
+
+This is mostly just a copy of the =gnugrep= assignment, with some =prev=
+sprinkled in there to reference back into the =minimal-bootstrap= package.  The
+=callPackage= to =./gnugrep= is unfortunate but not a huge hassle.  It just
+needs a copy of =gnugrep.nix= sitting locally.  I can spot that.  Also I need to
+remember:  I've added files to the flake, so I need to add them to git!  I
+expect this build will take longer since I ran a =nix-collect-garbage=.
+
+The result:
+
+#+begin_example
+setting 'packages.aarch64-darwin.lithium.drvPath' to failed
+error:
+       … in the condition of the assert statement
+
+         at /nix/store/776s0yzlk1mlf00xpk9cnwyjndgb1fkw-source/lib/customisation.nix:267:17:
+
+          266|     in commonAttrs // {
+          267|       drvPath = assert condition; drv.drvPath;
+             |                 ^
+          268|       outPath = assert condition; drv.outPath;
+
+       … while calling the 'seq' builtin
+
+         at /nix/store/776s0yzlk1mlf00xpk9cnwyjndgb1fkw-source/lib/customisation.nix:58:32:
+
+           57|       newDrv = derivation (drv.drvAttrs // (f drv));
+           58|     in flip (extendDerivation (seq drv.drvPath true)) newDrv (
+             |                                ^
+           59|       { meta = drv.meta or {};
+
+       (stack trace truncated; use '--show-trace' to show the full trace)
+
+       error: A definition for option `environment.etc."nix/path/nixpkgs".source' is not of type `path'. Definition values:
+       - In `/nix/store/2ids7add75kj4ldqnkk5vdjdkxpbb0h5-source/nix-path.nix': null
+
+#+end_example
+
+Now wait a minute - I thought this was from my switching to =nixpkgs=.  Some
+things that immediately spring to mind:
+
+1. My Nix store is corrupt on =linux-builder=, again.  Easy to prove:
+   #+begin_example
+   [logan@nixos:~]$ nix-store --verify
+   reading the Nix store...
+   checking path existence...
+   #+end_example
+2. I've somehow moved past the error with my adjustments, and am onto another,
+   real error.  I can test that by removing the overlay.  Removing the overlay
+   does nothing.  Removing the =overlays= list does nothing.
+3. Maybe it's actually a legitimate error?  I just don't know what I changed to
+   fix it.  I have been running =nix flake update= and commits are trickling in.
+   I suppose any of those could've changed things.  Unfortunately I haven't
+   been studious about committing my =flake.lock= and other work, so it would be
+   difficult to roll back to test.
+
+Let's go deeper into thinking this is a real error and not some transitive
+error.  It looks like I'm getting past the =dbus-1= stuff:
+
+#+begin_example
+checking access to '/nix/store/776s0yzlk1mlf00xpk9cnwyjndgb1fkw-source/pkgs/development/libraries/dbus/make-dbus-conf.nix'
+evaluating file '/nix/store/776s0yzlk1mlf00xpk9cnwyjndgb1fkw-source/pkgs/development/libraries/dbus/make-dbus-conf.nix'
+performing daemon worker op: 7
+copied source '/nix/store/776s0yzlk1mlf00xpk9cnwyjndgb1fkw-source/pkgs/development/libraries/dbus/make-system-conf.xsl' -> '/nix/store/n536iaha2b8kzm7dcjiy8b4h8aijbbw6-make-system-conf.xsl'
+performing daemon worker op: 7
+copied source '/nix/store/776s0yzlk1mlf00xpk9cnwyjndgb1fkw-source/pkgs/development/libraries/dbus/make-session-conf.xsl' -> '/nix/store/iqfsj1zscjdxrm6dxlsr6yz3560wwlh2-make-session-conf.xsl'
+#+end_example
+
+So maybe this is a new error.  Heh, look at this gem:
+
+#+begin_example
+~/dev/proton-nix on main|✚9?7 logan@scandium 1 [16:13:31] 6s
+$ nix store --verify
+error: unrecognised flag '--verify'
+Try 'nix --help' for more information.
+
+~/dev/proton-nix on main|✚9?7 logan@scandium 1 [16:13:56] 1s
+@ nix-store --verify
+reading the Nix store...
+checking path existence...
+#+end_example
+
+So =nix store= is not the same as =nix-store=?  Sigh.
+
+Okay so breaking down this error:
+
+#+begin_example
+       error: A definition for option `environment.etc."nix/path/nixpkgs".source' is not of type `path'. Definition values:
+       - In `/nix/store/gzrxzy00mhdhrp059xgngkprg0bii50p-source/nix-path.nix': null
+#+end_example
+
+Means there is an expression that is saying "I want you to write a file called
+=nix/path/nixpkgs= but I think the value is a supposed to be a file name and not
+a qualified path.  I did a search in my repository for that string and sure
+enough, I have it =nix-path.nix=:
+
+#+begin_src nix :results none
+  # This will additionally add your inputs to the system's legacy channels.
+  # Making legacy nix commands consistent as well, awesome!
+  nix.nixPath = ["/etc/nix/path"];
+#+end_src
+
+I'd yanked this code from someone else's VM setup.  It's very likely not needed.
+The comment doesn't make sense to me either, but I'd preserved it in hopes that
+it would later make sense.  It still doesn't make sense.  Let's just get rid of
+it, since it appears to be causing a problem.  In fact, now that I look at the
+rest of the code in the file, I can see that it's all interconnected.  I
+shouldn't include this file at all.  I'll remove it from the =modules= listing
+on the hosts I have.  Here's the whole thing, for reference:
+
+#+begin_src nix :results none
+{ config, lib, ... }: {
+  # This will additionally add your inputs to the system's legacy channels.
+  # Making legacy nix commands consistent as well, awesome!
+  nix.nixPath = ["/etc/nix/path"];
+  environment.etc =
+    lib.mapAttrs'
+    (name: value: {
+      name = "nix/path/${name}";
+      value.source = value.flake;
+    })
+    config.nix.registry;
+}
+#+end_src
+
+Now I get:
+
+#+begin_example
+error: build of '/nix/store/g9aqal322zaggxvac5gpqa4jl0m0cl9k-lazy-options.json.drv' on 'ssh-ng://builder@linux-builder' failed: builder for '/nix/store/g9aqal322zaggxvac5gpqa4jl0m0cl9k-lazy-options.json.drv' failed with exit code 1;
+       last 7 log lines:
+       > qemu-x86_64: QEMU internal SIGSEGV {code=MAPERR, addr=0x20}
+       > /build/.attr-0l2nkwhif96f51f4amnlf414lhl4rv9vh8iffyp431v6s28gsr90: line 26:    10 Segmentation fault      (core dumped) /nix/store/62fm7r6175k2bgvhc19hn9bdhw90wa3n-nix-2.18.1/bin/nix-instantiate --show-trace --eval --json --strict --argstr libPath "$libPath" --argstr pkgsLibPath "$pkgsLibPath" --argstr nixosPath "$nixosPath" --arg modules "import $modulesPath" --argstr stateVersion "24.05" --argstr release "24.05" $nixosPath/lib/eval-cacheable-options.nix > $out
+       > Cacheable portion of option doc build failed.
+       > Usually this means that an option attribute that ends up in documentation (eg `default` or `description`) depends on the restricted module arguments `config` or `pkgs`.
+       >
+       > Rebuild your configuration with `--show-trace` to find the offending location. Remove the references to restricted arguments (eg by escaping their antiquotations or adding a `defaultText`) or disable the sandboxed build for the failing module by setting `meta.buildDocsInSandbox = false`.
+       >
+       For full logs, run 'nix-store -l /nix/store/g9aqal322zaggxvac5gpqa4jl0m0cl9k-lazy-options.json.drv'.
+#+end_example
+
+The error message sounds like it would be really helpful if it were triggered on
+the common error it was built to address.  That is not my case.  I see more of
+the =QEMU internal SIGSEGV=.  It looks like =nix-instantiate= is the problem now.
+
+#+begin_example
+[logan@nixos:~]$ file $(readlink -f /nix/store/62fm7r6175k2bgvhc19hn9bdhw90wa3n-nix-2.18.1/bin/nix-instantiate)
+/nix/store/62fm7r6175k2bgvhc19hn9bdhw90wa3n-nix-2.18.1/bin/nix: ELF 64-bit LSB
+pie executable, x86-64, version 1 (SYSV), dynamically linked, interpreter
+/nix/store/8mc30d49ghc8m5z96yz39srlhg5s9sjj-glibc-2.38-44/lib/ld-linux-x86-64.so.2,
+BuildID[sha1]=f91c4b74df9835b6f530d8f3fdd0625d90c7c35b, for GNU/Linux 3.10.0,
+not stripped
+#+end_example
+
+So it's the same =glibc= I've been having trouble with.  But now it's an actual
+Nix command!  Oof.  Okay what about that overlay again?  I need to set it as
+part of =linux-builder-pkgs=.  I'd stupidly put it in the =let...in= block,
+which won't do anything.  Fixed with this:
+
+
+But still no joy. As I spelunk deeper I do find this amusing [[https://github.com/NixOS/nixpkgs/pull/227914#discussion_r1185772170][gem]]:
+
+#+begin_example
+ghost on May 5, 2023
+Can somebody please explain to me why it's called blood-elf? I've figured out
+all the other bizzare names (kaem, M2-Planet, MES) but this one still eludes me.
+
+emilytrau on May 8, 2023
+<oriansj> emilytrau[m]: it is called blood-elf because it kills the dwarf (stub)
+problem we had. [Because our ouput files needed generated dwarf stubs needed for
+objdump -d to get function names, which is what blood-elf produces
+#+end_example
+
+But silly names aside, I'm not really sure where to go next here.
+
+Further reading into [[https://github.com/emilytrau][Emily Trau's]] work reveals that this is pretty cutting edge
+stuff.  This confirms my suspicions that folks are likely just bootstrapping as
+a separate step.
+
+-----
+
+This is still very much a work in progress, but were I leave off.
+
+** Improving the derivation :noexport:
+:PROPERTIES:
+:CUSTOM_ID: adventure:-standing-up-a-=stable-diffusion-webui=-server-on-a-new-host--improving-the-derivation
+:END:
+
+I need to move this to another post...
+
+The first thing I would improve on this is...
+
+I'll pick this back up once I'm done playing with Stable Diffusion itself.
+There is much to learn here!
+
+
+I'm bouncing around a bit since I'm waiting on my machine to have enough memory
+available.  I really have to stop kicking off new image generations.  In the
+mean time, I'm looking at making the =stable-diffusion-webui= configuration more
+Nix-like.  My overall goals look like this:
+
+1. Configuration is entirely controlled via the Nix flake.
+2. Models, LoRAs, and other large entities I want to create a kind of download
+   function for.  So whether you're pulling these from http://civitai.com or
+   https://huggingface.com, you can just declare the things you want installed
+   and Nix will see to that.
+3. New settings changes will send the appropriate signal to the web application
+   so they can be reloaded.  Restarts can be "scheduled" if the queue is
+   running.
+4. This is more of a stretch goal, but it would be really cool to have a Nix
+   declaration for an image.  So you say what the prompt is, what settings it
+   should have, the seed, the model, etc. and the result is an image that you
+   can throw around to other Nix plumbing, or just have on disk.
