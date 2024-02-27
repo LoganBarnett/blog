@@ -2902,11 +2902,719 @@ objdump -d to get function names, which is what blood-elf produces
 
 But silly names aside, I'm not really sure where to go next here.
 
-Further reading into [[https://github.com/emilytrau][Emily Trau's]] work reveals that this is pretty cutting edge
+Further reading into [[https://github.com/emilytrau][Emily Trau's]] [[https://github.com/NixOS/nixpkgs/pull/231019][work]] reveals that this is pretty cutting edge
 stuff.  This confirms my suspicions that folks are likely just bootstrapping as
-a separate step.
+a separate step.  I'm not sure what the etiquette is here.  I'm not entitled to
+any help, let alone the highly skilled work required to pull this stuff off.
+Even if most of the work is Emily's, it's still a community-supported activity
+that many folks could weigh in on.  Perhaps most importantly:  I feel like
+there's more I can do to educate myself here.  I know little about the C and C++
+toolchains, let alone how they apply here.  But knowing how they work is key to
+all of this.  I'm also a little bit of a Nix baby, and I'm only going to get
+better at it by diving in.
 
 -----
+
+[2024-02-26 Mon]
+
+I'd like to start tracking the dates going forward, because I think it helps
+tell part of the story.  I've been working on this for about two to three weeks
+now, and probably about a 2-3 hour daily average.  This is hard stuff!
+
+Okay, so with some resolve steeled, let's go back into this back into this.  The
+=glibc-2.38-44/lib/ld-linux-x86-64.so.2= library just isn't working in my
+context.  I can reliably cause the segfault by invoking binaries built with the
+bootstrapping mechanism.
+
+Some of the big actors here, all of which I've looked up briefly:
+
++ =glibc= :: The GNU implementation of the C standard library.
++ QEMU :: (Quick Emulator) - Emulates other platforms via some translation and
+  some virtualization (like how VMs work).
++ ELF :: Executable and Link Format.  It's a generalized format for executable
+  files, "object code", libraries, and core dumps.  It's able to handle
+  different platforms and architectures.
+  a. ELF binaries have a header which contains meta-information about the
+     executable.  I gather this is how =file= is able to tell me about the
+     binary.
+  b. I have =file= working so I probably don't need to have a decomposed
+     understanding of the header for this endeavor.
++ Object code :: This is compiler output.  If you compile a C file (such as
+  =foo.c=) you will get a =foo.o= file as its output.  This is before any sort
+  of linking is done.  I don't know how object code differs from machine code,
+  but I suspect it isn't relevant here.
++ ABI :: Application Binary Interface.  This is like an API for machines.  So
+  basically, at the hardware level, piece of software can communicate with
+  another.  A common occurrence is for a program to call a library.  For
+  example, it would define byte size for numbers during a call, the address of
+  the call itself, etc.  This term has come up a lot in this space, so I think
+  it's good to call out.
+
+Let's take a look at our error again to see if it makes any more sense:
+
+#+begin_example
+qemu-x86_64: QEMU internal SIGSEGV {code=MAPERR, addr=0x20}
+#+end_example
+
+Both =MAPERR= and =0x20= are notable to me now.  I recall seeing in the [[https://en.wikipedia.org/wiki/Executable_and_Linkable_Format][ELF
+Wikipedia article]] a [[https://en.wikipedia.org/wiki/Executable_and_Linkable_Format#File_layout][section on the file header]] and it has lots of addresses.
+Additionally, the diagram shows a "Mapping" step in the loading process.  I
+believe this corresponds to =MAPERR=.  So I dive in further.  0x20 has "Points
+to the start of the section header table." in its description.  So I think we're
+onto something.  I should be careful though, because the "program" section also
+has a 0x20 which is "Size in bytes of the segment in the file image. May be 0.",
+and the "section"... section is also "Size in bytes of the section in the file
+image.  May be 0." - I think we're probably good with the "file" section.
+
+That was a really helpful exercise!  I also found I can use =readelf= to get
+more information than =file=.  =readelf= is not available on =linux-builder=,
+but that's an easy fix.  I did some searching around and I guess it's in
+=binutils-unwrapped=.  I went down a rabbit hole trying to get
+=command-not-found= or =nix-index= working on =linux-builder= but I think it
+requires a working =nix-channel= setup, which I do not have currently.  A quick
+invocation of =readelf= shows that it won't just take a path - it needs to be
+told what to print.  I tried =--all= first, but it was massive.  I tried
+=--file-header= next and that was much more sensible:
+
+#+begin_example
+[logan@nixos:~]$ readelf --file-header $(readlink -f /nix/store/62fm7r6175k2bgvhc19hn9bdhw90wa3n-nix-2.18.1/bin/nix-instantiate)
+ELF Header:
+  Magic:   7f 45 4c 46 02 01 01 00 00 00 00 00 00 00 00 00
+  Class:                             ELF64
+  Data:                              2's complement, little endian
+  Version:                           1 (current)
+  OS/ABI:                            UNIX - System V
+  ABI Version:                       0
+  Type:                              DYN (Position-Independent Executable file)
+  Machine:                           Advanced Micro Devices X86-64
+  Version:                           0x1
+  Entry point address:               0x99b20
+  Start of program headers:          64 (bytes into file)
+  Start of section headers:          2937344 (bytes into file)
+  Flags:                             0x0
+  Size of this header:               64 (bytes)
+  Size of program headers:           56 (bytes)
+  Number of program headers:         13
+  Size of section headers:           64 (bytes)
+  Number of section headers:         33
+  Section header string table index: 32
+#+end_example
+
+By itself, nothing really stands out to me here.  But let's look at the working
+executable, =hello=:
+
+#+begin_example
+[logan@nixos:~]$ readelf --file-header $(readlink -f $(which hello))
+ELF Header:
+  Magic:   7f 45 4c 46 02 01 01 00 00 00 00 00 00 00 00 00
+  Class:                             ELF64
+  Data:                              2's complement, little endian
+  Version:                           1 (current)
+  OS/ABI:                            UNIX - System V
+  ABI Version:                       0
+  Type:                              EXEC (Executable file)
+  Machine:                           Advanced Micro Devices X86-64
+  Version:                           0x1
+  Entry point address:               0x402810
+  Start of program headers:          64 (bytes into file)
+  Start of section headers:          58432 (bytes into file)
+  Flags:                             0x0
+  Size of this header:               64 (bytes)
+  Size of program headers:           56 (bytes)
+  Number of program headers:         13
+  Size of section headers:           64 (bytes)
+  Number of section headers:         30
+  Section header string table index: 29
+#+end_example
+
+Nothing really stands out to me here.  I could start using more arguments (like
+=--program-headers=).  I'm feeling around blind here, but one last try:
+
+#+begin_example
+[logan@nixos:~]$ readelf --program-headers $(readlink -f /nix/store/62fm7r6175k2bgvhc19hn9bdhw90wa3n-nix-2.18.1/bin/nix-instantiate)
+
+Elf file type is DYN (Position-Independent Executable file)
+Entry point 0x99b20
+There are 13 program headers, starting at offset 64
+
+Program Headers:
+  Type           Offset             VirtAddr           PhysAddr
+                 FileSiz            MemSiz              Flags  Align
+  PHDR           0x0000000000000040 0x0000000000000040 0x0000000000000040
+                 0x00000000000002d8 0x00000000000002d8  R      0x8
+  INTERP         0x0000000000000318 0x0000000000000318 0x0000000000000318
+                 0x0000000000000053 0x0000000000000053  R      0x1
+      [Requesting program interpreter: /nix/store/8mc30d49ghc8m5z96yz39srlhg5s9sjj-glibc-2.38-44/lib/ld-linux-x86-64.so.2]
+  LOAD           0x0000000000000000 0x0000000000000000 0x0000000000000000
+                 0x0000000000062e48 0x0000000000062e48  R      0x1000
+  LOAD           0x0000000000063000 0x0000000000063000 0x0000000000063000
+                 0x000000000013063d 0x000000000013063d  R E    0x1000
+  LOAD           0x0000000000194000 0x0000000000194000 0x0000000000194000
+                 0x000000000006e39d 0x000000000006e39d  R      0x1000
+  LOAD           0x0000000000202be8 0x0000000000203be8 0x0000000000203be8
+                 0x000000000002a378 0x000000000002aae0  RW     0x1000
+  DYNAMIC        0x000000000022a4d0 0x000000000022b4d0 0x000000000022b4d0
+                 0x0000000000000300 0x0000000000000300  RW     0x8
+  NOTE           0x0000000000000370 0x0000000000000370 0x0000000000000370
+                 0x0000000000000040 0x0000000000000040  R      0x8
+  NOTE           0x00000000000003b0 0x00000000000003b0 0x00000000000003b0
+                 0x0000000000000044 0x0000000000000044  R      0x4
+  GNU_PROPERTY   0x0000000000000370 0x0000000000000370 0x0000000000000370
+                 0x0000000000000040 0x0000000000000040  R      0x8
+  GNU_EH_FRAME   0x00000000001cd448 0x00000000001cd448 0x00000000001cd448
+                 0x00000000000063a4 0x00000000000063a4  R      0x4
+  GNU_STACK      0x0000000000000000 0x0000000000000000 0x0000000000000000
+                 0x0000000000000000 0x0000000000000000  RW     0x10
+  GNU_RELRO      0x0000000000202be8 0x0000000000203be8 0x0000000000203be8
+                 0x0000000000029418 0x0000000000029418  R      0x1
+
+ Section to Segment mapping:
+  Segment Sections...
+   00
+   01     .interp
+   02     .interp .note.gnu.property .note.gnu.build-id .note.ABI-tag .hash .gnu.hash .dynsym .dynstr .gnu.version .gnu.version_r .rela.dyn .rela.plt
+   03     .init .plt .plt.got .text .fini
+   04     .rodata .eh_frame_hdr .eh_frame .gcc_except_table
+   05     .init_array .fini_array .data.rel.ro .dynamic .got .data .bss
+   06     .dynamic
+   07     .note.gnu.property
+   08     .note.gnu.build-id .note.ABI-tag
+   09     .note.gnu.property
+   10     .eh_frame_hdr
+   11
+   12     .init_array .fini_array .data.rel.ro .dynamic .got
+#+end_example
+
+#+begin_example
+[logan@nixos:~]$ readelf --program-headers $(readlink -f $(which hello))
+
+Elf file type is EXEC (Executable file)
+Entry point 0x402810
+There are 13 program headers, starting at offset 64
+
+Program Headers:
+  Type           Offset             VirtAddr           PhysAddr
+                 FileSiz            MemSiz              Flags  Align
+  PHDR           0x0000000000000040 0x0000000000400040 0x0000000000400040
+                 0x00000000000002d8 0x00000000000002d8  R      0x8
+  INTERP         0x0000000000000318 0x0000000000400318 0x0000000000400318
+                 0x000000000000006c 0x000000000000006c  R      0x1
+      [Requesting program interpreter: /nix/store/dkhhp26aj1s28b9hdy4y2d4qcmj1s6n5-glibc-x86_64-unknown-linux-gnu-2.38-44/lib/ld-linux-x86-64.so.2]
+  LOAD           0x0000000000000000 0x0000000000400000 0x0000000000400000
+                 0x0000000000001648 0x0000000000001648  R      0x1000
+  LOAD           0x0000000000002000 0x0000000000402000 0x0000000000402000
+                 0x0000000000006a31 0x0000000000006a31  R E    0x1000
+  LOAD           0x0000000000009000 0x0000000000409000 0x0000000000409000
+                 0x0000000000002200 0x0000000000002200  R      0x1000
+  LOAD           0x000000000000bad0 0x000000000040cad0 0x000000000040cad0
+                 0x00000000000005bc 0x0000000000000788  RW     0x1000
+  DYNAMIC        0x000000000000bbd8 0x000000000040cbd8 0x000000000040cbd8
+                 0x0000000000000210 0x0000000000000210  RW     0x8
+  NOTE           0x0000000000000388 0x0000000000400388 0x0000000000400388
+                 0x0000000000000040 0x0000000000000040  R      0x8
+  NOTE           0x00000000000003c8 0x00000000004003c8 0x00000000004003c8
+                 0x0000000000000020 0x0000000000000020  R      0x4
+  GNU_PROPERTY   0x0000000000000388 0x0000000000400388 0x0000000000400388
+                 0x0000000000000040 0x0000000000000040  R      0x8
+  GNU_EH_FRAME   0x0000000000009cd4 0x0000000000409cd4 0x0000000000409cd4
+                 0x0000000000000384 0x0000000000000384  R      0x4
+  GNU_STACK      0x0000000000000000 0x0000000000000000 0x0000000000000000
+                 0x0000000000000000 0x0000000000000000  RW     0x10
+  GNU_RELRO      0x000000000000bad0 0x000000000040cad0 0x000000000040cad0
+                 0x0000000000000530 0x0000000000000530  R      0x1
+
+ Section to Segment mapping:
+  Segment Sections...
+   00
+   01     .interp
+   02     .interp .note.gnu.property .note.ABI-tag .hash .gnu.hash .dynsym .dynstr .gnu.version .gnu.version_r .rela.dyn .rela.plt
+   03     .init .plt .text .fini
+   04     .rodata .eh_frame_hdr .eh_frame
+   05     .init_array .fini_array .data.rel.ro .dynamic .got .data .bss
+   06     .dynamic
+   07     .note.gnu.property
+   08     .note.ABI-tag
+   09     .note.gnu.property
+   10     .eh_frame_hdr
+   11
+   12     .init_array .fini_array .data.rel.ro .dynamic .got
+#+end_example
+
+The thing that stands out is the =INTERP= (which I assume is "interpreter")
+field.  This doesn't give me any new information for the _value_, but the name
+of the _field_ (=INTERP= / interpreter) can help me refine future queries.
+
+A possible tangent:  While I was fiddling around with =command-not-found= and
+=nix-index=, I cleaned up the =darwin.nix= invocation to use the internal
+=callPackage= that is called for everything in =modules=.  This is what it looks
+like now:
+
+#+begin_src nix :results none
+      darwinConfigurations."scandium" = darwin.lib.darwinSystem {
+        inherit system;
+        modules = [
+          home-manager.darwinModules.home-manager
+          # Before I was using a curried function to pass these things in, but
+          # the _module.args idiom is how I can ensure these values get passed
+          # via the internal callPackage mechanism for darwinSystem on these
+          # modules.  We want callPackage because it does automatic "splicing"
+          # of nixpkgs to achieve cross-system compiling.  I don't know that we
+          # need to use this at this point, but making it all consistent has
+          # value.
+          {
+            _module.args.linux-builder-enabled = true;
+            _module.args.nixpkgs = nixpkgs;
+          }
+          ./darwin.nix
+        ];
+      };
+#+end_src
+
+My next run of =nix-darwin-switch= seemed to pull down a lot.  So it probably
+had an effect, but with another run I don't see any changes:
+
+#+begin_example
+error: build of '/nix/store/g9aqal322zaggxvac5gpqa4jl0m0cl9k-lazy-options.json.drv' on 'ssh-ng://builder@linux-builder' failed: builder for '/nix/store/g9aqal322zaggxvac5gpqa4jl0m0cl9k-lazy-options.json.drv' failed with exit code 1;
+       last 7 log lines:
+       > qemu-x86_64: QEMU internal SIGSEGV {code=MAPERR, addr=0x20}
+       > /build/.attr-0l2nkwhif96f51f4amnlf414lhl4rv9vh8iffyp431v6s28gsr90: line 26:    10 Segmentation fault      (core dumped) /nix/store/62fm7r6175k2bgvhc19hn9bdhw90wa3n-nix-2.18.1/bin/nix-instantiate --show-trace --eval --json --strict --argstr libPath "$libPath" --argstr pkgsLibPath "$pkgsLibPath" --argstr nixosPath "$nixosPath" --arg modules "import $modulesPath" --argstr stateVersion "24.05" --argstr release "24.05" $nixosPath/lib/eval-cacheable-options.nix > $out
+       > Cacheable portion of option doc build failed.
+       > Usually this means that an option attribute that ends up in documentation (eg `default` or `description`) depends on the restricted module arguments `config` or `pkgs`.
+       >
+       > Rebuild your configuration with `--show-trace` to find the offending location. Remove the references to restricted arguments (eg by escaping their antiquotations or adding a `defaultText`) or disable the sandboxed build for the failing module by setting `meta.buildDocsInSandbox = false`.
+       >
+       For full logs, run 'nix-store -l /nix/store/g9aqal322zaggxvac5gpqa4jl0m0cl9k-lazy-options.json.drv'.
+#+end_example
+
+I thought it _could_ especially because =callPackage= does some stuff to
+"splice" =pkgs= based on =system=, =hostPlatform=, =buildPlatform=, and
+=targetPlatform= according to some things I've read but no longer have links
+on hand.
+
+As part of jumping around a lot I noticed that the failing command contains
+_two_ =nix-instantiate= calls.  These are separate =nix-instantiate= executables
+sitting in the store!  But they are just two separate symlinks to the same =nix=
+binary:
+
+#+begin_example
+[logan@nixos:~]$ file $(readlink -f /nix/store/62fm7r6175k2bgvhc19hn9bdhw90wa3n-nix-2.18.1/bin/nix-instantiate)
+/nix/store/62fm7r6175k2bgvhc19hn9bdhw90wa3n-nix-2.18.1/bin/nix: ELF 64-bit LSB
+pie executable, x86-64, version 1 (SYSV), dynamically linked, interpreter
+/nix/store/8mc30d49ghc8m5z96yz39srlhg5s9sjj-glibc-2.38-44/lib/ld-linux-x86-64.so.2,
+BuildID[sha1]=f91c4b74df9835b6f530d8f3fdd0625d90c7c35b, for GNU/Linux 3.10.0,
+not stripped
+
+[logan@nixos:~]$ file $(readlink -f /nix/store/62fm7r6175k2bgvhc19hn9bdhw90wa3n-nix-2.18.1/bin/nix-instantiate)
+/nix/store/62fm7r6175k2bgvhc19hn9bdhw90wa3n-nix-2.18.1/bin/nix: ELF 64-bit LSB
+pie executable, x86-64, version 1 (SYSV), dynamically linked, interpreter
+/nix/store/8mc30d49ghc8m5z96yz39srlhg5s9sjj-glibc-2.38-44/lib/ld-linux-x86-64.so.2,
+BuildID[sha1]=f91c4b74df9835b6f530d8f3fdd0625d90c7c35b, for GNU/Linux 3.10.0,
+not stripped
+#+end_example
+
+I've tried setting =hostPlatform=, =buildPlatform=, and =targetPlatform= to no
+avail.  Though I don't feel great about ticking that box since I've set them on
+an =import nixpkgs= passed attribute set, but I don't know if that's where they
+should go.  The best examples I can find is that they hang off of =stdenv=.  So
+how does one customize =stdenv=?  I don't think I can in this case, due to the
+nature of how =minimal-bootstrap.nix= works.  It's also over my head at the
+moment.  My motivation is waning.  I believe for now I'm just going to have to
+download an installer.
+
+I go to [[https://nixos.wiki/wiki/Creating_a_NixOS_live_CD][Creating a NixOS live CD]] on the official Wiki.  I see this pretty
+quickly:
+
+#+begin_src nix :results none
+{ config, pkgs, ... }:
+{
+  imports = [
+    <nixpkgs/nixos/modules/installer/cd-dvd/installation-cd-minimal.nix>
+
+    # Provide an initial copy of the NixOS channel so that the user
+    # doesn't need to run "nix-channel --update" first.
+    <nixpkgs/nixos/modules/installer/cd-dvd/channel.nix>
+  ];
+  environment.systemPackages = [ pkgs.neovim ];
+}
+#+end_src
+
+Okay so the installer is imported.  And the =cd-dvd= channel.  But also there's
+=neovim= sitting there.  Why is =neovim= there?  Wait a second.  Wait...  Is
+this what I think it is?  The documentation has testing instructions with SSH.
+It just needs some additional configuration.
+
+#+begin_src nix :results none
+{
+  ...
+  # Enable SSH in the boot process.
+  systemd.services.sshd.wantedBy = pkgs.lib.mkForce [ "multi-user.target" ];
+  users.users.root.openssh.authorizedKeys.keys = [
+    "ssh-ed25519 AaAeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee username@host"
+  ];
+  ...
+}
+#+end_src
+
+So this is initial state, deployed by an installer.
+
+Deep.  Breaths.
+
+Okay but this is actually good in a way.  I don't have to write directly to a
+disk but instead I can just boot up through the installer and I guess it just
+works?  Or perhaps this is just my bootstrap state, where I can then run the
+installer for NixOS itself.
+
+It takes some nudging things around but eventually I arrive at:
+
+#+begin_src nix :results none
+# flake.nix:
+    nixosConfigurations.lithium-installer =
+      nixpkgs.lib.nixosSystem (import ./lithium.nix {
+        inherit nixpkgs;
+        pkgs = import nixpkgs {
+          system = "x86_64";
+        };
+      });
+    packages.aarch64-darwin.lithium-installer = self
+      .nixosConfigurations
+      .lithium-installer
+      .config
+      .system
+      .build
+      .isoImage
+    ;
+
+# lithium.nix:
+{ nixpkgs, ... } : let
+  system = "x86_64-linux";
+in {
+  inherit system;
+  modules = [
+    # self.nixosModules.vm
+    "${nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-minimal.nix"
+    ./logan.nix
+    (import ./nix.nix {
+      inherit system;
+      buildPlatform = "aarch64-linux";
+    })
+    # ./nix-path.nix
+    ./sshd.nix
+    (import ./lithium-configuration.nix { inherit system; })
+  ];
+}
+
+# sshd.nix (just mkForce added):
+{ lib, ... }: {
+  # This setups a SSH server.
+  services.openssh = {
+    enable = true;
+    settings = {
+      # Forbid root login through SSH.  ISO installer configurations will turn
+      # this on, but we don't want that since we're using our own, blessed
+      # settings.
+      PermitRootLogin = lib.mkForce "no";
+      # Use keys only. Remove if you want to SSH using password (not
+      # recommended).
+      PasswordAuthentication = false;
+    };
+  };
+}
+#+end_src
+
+My new invocation is:
+
+#+begin_src shell :results none :exports code
+nix build '.#lithium-installer' --debug
+#+end_src
+
+My reward:
+
+#+begin_example
+error: build of '/nix/store/g9aqal322zaggxvac5gpqa4jl0m0cl9k-lazy-options.json.drv' on 'ssh-ng://builder@linux-builder' failed: builder for '/nix/store/g9aqal322zaggxvac5gpqa4jl0m0cl9k-lazy-options.json.drv' failed with exit code 1;
+       last 7 log lines:
+       > qemu-x86_64: QEMU internal SIGSEGV {code=MAPERR, addr=0x20}
+       > /build/.attr-0l2nkwhif96f51f4amnlf414lhl4rv9vh8iffyp431v6s28gsr90: line 26:    10 Segmentation fault      (core dumped) /nix/store/62fm7r6175k2bgvhc19hn9bdhw90wa3n-nix-2.18.1/bin/nix-instantiate --show-trace --eval --json --strict --argstr libPath "$libPath" --argstr pkgsLibPath "$pkgsLibPath" --argstr nixosPath "$nixosPath" --arg modules "import $modulesPath" --argstr stateVersion "24.05" --argstr release "24.05" $nixosPath/lib/eval-cacheable-options.nix > $out
+       > Cacheable portion of option doc build failed.
+       > Usually this means that an option attribute that ends up in documentation (eg `default` or `description`) depends on the restricted module arguments `config` or `pkgs`.
+       >
+       > Rebuild your configuration with `--show-trace` to find the offending location. Remove the references to restricted arguments (eg by escaping their antiquotations or adding a `defaultText`) or disable the sandboxed build for the failing module by setting `meta.buildDocsInSandbox = false`.
+       >
+       For full logs, run 'nix-store -l /nix/store/g9aqal322zaggxvac5gpqa4jl0m0cl9k-lazy-options.json.drv'.
+#+end_example
+
+The exact same place as before.  I spend hours trying to disable
+=documentation=, which is where this =lazy-options.json= thing is coming from.
+I try:
+
+#+begin_src nix :results none
+  # In lithium-configuration.nix:
+  nixpkgs.overlays = [
+    (prev: final: {
+      nixos-configuration-reference-manpage =
+        builtins.trace "lithium-configuration overlay for nixos-configuration-reference-manpage"
+          prev.stdenv.mkDerivation {
+            name = "nixos-configuration-reference-manpage";
+          };
+      documentation =
+        builtins.trace "lithium-configuration overlay for documentation"
+          prev.documentation.overrideAttrs {
+            baseOptionsJSON = null;
+          };
+      ocumentation =
+        builtins.trace "lithium-configuration overlay for ocumentation"
+          prev.ocumentation.overrideAttrs {
+            baseOptionsJSON = null;
+          };
+      # documentation = prev.stdenv.mkDerivation {
+      #   name = "documentation";
+      # };
+      # # So the package may not event exist?
+      # ocumentation = prev.stdenv.mkDerivation {
+      #   name = "documentation";
+      # };
+    })
+  ];
+  documentation.enable = false;
+  documentation.nixos.enable = false;
+  documentation.doc.enable = false;
+  documentation.info.enable = false;
+
+# In flake.nix:
+    nixosConfigurations.lithium-installer =
+      nixpkgs.lib.nixosSystem (import ./lithium.nix {
+        inherit nixpkgs;
+        pkgs = import nixpkgs {
+          overlays = [
+            (prev: final: {
+              nixos-configuration-reference-manpage =
+                builtins.trace "flake.nix overlay for nixos-configuration-reference-manpage"
+                  prev.stdenv.mkDerivation {
+                    name = "nixos-configuration-reference-manpage";
+                  };
+              documentation =
+                builtins.trace "flake.nix overlay for documentation"
+                  prev.documentation.overrideAttrs {
+                    baseOptionsJSON = null;
+                  };
+              ocumentation =
+                builtins.trace "flake.nix overlay for ocumentation"
+                  prev.ocumentation.overrideAttrs {
+                    baseOptionsJSON = null;
+                  };
+              # documentation = prev.stdenv.mkDerivation {
+              #   name = "documentation";
+              # };
+              # # So the package may not event exist?
+              # ocumentation = prev.stdenv.mkDerivation {
+              #   name = "documentation";
+              # };
+            })
+          ];
+          system = "x86_64";
+        };
+      });
+#+end_src
+
+Nothing.  Nada.  Zilch.  But this gives me some output at least:
+
+#+begin_src nix :results none
+{ nixpkgs, ... } : let
+  system = "x86_64-linux";
+in builtins.trace "lithium itself" {
+  inherit system;
+  modules = [
+    # self.nixosModules.vm
+    "${nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-minimal.nix"
+    ./logan.nix
+    (import ./nix.nix {
+      inherit system;
+      buildPlatform = "aarch64-linux";
+    })
+    # ./nix-path.nix
+    ./sshd.nix
+    (import ./lithium-configuration.nix { inherit system; })
+  ];
+}
+#+end_src
+
+Where a =builtins.trace= is added to the top-level value.  I see zero evidence
+that my overlays are used.  The documented =documentation.enable= doesn't
+prevent this evaluation apparently.  Types.  Types!  Ugh I have seen Nix
+maintainers argue against types and I just can't agree with them here.  I have
+_no idea_ what this wants from me, and I have nothing to guide me.  I'm moving
+past frustrated.
+
+Okay so wait - I might have built an image.  I decided to move things back a
+bit.  It's all inline.
+
+#+begin_src nix :results none
+# In flake.nix:
+    nixosConfigurations.demo-installer =
+      nixpkgs.lib.nixosSystem (let
+        system = "x86_64-linux";
+        pkgs = import nixpkgs {
+          # overlays = [
+          #   (final: prev: {
+          #     nixos-configuration-reference-manpage =
+          #       builtins.traceVerbose "flake.nix overlay for nixos-configuration-reference-manpage"
+          #         prev.stdenv.mkDerivation {
+          #           name = "nixos-configuration-reference-manpage";
+          #         };
+          #   })
+          # ];
+          inherit system;
+        };
+      in builtins.traceVerbose "demo-installer" (nixpkgs.lib.nixosSystem {
+        inherit system;
+        modules = [
+          {
+            environment.systemPackages = [
+              pkgs.hello
+            ];
+            # nixpkgs.overlays = [
+            #   (final: prev: {
+            #     documentation =
+            #       builtins.traceVerbose "nixos-configuration overlay for documentation"
+            #         prev.documentation.overrideAttrs {
+            #           baseOptionsJSON = null;
+            #         };
+            #   })
+            # ];
+          }
+        ];
+      })
+      );
+#+end_src
+
+When the overlays were uncommented, I still didn't see evidence they were used.
+But I can save that for another day if I can get the thing to actually work.
+Let's slowly refactor it to make it look more like =lithium.nix=, or take things
+out of =lithium.nix= to assist the process.
+
+I've been chasing this one down for about two hours:
+
+#+begin_example
+@ nix build '.#nixosConfigurations.demo-installer.config.system.build.isoImage' --trace-verbose
+warning: Git tree '/Users/logan/dev/proton-nix' is dirty
+trace: {
+  modules = [
+    "/nix/store/zjavgzkmcrk3d8fn1y4qjh4xbsgyafih-source/nixos/modules/installer/cd-dvd/installation-cd-minimal.nix"
+    {
+      environment = {
+        systemPackages = [ ];
+      };
+    }
+  ];
+  system = "x86_64-linux";
+}
+error:
+       … from call site
+
+         at /nix/store/zjavgzkmcrk3d8fn1y4qjh4xbsgyafih-source/flake.nix:23:11:
+
+           22|         nixosSystem = args:
+           23|           import ./nixos/lib/eval-config.nix (
+             |           ^
+           24|             {
+
+       error: function 'anonymous lambda' called with unexpected argument 'type'
+
+       at /nix/store/zjavgzkmcrk3d8fn1y4qjh4xbsgyafih-source/nixos/lib/eval-config.nix:11:1:
+
+           10| # types.submodule instead of using eval-config.nix
+           11| evalConfigArgs@
+             | ^
+           12| { # !!! system can be set modularly, would be nice to remove,
+#+end_example
+
+Which translates to "you passed me an attribute set and not an actual module - a
+function that takes the =callPackage= dependency injection and returns an
+attribute set of NixOS module values".  What?  You didn't see that in there
+either?  Sigh.  I know it's open source, and really I should open a ticket at
+the very least.
+
+I've run it again with the fix (I'll post below), and it's still broken.  I have
+seen some documentation stating that this won't work with cross compiling, but I
+don't see that _here_.  It still would be really nice to just outright override
+and disable that cursed =documentation= package.
+
+Then I look in =installation-cd-minimal.nix= and I see it.  The cause of my
+woes.  My nemesis.
+
+#+begin_src nix :results none
+# This module defines a small NixOS installation CD.  It does not
+# contain any graphical stuff.
+
+{ lib, ... }:
+
+{
+  imports = [
+    ../../profiles/minimal.nix
+    ./installation-cd-base.nix
+  ];
+
+  # Causes a lot of uncached builds for a negligible decrease in size.
+  environment.noXlibs = lib.mkOverride 500 false;
+
+  documentation.man.enable = lib.mkOverride 500 true;
+
+  # Although we don't really need HTML documentation in the minimal installer,
+  # not including it may cause annoying cache misses in the case of the NixOS manual.
+  documentation.doc.enable = lib.mkOverride 500 true;
+
+  fonts.fontconfig.enable = lib.mkOverride 500 false;
+
+  isoImage.edition = lib.mkOverride 500 "minimal";
+}
+#+end_src
+
+Hah!  I have found it!  And I know it's secret now.  Now I will be the victor.
+
+I just add these in one of the modules:
+
+#+begin_src nix :results none
+            documentation.enable = pkgs.lib.mkForce false;
+            documentation.man.enable = pkgs.lib.mkForce true;
+            documentation.nixos.enable = pkgs.lib.mkForce false;
+            documentation.doc.enable = pkgs.lib.mkForce false;
+            documentation.info.enable = pkgs.lib.mkForce false;
+#+end_src
+
+And now I am rewarded with this:
+
+#+begin_example
+error: build of '/nix/store/6x9pvkg0524d9svsw550x2yxdy88lyi6-dbus-1.drv' on 'ssh-ng://builder@linux-builder' failed: builder for '/nix/store/6x9pvkg0524d9svsw550x2yxdy88lyi6-dbus-1.drv' failed with exit code 1;
+       last 3 log lines:
+       > qemu-x86_64: QEMU internal SIGSEGV {code=MAPERR, addr=0x20}
+       > /build/.attr-0l2nkwhif96f51f4amnlf414lhl4rv9vh8iffyp431v6s28gsr90: line 16:    28 Segmentation fault      (core dumped) grep -q '[^[:space:]]' "$out/system.conf"
+       > "/nix/store/b9bwmqmf9kyqxlrxv6c3i79kcx8dz6hh-dbus-1/system.conf" was generated incorrectly and is empty, try building again.
+       For full logs, run 'nix-store -l /nix/store/6x9pvkg0524d9svsw550x2yxdy88lyi6-dbus-1.drv'.
+error: builder for '/nix/store/6x9pvkg0524d9svsw550x2yxdy88lyi6-dbus-1.drv' failed with exit code 1
+error: 1 dependencies of derivation '/nix/store/wdnrm4a0gh9149n6kwj6x00kzxsjz3hz-etc.drv' failed to build
+error: 1 dependencies of derivation '/nix/store/j6apv44ii2006di74xvz8jakks9p33pb-nixos-system-nixos-24.05.20240227.860a2c5.drv' failed to build
+error: 1 dependencies of derivation '/nix/store/q8vix9gkak19bpdp3v0zx3sqybbdvfp9-closure-info.drv' failed to build
+error: 1 dependencies of derivation '/nix/store/bpvydp70wa48dv8vfmr7k6zj4fgjz6br-efi-directory.drv' failed to build
+error: 1 dependencies of derivation '/nix/store/2zm7l69w1qn1l6wvhg2g1nazsp0b48vp-isolinux.cfg-in.drv' failed to build
+error: 1 dependencies of derivation '/nix/store/rpd4gjakj3dwjm11131d9395q9r14abs-nixos-24.05.20240227.860a2c5-x86_64-linux.iso.drv' failed to build
+#+end_example
+
+This might be hard to fix, because I don't have working overlays.  My overlays
+are probably not even printing anything because it's a lazy evaluation, and
+there's another =pkgs= being injected.  I look at =iso-image.nix= and it's got a
+NixOS configuration-like scheme in there.   This stands out to me:
+
+#+begin_src nix :results none
+  grubPkgs = if config.boot.loader.grub.forcei686 then pkgs.pkgsi686Linux else pkgs;
+#+end_src
+
+=forcei686= defaults to =false= and I don't see anything else setting it in all
+of =nixpkgs=.  I want to try anyways.  Of course, I get cryptic errors when
+trying this out.
+
+-----
+
+[2024-02-27 Tue]
+
 
 This is still very much a work in progress, but were I leave off.
 
