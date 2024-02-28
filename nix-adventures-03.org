@@ -3615,8 +3615,35 @@ trying this out.
 
 [2024-02-27 Tue]
 
+In a fit of unbridled nerd rage, I copied all of the ISO imaging making files
+and the profile components they relied upon.  I was able to override
+=makeDBusConf= (which was not called =make-dbus-conf= after all).  Part of it
+was that I was getting the package name wrong.  This required searching through
+the =nixpkgs= code.  There has got to be a better way to glean this information!
+Well, there isn't actually.  But there _should be a better way_ and I don't
+think that's been a focus yet.
 
-This is still very much a work in progress, but were I leave off.
+It takes about 50 minutes to build on my laptop.  I understand the complaint
+about time but all I care about right now is _that it works_.
+
+I'll have to go back and post the code.  There's also a lot of miscellaneous
+files floating around that won't be easy to track completely in this post.  Thus
+I will put this in a simplified repository.  I haven't done that yet.  I'm
+exhausted.  I haven't tested if the ISO will work or not yet.
+
+But look at this!  Look at it!
+
+#+begin_example
+$ ssh lithium.proton
+The authenticity of host 'lithium.proton (192.168.254.38)' can't be established.
+ED25519 key fingerprint is SHA256:ZBnxylGMlP5RA129wQm7x84DkFRMofbgiExaZZU5snY.
+This key is not known by any other names.
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+Warning: Permanently added 'lithium.proton' (ED25519) to the list of known hosts.
+
+[logan@lithium:~]$
+#+end_example
+
 
 ** Improving the derivation :noexport:
 :PROPERTIES:
