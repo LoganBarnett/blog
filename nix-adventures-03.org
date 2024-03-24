@@ -3644,34 +3644,778 @@ Warning: Permanently added 'lithium.proton' (ED25519) to the list of known hosts
 [logan@lithium:~]$
 #+end_example
 
+I'm exhausted and will come back later.
 
-** Improving the derivation :noexport:
+**** Deploying Arbitrary Changes to the Host
 :PROPERTIES:
-:CUSTOM_ID: adventure:-standing-up-a-=stable-diffusion-webui=-server-on-a-new-host--improving-the-derivation
+:CUSTOM_ID: adventure:-standing-up-a-=stable-diffusion-webui=-server-on-a-new-host--preparing-the-host--direct-builds--deploying-arbitrary-changes-to-the-host
 :END:
 
-I need to move this to another post...
+[2024-02-28 Wed]
 
-The first thing I would improve on this is...
+I have the image created and a bootable machine with a lot of hacks in place.
+The next step I have to do is make it so I can easily roll out changes to this
+host.  I don't want to a burn an image every time!  I could go over to the
+machine, setup my git SSH keys, clone the repository, and do =nixos-rebuild
+switch= constantly to make the changes.  To avoid constant commit+push+pull
+iteration, Emacs' Tramp works great for editing files over SSH - it's almost
+totally transparent, even for using Magit.  This doesn't feel like Nix to me
+though.  Fortunately I believe there are solutions for this, namely
+[[https://github.com/serokell/deploy-rs][deploy-rs]].  It aims to allow me to deploy to any system I have SSH access to.
 
-I'll pick this back up once I'm done playing with Stable Diffusion itself.
-There is much to learn here!
+I got it all setup pretty quickly, at least as the documentation states I
+should.  Here's what I have in =outputs=:
+
+#+begin_src nix :results none
+      # This is some boilerplate that validates the deploy-rs settings.
+      checks = builtins.mapAttrs
+        (system: deployLib: deployLib.deployChecks self.deploy)
+        deploy-rs.lib
+      ;
+      deploy.nodes.lithium.profiles.system = {
+        path = deploy-rs.lib.x86_64-linux.activate.nixos
+          self.nixosConfigurations.lithium
+        ;
+      };
+#+end_src
+
+And... I have no idea how to run it.  These don't work:
+
+#+begin_example
+~/dev/proton-nix on main|✚3?2 logan@scandium 130 [09:21:05] 29577s
+$ nix build '.#deploy.nodes.lithium'
+warning: Git tree '/Users/logan/dev/proton-nix' is dirty
+error: flake output attribute 'deploy.nodes.lithium' is not a derivation or path
+
+~/dev/proton-nix on main|✚3?2 logan@scandium 1 [09:21:27] 0s
+$ nix build '.#deploy.nodes.lithium.profiles.system'
+warning: Git tree '/Users/logan/dev/proton-nix' is dirty
+error: flake output attribute 'deploy.nodes.lithium.profiles.system' is not a derivation or path
+#+end_example
+
+Uh.  The README states I should run this:
+
+#+begin_example
+nix run github:serokell/deploy-rs your-flake
+#+end_example
+
+Surely they don't mean for me to run _my entire flake_?  And surely not from
+their remote location?  I would like to have an installed package for this, or
+better - just something that I run from the flake and it Just Works.
+
+This doesn't work, unsurprisingly:
+
+#+begin_example
+~/dev/proton-nix on main|✚3?2 logan@scandium 1 [09:21:44] 0s
+$ nix build
+warning: Git tree '/Users/logan/dev/proton-nix' is dirty
+error: flake 'git+file:///Users/logan/dev/proton-nix' does not provide attribute 'packages.aarch64-darwin.default' or 'defaultPackage.aarch64-darwin'
+#+end_example
+
+Using their actual command results in a long install, and then:
+
+#+begin_example
+~/dev/proton-nix on main|✚3?2 logan@scandium 1 [09:26:59] 0s
+$ nix run github:serokell/deploy-rs
+🚀 ℹ️ [deploy] [INFO] Running checks for flake in .
+warning: Git tree '/Users/logan/dev/proton-nix' is dirty
+error:
+       … while checking flake output 'checks'
+
+         at /nix/store/ys2lfkymyfycnm5wwhs9q90z8qlhwx4f-source/flake.nix:45:7:
+
+           44|       # This is some boilerplate that validates the deploy-rs settings.
+           45|       checks = builtins.mapAttrs
+             |       ^
+           46|         (system: deployLib: deployLib.deployChecks self.deploy)
+
+       … while checking the derivation 'checks.aarch64-darwin.deploy-schema'
+
+         at «none»:0: (source not available)
+
+       (stack trace truncated; use '--show-trace' to show the full trace)
+
+       error: attribute 'lithium' missing
+
+       at /nix/store/ys2lfkymyfycnm5wwhs9q90z8qlhwx4f-source/flake.nix:51:11:
+
+           50|         path = deploy-rs.lib.x86_64-linux.activate.nixos
+           51|           self.nixosConfigurations.lithium
+             |           ^
+           52|         ;
+🚀 ❌ [deploy] [ERROR] Failed to check deployment: Nix checking command resulted in a bad exit code: Some(1)
+#+end_example
+
+Okay fair enough.  So I'll add the =nixosConfiguration= for =lithium=, which I'd
+prepared for and just missed the final step:
+
+#+begin_src nix :results none
+      nixosConfigurations.lithium = pkgs.callPackages ./lithium.nix {};
+#+end_src
+
+Leaving my total addition to be:
+
+#+begin_src nix :results none
+      # This is some boilerplate that validates the deploy-rs settings.
+      checks = builtins.mapAttrs
+        (system: deployLib: deployLib.deployChecks self.deploy)
+        deploy-rs.lib
+      ;
+      deploy.nodes.lithium.profiles.system = {
+        path = deploy-rs.lib.x86_64-linux.activate.nixos
+          self.nixosConfigurations.lithium
+        ;
+      };
+      devShells.aarch64-darwin.default = pkgs.mkShell {
+        packages = [];
+      };
+      nixosConfigurations.lithium = pkgs.callPackages ./lithium.nix {};
+      nixosConfigurations.lithium-installer = (let
+          pkgs = import nixpkgs {
+            overlays = overlays-fix-cross-build-issues;
+            system = "x86_64-linux";
+          };
+        in
+          pkgs.callPackage ./proton-image-base.nix {
+          inherit nixpkgs pkgs;
+        });
+#+end_src
+
+#+begin_example
+~/dev/proton-nix on main|✚3?2 logan@scandium 1 [09:29:35] 85s
+@ nix run github:serokell/deploy-rs
+🚀 ℹ️ [deploy] [INFO] Running checks for flake in .
+warning: Git tree '/Users/logan/dev/proton-nix' is dirty
+error:
+       … while checking flake output 'checks'
+
+         at /nix/store/n0zfp8mj9kgjx2c73sh3hixmy71xfgi3-source/flake.nix:45:7:
+
+           44|       # This is some boilerplate that validates the deploy-rs settings.
+           45|       checks = builtins.mapAttrs
+             |       ^
+           46|         (system: deployLib: deployLib.deployChecks self.deploy)
+
+       … while checking the derivation 'checks.aarch64-darwin.deploy-schema'
+
+         at «none»:0: (source not available)
+
+       (stack trace truncated; use '--show-trace' to show the full trace)
+
+       error: function 'anonymous lambda' called without required argument 'nixpkgs'
+
+       at /nix/store/n0zfp8mj9kgjx2c73sh3hixmy71xfgi3-source/lithium.nix:1:1:
+
+            1| { nixpkgs, ... } : let
+             | ^
+            2|   system = "x86_64-linux";
+🚀 ❌ [deploy] [ERROR] Failed to check deployment: Nix checking command resulted in a bad exit code: Some(1)
+#+end_example
+
+Types.  Types.  Types.  Please give me types!
+
+#+begin_src nix :results none
+      nixosConfigurations.lithium = pkgs.callPackages ./lithium.nix {
+        inherit nixpkgs;
+      };
+#+end_src
+
+#+begin_example
+@ nix run github:serokell/deploy-rs
+🚀 ℹ️ [deploy] [INFO] Running checks for flake in .
+warning: Git tree '/Users/logan/dev/proton-nix' is dirty
+trace: warning: system.stateVersion is not set, defaulting to 24.05. Read why this matters on https://nixos.org/manual/nixos/stable/options.html#opt-system.stateVersion.
+error:
+       … while checking flake output 'checks'
+
+         at /nix/store/7qg6v52fszl40x8pjdq20m65rrkzv94w-source/flake.nix:45:7:
+
+           44|       # This is some boilerplate that validates the deploy-rs settings.
+           45|       checks = builtins.mapAttrs
+             |       ^
+           46|         (system: deployLib: deployLib.deployChecks self.deploy)
+
+       … while checking the derivation 'checks.aarch64-darwin.deploy-schema'
+
+         at «none»:0: (source not available)
+
+       (stack trace truncated; use '--show-trace' to show the full trace)
+
+       error:
+       Failed assertions:
+       - The ‘fileSystems’ option does not specify your root file system.
+       - You must set the option ‘boot.loader.grub.devices’ or 'boot.loader.grub.mirroredBoots' to make the system bootable.
+🚀 ❌ [deploy] [ERROR] Failed to check deployment: Nix checking command resulted in a bad exit code: Some(1)
+#+end_example
+
+This is a little perplexing, but it might also be a NixOS configuration thing.
+I uncomment my =partitions.nix=, add it to my =lithium.nix= modules, and try
+again.  Same error.  My looking into the error makes me think things are way off
+here.  I decide to look at what's mounted on =lithium.proton=:
+
+#+begin_example
+[logan@lithium:~]$ df -h
+Filesystem      Size  Used Avail Use% Mounted on
+devtmpfs        1.2G     0  1.2G   0% /dev
+tmpfs            12G     0   12G   0% /dev/shm
+tmpfs           5.9G  4.9M  5.9G   1% /run
+tmpfs            12G  1.1M   12G   1% /run/wrappers
+tmpfs            12G   33M   12G   1% /
+/dev/root       969M  969M     0 100% /iso
+/dev/loop0      924M  924M     0 100% /nix/.ro-store
+tmpfs            12G  8.0K   12G   1% /nix/.rw-store
+overlay          12G  8.0K   12G   1% /nix/store
+tmpfs           2.4G  4.0K  2.4G   1% /run/user/1001
+tmpfs           2.4G  4.0K  2.4G   1% /run/user/1000
+#+end_example
+
+It looks like I still have more work to do with the image.  Perhaps using the
+"installer" is the wrong thing to do?  I'm a lot more familiar now with how the
+installer is being made and what's going on (though there's still a vast amount
+I don't know).  Still, I should be able to slice and dice this until there's no
+more "installer" and instead it's just a Nix image copied to disk.
+
+I don't have all of the refactors to put here but I'll try to whip up
+somethinmg.  Basically I rewrote my own =bootstrap-minimal.nix= which is just
+=installation-cd-minimal.nix= and =installation-cd-base.nix= rammed together.
+The =mkImageMediaOverride= calls have been removed, since that was preventing me
+from creating partitions on my own.  I suspect that is why we have a bootable
+installer.  There might be more installer cruft hanging around, but "it works"
+is vastly preferable without needing to over-polish this.
+
+I quickly ran into this issue:
+
+#+begin_example
+       error: A definition for option `networking.hostName' is not of type `string matching the pattern ^$|^[[:alnum:]]([[:alnum:]_-]{0,61}[[:alnum:]])?$'. Definition values:
+       - In `/nix/store/zjavgzkmcrk3d8fn1y4qjh4xbsgyafih-source/flake.nix': <derivation hostname-net-tools-2.10>
+#+end_example
+
+In comes =traceVal= to help see what's going on there.
+
+#+begin_src nix :results none
+    (import ./image-base-module.nix {
+      hostname = pkgs.lib.debug.traceVal hostname;
+      inherit  system;
+    })
+#+end_src
+
+And then we see:
+
+#+begin_example
+@ nix build '.#lithium-bootable' --show-trace
+warning: Git tree '/Users/logan/dev/proton-nix' is dirty
+trace: { __ignoreNulls = true; __structuredAttrs = false; all = <CODE>; args =
+<CODE>; buildCommand = <CODE>; buildInputs = <CODE>; builder = <CODE>;
+cmakeFlags = <CODE>; configureFlags = <CODE>; depsBuildBuild = <CODE>;
+depsBuildBuildPropagated = <CODE>; depsBuildTarget = <CODE>;
+depsBuildTargetPropagated = <CODE>; depsHostHost = <CODE>;
+depsHostHostPropagated = <CODE>; depsTargetTarget = <CODE>;
+depsTargetTargetPropagated = <CODE>; doCheck = <CODE>; doInstallCheck = <CODE>;
+drvAttrs = { __ignoreNulls = true; __structuredAttrs = false; args = <CODE>;
+buildCommand = <CODE>; buildInputs = <CODE>; builder = <CODE>; cmakeFlags =
+<CODE>; configureFlags = <CODE>; depsBuildBuild = <CODE>;
+depsBuildBuildPropagated = <CODE>; depsBuildTarget = <CODE>;
+depsBuildTargetPropagated = <CODE>; depsHostHost = <CODE>;
+depsHostHostPropagated = <CODE>; depsTargetTarget = <CODE>;
+depsTargetTargetPropagated = <CODE>; doCheck = <CODE>; doInstallCheck = <CODE>;
+enableParallelBuilding = true; enableParallelChecking = <CODE>;
+enableParallelInstalling = <CODE>; mesonFlags = <CODE>; name = <CODE>;
+nativeBuildInputs = <CODE>; outputs = [ "out" ]; passAsFile = <CODE>; patches =
+<CODE>; preferLocalBuild = true; propagatedBuildInputs = <CODE>;
+propagatedNativeBuildInputs = <CODE>; stdenv = { __extraImpureHostDeps = <CODE>;
+all = <CODE>; allowedRequisites = <CODE>; args = <CODE>; bootstrapTools = { all
+= <CODE>; args = [ "ash" "-e"
+/nix/store/zjavgzkmcrk3d8fn1y4qjh4xbsgyafih-source/pkgs/stdenv/linux/bootstrap-tools/scripts/unpack-bootstrap-tools.sh
+]; builder = { all = <CODE>; builder = "builtin:fetchurl"; drvAttrs = { builder
+= "builtin:fetchurl"; executable = true; impureEnvVars = [ "http_proxy"
+"https_proxy" "ftp_proxy" "all_proxy" "no_proxy" ]; name = "busybox"; outputHash
+= "sha256-QrTEnQTBM1Y/qV9odq8irZkQSD9uOMbs2Q5NgCvKCNQ="; outputHashAlgo = "";
+outputHashMode = "recursive"; preferLocalBuild = true; system = "builtin";
+unpack = false; url =
+"http://tarballs.nixos.org/stdenv/x86_64-unknown-linux-gnu/82b583ba2ba2e5706b35dbe23f31362e62be2a9d/busybox";
+urls = [
+"http://tarballs.nixos.org/stdenv/x86_64-unknown-linux-gnu/82b583ba2ba2e5706b35dbe23f31362e62be2a9d/busybox"
+]; }; drvPath = <CODE>; executable = true; impureEnvVars = «repeated»; name =
+"busybox"; out = «repeated»; outPath =
+"/nix/store/p9wzypb84a60ymqnhqza17ws0dvlyprg-busybox"; outputHash =
+"sha256-QrTEnQTBM1Y/qV9odq8irZkQSD9uOMbs2Q5NgCvKCNQ="; outputHashAlgo = "";
+outputHashMode = "recursive"; outputName = "out"; preferLocalBuild = true;
+system = "builtin"; type = "derivation"; unpack = false; url =
+"http://tarballs.nixos.org/stdenv/x86_64-unknown-linux-gnu/82b583ba2ba2e5706b35dbe23f31362e62be2a9d/busybox";
+urls = «repeated»; }; drvAttrs = { args = «repeated»; builder = «repeated»;
+hardeningUnsupportedFlags = [ "fortify3" "zerocallusedregs" ]; isGNU = true;
+langC = true; langCC = true; name = "bootstrap-tools"; system = "x86_64-linux";
+tarball = { all = <CODE>; builder = "builtin:fetchurl"; drvAttrs = { builder =
+"builtin:fetchurl"; executable = false; impureEnvVars = [ "http_proxy"
+"https_proxy" "ftp_proxy" "all_proxy" "no_proxy" ]; name =
+"bootstrap-tools.tar.xz"; outputHash =
+"sha256-YQlr088HPoVWBU2jpPhpIMyOyoEDZYDw1y60SGGbUM0="; outputHashAlgo = "";
+outputHashMode = "flat"; preferLocalBuild = true; system = "builtin"; unpack =
+false; url =
+"http://tarballs.nixos.org/stdenv/x86_64-unknown-linux-gnu/82b583ba2ba2e5706b35dbe23f31362e62be2a9d/bootstrap-tools.tar.xz";
+urls = [
+"http://tarballs.nixos.org/stdenv/x86_64-unknown-linux-gnu/82b583ba2ba2e5706b35dbe23f31362e62be2a9d/bootstrap-tools.tar.xz"
+]; }; drvPath = <CODE>; executable = false; impureEnvVars = «repeated»; name =
+"bootstrap-tools.tar.xz"; out = «repeated»; outPath =
+"/nix/store/2pizl7lq4awa7p9bklr8037yh1sca0hg-bootstrap-tools.tar.xz"; outputHash
+= "sha256-YQlr088HPoVWBU2jpPhpIMyOyoEDZYDw1y60SGGbUM0="; outputHashAlgo = "";
+outputHashMode = "flat"; outputName = "out"; preferLocalBuild = true; system =
+"builtin"; type = "derivation"; unpack = false; url =
+"http://tarballs.nixos.org/stdenv/x86_64-unknown-linux-gnu/82b583ba2ba2e5706b35dbe23f31362e62be2a9d/bootstrap-tools.tar.xz";
+urls = «repeated»; }; }; drvPath = <CODE>; hardeningUnsupportedFlags =
+«repeated»; isGNU = true; langC = true; langCC = true; name = "bootstrap-tools";
+out = { all = <CODE>; args = «repeated»; builder = «repeated»; drvAttrs =
+«repeated»; drvPath = <CODE>; hardeningUnsupportedFlags = «repeated»; isGNU =
+true; langC = true; langCC = true; name = "bootstrap-tools"; out = «repeated»;
+outPath = "/nix/store/j8ca78l3vdfdwnsq3bjmamwjkhi8wazg-bootstrap-tools";
+outputName = "out"; system = "x86_64-linux"; tarball = «repeated»; type =
+"derivation"; }; outPath =
+"/nix/store/j8ca78l3vdfdwnsq3bjmamwjkhi8wazg-bootstrap-tools"; outputName =
+"out"; passthru = { isFromBootstrapFiles = true; }; system = "x86_64-linux";
+tarball = «repeated»; type = "derivation"; }; buildPlatform = { aesSupport =
+false; avx2Support = false; avx512Support = false; avxSupport = false;
+canExecute = <LAMBDA>; config = "x86_64-unknown-linux-gnu"; darwinArch =
+"x86_64"; darwinMinVersion = "10.12"; darwinMinVersionVariable = null;
+darwinPlatform = null; darwinSdkVersion = "10.12"; efiArch = "x64"; emulator =
+<LAMBDA>; emulatorAvailable = <LAMBDA>; extensions = { executable = ""; library
+= ".so"; sharedLibrary = ".so"; staticLibrary = ".a"; }; fma4Support = false;
+fmaSupport = false; gcc = { }; hasSharedLibraries = true; is32bit = false;
+is64bit = true; isAarch = false; isAarch32 = false; isAarch64 = false;
+isAbiElfv2 = false; isAlpha = false; isAndroid = false; isArmv7 = false; isAvr =
+false; isBSD = false; isBigEndian = false; isCompatible = <LAMBDA>; isCygwin =
+false; isDarwin = false; isEfi = true; isElf = true; isFreeBSD = false; isGenode
+= false; isGhcjs = false; isGnu = true; isILP32 = false; isJavaScript = false;
+isLinux = true; isLittleEndian = true; isLoongArch64 = false; isM68k = false;
+isMacOS = false; isMacho = false; isMicroBlaze = false; isMinGW = false; isMips
+= false; isMips32 = false; isMips64 = false; isMips64n32 = false; isMips64n64 =
+false; isMmix = false; isMsp430 = false; isMusl = false; isNetBSD = false;
+isNone = false; isOpenBSD = false; isOr1k = false; isPower = false; isPower64 =
+false; isRedox = false; isRiscV = false; isRiscV32 = false; isRiscV64 = false;
+isRx = false; isS390 = false; isS390x = false; isSparc = false; isSparc64 =
+false; isStatic = false; isSunOS = false; isUClibc = false; isUnix = true; isVc4
+= false; isWasi = false; isWasm = false; isWindows = false; isi686 = false;
+isiOS = false; isx86 = true; isx86_32 = false; isx86_64 = true; libDir =
+"lib64"; libc = "glibc"; linker = "bfd"; linux-kernel = { autoModules = true;
+baseConfig = "defconfig"; name = "pc"; target = "bzImage"; }; linuxArch =
+"x86_64"; parsed = { _type = "system"; abi = { _type = "abi"; assertions = [ {
+assertion = <LAMBDA>; message = "The \"gnu\" ABI is ambiguous on 32-bit ARM. Use
+\"gnueabi\" or \"gnueabihf\" instead.\n"; } { assertion = <LAMBDA>; message =
+"The \"gnu\" ABI is ambiguous on big-endian 64-bit PowerPC. Use \"gnuabielfv2\"
+or \"gnuabielfv1\" instead.\n"; } ]; name = "gnu"; }; cpu = { _type =
+"cpu-type"; arch = "x86-64"; bits = 64; family = "x86"; name = "x86_64";
+significantByte = { _type = "significant-byte"; name = "littleEndian"; }; };
+kernel = { _type = "kernel"; execFormat = { _type = "exec-format"; name = "elf";
+}; families = { }; name = "linux"; }; vendor = { _type = "vendor"; name =
+"unknown"; }; }; qemuArch = "x86_64"; rust = { cargoEnvVarTarget =
+"X86_64_UNKNOWN_LINUX_GNU"; cargoShortTarget = "x86_64-unknown-linux-gnu";
+isNoStdTarget = false; platform = { arch = "x86_64"; os = "linux"; target-family
+= [ "unix" ]; vendor = "unknown"; }; rustcTarget = "x86_64-unknown-linux-gnu";
+rustcTargetSpec = "x86_64-unknown-linux-gnu"; }; rustc = { }; sse3Support =
+false; sse4_1Support = false; sse4_2Support = false; sse4_aSupport = false;
+ssse3Support = false; system = "x86_64-linux"; ubootArch = "x86_64"; uname = {
+processor = "x86_64"; release = null; system = "Linux"; }; useAndroidPrebuilt =
+false; useiOSPrebuilt = false; }; builder = <CODE>; cc = null;
+defaultBuildInputs = <CODE>; defaultNativeBuildInputs = <CODE>;
+disallowedRequisites = <CODE>; drvAttrs = { allowedRequisites = <CODE>; args =
+<CODE>; builder = <CODE>; defaultBuildInputs = <CODE>; defaultNativeBuildInputs
+= <CODE>; disallowedRequisites = <CODE>; initialPath = <CODE>; name =
+"stdenv-linux"; preHook = <CODE>; setup =
+/nix/store/zjavgzkmcrk3d8fn1y4qjh4xbsgyafih-source/pkgs/stdenv/generic/setup.sh;
+shell = <CODE>; system = <CODE>; }; drvPath = <CODE>; extraBuildInputs = <CODE>;
+extraNativeBuildInputs = <CODE>; extraSandboxProfile = ""; fetchurlBoot =
+<CODE>; hasCC = false; hostPlatform = «repeated»; initialPath = <CODE>; is32bit
+= <CODE>; is64bit = <CODE>; isAarch32 = <CODE>; isAarch64 = <CODE>; isBSD =
+<CODE>; isBigEndian = <CODE>; isCygwin = <CODE>; isDarwin = <CODE>; isFreeBSD =
+<CODE>; isLinux = <CODE>; isMips = <CODE>; isOpenBSD = <CODE>; isSunOS = <CODE>;
+isi686 = <CODE>; isx86_32 = <CODE>; isx86_64 = <CODE>; meta = <CODE>;
+mkDerivation = <CODE>; name = "stdenv-linux"; out = { all = <CODE>;
+allowedRequisites = <CODE>; args = <CODE>; builder = <CODE>; defaultBuildInputs
+= <CODE>; defaultNativeBuildInputs = <CODE>; disallowedRequisites = <CODE>;
+drvAttrs = «repeated»; drvPath = <CODE>; initialPath = <CODE>; name =
+"stdenv-linux"; out = «repeated»; outPath = <CODE>; outputName = "out"; preHook
+= <CODE>; setup =
+/nix/store/zjavgzkmcrk3d8fn1y4qjh4xbsgyafih-source/pkgs/stdenv/generic/setup.sh;
+shell = <CODE>; system = <CODE>; type = "derivation"; }; outPath = <CODE>;
+outputName = "out"; override = <CODE>; overrideDerivation = <CODE>; overrides =
+<LAMBDA>; passthru = <CODE>; preHook = <CODE>; setup =
+/nix/store/zjavgzkmcrk3d8fn1y4qjh4xbsgyafih-source/pkgs/stdenv/generic/setup.sh;
+shell = <CODE>; shellDryRun = <CODE>; shellPackage = <CODE>; system = <CODE>;
+targetPlatform = «repeated»; tests = <CODE>; type = "derivation"; }; strictDeps
+= <CODE>; system = <CODE>; userHook = <CODE>; }; drvPath = <CODE>;
+enableParallelBuilding = true; enableParallelChecking = <CODE>;
+enableParallelInstalling = <CODE>; inputDerivation = <CODE>; mesonFlags =
+<CODE>; meta = <CODE>; name = <CODE>; nativeBuildInputs = <CODE>; out = <CODE>;
+outPath = <CODE>; outputName = "out"; outputs = «repeated»; override = <CODE>;
+overrideAttrs = <CODE>; overrideDerivation = <CODE>; passAsFile = <CODE>;
+passthru = { provider = <CODE>; }; patches = <CODE>; preferLocalBuild = true;
+propagatedBuildInputs = <CODE>; propagatedNativeBuildInputs = <CODE>; provider =
+<CODE>; stdenv = «repeated»; strictDeps = <CODE>; system = <CODE>; type =
+"derivation"; userHook = <CODE>; }
+error:
+#+end_example
+
+That's definitely not a string!  But how did that happen?  Let's look at my
+passing mechanism:
+
+#+begin_src nix :results none
+      nixosConfigurations.lithium-bootable = (let
+          system = "x86_64-linux";
+          pkgs = import nixpkgs {
+            inherit system;
+            overlays = overlays-fix-cross-build-issues;
+          };
+        in
+          pkgs.callPackage ./proton-image-base.nix {
+            _module.args.hostname = "lithium";
+            _module.args.buildPlatform = "aarch64-linux";
+            inherit system nixpkgs pkgs;
+          });
+#+end_src
+
+The =_module.args= idiom is how you can inject dependencies into the
+=callPackage= dependency management.  I want that to be there because
+=callPackage= does some special "splicing" with =pkgs= (their term, not mine),
+and that helps with cross system compilation.
+
+Since I don't know all of the dependencies available to =callPackage= and
+getting this information is kind of difficult, I try to see if something else is
+setting =hostname=.  I don't really know a way of seeing that either.  Not
+definitively.  I can just use a different variable name, which will give a sense
+of that value being occupied.  I chose =hostName= just for the moment, but if it
+works I will rename it to something more self-descriptive like
+=hostname-is-already-taken-in-weird-ways=.
+
+Now I see this:
+
+#+begin_example
+       error: evaluation aborted with the following error message:
+       'lib.customisation.callPackageWith: Function called without required
+       argument "hostName" at
+       /nix/store/qmjmszmziysmlxvanxrm5hbb1c16g954-source/proton-image-base.nix:11,
+       did you mean "hostname"?'
+#+end_example
+
+I double checked that all of the files in the call chain have been saved.  All
+of the values are consistently renamed to be =hostName= where they need to be.
+The stack points to the parameter list for the function in =proton-image-base=.
+I think this means that =_module.args= doesn't work the way I think it does.
+I've tried both forms:
+
+#+begin_src nix :results none
+          pkgs.callPackage ./proton-image-base.nix {
+            _module.args.hostName = "lithium";
+            _module.args.buildPlatform = "aarch64-linux";
+            inherit system nixpkgs pkgs;
+          }
+#+end_src
+
+And:
+
+#+begin_src nix :results none
+          pkgs.callPackage ./proton-image-base.nix {
+            _module.args = {
+              hostName = "lithium";
+              buildPlatform = "aarch64-linux";
+            };
+            inherit system nixpkgs pkgs;
+          }
+#+end_src
+
+But there is no change.
+
+[[https://github.com/nix-community/home-manager/issues/1642][home-manager#1642]] suggests that the =@inputs= could somehow be involved (even
+though I don't use it at all).  I'm not using it all, so I remove =@inputs=.
+Same result.  As I continue to look around, I think there's got to be a less
+"maagical" way of handling this.  I can surround the module with a function - it
+becomes curried.  But that doesn't work with =callPackage= from my earlier
+efforts.  Instead I could try using =overlays= to inject values directly into
+=pkgs=.
+
+This becomes my entire change:
+
+#+begin_src nix :results none
+      nixosConfigurations.lithium-bootable = (let
+          system = "x86_64-linux";
+          pkgs = import nixpkgs {
+            inherit system;
+            overlays = overlays-fix-cross-build-issues ++ [
+              (final: prev: {
+                hostName = "lithium";
+                buildPlatform = "aarch64-linux";
+              })
+            ];
+          };
+        in
+          pkgs.callPackage ./proton-image-base.nix {
+            # _module.args = {
+            #   hostName = "lithium";
+            #   buildPlatform = "aarch64-linux";
+            # };
+            inherit system nixpkgs pkgs;
+          }
+      );
+#+end_src
+
+And now I see =lithium= in the =traceVal=.  Okay good!  Maybe this is what I'll
+do from here on, if I can.
+
+I expect this build will take a while, so I'll go off to do something else.  I
+have to push back on fatigue to day so I don't run away from this whole
+endeavor, screaming I'll never touch it again.
+
+Oh now I see:
+
+#+begin_example
+@ nix build '.#lithium-bootable' --show-trace
+warning: Git tree '/Users/logan/dev/proton-nix' is dirty
+trace: lithium
+error: build of '/nix/store/q635cz668i46y1fcwa4xb1nn28w91jzs-extra-utils.drv' on 'ssh-ng://builder@linux-builder' failed: builder for '/nix/store/q635cz668i46y1fcwa4xb1nn28w91jzs-extra-utils.drv' failed with exit code 139;
+       last 10 log lines:
+       > patching /nix/store/w4pndrk0511z6ms6kcw631z446vrkj7z-extra-utils/lib/libattr.so.1...
+       > patching /nix/store/w4pndrk0511z6ms6kcw631z446vrkj7z-extra-utils/lib/libresolv.so.2...
+       > patching /nix/store/w4pndrk0511z6ms6kcw631z446vrkj7z-extra-utils/lib/libcrypto.so.3...
+       > patching /nix/store/w4pndrk0511z6ms6kcw631z446vrkj7z-extra-utils/lib/libdl.so.2...
+       > patching /nix/store/w4pndrk0511z6ms6kcw631z446vrkj7z-extra-utils/lib/libpam.so.0...
+       > patching /nix/store/w4pndrk0511z6ms6kcw631z446vrkj7z-extra-utils/lib/libgcrypt.so.20...
+       > testing patched programs...
+       > qemu-x86_64: QEMU internal SIGSEGV {code=MAPERR, addr=0x20}
+       > /build/.attr-0l2nkwhif96f51f4amnlf414lhl4rv9vh8iffyp431v6s28gsr90: line 116: 14031 Done                    $out/bin/ash -c 'echo hello world'
+       >      14032 Segmentation fault      (core dumped) | grep "hello world"
+       For full logs, run 'nix-store -l /nix/store/q635cz668i46y1fcwa4xb1nn28w91jzs-extra-utils.drv'.
+error: builder for '/nix/store/q635cz668i46y1fcwa4xb1nn28w91jzs-extra-utils.drv' failed with exit code 1
+error: 1 dependencies of derivation '/nix/store/rph8ffy8w1pg6bwrikgcyflxgh8dwdpl-stage-1-init.sh.drv' failed to build
+error: 1 dependencies of derivation '/nix/store/abbbcawpjagpj5wj9b0ff5rqjn42h08h-initrd-linux-6.1.79.drv' failed to build
+error: 1 dependencies of derivation '/nix/store/r5xgcs803pdhjl34yk8kvpfm620y030n-nixos-24.05.20240227.860a2c5-x86_64-linux.iso.drv' failed to build
+#+end_example
+
+This looks very familiar.  This comes form =minimal-bootstrap.nix=, which I
+think has been causing me problems for some time.  I find it in
+=all-packages.nix= to confirm its name, and then add it to my overlays thusly:
+
+#+begin_src nix :results none
+          minimal-bootstrap = prev.lib.recurseIntoAttrs (import ./minimal-bootstrap-fixed.nix {
+            # inherit (stdenv) buildPlatform hostPlatform;
+            inherit (stdenv);
+            buildPlatform = system;
+            hostPlatform = "x86_64-linux";
+            config = prev.config;
+            lib = prev.lib;
+            # inherit lib config;
+            # fetchurl = import ../build-support/fetchurl/boot.nix {
+            #   inherit (prev.stdenv.buildPlatform) system;
+            # };
+            # checkMeta = callPackage ../stdenv/generic/check-meta.nix { };
+          });
+#+end_src
+
+And then =minimal-bootstrap-fixed.nix= is:
+
+#+begin_src nix :results none
+{ lib
+, config
+, buildPlatform
+, hostPlatform
+, fetchurl
+, checkMeta
+}: {}
+#+end_src
+
+Yep.  It does nothing now.  I strongly believe I don't need it anyways, because
+it's job is to create a kind of "minimal" environment where as little stuff gets
+pulled in as possible.  But it circumvents my =stdenv= stuff that and QEMU does
+not like that.
+
+But that still gives me the same error.  Something is wonky here.  I look around
+for the derivation on the stack =stage-1-init.sh= and find
+=nixos/modules/system/boot/stage-1.nix= and see this damning header comment:
+
+#+begin_src nix :results none
+# This module builds the initial ramdisk, which contains an init
+# script that performs the first stage of booting the system: it loads
+# the modules necessary to mount the root file system, then calls the
+# init in the root file system to start the second boot stage.
+#+end_src
+
+I don't think that's what I want at all - this is still in installer territory.
+But this module is probably fine on its own - I need to go higher in the stack
+to see what's pulling this in.  Perhaps I can glean more context there.
+=stage-1-init.sh= is just a derivation created inside the same file.  That file
+is then brought in by =module-list.nix=.  That then traces back to
+=eval-config.nix=.
+
+How did I get back here?  I had it install... stuff.  But why does making it not
+an installer suddenly bring me back into this misconfigured =stdenv= issue?
+
+I haven't really confirmed that my overlay is doing the job.  I make my overlay
+into this:
+
+#+begin_src nix :results none
+minimal-bootstrap = builtins.trace "minimal-bootstrap-override used" {};
+#+end_src
+
+And the trace does not appear.  I have left the =lithium= trace, so I know
+tracing is still happening.
+
+I tried a bunch of things.  I went off alone, without you, dear reader.  I dived
+into rage, frustration, and lots of stuff that seems to have a strict assumption
+that you aren't running Nix on =aarch64=.  I tried =nixos-anywhere=.  I tried
+=deploy-rs=.  I tried =nixos-rebuild switch --target-host ...= and none of it
+works because it makes some steep assumptions, requires me to jump through
+configuration hoops that I shouldn't, or it _mandates_ that you cannot cross
+compile.
+
+It's a little infuriating that I can build an ISO somehow but not the _actual
+image itself_.  If I just understood the tooling a little better this could be
+different.
+
+So let's do this like an animal.  I can get what I think is a bootable ISO
+going.  So we'll boot to the machine.  Hopefully we can do this headlessly but I
+don't know the boot order and getting a monitor going might be complicated
+with my physical setup.  I could know for sure just by wiping the disk.  This
+involves opening it up again.
+
+I'm able to use my =image-deploy.sh= once again and it flawlessly writes
+everything to a USB drive.  I can =scp= all of my =proton-nix= repository over
+and just run =nixos-rebuild switch --flake '.#lithium'= and that _should_
+install it?  If not I might have to use =nixos-install= - I need to look into
+that.  The =switch= invocation does need =git=, I find out, so I add that to the
+installer's =pkgs= and run it again.
+
+-----
+
+[2024-02-29 Thu]
+
+I can't run =nixos-installer= because there's no =configuration.nix=.  I can't
+use =nixos-rebuild --target-host= because there's no =nixos-config= on my local
+machine.  I've seen mention of =nixos-generate-config= but I have just a name in
+this context from [[https://github.com/nix-community/nixos-generators][nixos-generators]]:
+
+#+begin_quote
+After booting, if you intend to use nixos-switch, consider using
+nixos-generate-config.
+#+end_quote
+
+I might try making an =sd-card-x86_64-linux=.
 
 
-I'm bouncing around a bit since I'm waiting on my machine to have enough memory
-available.  I really have to stop kicking off new image generations.  In the
-mean time, I'm looking at making the =stable-diffusion-webui= configuration more
-Nix-like.  My overall goals look like this:
+-----
 
-1. Configuration is entirely controlled via the Nix flake.
-2. Models, LoRAs, and other large entities I want to create a kind of download
-   function for.  So whether you're pulling these from http://civitai.com or
-   https://huggingface.com, you can just declare the things you want installed
-   and Nix will see to that.
-3. New settings changes will send the appropriate signal to the web application
-   so they can be reloaded.  Restarts can be "scheduled" if the queue is
-   running.
-4. This is more of a stretch goal, but it would be really cool to have a Nix
-   declaration for an image.  So you say what the prompt is, what settings it
-   should have, the seed, the model, etc. and the result is an image that you
-   can throw around to other Nix plumbing, or just have on disk.
+[2024-03-01 Fri]
+
+Yesterday I tried a bunch of things, but recorded very little of it.  It's
+probably for the best, because I am very irritable with Nix, its community, and
+its ecosystem at this point.  I still keep thinking I could demand my money
+back, but oh, right, this is open source and I paid nothing.  But still, I've
+sunk an enormous amount of my personal time into this and much of it feels
+wasted.  I've learned a lot about Nix, but I've also learned some really bad
+things, like I _should outright ignore the documentation and just go look in the
+code_.  This bodes very ill for Nix, and I hope the values held there change
+soon.  I've thought about contributing some documentation, but I have to fucking
+reverse engineer anything I'd like to document.  This is why when I design
+things, I _start_ with the documentation.
+
+Today, I have something going with =nixos-anywhere= in which I've already forked
+it in an attempt to get it to work.  My settings for the image have caused a lot
+of problems - namely that I can't SSH to =root= directly.  It's common practice
+to use a special user instead, but Nix's install tooling demands it must be run
+as root for my purposes.  Right now I'm awaiting another build of the installer
+(I've done three today) just to try out some configuration edits.
+
+I was really hoping to spin up many more machines.  Maybe once I have =lithium=
+up, I can leverage it as an =x86_64-linux= builder.
+
+I've done an immense amount of reading and trying out various permutations.
+I've learned that BIOS and UEFI are different things entirely (and by
+definition, mutually exclusive).  I've learned this computer's older motherboard
+saying "UEFI BIOS" is both nonsensical and a flat out lie.
+
+I'm going to save some of my energy for updating some of the documentation in
+=nixos-anywhere=.  I think a good part of putting code together is explaining
+_why_, and it would've saved enormous spelunking on my part.  Folks should still
+be curious and learn things, but for a disk formatting and installation tool,
+having some information on how to troubleshoot booting problems as well as
+context to various settings would be helpful, and the examples is the right
+place to do some of that.
+
+I can finally move onto making the =stable-diffusion-webui= derivation!
+
+-----
+
+[2024-03-01 Fri]
+
+This day was mostly spent with me learning how to configure =NixOS= and the
+painful amount of detail I have to know about the physical machine.  I had to
+learn that BIOS and UEFI are two different and mutually exclusive things.  I
+learned that UEFI is often mis-used, as is BIOS.  That my motherboard boots with
+"UEFI BIOS" is... sad.  It's actually just BIOS.  Once I sorted that out, I was
+able to get the boot going.
+
+-----
+
+[2024-03-02 Sat]
+
+I've been trying to install NVidia drivers and the like and running into
+problems.  I was having similar, sporadic build issues found in [[https://github.com/NixOS/nixpkgs/issues/206213][nixpkgs#206213]]
+wherein the reporter found out they were having faulty memory issues.  It was
+only similar in the error message and that packages seemed to have trouble at
+random.  I'd also seen problems with hash consistency in the nix store, which
+were also sporadic.
+
+I happen to have memtest installed on a thumb drive just for this kind of thing.
+Once I got the machine to boot on the drive, it immediately reported memory
+failures.  I'd also noticed my four sticks of 8GB each were actually registering
+up to 24GB total, instead of the expected 32GB.  Memtest is actually really good
+for this - it shows slots and can report meta information about the memory
+sticks.  It turned out my "slot 3" wasn't even there, according to Memtest.
+Upon further inspection, I found this:
+
+Remember to insert the picture!
+
+A bent pin!
+
+Physical memory exists on a [[https://en.wikipedia.org/wiki/Bus_(computing)#Memory_bus][memory bus]].  This means data being written to or
+read from the memory must travel along the bus.  The "bus" is similar to a
+metaphor of a real bus.  One could imagine the route a bus takes across a city
+to get where it's going, making stops along the way.  On a memory bus, data
+moving around must go on the bus and it will make a "stop" along each entity of
+the bus.  This gives every device on the bus an opportunity to act on the data
+in some way.  In the case of a physical fault, this could mean corrupting the
+memory along the way, even if the motherboard didn't think there was a proper
+stick of memory in the slot anyways.  At this level, it's really all just 1s and
+0s, so we're talking about changes in electrical charge.
+
+It's a wonder this machine boots at all.
+
+-----
+
+[2024-03-03 Sun]
+
+Memory issues are fixed.  I bent the pin back into place.
+
+A quick dump:
+
+#+begin_src shell :results none :exports code
+nix run github:LoganBarnett/nixos-anywhere/disko-with-sudo --refresh -- --flake '.#lithium' root@lithium.proton --build-on-remote --debug
+#+end_src
+
+My branch isn't strictly necessary, but this is the instructions required to
+push the build from my machine to it, while the machine sits in the installer.
+
+If it can't find =diskoScript=, it's not really =diskoScript= that's missing,
+but that it can't resolve to a system.  Strangely it will try _something_ - I
+don't know how it finds =lithium=.  My =flake.nix= is quite bit with lots of
+attempts at things, so it could just be my setup.  Anyways, this error means
+that I don't have an =aarch64-darwin= for =lithium=.  It has to be there, even
+though I'm not building it there at all.  This means potential duplication.
+
+To clean this up, I need to figure out how to do parameters to =callPackage=
+consistently (and document them) and then also refactor some things so I don't
+have so much duplication.  I think it had me chasing some weird errors earlier
+because I had an old =nixosConfigurations.aarch64-darwin.lithium=.
+
+I also need to setup my SSH key for =root=.
+
+I was thinking, this installer is really just a rescue/boot disk for me.  I
+should give it a unique name.  This would help my bootstrapping process
+immensely.  It could have a plain text =root= password because it's briefly
+transient (though I still want to encrypt), and then get an SSH key setup.
