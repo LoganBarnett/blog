@@ -779,11 +779,347 @@ understand what latent space is, denoising, and some of the other terms that get
 tossed around.
 
 I almost want ComfyUI to use code instead of being graphical.  Something like
-Verilog or VHDL comes to mind.  I could even use... Nix!  Certainly, after
+Verilog or VHDL comes to mind.  I could even use... Nix!  So far, I've been
 putzing around and losing settings very easily, and having to click, drag, and
-sometimes do the multi-finger allioop on a touch pad really will have me sick of
+sometimes do the multi-finger allioop on a touch pad.  I may soon grow sick of
 this interface soon, even if it does offer immense power.
 
+-----
+
+[2024-03-28 Thu]
+
+At this point I've gotten it such that I can declare a configuration for the
+service with the models pulled down via a "fetcher" (my term, I don't think Nix
+uses such a notion directly).  There's a little data massaging that happens that
+gets the naming setup correctly, and some intermediate derivations are created
+so that symlinks can be aggregated.  This all seems to work nicely.  I've also
+found =toGNUCommandLine= (which was in there already), and I've begun adding all
+of the stated arguments for =comfyui= into the options it takes.  Many are
+trivial fits, and others may require some cleverness.  I also need to figure out
+what some defaults should be, and how to handle enumerations for this plumbing.
+
+I haven't read up on Nix's contributing/style guide much, and I suspect it won't
+be something I prefer.  I see a lot of trippy =camelCase= used (which ultimately
+becomes inconsistent in the face of initialisms and acronyms).  If a language
+allows it, I always prefer =kebab-case=.  It works the most generously as file
+names, URL paths, and staying away from lots of capital letters increases
+readability on screens as is held as the current body of research.  I also stick
+pretty strictly to 80 columns because I really love working in splits, and no I
+don't suffer from "my monitor is too small on a laptop" syndrome.  If you do, I
+suggest learning splits!
+
+That's a lot of digression.  Let's look at the configuration I've created.  The
+intention I started with was this:
+
+#+begin_src nix :results none
+service.comfyui = {
+  # ... other attributes.
+  models = {
+    checkpoints = {
+      pony-xl-v6 = (fetchModel {
+        # It's critical that the extension is present, or comfyui won't find
+        # the file.
+        format = "safetensors";
+        url = "https://civitai.com/api/download/models/290640?type=Model&format=SafeTensor&size=pruned&fp=fp16";
+        sha256 = "1cxh5450k3y9mkrf9dby7hbaydj3ymjwq5fvzsrqk6j3xkc2zav7";
+      });
+    };
+    clip = {};
+    clip_vision = {};
+    configs = {};
+    controlnet = {
+      controlnet-v1_1_f1e-sd15-tile = (fetchModel {
+        format = "pth";
+        url = "https://huggingface.co/lllyasviel/ControlNet-v1-1/blob/main/control_v11f1e_sd15_tile.pth";
+        sha256 = "11qndcrfz5jrjghn6v9is813igfd8310knl1l9rwxbf8lvwjncbc";
+      });
+    };
+    embeddings = {};
+    loras = {
+      # https://civitai.com/models/264290?modelVersionId=398292
+      ponx-xl-v6-artist-styles = (fetchModel {
+        format = "safetensors";
+        url = "https://civitai.com/api/download/models/398292?type=Model&format=SafeTensor";
+        sha256 = "01m4zq2i1hyzvx95nq2v3n18b2m98iz0ryizdkyc1y42f1rwd0kx";
+      });
+      # https://civitai.com/models/200255/hands-xl-sd-15?modelVersionId=254267
+      # Requires an auth token.
+      # (fetchModel {
+      #   name = "hands-sdxl.safetensors";
+      #   url = "https://civitai.com/api/download/models/254267?type=Model&format=SafeTensor";
+      #   sha256 = "00f65fia7g0ammwjw2vw1yhijw5kd2c54ksv3d64mgw6inplamr3";
+      # })
+    };
+  };
+  # Even more attributes...
+};
+#+end_src
+
+Essentially, I have a bunch of known model types (=checkpoint=, =vae=, =clip=,
+and so on).  Under those model types are the models, as an =attrset=, where the
+keys are the names of the model (as will they will appear on the filesystem and
+therefore the =comfyui= nodes).  The values come from this =fetchModel=
+function, which is a fancy wrapper over =fetchUrl= that will populate =name= in
+a way that pleases Nix - Nix doesn't allow just any arbitrary string and so
+defaulting as part of the URL as =fetchUrl= does won't work in this
+circumstance.  =civitai.com=, for example, uses query strings to delineate
+models by their IDs, and Nix does not like the characters used there, such as
+the question mark.
+
+Let's take a tour through what that looks like, because this shows off some of
+Nix's quirks and the power of a properly functional language.
+
+The =comfyui= service package declaration has a =preStart= hook that runs a
+bunch of shell invocations.  As part of that, =/var/lib/comfyui= is laid down,
+and files are copied or symlinked there as appropriate.  This is where we use
+=linkModels=, a home rolled function for this package that knows how to walk the
+configuration's =models= attribute, and convert those into the necessary symlink
+invocations.  So if I have this:
+
+#+begin_src nix :results none
+  services.comfrui = {
+    models = {
+      checkpoints = {
+        pony-xl-v6 = (fetchModel {
+          # It's critical that the extension is present, or comfyui won't find
+          # the file.
+          format = "safetensors";
+          url = "https://civitai.com/api/download/models/290640?type=Model&format=SafeTensor&size=pruned&fp=fp16";
+          sha256 = "1cxh5450k3y9mkrf9dby7hbaydj3ymjwq5fvzsrqk6j3xkc2zav7";
+        });
+      };
+    };
+  };
+#+end_src
+
+Then I should have a =/var/lib/comfyui/models/checkpoints= directory.  Within
+that directory is checkpoint files.  Some or all of these may be symlinks, and
+that is an implementation detail.  I did test in advance if =comfyui= respects
+symlinks, and it does.  Some systems have trouble with symlinks and insist on
+treating them differently.
+
+I've not looked much into the Nix manual - just a few references and skims here
+and there to keep me moving.  I really should dive into it!  If you haven't read
+it, I highly recommend it.  It's worth it - Nix is not like other languages and
+frameworks where you can just bumble your way through it and everything looks
+great - it's a lot of pain instead.  Some of this is its syntax choices, and
+some of it is the APIs, and some of it is straight up functional language
+concepts.
+
+Here's a functional language concept:  Partial application.  First, let's
+establish what a function looks like in Nix.  Here's a really naive
+implementation of =concat= that concatenates two strings:
+
+#+begin_src nix :results none
+x: y: x + y
+#+end_src
+
+Most of the time, the parenthesis are not optional around it, but that's the
+basic form.  =x= is a parameter, declared via =x:=, with =y= as =y:=.  You
+might've seen some functions with it declared like this:
+
+#+begin_src nix :results none
+{ x, y }: x + y
+#+end_src
+
+These are named arguments, instead of positional arguments.  Named arguments
+won't be covered right now.
+
+In the example we had above:
+
+#+begin_src nix :results none
+x: y: x + y
+#+end_src
+
+There's one function nested in another.  The form for functions in Nix ix simply
+=<var>: <body>=, here our variable here is =x=, and our body is =y: x + y=.
+Seems weird, yeah?  So the body is itself another function declaration.  We say
+that this function is "curried".  Many modern functional languages give special
+treatment to them, or implicitly model every function as if it were curried,
+with multiple parameters being syntax sugar for a curried function.
+
+What does this mean?  Well on one hand, I can use this to "bake" a function with
+a preset value.  The first parameter in our =concat= (=x=) could be set to some
+value ahead of time, and reused multiple times or used in a circumstance where I
+know only one more parameter will be given.  For example:
+
+#+begin_src nix :results none
+let
+  concat = x: y: x + y;
+  prefix-foo = concat "foo-";
+in
+  prefix-foo "bar"
+#+end_src
+
+This will return the string ~"foo-bar"~ .  To stress again, I called =concat=
+with ~"foo-"~, and that gave me a function where =x= is already set to a value
+(="foo-"=).  Remember that we said that we have one argument, (~x~), and the
+body is the function ~y: x + y~.  But since we know what =x= is, we can express
+the returned function like this: =y: "foo-" + y=.  Hopefully this makes sense on
+why I called it =prefix-foo=.  A function that has a value pre-set like this
+that was returned from another (typically curried) function is called "partially
+applied".  You could think of that as "partially invoked", but in the realm of
+functional programming, functions are "applied" instead of "invoked".
+
+Later, when we call =prefix-foo=, we pass it ="bar"=, which becomes the value
+for =y=.  So then the function evaluates to ="foo-" + "bar"=, so we get
+~"foo-bar"~.  I'm not saying you would necessarily write functions like this in
+the wild.  It's common in functional programming to skip saving the intermediate
+function to a variable unless clarity or re-use is involved.
+
+Here, I chose to save it for re-use, and also a degree of clarity:
+
+#+begin_src nix :results none
+preStart = let
+  # This form of inherit allows us to avoid fully qualifying the functions used.
+  # Without this, we would have to express `lib.strings.concatStrings` instead
+  # of `concatStrings`.
+  inherit (lib.strings) concatStrings intersperse;
+  join = (sep: (xs: concatStrings (intersperse sep xs)));
+#+end_src
+
+I wanted a simple =join= function that takes a list of strings, and gives me a
+single string back with the two values joined by a separator (which I have named
+=sep=).  In functional programming, there's an art form of loading your
+"configuration" arguments first in the argument list so you can achieve
+favorable composition.  In this case =sep= is the configuration argument, and
+=xs= is the "data" argument.  =xs= is a common convention in functional
+programming which you can basically interpret as "many x's" or more accurately
+"a list of x's".  Simply,  =xs= is the plural of =x=.  What is =x=?  It's the
+thing we're working on.  I could've called it =strings= but the function is so
+small and simple that I chose to leave that part out.  I could've left =xs= out
+entirely to achieve "zero point programming", but that's way beyond our scope
+here.
+
+We can interpret "imperatively" what this function does by reading the
+inner-most expressions and working our way outwards.  It takes a =sep= and an
+=xs=, and calls =interperse=.  This will take our =xs= and inject =sep= in
+between them.  If our =sep= is ="1"= and our list is =["a" "b" "c"]=, then our
+result would be =["a" "1" "b" "1" "c"]=.  This result is this passed directly to
+=concatStrings=, which simply takes a list of strings and makes them one string,
+preserving the order.  This will give us =a1b1c=.  I want this because I need to
+join lines together.  I plan on using ="\n"= for =sep=, and the list will be a
+list of shell invocations.  Adding the line break will make the shell treat them
+as separate statements.  I could use semi-colons, but that makes the shell
+statements hard to read later, and you can run into goofy order-of-operations
+issues with semi-colons.
+
+As I said, I want to join strings into separate lines.  I want something like
+this:
+
+#+begin_src nix :results none
+[
+  "touch foo"
+  "touch bar"
+  "touch baz"
+]
+#+end_src
+
+To become:
+
+#+begin_src nix :results none
+"touch foo
+touch bar
+touch baz"
+#+end_src
+
+To get this, I can simply do the partial application we talked about earlier
+with ="\n"=.  Here's what it looks like:
+
+#+begin_src nix :results none
+preStart = let
+  # This form of inherit allows us to avoid fully qualifying the functions used.
+  # Without this, we would have to express `lib.strings.concatStrings` instead
+  # of `concatStrings`.
+  inherit (lib.strings) concatStrings intersperse;
+  join = (sep: (xs: concatStrings (intersperse sep xs)));
+  join-lines = join "\n";
+#+end_src
+
+I could've written the whole thing together like this:
+
+#+begin_src nix :results none
+preStart = let
+  # This form of inherit allows us to avoid fully qualifying the functions used.
+  # Without this, we would have to express `lib.strings.concatStrings` instead
+  # of `concatStrings`.
+  inherit (lib.strings) concatStrings intersperse;
+  join-lines = (xs: concatStrings (intersperse "\n" xs));
+#+end_src
+
+But I find this form of composition is easier to reason about, and creates a lot
+of re-use.  Since this functions remain very simple, it's very easy to say what
+they do and expect them to work in certain ways.  This is perhaps one of the
+most critical skills relating directly to code you can have as a software
+engineer.  When you are new, it's hard to see this though.  You haven't see
+sprawling code bases yet where it's really hard to figure out what's going on,
+and you're tracking dozens of variables at once.  Reducing those things so you
+can maintain laser focus on small problems is always going to be better.  You
+don't need to be a genius to get this stuff, instead you bring the stuff down
+your (and the rest of humanity's) level.
+
+That's about as much as I'll subject for functional programming lessons for now.
+Here's the next bits:
+
+#+begin_src nix :results none
+      preStart = let
+        inherit (lib.trivial) throwIfNot;
+        inherit (lib) isAttr isString;
+        inherit (lib.strings) concatStrings intersperse;
+        inherit (lib.lists) flatten;
+        inherit (lib.attrsets) attrValues mapAttrsToList;
+        # And here is ++leftPad++ sorry `join`.
+        join = (sep: (xs: concatStrings (intersperse sep xs)));
+        join-lines = join "\n";
+        # We don't have a type system and this is pretty deep in the call stack,
+        # so do some checking on the inputs so we have fewer stones to overturn
+        # when something goes wrong later.
+        throw-if-not-fetched = fetched:
+          throwIfNot (isAttrs fetched) "fetched must be an attrset."
+          throwIfNot (isString fetched.format) "fetched.format must be a string."
+          throwIfNot (isString fetched.path) "fetched.path must be a string."
+        ;
+        fetched-to-symlink = path: name: fetched: (
+          throwIfNot (isString path) "path must be a string."
+          throwIfNot (isString name) "name must be a string."
+          throw-if-not-fetched fetched
+            ''
+             ln -snf ${fetched.path} $out/${name}.${fetched.format}
+            ''
+        );
+
+#+end_src
+
+I created =throw-if-not-fetched= as a way of telling me if a =fetched= is the
+right structure or not.  This was never wrong in my construction of this code,
+but it could've been.  I _knew_ it was never wrong because I never saw this as
+an error message.  It's really nice to have comfort it knowing that these stones
+remain unturned all the time.  Don't get me wrong - I had a lot of trouble with
+this code as I wrote it, but I knew it wasn't here. due to its sanitation.
+
+This is a very unfortunate aspect for languages which insist on being untyped.
+While being untyped can let you seemingly move more quickly, I find it just
+begets lots of unit tests (that pretend to be a type system), sanitation, and
+whoopsies.  The apology is typically "it wasn't supposed to be called with
+invalid data", but if it were typed that would never be possible.  The
+correction is typically to go to the _call site_ and make sure it passes the
+right data.  Then do that again for all of the call sites.  If you did any
+mocking, well you need to remember to update those mocks.  If you didn't, well
+you now have a runtime bug that snuck right past your unit tests.
+
+So anytime anything gets tricky, I just sanitize everything and let everyone
+know that type systems are great and we wouldn't be doing this if we had them.
+It does make me wonder if Nix could be better expressed with Scheme, a typed
+Lisp.  I'm not going to do that here, and there are perils with imposing a
+progressive type system on an untyped language.
+
+By the way you might be thinking "Ugh I hate types and Factory patterns and all
+that stuff!", and if that's the case, you haven't used a Real Type System™.
+Instead you've used the Fischer Price My First Type System.  You can quickly
+identify if you're in one of those type systems if you don't know what a sum
+type is, or if your type system supports =null=.  Sorry, it's a faux type
+system.  But exciting discoveries await you!  I won't be going into it more
+here.
 
 
 * COMMENT settings
