@@ -31,7 +31,7 @@ title: Dirshum
 #  LocalWords:  Bel'aheldanii Bel'aheldan Bel'heldin Val'Genier
 #  LocalWords:  Minheimia Minheimian Minheimians
 #  LocalWords:  darkvision
-#  LocalWords:  Valan Sque valan
+#  LocalWords:  Sque Valan valan
 #  LocalWords:  Gyoro
 #  LocalWords:  Nomasgard Duranae Egalstan
 #  LocalWords:  dragonborn
@@ -53,6 +53,12 @@ title: Dirshum
   A world made for my D&D campaigns. It's easy to destroy a world that you made
   yourself!
 
+** map
+   :PROPERTIES:
+   :CUSTOM_ID: dirshum--map
+   :END:
+  #+attr_org: :width 594px
+  [[./dirshum-01.png]]
 ** Golani Grumsvelt's Guide to Dirshum
    :PROPERTIES:
    :CUSTOM_ID: dirshum--golani-grumsvelt's-guide-to-dirshum
@@ -1303,9 +1309,3 @@ to refuse shelter to any of the goodly races during this 30 day period.
 
 #+include: "../../notes/dm.org::#campaigns--era-of-eras--wand-of-woe--economy--magic-items" :only-contents t
 
-** map
-   :PROPERTIES:
-   :CUSTOM_ID: dirshum--map
-   :END:
-  #+attr_org: :width 594px
-  [[./dirshum-01.png]]
