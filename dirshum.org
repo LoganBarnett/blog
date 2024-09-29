@@ -47,18 +47,25 @@ title: Dirshum
   :CUSTOM_ID: dirshum
   :UNNUMBERED: toc
   :END:
-
+  # This tells us to only export local headlines, not headlines included from
+  # other org-mode files.
   #+toc: headlines 5 local
+  # Even though the #+toc definition above indicates the headline level, it
+  # isn't actually respected and has been using the default.  Using the
+  # #+options below actually sets the headline leve.
+  #+options: H:5
 
   A world made for my D&D campaigns. It's easy to destroy a world that you made
   yourself!
 
 ** map
-   :PROPERTIES:
-   :CUSTOM_ID: dirshum--map
-   :END:
-  #+attr_org: :width 594px
-  [[./dirshum-01.png]]
+:PROPERTIES:
+:CUSTOM_ID: dirshum--map
+:END:
+
+#+attr_org: :width 594px
+[[./dirshum-01.png]]
+
 ** Golani Grumsvelt's Guide to Dirshum
    :PROPERTIES:
    :CUSTOM_ID: dirshum--golani-grumsvelt's-guide-to-dirshum
@@ -1309,3 +1316,166 @@ to refuse shelter to any of the goodly races during this 30 day period.
 
 #+include: "../../notes/dm.org::#campaigns--era-of-eras--wand-of-woe--economy--magic-items" :only-contents t
 
+** campaigns
+:PROPERTIES:
+:CUSTOM_ID: dirshum--campaigns
+:END:
+*** Wand of Woe
+:PROPERTIES:
+:CUSTOM_ID: dirshum--campaigns--wand-of-woe
+:END:
+**** recaps
+:PROPERTIES:
+:CUSTOM_ID: dirshum--campaigns--wand-of-woe--recaps
+:END:
+
+***** session 1
+:PROPERTIES:
+:CUSTOM_ID: dirshum--campaigns--wand-of-woe--recaps--session-1
+:END:
+#+include: "../../notes/dm.org::#campaigns--era-of-eras--wand-of-woe--sessions--session-1--public" :only-contents t
+***** session 2
+:PROPERTIES:
+:CUSTOM_ID: dirshum--campaigns--wand-of-woe--recaps--session-2
+:END:
+#+include: "../../notes/dm.org::#campaigns--era-of-eras--wand-of-woe--sessions--session-2--public" :only-contents t
+***** session 3
+:PROPERTIES:
+:CUSTOM_ID: dirshum--campaigns--wand-of-woe--recaps--session-3
+:END:
+#+include: "../../notes/dm.org::#campaigns--era-of-eras--wand-of-woe--sessions--session-3--public" :only-contents t
+***** session 4
+:PROPERTIES:
+:CUSTOM_ID: dirshum--campaigns--wand-of-woe--recaps--session-4
+:END:
+#+include: "../../notes/dm.org::#campaigns--era-of-eras--wand-of-woe--sessions--session-4--public" :only-contents t
+***** session 5
+:PROPERTIES:
+:CUSTOM_ID: dirshum--campaigns--wand-of-woe--recaps--session-5
+:END:
+#+include: "../../notes/dm.org::#campaigns--era-of-eras--wand-of-woe--sessions--session-5--public" :only-contents t
+***** session 6
+:PROPERTIES:
+:CUSTOM_ID: dirshum--campaigns--wand-of-woe--recaps--session-6
+:END:
+#+include: "../../notes/dm.org::#campaigns--era-of-eras--wand-of-woe--sessions--session-6--public" :only-contents t
+***** session 7
+:PROPERTIES:
+:CUSTOM_ID: dirshum--campaigns--wand-of-woe--recaps--session-7
+:END:
+#+include: "../../notes/dm.org::#campaigns--era-of-eras--wand-of-woe--sessions--session-7--public" :only-contents t
+***** session 8
+:PROPERTIES:
+:CUSTOM_ID: dirshum--campaigns--wand-of-woe--recaps--session-8
+:END:
+#+include: "../../notes/dm.org::#campaigns--era-of-eras--wand-of-woe--sessions--session-8--public" :only-contents t
+***** session 9
+:PROPERTIES:
+:CUSTOM_ID: dirshum--campaigns--wand-of-woe--recaps--session-9
+:END:
+#+include: "../../notes/dm.org::#campaigns--era-of-eras--wand-of-woe--sessions--session-9--public" :only-contents t
+***** session 10
+:PROPERTIES:
+:CUSTOM_ID: dirshum--campaigns--wand-of-woe--recaps--session-10
+:END:
+#+include: "../../notes/dm.org::#campaigns--era-of-eras--wand-of-woe--sessions--session-10--public" :only-contents t
+***** session 11
+:PROPERTIES:
+:CUSTOM_ID: dirshum--campaigns--wand-of-woe--recaps--session-11
+:END:
+#+include: "../../notes/dm.org::#campaigns--era-of-eras--wand-of-woe--sessions--session-11--public" :only-contents t
+***** session 12
+:PROPERTIES:
+:CUSTOM_ID: dirshum--campaigns--wand-of-woe--recaps--session-12
+:END:
+#+include: "../../notes/dm.org::#campaigns--era-of-eras--wand-of-woe--sessions--session-12--public" :only-contents t
+***** session 13
+:PROPERTIES:
+:CUSTOM_ID: dirshum--campaigns--wand-of-woe--recaps--session-13
+:END:
+#+include: "../../notes/dm.org::#campaigns--era-of-eras--wand-of-woe--sessions--session-13--public" :only-contents t
+***** session 14
+:PROPERTIES:
+:CUSTOM_ID: dirshum--campaigns--wand-of-woe--recaps--session-14
+:END:
+#+include: "../../notes/dm.org::#campaigns--era-of-eras--wand-of-woe--sessions--session-14--public" :only-contents t
+***** session 15
+:PROPERTIES:
+:CUSTOM_ID: dirshum--campaigns--wand-of-woe--recaps--session-15
+:END:
+#+include: "../../notes/dm.org::#campaigns--era-of-eras--wand-of-woe--sessions--session-15--public" :only-contents t
+***** session 16
+:PROPERTIES:
+:CUSTOM_ID: dirshum--campaigns--wand-of-woe--recaps--session-16
+:END:
+#+include: "../../notes/dm.org::#campaigns--era-of-eras--wand-of-woe--sessions--session-16--public" :only-contents t
+***** session 17
+:PROPERTIES:
+:CUSTOM_ID: dirshum--campaigns--wand-of-woe--recaps--session-17
+:END:
+#+include: "../../notes/dm.org::#campaigns--era-of-eras--wand-of-woe--sessions--session-17--public" :only-contents t
+***** session 18
+:PROPERTIES:
+:CUSTOM_ID: dirshum--campaigns--wand-of-woe--recaps--session-18
+:END:
+#+include: "../../notes/dm.org::#campaigns--era-of-eras--wand-of-woe--sessions--session-18--public" :only-contents t
+***** session 19
+:PROPERTIES:
+:CUSTOM_ID: dirshum--campaigns--wand-of-woe--recaps--session-19
+:END:
+#+include: "../../notes/dm.org::#campaigns--era-of-eras--wand-of-woe--sessions--session-19--public" :only-contents t
+***** session 20
+:PROPERTIES:
+:CUSTOM_ID: dirshum--campaigns--wand-of-woe--recaps--session-20
+:END:
+#+include: "../../notes/dm.org::#campaigns--era-of-eras--wand-of-woe--sessions--session-20--public" :only-contents t
+***** session 21
+:PROPERTIES:
+:CUSTOM_ID: dirshum--campaigns--wand-of-woe--recaps--session-21
+:END:
+#+include: "../../notes/dm.org::#campaigns--era-of-eras--wand-of-woe--sessions--session-21--public" :only-contents t
+***** session 22
+:PROPERTIES:
+:CUSTOM_ID: dirshum--campaigns--wand-of-woe--recaps--session-22
+:END:
+#+include: "../../notes/dm.org::#campaigns--era-of-eras--wand-of-woe--sessions--session-22--public" :only-contents t
+***** session 23
+:PROPERTIES:
+:CUSTOM_ID: dirshum--campaigns--wand-of-woe--recaps--session-23
+:END:
+#+include: "../../notes/dm.org::#campaigns--era-of-eras--wand-of-woe--sessions--session-23--public" :only-contents t
+***** session 24
+:PROPERTIES:
+:CUSTOM_ID: dirshum--campaigns--wand-of-woe--recaps--session-24
+:END:
+#+include: "../../notes/dm.org::#campaigns--era-of-eras--wand-of-woe--sessions--session-24--public" :only-contents t
+***** session 25
+:PROPERTIES:
+:CUSTOM_ID: dirshum--campaigns--wand-of-woe--recaps--session-25
+:END:
+#+include: "../../notes/dm.org::#campaigns--era-of-eras--wand-of-woe--sessions--session-25--public" :only-contents t
+***** session 26
+:PROPERTIES:
+:CUSTOM_ID: dirshum--campaigns--wand-of-woe--recaps--session-26
+:END:
+#+include: "../../notes/dm.org::#campaigns--era-of-eras--wand-of-woe--sessions--session-26--public" :only-contents t
+***** session 27
+:PROPERTIES:
+:CUSTOM_ID: dirshum--campaigns--wand-of-woe--recaps--session-27
+:END:
+#+include: "../../notes/dm.org::#campaigns--era-of-eras--wand-of-woe--sessions--session-27--public" :only-contents t
+***** session 28
+:PROPERTIES:
+:CUSTOM_ID: dirshum--campaigns--wand-of-woe--recaps--session-28
+:END:
+#+include: "../../notes/dm.org::#campaigns--era-of-eras--wand-of-woe--sessions--session-28--public" :only-contents t
+***** session 29
+:PROPERTIES:
+:CUSTOM_ID: dirshum--campaigns--wand-of-woe--recaps--session-29
+:END:
+#+include: "../../notes/dm.org::#campaigns--era-of-eras--wand-of-woe--sessions--session-29--public" :only-contents t
+***** session 30
+:PROPERTIES:
+:CUSTOM_ID: dirshum--campaigns--wand-of-woe--recaps--session-30
+:END:
+#+include: "../../notes/dm.org::#campaigns--era-of-eras--wand-of-woe--sessions--session-30--public" :only-contents t
