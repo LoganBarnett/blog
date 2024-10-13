@@ -1479,3 +1479,7 @@ to refuse shelter to any of the goodly races during this 30 day period.
 :CUSTOM_ID: dirshum--campaigns--wand-of-woe--recaps--session-30
 :END:
 #+include: "../../notes/dm.org::#campaigns--era-of-eras--wand-of-woe--sessions--session-30--public" :only-contents t
+
+***** session 31
+
+#+include: "../../notes/dm.org::#campaigns--era-of-eras--wand-of-woe--sessions--session-31--public" :only-contents t
