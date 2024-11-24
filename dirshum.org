@@ -63,6 +63,9 @@ title: Dirshum
 :CUSTOM_ID: dirshum--map
 :END:
 
+# This doesn't hit the div, but just the image.  We still don't have consistent
+# IDs.
+#+attr_html: :id dirshum--map--figure
 #+attr_org: :width 594px
 [[./dirshum-01.png]]
 
@@ -1486,3 +1489,17 @@ to refuse shelter to any of the goodly races during this 30 day period.
 :END:
 
 #+include: "../../notes/dm.org::#campaigns--era-of-eras--wand-of-woe--sessions--session-31--public" :only-contents t
+
+***** session 32
+:PROPERTIES:
+:CUSTOM_ID: dirshum--campaigns--wand-of-woe--recaps--session-32
+:END:
+
+#+include: "../../notes/dm.org::#campaigns--era-of-eras--wand-of-woe--sessions--session-32--public" :only-contents t
+
+***** session 33
+:PROPERTIES:
+:CUSTOM_ID: dirshum--campaigns--wand-of-woe--recaps--session-33
+:END:
+
+#+include: "../../notes/dm.org::#campaigns--era-of-eras--wand-of-woe--sessions--session-33--public" :only-contents t
