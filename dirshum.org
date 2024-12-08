@@ -1503,3 +1503,9 @@ to refuse shelter to any of the goodly races during this 30 day period.
 :END:
 
 #+include: "../../notes/dm.org::#campaigns--era-of-eras--wand-of-woe--sessions--session-33--public" :only-contents t
+***** session 34
+:PROPERTIES:
+:CUSTOM_ID: dirshum--campaigns--wand-of-woe--recaps--session-34
+:END:
+
+#+include: "../../notes/dm.org::#campaigns--era-of-eras--wand-of-woe--sessions--session-34--public" :only-contents t
