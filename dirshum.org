@@ -52,7 +52,7 @@ title: Dirshum
   #+toc: headlines 5 local
   # Even though the #+toc definition above indicates the headline level, it
   # isn't actually respected and has been using the default.  Using the
-  # #+options below actually sets the headline leve.
+  # #+options below actually sets the headline level.
   #+options: H:5
 
   A world made for my D&D campaigns. It's easy to destroy a world that you made
