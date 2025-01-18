@@ -20,7 +20,11 @@ title: Age of Golemancy
 <li><a href="#golems--the-humanity-of-golems--the-cohesion-system">The Cohesion System</a></li>
 </ul>
 </li>
-<li><a href="#golems--mind-break">Mind Break</a></li>
+<li><a href="#golems--mind-break">Mind Break</a>
+<ul>
+<li><a href="#golems--mind-break--mind-broken">Mind Broken</a></li>
+</ul>
+</li>
 <li><a href="#golems--golem-death">Golem Death</a></li>
 <li><a href="#golems--repairs">Repairs</a></li>
 <li><a href="#golems--casters">Casters</a>
@@ -98,7 +102,8 @@ title: Age of Golemancy
 <li><a href="#captains--captain-traits--stay-in-formation">Stay in Formation</a></li>
 <li><a href="#captains--captain-traits--inspired-to-greatness">Inspired to Greatness</a></li>
 <li><a href="#captains--captain-traits--emergency-field-repairs">Emergency Field Repairs</a></li>
-<li><a href="#captains--captain-traits--voidborn-expert">Voidborn Expert</a></li>
+<li><a href="#captains--captain-traits--voidborn-expert"><span class="todo TODO">TODO</span> Voidborn Expert</a></li>
+<li><a href="#captains--captain-traits--back-from-the-brink">Back from the Brink</a></li>
 </ul>
 </li>
 </ul>
@@ -223,7 +228,7 @@ has done research on any sort of limit, and anything firmly tested has been
 surpassed in some way or another.
 </p>
 
-<pre class="example" id="org3b39627">
+<pre class="example" id="org552fb45">
 Include an exerpt from a military leader who is worried that golemancers don't
 know the limits to their own creations.
 </pre>
@@ -281,23 +286,22 @@ Certain kinds of trauma can cause a loss of CP or provoke a Cohesion check.
 Any time a golem loses a CP, they must perform a Cohesion check.
 A Cohesion check is a simple roll of a d20.  If the roll is 10 or above, the
 check is passed and nothing else happens.  If the Cohesion check is failed, the
-golem loses 1 CP.
+golem loses 1 CP, and the golem is said to be experiencing a Cohesion Slip
+(sometimes called Cohesion Slipping).
 </p>
 
 <p>
-It should be noted that losing a CP from a Cohesion check provokes another
-Cohesion check.  This can cause a runaway process and thus makes flirting with
-one's own Cohesion a dangerous proposition.
+While Cohesion Slipping, a golem must make a Cohesion check at the start of
+their turn until the check is passed.  At this point the golem is no longer
+Cohesion Slipping.
 </p>
 
 <p>
 However, only one Cohesion check can be taken per round.  If multiple Cohesion
-checks are presented in the same round, they are ignored.  When this happens, a
-single Cohesion check must be taken on the next round, regardless of how many
-Cohesion checks were provoked during the current round.
+checks are presented in the same round, they are ignored.
 </p>
 
-<pre class="example" id="org3a55b66">
+<pre class="example" id="org78274a6">
 Melog the golem's allies are falling to their doom.  Melog decides to risk it
 all to save them.  Melog spends a point of CP (5 down to 4) to perform the
 [[Golem Surge]] "Hasted Clock".  Time slows to almost a stop.  Then Melog
@@ -308,10 +312,11 @@ Both the Golem Surge and the extra limbs would cause a Cohesion check, but Melog
 only needs to take one.
 
 Melog takes the Cohesion check, and rolls an 8: a failure.  Melog loses another
-CP (3 down to 2).  Melog now needs to take another Cohesion check next round.
+CP (3 down to 2).  Melog is now Cohesion Slipping.
 
-Melog's turn comes up again, and rolls a 10 on the Cohesion check.  Success!
-Melog no longer has to take additional cohesion checks.
+Melog's turn comes up again.  Melog is in a Cohesion Slip, so at the start of
+the turn Melog must take a Cohesion check.  He rolls a 10 on the Cohesion check.
+Success!  Melog is no longer Cohesion Slipping.
 
 Melog came pretty close to a Mind Break with 2 CP remaining, and needs to take
 it easy on extreme golem abilities for a while.
@@ -365,50 +370,65 @@ can.
 <h4 id="golems--mind-break">Mind Break</h4>
 <div class="outline-text-4" id="text-golems--mind-break">
 <p>
-A golem experiencing a mind break is in serious trouble.  As they do this, their
-perception of reality dramatically shifts.  They seem to perceive things that
-aren't there, or things that are there but are impossible to be perceived from
-their particular vantage.  For example, a golem might perceive ruins of an
-ancient city as it was when it was occupied.  They might sense a person's social
-connections via glowing, gossamer threads.  They might see the living as blotchy
-motes of light in a turbulent sea of ethereal energy, with colors representing
-their personalities or emotional states.
+A golem undergoing a mind break is in serious trouble.  A mind break occurs when
+the CP of a golem reaches or goes below 0.  Outwardly, the golem's body will
+develop a stark sheen.  Small, black, oily droplets gather on parts of the body,
+as if water running off the skin.  Other areas will slightly distort, almost
+seeming like the golem's body is just about to become completely liquid.
 </p>
 
 <p>
-Once the mind break occurs, the golem either experiences a personality switch,
-or they turn on their allies and become mind broken.
+From the golem's perspective, their perception of reality dramatically shifts.
+They seem to perceive things that aren't there, or things that are there but are
+impossible to be perceived from their particular vantage.  For example, a golem
+might perceive ruins of an ancient city as it was when it was occupied.  They
+might sense a person's social connections via glowing, gossamer threads.  They
+might see the living as blotchy motes of light in a turbulent sea of ethereal
+energy, with colors representing their personalities or emotional states.
 </p>
 
 <p>
-The personality switch can be dramatic.  During this time the golem retains all
-of their prior memories as a golem.  Parts of their physical appearance might
-change as well.  They may become older or more mature.  There is no known limit
-to how the personality changes - they could effectively become a new person or
-they could change something.  It is thought that this can be directed by their
-own aspirations or traumas, but this isn't largely understood to be the only
-guiding influence.
+Once the mind break occurs, there are a few different outcomes.  A vast majority
+of the time, the outcome is the golem is Mind Broken.
+</p>
+</div>
+<div id="outline-container-golems--mind-break--mind-broken" class="outline-5">
+<h5 id="golems--mind-break--mind-broken">Mind Broken</h5>
+<div class="outline-text-5" id="text-golems--mind-break--mind-broken">
+<p>
+The golem loses their final grip on reality and their ability to control their
+body.  In the best cases for those around the golem, a sort of madness sets in.
+In the worst cases, the golem loses control of their body in a spectacularly
+violent fashion.
 </p>
 
 <p>
-A golem that gets a personality switch restores all of their previous humanity
-points.
+Examples of mind broken golems:
+</p>
+<ol class="org-ol">
+<li>A golem crumpled into a sphere and projected spikes of Ebonyte dozens yards
+long, skewering friend and foe alike.</li>
+<li>A golem converted to energy in a violent explosion.  A crater the size of a
+football field still remains to this day.</li>
+<li>A golem acquired a madness about having a body of flesh again, and would tear
+apart and consume any sources of meat they could find.  The first nearby
+victim was the captain.  The found her with the captain's face hanging limply
+from her own.</li>
+<li>A golem seemed to convulse in unspeakable pain, and let out a wail that
+shattered every rigid object nearby.  Those close enough were pulverized.</li>
+</ol>
+
+<p>
+For these reasons, it is considered both humane for the golem and for any allies
+nearby to scrap the golem on the spot.  In cases where the golem could be
+restrained, it was found the golem suffered permanent mental damage.
 </p>
 
 <p>
-A golem that becomes mind broken is no longer a playable character.
+A player character that becomes Mind Broken loses control of their character,
+regardless of what kind of Mind Broken occurs.
 </p>
-
-<p>
-To determine if a personality switch occurs for a golem, roll a d6.  On a 6, a
-personality switch occurs.  Otherwise the golem is mind broken.
-</p>
-
-<p>
-A player and the GM can work out a fixed personality switch outcome for thematic
-reasons, or if the player would like to change their character without a
-complete restart.
-</p>
+</div>
 </div>
 </div>
 <div id="outline-container-golems--golem-death" class="outline-4">
@@ -694,11 +714,6 @@ Some golems can resist the WISP to bend or even break these directives.  Some
 golems are better than it than others.  Golems who openly bend or especially
 break the directives are either destroyed or taken in for study, so this isn't
 seen happening with any sort of frequency.
-</p>
-
-<p>
-When a golem is mind broken, "human" and "golem" is changed to "void born" and
-<code>classified</code>.
 </p>
 </div>
 </div>
@@ -1419,7 +1434,7 @@ repair kit if they are willing.
 </div>
 </div>
 <div id="outline-container-captains--captain-traits--voidborn-expert" class="outline-5">
-<h5 id="captains--captain-traits--voidborn-expert">Voidborn Expert</h5>
+<h5 id="captains--captain-traits--voidborn-expert"><span class="todo TODO">TODO</span> Voidborn Expert</h5>
 <div class="outline-text-5" id="text-captains--captain-traits--voidborn-expert">
 <p>
 You have studied the documents on voidborn and know their anatomy, weaknesses,
@@ -1460,6 +1475,27 @@ number of checks or knowledge held so far.
 </tr>
 </tbody>
 </table>
+</div>
+</div>
+<div id="outline-container-captains--captain-traits--back-from-the-brink" class="outline-5">
+<h5 id="captains--captain-traits--back-from-the-brink">Back from the Brink</h5>
+<div class="outline-text-5" id="text-captains--captain-traits--back-from-the-brink">
+<p>
+Once per day, as an action, you can pull a golem back from the brink of loss of
+cohesion.  You must utter, present, or otherwise communicate something that
+snaps the golem back to reality.  You can use this as a reaction when the golem
+you can see or hear reaches 0 CP.
+</p>
+
+<p>
+When it is done, the golem gains 1 CP.  The golem is no longer Cohesion
+Slipping.
+</p>
+
+<p>
+At 5th level you can do this twice a day.  At 11th, three times a day, at 16th,
+4 times a day, and at 20th, 5 times a day.
+</p>
 </div>
 </div>
 </div>
