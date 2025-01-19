@@ -39,16 +39,6 @@ title: Age of Golemancy
 </li>
 <li><a href="#golems--golem-death">Golem Death</a></li>
 <li><a href="#golems--repairs">Repairs</a></li>
-<li><a href="#golems--casters">Casters</a>
-<ul>
-<li><a href="#golems--casters--scattercaster">Scattercaster</a></li>
-<li><a href="#golems--casters--longcaster">Longcaster</a></li>
-<li><a href="#golems--casters--battlecaster">Battlecaster</a></li>
-<li><a href="#golems--casters--sidecaster">Sidecaster</a></li>
-<li><a href="#golems--casters--scrapcaster">Scrapcaster</a></li>
-<li><a href="#golems--casters--day-breaker">Day Breaker</a></li>
-</ul>
-</li>
 <li><a href="#golems--wisp">WISP</a>
 <ul>
 <li><a href="#golems--wisp--wisp-directives">WISP Directives</a></li>
@@ -56,6 +46,7 @@ title: Age of Golemancy
 <li><a href="#golems--wisp--combat-experience">Combat Experience</a></li>
 </ul>
 </li>
+<li><a href="#golems--golem-weapons">Golem Weapons</a></li>
 <li><a href="#golems--void-chosen">Void Chosen<span class="tag"><span class="archive">archive</span></span></a></li>
 <li><a href="#golems--character-creation">Character Creation</a>
 <ul>
@@ -82,11 +73,15 @@ title: Age of Golemancy
 <li><a href="#golems--character-creation--golem-surge">Golem Surge</a></li>
 <li><a href="#golems--character-creation--golem-traits">Golem Traits</a>
 <ul>
-<li><a href="#golems--character-creation--golem-traits--firm-humanity">Firm Humanity</a></li>
+<li><a href="#golems--character-creation--golem-traits--existential-fortitude">Existential Fortitude</a></li>
+<li><a href="#golems--character-creation--golem-traits--eternal-fast">Eternal Fast</a></li>
 <li><a href="#golems--character-creation--golem-traits--quick-loader">Quick Loader</a></li>
 <li><a href="#golems--character-creation--golem-traits--narcolepsy">Narcolepsy</a></li>
 <li><a href="#golems--character-creation--golem-traits--prescience">Prescience</a></li>
 <li><a href="#golems--character-creation--golem-traits--hit-and-run">Hit and Run</a></li>
+<li><a href="#golems--character-creation--golem-traits--snap-shot">Snap Shot</a></li>
+<li><a href="#golems--character-creation--golem-traits--elemental-loader">Elemental Loader</a></li>
+<li><a href="#golems--character-creation--golem-traits--elemental-seeder">Elemental Seeder</a></li>
 <li><a href="#golems--character-creation--golem-traits--wisp-resistant">WISP Resistant</a></li>
 </ul>
 </li>
@@ -131,6 +126,44 @@ title: Age of Golemancy
 <ul>
 <li><a href="#golemancers--golemancer-specialty">Golemancer Specialty</a></li>
 <li><a href="#golemancers--golemancer-ranking">Golemancer Ranking</a></li>
+</ul>
+</li>
+<li><a href="#casters">Casters</a>
+<ul>
+<li><a href="#casters--caster-types">Caster Types</a>
+<ul>
+<li><a href="#casters--caster-types--scattercaster">Scattercaster</a></li>
+<li><a href="#casters--caster-types--longcaster">Longcaster</a></li>
+<li><a href="#casters--caster-types--battlecaster">Battlecaster</a></li>
+<li><a href="#casters--caster-types--sidecaster">Sidecaster</a></li>
+<li><a href="#casters--caster-types--scrapcaster">Scrapcaster</a></li>
+<li><a href="#casters--caster-types--day-breaker">Day Breaker</a></li>
+</ul>
+</li>
+<li><a href="#casters--elemental-effects">Elemental Effects</a>
+<ul>
+<li><a href="#casters--elemental-effects--elemental-types">Elemental Types</a>
+<ul>
+<li><a href="#casters--elemental-effects--elemental-types--acid">Acid</a></li>
+<li><a href="#casters--elemental-effects--elemental-types--cold">Cold</a></li>
+<li><a href="#casters--elemental-effects--elemental-types--fire">Fire</a></li>
+<li><a href="#casters--elemental-effects--elemental-types--lightning">Lightning</a></li>
+<li><a href="#casters--elemental-effects--elemental-types--poison">Poison</a></li>
+<li><a href="#casters--elemental-effects--elemental-types--thunder">Thunder</a></li>
+</ul>
+</li>
+<li><a href="#casters--elemental-effects--elemental-interactions">Elemental Interactions</a>
+<ul>
+<li><a href="#casters--elemental-effects--elemental-interactions--shatter">Shatter</a></li>
+<li><a href="#casters--elemental-effects--elemental-interactions--explosion">Explosion</a></li>
+<li><a href="#casters--elemental-effects--elemental-interactions--armor-softening">Armor Softening</a></li>
+<li><a href="#casters--elemental-effects--elemental-interactions--spreading-fire">Spreading Fire</a></li>
+<li><a href="#casters--elemental-effects--elemental-interactions--smoke-screen">Smoke Screen</a></li>
+<li><a href="#casters--elemental-effects--elemental-interactions--matrix">Matrix</a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -284,7 +317,7 @@ taking advantage of its vacancy.  The Voidborn ignore these.
 <div class="outline-text-3" id="text-artifice">
 <p>
 Artifice is the name given to a quasi magic, quasi technology that governs
-everything humanity uses to survive.  This includes the <a href="#golems">Golems</a>, the <a href="#golems--casters">Casters</a> they
+everything humanity uses to survive.  This includes the <a href="#golems">Golems</a>, the <a href="#casters">Casters</a> they
 wield.  It also includes trains, vehicles, communication devices, and more.
 Artifice is largely equivalent to our own, real world technology today.
 </p>
@@ -339,7 +372,7 @@ has done research on any sort of limit, and anything firmly tested has been
 surpassed in some way or another.
 </p>
 
-<pre class="example" id="org90a0d81">
+<pre class="example" id="orgf5f1d80">
 Include an exerpt from a military leader who is worried that golemancers don't
 know the limits to their own creations.
 </pre>
@@ -412,7 +445,7 @@ However, only one Cohesion check can be taken per round.  If multiple Cohesion
 checks are presented in the same round, they are ignored.
 </p>
 
-<pre class="example" id="org6c0475a">
+<pre class="example" id="org0410012">
 Melog the golem's allies are falling to their doom.  Melog decides to risk it
 all to save them.  Melog spends a point of CP (5 down to 4) to perform the
 [[Golem Surge]] "Hasted Clock".  Time slows to almost a stop.  Then Melog
@@ -597,203 +630,6 @@ Field repairs are also possible, but very limiting.
 </p>
 </div>
 </div>
-<div id="outline-container-golems--casters" class="outline-4">
-<h4 id="golems--casters">Casters</h4>
-<div class="outline-text-4" id="text-golems--casters">
-<p>
-Golems are indistinguishable from humans in every perceivable way, but one thing
-that quickly sets them apart is their issued weapons, called casters.  Casters
-are firearms use caster cartridges, special artifice ammunition.  These weapons
-are capable of harming the void born.  Golems are required to carry these
-weapons with them at all times, including restricted areas, in the event of an
-invasion.  To curb the unease of such powerful creatures carrying such powerful
-weapons, the WISP limits a golem's ability to harm other humans and even golems.
-</p>
-
-<p>
-Caster cartridges are packed with ground powder from various materials.  When
-void born perish, they also leave behind colored orbs called heart stones.
-These can be ground into powder.
-</p>
-
-<p>
-Golems carry field kits to refill their caster cartridges.  They both contain
-powder as well as the equipment needed to powder the heart stones.
-</p>
-
-<p>
-A golem's frame is capable of firing these caster cartridges.  Humans can fire
-them too, at harm to themselves due to the enormous kick.  A human firing a
-caster will take the same damage the caster does normally, but one die size
-smaller and as bludgeoning damage.  If the human passes a DC 15 Strength saving
-throw, they take half damage.
-</p>
-
-<p>
-There are many different kinds of casters.  Golems specialize in these casters
-and so carry just one, but have the ability to use any kind of caster.
-</p>
-</div>
-<div id="outline-container-golems--casters--scattercaster" class="outline-5">
-<h5 id="golems--casters--scattercaster">Scattercaster</h5>
-<div class="outline-text-5" id="text-golems--casters--scattercaster">
-<p>
-The scattercaster is the answer to close-quarters but ranged combat.  It does
-this by covering a wide spread when fired.  Scattercasters have no magazines but
-instead caster shells are directly chambered into the two barrels it has.  This
-does slow its rate of fire but does allow for rapidly switching elemental caster
-shells.  Its double barrels have chokes on them which can be used to vary their
-spread.
-</p>
-</div>
-</div>
-<div id="outline-container-golems--casters--longcaster" class="outline-5">
-<h5 id="golems--casters--longcaster">Longcaster</h5>
-<div class="outline-text-5" id="text-golems--casters--longcaster">
-<p>
-Longcasters are known for their long barrels and always have a scope to help see
-further or more precisely.  The longcaster fires a heavy caster cartridge, and a
-choke is included to select between "needle" and "column" modes.  The shots are
-capable of penetrating multiple targets but requires "column" on the choke
-setting to hit anything with any practicality.
-</p>
-
-<p>
-Its bolt action mechanism makes cycling in new cartridges slow, but does allow
-the opportunity to push in a different elemental caster cartridge.
-</p>
-
-<p>
-Needle:
-</p>
-
-<p>
-6d12 + 25
-</p>
-
-<p>
-Column:
-</p>
-
-<p>
-4d12 + 20
-</p>
-</div>
-</div>
-<div id="outline-container-golems--casters--battlecaster" class="outline-5">
-<h5 id="golems--casters--battlecaster">Battlecaster</h5>
-<div class="outline-text-5" id="text-golems--casters--battlecaster">
-<p>
-Battlecasters are versatile weapons that enjoy effectiveness at many different
-ranges.
-</p>
-
-<p>
-One shot:
-6d8 + 20
-</p>
-
-<p>
-Tight burst:
-</p>
-
-<p>
-Full auto:
-</p>
-</div>
-</div>
-<div id="outline-container-golems--casters--sidecaster" class="outline-5">
-<h5 id="golems--casters--sidecaster">Sidecaster</h5>
-<div class="outline-text-5" id="text-golems--casters--sidecaster">
-<p>
-A sidecaster is a pistol sized caster designed for one handed use.  It tends
-fire lower yields and is less accurate due its shorter barrel and lack of
-bracing.
-</p>
-
-<p>
-One shot:
-4d6 + 12
-</p>
-</div>
-</div>
-<div id="outline-container-golems--casters--scrapcaster" class="outline-5">
-<h5 id="golems--casters--scrapcaster">Scrapcaster</h5>
-<div class="outline-text-5" id="text-golems--casters--scrapcaster">
-<p>
-Scrapcasters are a variant of the <a href="#golems--casters--sidecaster">Sidecaster</a>, designed for human use.  To get
-around the deleterious effects of firing casters for humans, this particular
-caster is designed to absorb much of the kick of the weapon - enough that it
-doesn't damage the human firing it.  When a scrapcaster is fired, it can't be
-fired again for another minute.  During this time, it vents heat and faintly
-glows in the dark, and the barrel is hot enough to sear flesh (1d4 fire damage
-on contact).
-</p>
-
-<p>
-Scrapcasters are issued to captains and golems alike.  The intention is to have
-a weapon that can "scrap" golems who are undergoing a mind break.  Golems are
-generally unable to use these, but can provide them to their captains, or, if
-they have the gumption, use it on themselves.
-</p>
-
-<p>
-Generally these are used point blank, at where the brain would reside if as if
-pointed at a human.  When doing so, the golem dies outright.
-</p>
-</div>
-</div>
-<div id="outline-container-golems--casters--day-breaker" class="outline-5">
-<h5 id="golems--casters--day-breaker">Day Breaker</h5>
-<div class="outline-text-5" id="text-golems--casters--day-breaker">
-<p>
-In a world where firearms are the weapon of choice for golems, and the voidborn
-have their own ranged capabilities, there's always going to be someone who wants
-to hit things with a stick.
-</p>
-
-<p>
-Day Breakers, while not caster firearms, are melee weapons that are incredibly
-heavy and made of the same sturdy stuff as golems.  Day breakers can cut through
-or bash apart both golem and voidborn bodies when wielded by a golem.
-</p>
-
-<p>
-Day Breakers do require sharpening.  They can also be imbued with an element by
-pouring caster powder into the fuller - the groove along the center, or along a
-groove of the back side of a single sided blade.  This only lasts for so long
-though.
-</p>
-
-<p>
-Day Breakers are high risk, high reward weapons.  They require getting close to
-the voidborn, who haven't lost their close-combat edge since the first invasion
-despite having learned to channel their energy into ranged attacks.  This means
-a Day Breaker is at risk regardless of the range, and the Day Breaker golem must
-first close the gap before being able to attack.
-</p>
-
-<p>
-Day Breakers have attached somewhere (for storage) a part that can unfold or
-otherwise deploy into a bracer to be worn on the off-arm.  This is the aegis - a
-special shield.  When not used directly, it provides some protection.  When
-directly employed it can be used to shield the golem completely and provide
-cover to allies.
-</p>
-
-<p>
-The ministry of golems cautions against taking more than one day breaker for
-every 5 golems in a squad.  Anything more is considered wasteful and could see
-punishment.
-</p>
-
-<p>
-Stroke:
-5d20 + 30
-</p>
-</div>
-</div>
-</div>
 <div id="outline-container-golems--wisp" class="outline-4">
 <h4 id="golems--wisp">WISP</h4>
 <div class="outline-text-4" id="text-golems--wisp">
@@ -866,6 +702,17 @@ Combat Experience is extracted regularly.  Typically after a major engagement.
 </div>
 </div>
 </div>
+<div id="outline-container-golems--golem-weapons" class="outline-4">
+<h4 id="golems--golem-weapons">Golem Weapons</h4>
+<div class="outline-text-4" id="text-golems--golem-weapons">
+<p>
+Golems are required to carry their signature weapons, called <a href="#casters">Casters</a>, at all
+times.  This is to potentially provide instant response to repel an invasion.
+They are so powerful to be dangerous for humans to handle.  These are typically
+firearms, but similar artifice goes into making melee weapons as well.
+</p>
+</div>
+</div>
 <div id="outline-container-golems--void-chosen" class="outline-4">
 <h4 id="golems--void-chosen">Void Chosen<span class="tag"><span class="archive">archive</span></span></h4>
 <div class="outline-text-4" id="text-golems--void-chosen">
@@ -896,7 +743,7 @@ This puts a starting golem at 130 HP.
 </p>
 
 <p>
-Golems start with 5 humanity points.
+Golems start with 5 cohesion points.
 </p>
 
 <p>
@@ -932,11 +779,10 @@ treatments) have no effect on you.  You must be able to conduct field repairs
 to use your hit dice.  This requires a field repair kit, and you must be
 intact enough to use it with two arms.  You do not gain hit dice back after a
 long rest.  You do not gain hit points back after a long rest.</dd>
-<dt>Tenuous Humanity</dt><dd>Your sense humanity is perilous.  Using any of your
-construct abilities will cost a point of humanity.  Any time a humanity point
-is lost, you need to take a humanity check as seen in <a href="#golems--mind-break">Mind Break</a>.  The same
-section outlines how you can regain your lost humanity points, and what
-happens when those humanity points reach zero.</dd>
+<dt>Tenuous Cohesion</dt><dd>Your cohesion is perilous.  Using any of your
+<a href="#golems--character-creation--golem-surge">Golem Surge</a> abilities cost 1 CP.  Any time a CP is lost, you need to take a
+cohesion check as seen in <a href="#golems--mind-break">Mind Break</a>.  The same section outlines how you can
+regain your lost CP, and what happens when your CP reach zero.</dd>
 </dl>
 </div>
 </div>
@@ -1088,7 +934,7 @@ specialty in some obvious way.  You have disadvantage trying to pass off as
 someone else, or as a specialty golem of another kind.</dd>
 
 <dt>Strong Identity</dt><dd>Only human essences with strong self identities are imbued
-to golem bodies.  You gain +1 humanity points.</dd>
+to golem bodies.  You gain +1 total CP.</dd>
 
 <dt>Expert Source</dt><dd>You have advantage convincing people regarding topics of your
 area of expertise.</dd>
@@ -1114,7 +960,7 @@ creates these golems with some lofty dream in mind.
 <dl class="org-dl">
 <dt>Expensive Repairs</dt><dd>Repairs take 10x as long for you at a repair center, and
 you have disadvantage on hit dice when doing field repairs.</dd>
-<dt>Powerful Identity</dt><dd>You gain +2 humanity points.  Only the human essences
+<dt>Powerful Identity</dt><dd>You gain +2 total CP.  Only the human essences
 with the strongest self-identities are suitable for such constructs.</dd>
 <dt>Pinnacle of Creation</dt><dd>You start with three Golem Traits instead of the
 normal starting traits.</dd>
@@ -1154,7 +1000,7 @@ to two attributes that are tied for highest.</dd>
 <dt>Still Constructed</dt><dd>You are still constructed as other golems are.  You must
 be another Production Type to be your physical type.  You gain all of the
 abilities and aspects of that production type.</dd>
-<dt>Surreal Existence</dt><dd>You lose 2 points of humanity, since your psyche is
+<dt>Surreal Existence</dt><dd>You lose 2 points of total CP, since your psyche is
 trying to hold together both your golem form and your past lives.  What's
 real, current, and everything you knew to be true is in disarray.</dd>
 </dl>
@@ -1165,7 +1011,7 @@ real, current, and everything you knew to be true is in disarray.</dd>
 <h5 id="golems--character-creation--golem-weapon">Golem Weapon</h5>
 <div class="outline-text-5" id="text-golems--character-creation--golem-weapon">
 <p>
-You are issued a <a href="#golems--casters--scrapcaster">Scrapcaster</a> as a side arm and you chose you primary weapon.
+You are issued a <a href="#casters--caster-types--scrapcaster">Scrapcaster</a> as a side arm and you chose you primary weapon.
 </p>
 
 <dl class="org-dl">
@@ -1189,7 +1035,7 @@ aegis to shield yourself and your allies.</dd>
 </dl>
 
 <p>
-See the <a href="#golems--casters">Casters</a> section for more details.
+See the <a href="#casters">Casters</a> section for more details.
 </p>
 </div>
 </div>
@@ -1203,7 +1049,7 @@ random gift, or a tacky article of clothing.
 </p>
 
 <p>
-Focusing on this as an action will permit the golem to take a humanity check at
+Focusing on this as an action will permit the golem to take a cohesion check at
 advantage, but it can only be used once per day.
 </p>
 
@@ -1219,8 +1065,7 @@ GM.
 <p>
 A golem can reach deep into themselves to stretch the limits of their already
 powerful bodies.  This is a desperate and dangerous activity, as it presents a
-difficult challenge for the mind.  Performing a Golem Surge spends a point of
-humanity.
+difficult challenge for the mind.  Performing a Golem Surge spends 1 CP.
 </p>
 
 <dl class="org-dl">
@@ -1245,7 +1090,7 @@ throws or resistance, simply divide by two again, always rounding up.</dd>
 
 <p>
 Other physical feats can potentially done at GM discretion, and may cost more
-than one point of humanity depending on the scope of the power.
+than 1 CP depending on the scope of the power.
 </p>
 </div>
 </div>
@@ -1257,15 +1102,28 @@ Golems learn new ways of handling their bodies and weapons that can't normally
 be taught.
 </p>
 </div>
-<div id="outline-container-golems--character-creation--golem-traits--firm-humanity" class="outline-6">
-<h6 id="golems--character-creation--golem-traits--firm-humanity">Firm Humanity</h6>
-<div class="outline-text-6" id="text-golems--character-creation--golem-traits--firm-humanity">
+<div id="outline-container-golems--character-creation--golem-traits--existential-fortitude" class="outline-6">
+<h6 id="golems--character-creation--golem-traits--existential-fortitude">Existential Fortitude</h6>
+<div class="outline-text-6" id="text-golems--character-creation--golem-traits--existential-fortitude">
 <p>
-Type: Humanity
+Type: Cohesion
 </p>
 
 <p>
-You have +1d4 on humanity checks.
+You have +1d4 on cohesion checks.
+</p>
+</div>
+</div>
+<div id="outline-container-golems--character-creation--golem-traits--eternal-fast" class="outline-6">
+<h6 id="golems--character-creation--golem-traits--eternal-fast">Eternal Fast</h6>
+<div class="outline-text-6" id="text-golems--character-creation--golem-traits--eternal-fast">
+<p>
+You can forgo food and water without losing CP.  Eating and drinking is no
+longer a requirement for you to regain CP.
+</p>
+
+<p>
+You gain +1 Constitution.
 </p>
 </div>
 </div>
@@ -1290,10 +1148,10 @@ You gain +1 Dexterity.
 <h6 id="golems--character-creation--golem-traits--narcolepsy">Narcolepsy</h6>
 <div class="outline-text-6" id="text-golems--character-creation--golem-traits--narcolepsy">
 <p>
-You can forgo sleep without it costing a point of humanity, and sleep is no
-longer a requirement for you to regain humanity points.  A sort of mental clock
-in your mind helps keep you mindful of the time - you always know what time it
-is even if you lose consciousness, and you gain +1 Intelligence.
+You can forgo sleep without it costing CP, and sleep is no longer a requirement
+for you to regain CP.  A sort of mental clock in your mind helps keep you
+mindful of the time - you always know what time it is even if you lose
+consciousness, and you gain +1 Intelligence.
 </p>
 </div>
 </div>
@@ -1313,6 +1171,81 @@ you have advantage on initiative rolls.  You gain +1 Wisdom.
 After attacking with your weapon and scoring a hit, you can immediately move 15
 feet that does not count against your normal movement for the rest of your turn.
 This movement does not provoke opportunity attacks.
+</p>
+
+<p>
+You gain +1 Dexterity.
+</p>
+</div>
+</div>
+<div id="outline-container-golems--character-creation--golem-traits--snap-shot" class="outline-6">
+<h6 id="golems--character-creation--golem-traits--snap-shot">Snap Shot</h6>
+<div class="outline-text-6" id="text-golems--character-creation--golem-traits--snap-shot">
+<p>
+You've gotten really good at making accurate-enough shots at point blank with
+your side arm.
+</p>
+
+<p>
+As a bonus action, you can draw your side arm and fire it at half of its normal
+range.  Alternatively, as a bonus action you can fire your side arm and holster
+it.
+</p>
+
+<p>
+As a reaction, you can draw your firearm and fire it at something that just came
+within threatening range of you.
+</p>
+
+<p>
+You gain +1 Dexterity.
+</p>
+</div>
+</div>
+<div id="outline-container-golems--character-creation--golem-traits--elemental-loader" class="outline-6">
+<h6 id="golems--character-creation--golem-traits--elemental-loader">Elemental Loader</h6>
+<div class="outline-text-6" id="text-golems--character-creation--golem-traits--elemental-loader">
+<p>
+This trait can be taken multiple times.
+</p>
+
+<p>
+Select an element for this trait.
+</p>
+
+<p>
+When refilling caster ammunition with caster powder, you can always make the
+powder be the selected element.
+</p>
+</div>
+</div>
+<div id="outline-container-golems--character-creation--golem-traits--elemental-seeder" class="outline-6">
+<h6 id="golems--character-creation--golem-traits--elemental-seeder">Elemental Seeder</h6>
+<div class="outline-text-6" id="text-golems--character-creation--golem-traits--elemental-seeder">
+<p>
+Requires: Level 16, Elemental Loader of the selected element.
+</p>
+
+<p>
+This trait can be taken multiple times.
+</p>
+
+<p>
+Select an element for this trait.
+</p>
+
+<p>
+When you refill caster ammunition using your Elemental Loader trait, that caster
+ammunition contains a "seed" of a different element of your choosing (different
+from this trait).  This is Seeded Caster Ammunition, seeded with the chosen
+element.
+</p>
+
+<p>
+When a Seeded Caster Ammunition hits, it applies elemental effects as normal.
+At the beginning of the target's turn, that target makes a Constitution Save
+against your Elemental DC.  If it fails, the seeded elemental effect is applied
+to the target immediately.
 </p>
 </div>
 </div>
@@ -1668,6 +1601,444 @@ Golemancers are ranked by colors.  Gray represents the lowest rank, and most
 Golemancers graduate just above that rank.  Golemancers wear robes and hats much
 like the wizards of old did, but they are colored according to their rank.
 </p>
+</div>
+</div>
+</div>
+<div id="outline-container-casters" class="outline-3">
+<h3 id="casters">Casters</h3>
+<div class="outline-text-3" id="text-casters">
+<p>
+Golems are indistinguishable from humans in every perceivable way, but one thing
+that quickly sets them apart is their issued weapons, called casters.  Casters
+are firearms use caster cartridges, special artifice ammunition.  These weapons
+are capable of harming the void born.  Golems are required to carry these
+weapons with them at all times, including restricted areas, in the event of an
+invasion.  To curb the unease of such powerful creatures carrying such powerful
+weapons, the WISP limits a golem's ability to harm other humans and even golems.
+</p>
+
+<p>
+Caster cartridges are packed with ground powder from various materials.  When
+void born perish, they also leave behind colored orbs called heart stones.
+These can be ground into powder.
+</p>
+
+<p>
+Golems carry field kits to refill their caster cartridges.  They both contain
+powder as well as the equipment needed to powder the heart stones.
+</p>
+
+<p>
+A golem's frame is capable of firing these caster cartridges.  Humans can fire
+them too, at harm to themselves due to the enormous kick.  A human firing a
+caster will take the same damage the caster does normally, but one die size
+smaller and as bludgeoning damage.  If the human passes a DC 15 Strength saving
+throw, they take half damage.
+</p>
+
+<p>
+There are many different kinds of casters.  Golems specialize in these casters
+and so carry just one, but have the ability to use any kind of caster.
+</p>
+
+<p>
+Casters use the shooter's Dexterity for determining the damage bonus and the
+to-hit bonus.
+</p>
+</div>
+<div id="outline-container-casters--caster-types" class="outline-4">
+<h4 id="casters--caster-types">Caster Types</h4>
+<div class="outline-text-4" id="text-casters--caster-types">
+</div>
+<div id="outline-container-casters--caster-types--scattercaster" class="outline-5">
+<h5 id="casters--caster-types--scattercaster">Scattercaster</h5>
+<div class="outline-text-5" id="text-casters--caster-types--scattercaster">
+<p>
+The scattercaster is the answer to close-quarters but ranged combat.  It does
+this by covering a wide spread when fired.  Scattercasters have no magazines but
+instead caster shells are directly chambered into the two barrels it has.  This
+does slow its rate of fire but does allow for rapidly switching elemental caster
+shells.  Its double barrels have chokes on them which can be used to vary their
+spread.
+</p>
+</div>
+</div>
+<div id="outline-container-casters--caster-types--longcaster" class="outline-5">
+<h5 id="casters--caster-types--longcaster">Longcaster</h5>
+<div class="outline-text-5" id="text-casters--caster-types--longcaster">
+<p>
+Longcasters are known for their long barrels and always have a scope to help see
+further or more precisely.  The longcaster fires a heavy caster cartridge, and a
+choke is included to select between "needle" and "column" modes.  The shots are
+capable of penetrating multiple targets but requires "column" on the choke
+setting to hit anything with any practicality.
+</p>
+
+<p>
+Its bolt action mechanism makes cycling in new cartridges slow, but does allow
+the opportunity to push in a different elemental caster cartridge.
+</p>
+
+<p>
+Needle:
+</p>
+
+<p>
+6d12 + 25
+</p>
+
+<p>
+Column:
+</p>
+
+<p>
+4d12 + 20
+</p>
+</div>
+</div>
+<div id="outline-container-casters--caster-types--battlecaster" class="outline-5">
+<h5 id="casters--caster-types--battlecaster">Battlecaster</h5>
+<div class="outline-text-5" id="text-casters--caster-types--battlecaster">
+<p>
+Battlecasters are versatile weapons that enjoy effectiveness at many different
+ranges.
+</p>
+
+<p>
+One shot:
+6d8 + 20
+</p>
+
+<p>
+Tight burst:
+</p>
+
+<p>
+Full auto:
+</p>
+</div>
+</div>
+<div id="outline-container-casters--caster-types--sidecaster" class="outline-5">
+<h5 id="casters--caster-types--sidecaster">Sidecaster</h5>
+<div class="outline-text-5" id="text-casters--caster-types--sidecaster">
+<p>
+A sidecaster is a pistol sized caster designed for one handed use.  It tends
+fire lower yields and is less accurate due its shorter barrel and lack of
+bracing.
+</p>
+
+<p>
+One shot:
+4d6 + 12
+</p>
+</div>
+</div>
+<div id="outline-container-casters--caster-types--scrapcaster" class="outline-5">
+<h5 id="casters--caster-types--scrapcaster">Scrapcaster</h5>
+<div class="outline-text-5" id="text-casters--caster-types--scrapcaster">
+<p>
+Scrapcasters are a variant of the <a href="#casters--caster-types--sidecaster">Sidecaster</a>, designed for human use.  To get
+around the deleterious effects of firing casters for humans, this particular
+caster is designed to absorb much of the kick of the weapon - enough that it
+doesn't damage the human firing it.  When a scrapcaster is fired, it can't be
+fired again for another minute.  During this time, it vents heat and faintly
+glows in the dark, and the barrel is hot enough to sear flesh (1d4 fire damage
+on contact).
+</p>
+
+<p>
+Scrapcasters are issued to captains and golems alike.  The intention is to have
+a weapon that can "scrap" golems who are undergoing a mind break.  Golems are
+generally unable to use these, but can provide them to their captains, or, if
+they have the gumption, use it on themselves.
+</p>
+
+<p>
+Generally these are used point blank, at where the brain would reside if as if
+pointed at a human.  When doing so, the golem dies outright.
+</p>
+</div>
+</div>
+<div id="outline-container-casters--caster-types--day-breaker" class="outline-5">
+<h5 id="casters--caster-types--day-breaker">Day Breaker</h5>
+<div class="outline-text-5" id="text-casters--caster-types--day-breaker">
+<p>
+In a world where firearms are the weapon of choice for golems, and the voidborn
+have their own ranged capabilities, there's always going to be someone who wants
+to hit things with a stick.
+</p>
+
+<p>
+Day Breakers, while not caster firearms, are melee weapons that are incredibly
+heavy and made of the same sturdy stuff as golems.  Day breakers can cut through
+or bash apart both golem and voidborn bodies when wielded by a golem.
+</p>
+
+<p>
+Day Breakers do require sharpening.  They can also be imbued with an element by
+pouring caster powder into the fuller - the groove along the center, or along a
+groove of the back side of a single sided blade.  This only lasts for so long
+though.
+</p>
+
+<p>
+Day Breakers are high risk, high reward weapons.  They require getting close to
+the voidborn, who haven't lost their close-combat edge since the first invasion
+despite having learned to channel their energy into ranged attacks.  This means
+a Day Breaker is at risk regardless of the range, and the Day Breaker golem must
+first close the gap before being able to attack.
+</p>
+
+<p>
+Day Breakers have attached somewhere (for storage) a part that can unfold or
+otherwise deploy into a bracer to be worn on the off-arm.  This is the aegis - a
+special shield.  When not used directly, it provides some protection.  When
+directly employed it can be used to shield the golem completely and provide
+cover to allies.
+</p>
+
+<p>
+The ministry of golems cautions against taking more than one day breaker for
+every 5 golems in a squad.  Anything more is considered wasteful and could see
+punishment.
+</p>
+
+<p>
+A golem can make three Sweep attacks per turn using Multi-Attack using a Day
+Breaker.  A single Strike attack can be made instead of the three Sweep attacks.
+Its to-hit bonus and damage bonus use Strength.
+</p>
+
+<p>
+Sweep:
+3d20 + 30
+</p>
+
+<p>
+Strike:
+6d20 + 50
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-casters--elemental-effects" class="outline-4">
+<h4 id="casters--elemental-effects">Elemental Effects</h4>
+<div class="outline-text-4" id="text-casters--elemental-effects">
+<p>
+Caster ammunition is composed of special powders.  When ignited, they provide
+tremendous force and energy.  The type of energy can vary, and follows several
+distinct classifications.  With these classifications comes interactions with
+other elements.
+</p>
+</div>
+<div id="outline-container-casters--elemental-effects--elemental-types" class="outline-5">
+<h5 id="casters--elemental-effects--elemental-types">Elemental Types</h5>
+<div class="outline-text-5" id="text-casters--elemental-effects--elemental-types">
+</div>
+<div id="outline-container-casters--elemental-effects--elemental-types--acid" class="outline-6">
+<h6 id="casters--elemental-effects--elemental-types--acid">Acid</h6>
+<div class="outline-text-6" id="text-casters--elemental-effects--elemental-types--acid">
+<p>
+The acid element eats away at an area.  It's generally not strong enough to eat
+through anything (or it would eat through the caster itself) but it will cleanse
+most elements off of an area.
+</p>
+</div>
+</div>
+<div id="outline-container-casters--elemental-effects--elemental-types--cold" class="outline-6">
+<h6 id="casters--elemental-effects--elemental-types--cold">Cold</h6>
+<div class="outline-text-6" id="text-casters--elemental-effects--elemental-types--cold">
+<p>
+The cold element causes the effected area to become rigid and brittle.  This
+typically has devastating effect to armor.
+</p>
+</div>
+</div>
+<div id="outline-container-casters--elemental-effects--elemental-types--fire" class="outline-6">
+<h6 id="casters--elemental-effects--elemental-types--fire">Fire</h6>
+<div class="outline-text-6" id="text-casters--elemental-effects--elemental-types--fire">
+<p>
+The fire element produces incredible heat and even kicks off combustion.
+Generally, fire doesn't work without a catalyst.
+</p>
+</div>
+</div>
+<div id="outline-container-casters--elemental-effects--elemental-types--lightning" class="outline-6">
+<h6 id="casters--elemental-effects--elemental-types--lightning">Lightning</h6>
+<div class="outline-text-6" id="text-casters--elemental-effects--elemental-types--lightning">
+<p>
+The lightning element is a blast of high powered electricity.  It is known for
+finding the path of least resistance.
+</p>
+</div>
+</div>
+<div id="outline-container-casters--elemental-effects--elemental-types--poison" class="outline-6">
+<h6 id="casters--elemental-effects--elemental-types--poison">Poison</h6>
+<div class="outline-text-6" id="text-casters--elemental-effects--elemental-types--poison">
+</div>
+</div>
+<div id="outline-container-casters--elemental-effects--elemental-types--thunder" class="outline-6">
+<h6 id="casters--elemental-effects--elemental-types--thunder">Thunder</h6>
+<div class="outline-text-6" id="text-casters--elemental-effects--elemental-types--thunder">
+<p>
+The thunder element is a manifested shock wave of great resonance.  Anything
+brittle struck by thunder is typically shattered.
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-casters--elemental-effects--elemental-interactions" class="outline-5">
+<h5 id="casters--elemental-effects--elemental-interactions">Elemental Interactions</h5>
+<div class="outline-text-5" id="text-casters--elemental-effects--elemental-interactions">
+</div>
+<div id="outline-container-casters--elemental-effects--elemental-interactions--shatter" class="outline-6">
+<h6 id="casters--elemental-effects--elemental-interactions--shatter">Shatter</h6>
+<div class="outline-text-6" id="text-casters--elemental-effects--elemental-interactions--shatter">
+<p>
+Applying cold and then applying thunder does incredible damage to a target based
+on its armor.  The higher the armor, the greater the impact.
+</p>
+</div>
+</div>
+<div id="outline-container-casters--elemental-effects--elemental-interactions--explosion" class="outline-6">
+<h6 id="casters--elemental-effects--elemental-interactions--explosion">Explosion</h6>
+<div class="outline-text-6" id="text-casters--elemental-effects--elemental-interactions--explosion">
+<p>
+Applying Poison and then applying Fire will produce an explosion.
+</p>
+</div>
+</div>
+<div id="outline-container-casters--elemental-effects--elemental-interactions--armor-softening" class="outline-6">
+<h6 id="casters--elemental-effects--elemental-interactions--armor-softening">Armor Softening</h6>
+<div class="outline-text-6" id="text-casters--elemental-effects--elemental-interactions--armor-softening">
+<p>
+Applying Acid and then Fire will soften the armor.
+</p>
+</div>
+</div>
+<div id="outline-container-casters--elemental-effects--elemental-interactions--spreading-fire" class="outline-6">
+<h6 id="casters--elemental-effects--elemental-interactions--spreading-fire">Spreading Fire</h6>
+<div class="outline-text-6" id="text-casters--elemental-effects--elemental-interactions--spreading-fire">
+<p>
+Fire and then Thunder Creates a fire that spreads.
+</p>
+</div>
+</div>
+<div id="outline-container-casters--elemental-effects--elemental-interactions--smoke-screen" class="outline-6">
+<h6 id="casters--elemental-effects--elemental-interactions--smoke-screen">Smoke Screen</h6>
+<div class="outline-text-6" id="text-casters--elemental-effects--elemental-interactions--smoke-screen">
+<p>
+Fire and then Cold.
+</p>
+</div>
+</div>
+<div id="outline-container-casters--elemental-effects--elemental-interactions--matrix" class="outline-6">
+<h6 id="casters--elemental-effects--elemental-interactions--matrix">Matrix</h6>
+<div class="outline-text-6" id="text-casters--elemental-effects--elemental-interactions--matrix">
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">First / Second</th>
+<th scope="col" class="org-left">Acid</th>
+<th scope="col" class="org-left">Cold</th>
+<th scope="col" class="org-left">Fire</th>
+<th scope="col" class="org-left">Lightning</th>
+<th scope="col" class="org-left">Poison</th>
+<th scope="col" class="org-left">Thunder</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">Acid</td>
+<td class="org-left">O</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">R</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">Cold</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">O</td>
+<td class="org-left">C</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">R</td>
+</tr>
+
+<tr>
+<td class="org-left">Fire</td>
+<td class="org-left">C</td>
+<td class="org-left">R</td>
+<td class="org-left">O</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">C</td>
+<td class="org-left">R</td>
+</tr>
+
+<tr>
+<td class="org-left">Lightning</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">O</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">Poison</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">R</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">O</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">Thunder</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">C</td>
+<td class="org-left">C</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">O</td>
+</tr>
+</tbody>
+</table>
+
+
+<p>
+Legend:
+</p>
+<dl class="org-dl">
+<dt>O</dt><dd>No interaction.</dd>
+<dt>C</dt><dd>Column -&gt; Row interaction.</dd>
+<dt>R</dt><dd>Row -&gt; Column interaction.</dd>
+<dt>X</dt><dd>Cross Interaction.</dd>
+</dl>
+</div>
+</div>
 </div>
 </div>
 </div>
