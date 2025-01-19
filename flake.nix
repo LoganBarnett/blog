@@ -54,6 +54,7 @@
           # https://github.com/NixOS/nixpkgs/blob/master/pkgs/applications/misc/jekyll/default.nix
           # or in that vicinity.
           pkgs.ruby
+          pkgs.jekyll
         ];
       };
   };
