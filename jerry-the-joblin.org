@@ -1,0 +1,49 @@
+#+title:     Jerry the Joblin
+#+author:    Logan Barnett
+#+email:     logustus@gmail.com
+#+date:      <2025-03-30 Sun>
+#+language:  en
+#+file_tags:
+#+tags:
+#+auto_id:   t
+#+options:   toc:nil
+
+#+BEGIN_EXPORT html
+---
+categories: dnd
+date: 2025-03-30
+layout: default
+title: Jerry the Joblin
+---
+#+END_EXPORT
+
+* Jerry the Joblin
+:PROPERTIES:
+:VISIBILITY: content
+:CUSTOM_ID: jerry-the-joblin
+:UNNUMBERED: toc
+:END:
+
+** Introduction
+:PROPERTIES:
+:CUSTOM_ID: jerry-the-joblin--introduction
+:END:
+** Sessions
+:PROPERTIES:
+:CUSTOM_ID: jerry-the-joblin--sessions
+:END:
+*** Session 1
+:PROPERTIES:
+:CUSTOM_ID: jerry-the-joblin--sessions--session-1
+:END:
+#+include: "../../notes/dm.org::#campaigns--era-of-eras--prophet-assassination--sessions--session-1--public" :only-contents t
+*** Session 2
+:PROPERTIES:
+:CUSTOM_ID: jerry-the-joblin--sessions--session-2
+:END:
+#+include: "../../notes/dm.org::#campaigns--era-of-eras--prophet-assassination--sessions--session-2--public" :only-contents t
+*** Session 3
+:PROPERTIES:
+:CUSTOM_ID: jerry-the-joblin--sessions--session-3
+:END:
+#+include: "../../notes/dm.org::#campaigns--era-of-eras--prophet-assassination--sessions--session-3--public" :only-contents t

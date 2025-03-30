@@ -1523,3 +1523,9 @@ to refuse shelter to any of the goodly races during this 30 day period.
 :END:
 
 #+include: "../../notes/dm.org::#campaigns--era-of-eras--wand-of-woe--sessions--session-36--public" :only-contents t
+*** Jerry the Joblin
+:PROPERTIES:
+:CUSTOM_ID: dirshum--campaigns--jerry-the-joblin
+:END:
+
+See [[./jerry-the-joblin.org]].
