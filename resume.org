@@ -82,12 +82,20 @@ road to well maintained and understood software.
 :PROPERTIES:
 :CUSTOM_ID: job-experience
 :END:
-** NWEA (2023-current)
+** HMH (formerly NWEA) (2023-current)
 :PROPERTIES:
-:CUSTOM_ID: job-experience--nwea-2023-current
+:CUSTOM_ID: job-experience--hmh-formerly-nwea-2023-current
 :END:
+
 Alchemy had to close its doors. I'd left NWEA better than I'd found it, and they
 were happy to have me back. I resumed work at DevOps.
+
+1. I took over our Environment Down Days process, which took about seven
+   engineers working full time for 3 days to accomplish, down to 1-1.5 days of a
+   single engineer.
+2. Provided guidance to many new engineers on how to work with our Puppet
+   ecosystem, keep systems operational, and build out further automation.
+
 ** Principal Instructor at Alchemy Code Lab (2022-2023)
 :PROPERTIES:
 :CUSTOM_ID: job-experience--principal-instructor-at-alchemy-code-lab-2022-2023
