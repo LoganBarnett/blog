@@ -1,0 +1,133 @@
+#+title:     LLMs in 2026
+#+author:    Logan Barnett
+#+email:     logustus@gmail.com
+#+date:      <2026-03-25 Wed>
+#+language:  en
+#+file_tags:
+#+tags:
+
+Just a paste of a prior write-up.  I need to review and expand this with
+details.  Most of this revolves around using LLMs as coding agents, or even as
+general task assistants.
+
+1. Avoid MCP.  Use the code runner (like claude code) and make CLI programs
+   available instead.  I'm not talking raw curl.  Populate environment variables
+   or other configuration in advance.  Wrap complex CLI invocations (like Jira
+   issue creation when there's literally 20 fields).  The LLM will build these
+   tools happily.  Bonus: the human can still use it, and the LLM can explore as
+   needed.  LLMs are very good at CLI usage and composition.
+2. Be descriptive in your prompt, but don't write a manifesto.  Instead, create
+   guardrails to control behavior.  Use SSH host matchers that check for
+   CLAUDECODE=1 to use a read only user.  Use treefmt and friends on a pre
+   commit to achieve the code formatting you want.  Use best in class languages
+   like Rust, Elm, and Nix to ensure entire classes of errors are impossible.
+3. (extension of 2 mostly) The LLM misbehaving or hallucinating is almost always
+   user error, but the answer isn't to prompt harder.  The answer is to reduce
+   burden on the LLM.  Create tools it can use for deterministic results, and
+   allow the LLM to be the brains of when to use it.  Or invoke the LLM to do an
+   inspection like a fuzzy heuristic.
+4. Don't use agents or subagents.  They just spend more tokens doing the work of
+   formatters and type checkers.
+5. Try to avoid writes to ~MEMORY.md~.  There are things that are worth putting
+   in ~MEMORY.md~, but generally they should be very deliberate, and the scope
+   should also be deliberate.  Ask yourself, does the thing you want the LLM to
+   remember something that should be generally remembered by both humans and
+   LLMs?  If you put it in ~MEMORY.md~, then only your LLM can see it.  You
+   can't see it (unless you think to look for it), and nobody else can see it
+   (be it another human or LLM).
+6. Have the LLM _read the freaking docs_.  The first thing you should do as a
+   human when you jump into a new project is at least _glance_ at the README.
+   That the LLM isn't instructed to do this right off the hop blows my mind.  Oh
+   well, just take your ~CLAUDE.md~ and tell it to read the README.
+
+Some things about view on it:
+1. Some folks want time-to-market above all else.  They would take their
+   combustion engine driven vehicles and drive them as fast as possible, and if
+   they hit a brick wall, they died and took their passengers with them.  Such
+   is the world we live in.  Take risks that shouldn't be necessary, and if you
+   die, well that's life (or death, depending on how you look at it).  But now
+   they have a 747 full of 200 passengers and a planet to crash into.  Honestly,
+   I don't know that there's anything we can do about these folks.  Occasionally
+   their insistence on running across busy streets without looking or slowing
+   down works, and they win the day for it.  So long as we have market pressure,
+   this will exist.  Thanks, market pressure.
+2. When we are using this tool well, when it purely _hums_, it feels like we're
+   the software engineers they never show in Star Trek.  We're making the
+   computers do the really tricky stuff, but we spend our time in brain space
+   more than scooting expressions between functions so everything looks Just So.
+   I think we need to acknowledge that this is where we want to be:  In the
+   data model.  We can view the LLM like a compiler.  It emits computer
+   instructions that, individually, _don't actually matter_.  We're in the early
+   days of these compilers, so there's lots of bugs and so we have to look at
+   what the compiler did from time to time.  We're in that awkward transition
+   period where the trust hasn't formed, and frankly hasn't been totally earned.
+   But we don't have time to inspect entire applications the compiler created -
+   we only go in when the symptoms of issues give us reason to.  We know what
+   those reasons look like, because we grew our knowledge before these compilers
+   took care of this stuff for us.  But, like _actual_ compilers are today, very
+   few of us actually care what they do, and we trust them implicitly and
+   totally, even if they still have bugs in them.  And even if we have to, for
+   some reason, figure out what's going on with them, we do so on demand.
+   Nobody who isn't actively working compilers is cracking open their binaries
+   or their runtimes to see what's happening _de rigueur_.
+
+
+I need to come up with some pillars:
+
+1. Things that LLMs tend to struggle with are also things humans tend to
+   struggle with.
+   a. Remembering detailed procedures (e.g. here are the 7 steps to achieving a
+      successful deployment).
+   b. Remembering to write and run the tests.
+   c. Long, complicated functions are hovels for bugs.  Squash them there
+      all you like, but that's the nest where they breed - more will just keep
+      popping out of there.
+   d. Poorly named concepts are rich sources of confusion.  Confusion is
+      oftentimes a sign that you need to tighten up your vocabulary.
+   e. Long running, deterministic activities will always be weak.  The
+      deployment example above is a good example.  Another good example is code
+      formatting.  Just use a formatter for this.  Anything that can be
+      deterministic should be made deterministic.
+   f. The right amount of detail is important.  Give it too much detail, and you
+      inadvertently stress the wrong things.  Give it too much vagaries
+      (e.g. "put stuff in there that you think should go in there") and it
+      becomes performative (let's put things in that look good but carry no
+      value).
+2. It really helps with knowing some of the subject matter.
+   a. Perhaps the most invasive/attacking thing we can say.  So pad it a bit.
+      It's not an attack.
+   b. Knowing enough about the surrounding topic can really help keep the LLM on
+      track and providing the correct value.  When you lead, the LLM can do
+      great work.  When you're flying blind, the LLM kind of is too.  It can
+      provide great insights through its investigations, but it has no guiding
+      principles for what you really want.
+   c. Learning the topic in this new era of "well the machine can just do it for
+      me" is going to be hard.  Maybe once the dust settles, we won't be in this
+      mode anymore and we can rely on the LLM to do the heavy lifting, but I'm
+      not certain about this.  I think if we can't grasp the topic cleanly, we
+      won't be steering.
+3. Focus on the tool's strengths.
+   a. It can help find missing pieces very rapidly.  When a human "pulls on a
+      thread" for some kind of problem, the act of walking that thread is a
+      journey worthy of tale.  The human who did all of that work deserves a pat
+      on the back.  It can take the day (and will take the day even if it's not
+      8 hours - it's exhausting).  For an LLM, that was a 5 minute jaunt.  It's
+      pretty good at catching spelling mistakes, typos, and making sure the
+      right thing got referenced in the right place.
+   b. It engages with continuous math problems very well.  Let's talk about this
+      for a moment because it comes up as a point of confusion a lot with
+      software engineering.  In the world of software engineering, we're working
+      with discrete math whether we understand it as such or not.  Discrete math
+      deals strongly with relationships of non-scalar forms.  We tend to see
+      this kind of thing as data modeling or logic flow.  Continuous math deals
+      with the kind of stuff we might've encountered in physics related classes
+      (calculate force, calculate the number of moles, etc).  The LLM makes for
+      a terrible calculator.  You can ask many models how many R's there are in
+      "strawberry" and get fairly pathetic responses back.  But ask it to help
+      you shape pings and boops on wave-forms - it's got your back pretty well.
+      The former is a discrete math problem (crawl the letters until the end,
+      count the number of R's along the way), and the latter is a continuous
+      math problem.  Fortunately for the discrete math problems, it's pretty
+      good at writing code, which themselves are a form of discrete math
+      problems.  It's just not good at _solving_ them, but it can work with you
+      to articulate and solve them programmatically.
