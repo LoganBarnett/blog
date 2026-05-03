@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>Programming on Logan Barnett&#39;s blog</title>
-    <link>http://localhost:1313/categories/programming/</link>
+    <link>https://blog.logustus.com/categories/programming/</link>
     <description>Recent content in Programming on Logan Barnett&#39;s blog</description>
     <generator>Hugo</generator>
     <language>en-us</language>
     <lastBuildDate>Wed, 17 Aug 2016 22:17:00 +0000</lastBuildDate>
-    <atom:link href="http://localhost:1313/categories/programming/feed.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://blog.logustus.com/categories/programming/feed.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>asteriod generation</title>
-      <link>http://localhost:1313/asteroid-generation/</link>
+      <link>https://blog.logustus.com/asteroid-generation/</link>
       <pubDate>Wed, 17 Aug 2016 22:17:00 +0000</pubDate>
-      <guid>http://localhost:1313/asteroid-generation/</guid>
+      <guid>https://blog.logustus.com/asteroid-generation/</guid>
       <description>&lt;h1 id=&#34;introduction&#34;&gt;Introduction&lt;/h1&gt;
 &lt;p&gt;For my personal project, I&amp;rsquo;m working on a simple and relaxing asteroid mining
 game. It spent a long time as a prototype, simplified from many other
@@ -29,9 +29,9 @@ after I&amp;rsquo;d tested whatever functionality I was curious about during tha
     </item>
     <item>
       <title>verification</title>
-      <link>http://localhost:1313/verification/</link>
+      <link>https://blog.logustus.com/verification/</link>
       <pubDate>Sat, 28 May 2016 16:37:00 +0000</pubDate>
-      <guid>http://localhost:1313/verification/</guid>
+      <guid>https://blog.logustus.com/verification/</guid>
       <description>&lt;p&gt;Unit tests, type checkers, SAT provers. These are all tools we use to verify our
 code, and it&amp;rsquo;s by no means an exhaustive list. People struggle with using them
 though. Ruby and Python engineers typically find static type systems too
@@ -43,9 +43,9 @@ and Java engineers can&amp;rsquo;t even wrap their heads around without major st
     </item>
     <item>
       <title>Aspects of Functional Programming</title>
-      <link>http://localhost:1313/aspects-of-functional-programming/</link>
+      <link>https://blog.logustus.com/aspects-of-functional-programming/</link>
       <pubDate>Mon, 30 Nov 2015 17:20:00 +0000</pubDate>
-      <guid>http://localhost:1313/aspects-of-functional-programming/</guid>
+      <guid>https://blog.logustus.com/aspects-of-functional-programming/</guid>
       <description>&lt;p&gt;For all of the flak Javascript gets, there is one thing it has above all of the
 &amp;ldquo;better&amp;rdquo; mainstream languages out there. I&amp;rsquo;m talking Java, C#, Python, Ruby
 (yeah you two are mainstream to me). Javascript has functions as first class
@@ -60,9 +60,9 @@ like I&amp;rsquo;ve climbed over some humps.&lt;/p&gt;</description>
     </item>
     <item>
       <title>One True Language</title>
-      <link>http://localhost:1313/one-true-language/</link>
+      <link>https://blog.logustus.com/one-true-language/</link>
       <pubDate>Sun, 13 Sep 2015 13:21:00 +0000</pubDate>
-      <guid>http://localhost:1313/one-true-language/</guid>
+      <guid>https://blog.logustus.com/one-true-language/</guid>
       <description>&lt;p&gt;I&amp;rsquo;ve spent a lot of my tech career pursuing the One True Language, or One True Library, or some means of doing something in a unified way that could serve as an answer to the problems I was having. The polyglot folks would probably just say some langauges are better than others at certain things and so we should use several languages at once when building applications. I&amp;rsquo;m not sure I agree with this. I believe most of our languages are pretty good at the problem domains we select them for, or at least they could be.&lt;/p&gt;</description>
     </item>
   </channel>

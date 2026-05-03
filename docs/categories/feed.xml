@@ -2,94 +2,94 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>Categories on Logan Barnett&#39;s blog</title>
-    <link>http://localhost:1313/categories/</link>
+    <link>https://blog.logustus.com/categories/</link>
     <description>Recent content in Categories on Logan Barnett&#39;s blog</description>
     <generator>Hugo</generator>
     <language>en-us</language>
     <lastBuildDate>Wed, 15 Jan 2025 00:00:00 -0800</lastBuildDate>
-    <atom:link href="http://localhost:1313/categories/feed.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://blog.logustus.com/categories/feed.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Dnd</title>
-      <link>http://localhost:1313/categories/dnd/</link>
+      <link>https://blog.logustus.com/categories/dnd/</link>
       <pubDate>Wed, 15 Jan 2025 00:00:00 -0800</pubDate>
-      <guid>http://localhost:1313/categories/dnd/</guid>
+      <guid>https://blog.logustus.com/categories/dnd/</guid>
       <description></description>
     </item>
     <item>
       <title>Nix</title>
-      <link>http://localhost:1313/categories/nix/</link>
+      <link>https://blog.logustus.com/categories/nix/</link>
       <pubDate>Fri, 16 Feb 2024 00:00:00 -0800</pubDate>
-      <guid>http://localhost:1313/categories/nix/</guid>
+      <guid>https://blog.logustus.com/categories/nix/</guid>
       <description></description>
     </item>
     <item>
       <title>Machinelearning</title>
-      <link>http://localhost:1313/categories/machinelearning/</link>
+      <link>https://blog.logustus.com/categories/machinelearning/</link>
       <pubDate>Tue, 06 Feb 2024 00:00:00 -0800</pubDate>
-      <guid>http://localhost:1313/categories/machinelearning/</guid>
+      <guid>https://blog.logustus.com/categories/machinelearning/</guid>
       <description></description>
     </item>
     <item>
       <title>Software-Engineering</title>
-      <link>http://localhost:1313/categories/software-engineering/</link>
+      <link>https://blog.logustus.com/categories/software-engineering/</link>
       <pubDate>Tue, 16 Aug 2022 00:00:00 -0700</pubDate>
-      <guid>http://localhost:1313/categories/software-engineering/</guid>
+      <guid>https://blog.logustus.com/categories/software-engineering/</guid>
       <description></description>
     </item>
     <item>
       <title>Xml</title>
-      <link>http://localhost:1313/categories/xml/</link>
+      <link>https://blog.logustus.com/categories/xml/</link>
       <pubDate>Mon, 23 Aug 2021 00:00:00 -0700</pubDate>
-      <guid>http://localhost:1313/categories/xml/</guid>
+      <guid>https://blog.logustus.com/categories/xml/</guid>
       <description></description>
     </item>
     <item>
       <title>Killer-Queen</title>
-      <link>http://localhost:1313/categories/killer-queen/</link>
+      <link>https://blog.logustus.com/categories/killer-queen/</link>
       <pubDate>Sun, 14 Jan 2018 00:00:00 -0800</pubDate>
-      <guid>http://localhost:1313/categories/killer-queen/</guid>
+      <guid>https://blog.logustus.com/categories/killer-queen/</guid>
       <description></description>
     </item>
     <item>
       <title>Testing</title>
-      <link>http://localhost:1313/categories/testing/</link>
+      <link>https://blog.logustus.com/categories/testing/</link>
       <pubDate>Wed, 17 May 2017 00:00:00 -0700</pubDate>
-      <guid>http://localhost:1313/categories/testing/</guid>
+      <guid>https://blog.logustus.com/categories/testing/</guid>
       <description></description>
     </item>
     <item>
       <title>Programming</title>
-      <link>http://localhost:1313/categories/programming/</link>
+      <link>https://blog.logustus.com/categories/programming/</link>
       <pubDate>Wed, 17 Aug 2016 22:17:00 +0000</pubDate>
-      <guid>http://localhost:1313/categories/programming/</guid>
+      <guid>https://blog.logustus.com/categories/programming/</guid>
       <description></description>
     </item>
     <item>
       <title>Productivity</title>
-      <link>http://localhost:1313/categories/productivity/</link>
+      <link>https://blog.logustus.com/categories/productivity/</link>
       <pubDate>Mon, 05 Oct 2015 20:05:00 +0000</pubDate>
-      <guid>http://localhost:1313/categories/productivity/</guid>
+      <guid>https://blog.logustus.com/categories/productivity/</guid>
       <description></description>
     </item>
     <item>
       <title>Programming Tutorial</title>
-      <link>http://localhost:1313/categories/programming-tutorial/</link>
+      <link>https://blog.logustus.com/categories/programming-tutorial/</link>
       <pubDate>Fri, 04 Sep 2015 21:40:00 +0000</pubDate>
-      <guid>http://localhost:1313/categories/programming-tutorial/</guid>
+      <guid>https://blog.logustus.com/categories/programming-tutorial/</guid>
       <description></description>
     </item>
     <item>
       <title>Markdown</title>
-      <link>http://localhost:1313/categories/markdown/</link>
+      <link>https://blog.logustus.com/categories/markdown/</link>
       <pubDate>Thu, 13 Aug 2015 19:01:00 +0000</pubDate>
-      <guid>http://localhost:1313/categories/markdown/</guid>
+      <guid>https://blog.logustus.com/categories/markdown/</guid>
       <description></description>
     </item>
     <item>
       <title>Javascript</title>
-      <link>http://localhost:1313/categories/javascript/</link>
+      <link>https://blog.logustus.com/categories/javascript/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/categories/javascript/</guid>
+      <guid>https://blog.logustus.com/categories/javascript/</guid>
       <description></description>
     </item>
   </channel>

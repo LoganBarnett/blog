@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>Machinelearning on Logan Barnett&#39;s blog</title>
-    <link>http://localhost:1313/categories/machinelearning/</link>
+    <link>https://blog.logustus.com/categories/machinelearning/</link>
     <description>Recent content in Machinelearning on Logan Barnett&#39;s blog</description>
     <generator>Hugo</generator>
     <language>en-us</language>
     <lastBuildDate>Tue, 06 Feb 2024 00:00:00 -0800</lastBuildDate>
-    <atom:link href="http://localhost:1313/categories/machinelearning/feed.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://blog.logustus.com/categories/machinelearning/feed.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Machine Learning - Stable Diffusion Prompt Engineering</title>
-      <link>http://localhost:1313/stable-diffusion-prompt-engineering-01/</link>
+      <link>https://blog.logustus.com/stable-diffusion-prompt-engineering-01/</link>
       <pubDate>Tue, 06 Feb 2024 00:00:00 -0800</pubDate>
-      <guid>http://localhost:1313/stable-diffusion-prompt-engineering-01/</guid>
+      <guid>https://blog.logustus.com/stable-diffusion-prompt-engineering-01/</guid>
       <description>&lt;h2 id=&#34;introduction&#34;&gt;&lt;span class=&#34;section-num&#34;&gt;1&lt;/span&gt; Introduction&lt;/h2&gt;
-&lt;p&gt;From my prior adventures during &lt;a href=&#34;http://localhost:1313/nix-adventures-02/&#34;&gt;Nix Adventures Part 2&lt;/a&gt;, I managed to stand up a
+&lt;p&gt;From my prior adventures during &lt;a href=&#34;https://blog.logustus.com/nix-adventures-02/&#34;&gt;Nix Adventures Part 2&lt;/a&gt;, I managed to stand up a
 local instances of &lt;a href=&#34;https://github.com/AUTOMATIC1111/stable-diffusion-webui&#34;&gt;stable-diffusion-webui&lt;/a&gt; and I&amp;rsquo;ve been having both a lot of fun
 and some frustration with it.  This domain is not quite as push-button as I
 thought it would be.  There&amp;rsquo;s a lot of information here, some of it dated, and

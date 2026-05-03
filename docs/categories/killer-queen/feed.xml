@@ -2,30 +2,30 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>Killer-Queen on Logan Barnett&#39;s blog</title>
-    <link>http://localhost:1313/categories/killer-queen/</link>
+    <link>https://blog.logustus.com/categories/killer-queen/</link>
     <description>Recent content in Killer-Queen on Logan Barnett&#39;s blog</description>
     <generator>Hugo</generator>
     <language>en-us</language>
     <lastBuildDate>Sun, 14 Jan 2018 00:00:00 -0800</lastBuildDate>
-    <atom:link href="http://localhost:1313/categories/killer-queen/feed.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://blog.logustus.com/categories/killer-queen/feed.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Killer Queen</title>
-      <link>http://localhost:1313/killer-queen/</link>
+      <link>https://blog.logustus.com/killer-queen/</link>
       <pubDate>Sun, 14 Jan 2018 00:00:00 -0800</pubDate>
-      <guid>http://localhost:1313/killer-queen/</guid>
+      <guid>https://blog.logustus.com/killer-queen/</guid>
       <description>&lt;p&gt;I&amp;rsquo;ve played some Killer Queen and helped put together streaming. Though the tech
 for Portland&amp;rsquo;s streaming setup has dramatically improved, the streaming guide is
 left up for posterity.&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;http://localhost:1313/killer-queen-black-box-study/&#34;&gt;Killer Queen black box study&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://localhost:1313/killer-queen-streaming-guide/&#34;&gt;Killer Queen streaming guide&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://blog.logustus.com/killer-queen-black-box-study/&#34;&gt;Killer Queen black box study&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://blog.logustus.com/killer-queen-streaming-guide/&#34;&gt;Killer Queen streaming guide&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;</description>
     </item>
     <item>
       <title>Killer Queen Black Box Study</title>
-      <link>http://localhost:1313/killer-queen-black-box-study/</link>
+      <link>https://blog.logustus.com/killer-queen-black-box-study/</link>
       <pubDate>Sun, 14 Jan 2018 00:00:00 -0800</pubDate>
-      <guid>http://localhost:1313/killer-queen-black-box-study/</guid>
+      <guid>https://blog.logustus.com/killer-queen-black-box-study/</guid>
       <description>&lt;div class=&#34;ox-hugo-toc toc&#34;&gt;
 &lt;div class=&#34;heading&#34;&gt;Table of Contents&lt;/div&gt;
 &lt;ul&gt;
@@ -94,9 +94,9 @@ we cannot see inside it. We can make some good guesses though.&lt;/p&gt;</descri
     </item>
     <item>
       <title>Killer Queen Streaming Guide</title>
-      <link>http://localhost:1313/killer-queen-streaming-guide/</link>
+      <link>https://blog.logustus.com/killer-queen-streaming-guide/</link>
       <pubDate>Sun, 05 Nov 2017 00:00:00 -0700</pubDate>
-      <guid>http://localhost:1313/killer-queen-streaming-guide/</guid>
+      <guid>https://blog.logustus.com/killer-queen-streaming-guide/</guid>
       <description>&lt;div class=&#34;ox-hugo-toc toc&#34;&gt;
 &lt;div class=&#34;heading&#34;&gt;Table of Contents&lt;/div&gt;
 &lt;ul&gt;

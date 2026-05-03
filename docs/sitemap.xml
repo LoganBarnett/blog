@@ -2,187 +2,187 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>http://localhost:1313/jerry-the-joblin/</loc>
+    <loc>https://blog.logustus.com/jerry-the-joblin/</loc>
     <lastmod>2025-03-30T00:00:00-07:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/</loc>
+    <loc>https://blog.logustus.com/</loc>
     <lastmod>2025-03-30T00:00:00-07:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/posts/</loc>
+    <loc>https://blog.logustus.com/posts/</loc>
     <lastmod>2025-03-30T00:00:00-07:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/age-of-golemancy/</loc>
+    <loc>https://blog.logustus.com/age-of-golemancy/</loc>
     <lastmod>2025-01-15T00:00:00-08:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/categories/</loc>
+    <loc>https://blog.logustus.com/categories/</loc>
     <lastmod>2025-01-15T00:00:00-08:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/categories/dnd/</loc>
+    <loc>https://blog.logustus.com/categories/dnd/</loc>
     <lastmod>2025-01-15T00:00:00-08:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/nix-adventures-04/</loc>
+    <loc>https://blog.logustus.com/nix-adventures-04/</loc>
     <lastmod>2024-03-03T00:00:00-08:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/categories/nix/</loc>
+    <loc>https://blog.logustus.com/categories/nix/</loc>
     <lastmod>2024-02-16T00:00:00-08:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/nix-adventures-03/</loc>
+    <loc>https://blog.logustus.com/nix-adventures-03/</loc>
     <lastmod>2024-02-16T00:00:00-08:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/nix-adventures/</loc>
+    <loc>https://blog.logustus.com/nix-adventures/</loc>
     <lastmod>2024-02-11T00:00:00-08:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/stable-diffusion-prompt-engineering-01/</loc>
+    <loc>https://blog.logustus.com/stable-diffusion-prompt-engineering-01/</loc>
     <lastmod>2024-02-06T00:00:00-08:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/categories/machinelearning/</loc>
+    <loc>https://blog.logustus.com/categories/machinelearning/</loc>
     <lastmod>2024-02-06T00:00:00-08:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/nix-adventures-02/</loc>
+    <loc>https://blog.logustus.com/nix-adventures-02/</loc>
     <lastmod>2024-01-19T00:00:00-08:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/nix-adventures-01/</loc>
+    <loc>https://blog.logustus.com/nix-adventures-01/</loc>
     <lastmod>2023-12-22T00:00:00-08:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/message-to-students-and-alumni/</loc>
+    <loc>https://blog.logustus.com/message-to-students-and-alumni/</loc>
     <lastmod>2023-03-31T00:00:00-07:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/command-line-programs/</loc>
+    <loc>https://blog.logustus.com/command-line-programs/</loc>
     <lastmod>2022-08-29T00:00:00-07:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/commit-messages/</loc>
+    <loc>https://blog.logustus.com/commit-messages/</loc>
     <lastmod>2022-08-23T00:00:00-07:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/acing-interviews/</loc>
+    <loc>https://blog.logustus.com/acing-interviews/</loc>
     <lastmod>2022-08-16T00:00:00-07:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/categories/software-engineering/</loc>
+    <loc>https://blog.logustus.com/categories/software-engineering/</loc>
     <lastmod>2022-08-16T00:00:00-07:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/data-modeling/</loc>
+    <loc>https://blog.logustus.com/data-modeling/</loc>
     <lastmod>2022-05-21T00:00:00-07:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/function-composition/</loc>
+    <loc>https://blog.logustus.com/function-composition/</loc>
     <lastmod>2022-05-11T00:00:00-07:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/control-flow-simplified-01/</loc>
+    <loc>https://blog.logustus.com/control-flow-simplified-01/</loc>
     <lastmod>2022-02-22T00:00:00-08:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/stop-rewrites/</loc>
+    <loc>https://blog.logustus.com/stop-rewrites/</loc>
     <lastmod>2021-12-08T00:00:00-08:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/resume/</loc>
+    <loc>https://blog.logustus.com/resume/</loc>
     <lastmod>2021-09-06T00:00:00-07:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/categories/xml/</loc>
+    <loc>https://blog.logustus.com/categories/xml/</loc>
     <lastmod>2021-08-23T00:00:00-07:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/xml-namespaces/</loc>
+    <loc>https://blog.logustus.com/xml-namespaces/</loc>
     <lastmod>2021-08-23T00:00:00-07:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/software-engineering-windows/</loc>
+    <loc>https://blog.logustus.com/software-engineering-windows/</loc>
     <lastmod>2021-04-14T00:00:00-07:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/software-engineering-perfectionism/</loc>
+    <loc>https://blog.logustus.com/software-engineering-perfectionism/</loc>
     <lastmod>2021-02-24T00:00:00-08:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/captain-toofsnaggle/</loc>
+    <loc>https://blog.logustus.com/captain-toofsnaggle/</loc>
     <lastmod>2020-12-28T00:00:00-08:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/javascript-promise-and-map/</loc>
+    <loc>https://blog.logustus.com/javascript-promise-and-map/</loc>
     <lastmod>2020-08-01T00:00:00-07:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/world-building/</loc>
+    <loc>https://blog.logustus.com/world-building/</loc>
     <lastmod>2020-05-17T00:00:00-07:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/sans-dungeon-master/</loc>
+    <loc>https://blog.logustus.com/sans-dungeon-master/</loc>
     <lastmod>2020-03-31T00:00:00-07:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/rpg-gm-tropes/</loc>
+    <loc>https://blog.logustus.com/rpg-gm-tropes/</loc>
     <lastmod>2020-02-24T00:00:00-08:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/dirshum/</loc>
+    <loc>https://blog.logustus.com/dirshum/</loc>
     <lastmod>2020-01-17T00:00:00-08:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/software-engineering-starter-web-04/</loc>
+    <loc>https://blog.logustus.com/software-engineering-starter-web-04/</loc>
     <lastmod>2018-08-21T00:00:00-07:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/software-engineering-starter-web-03/</loc>
+    <loc>https://blog.logustus.com/software-engineering-starter-web-03/</loc>
     <lastmod>2018-07-10T00:00:00-07:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/software-engineering-starter-web-02/</loc>
+    <loc>https://blog.logustus.com/software-engineering-starter-web-02/</loc>
     <lastmod>2018-06-15T00:00:00-07:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/software-engineering-starter-web/</loc>
+    <loc>https://blog.logustus.com/software-engineering-starter-web/</loc>
     <lastmod>2018-06-13T00:00:00-07:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/software-engineering-starter-web-01/</loc>
+    <loc>https://blog.logustus.com/software-engineering-starter-web-01/</loc>
     <lastmod>2018-06-13T00:00:00-07:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/killer-queen/</loc>
+    <loc>https://blog.logustus.com/killer-queen/</loc>
     <lastmod>2018-01-14T00:00:00-08:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/killer-queen-black-box-study/</loc>
+    <loc>https://blog.logustus.com/killer-queen-black-box-study/</loc>
     <lastmod>2018-01-14T00:00:00-08:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/categories/killer-queen/</loc>
+    <loc>https://blog.logustus.com/categories/killer-queen/</loc>
     <lastmod>2018-01-14T00:00:00-08:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/ultimate-cicd-setup/</loc>
+    <loc>https://blog.logustus.com/ultimate-cicd-setup/</loc>
     <lastmod>2018-01-01T00:00:00-08:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/killer-queen-streaming-guide/</loc>
+    <loc>https://blog.logustus.com/killer-queen-streaming-guide/</loc>
     <lastmod>2017-11-05T00:00:00-07:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/unit-testing/</loc>
+    <loc>https://blog.logustus.com/unit-testing/</loc>
     <lastmod>2017-05-17T00:00:00-07:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/categories/testing/</loc>
+    <loc>https://blog.logustus.com/categories/testing/</loc>
     <lastmod>2017-05-17T00:00:00-07:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/asteroid-generation/</loc>
+    <loc>https://blog.logustus.com/asteroid-generation/</loc>
     <lastmod>2016-08-17T22:17:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/categories/programming/</loc>
+    <loc>https://blog.logustus.com/categories/programming/</loc>
     <lastmod>2016-08-17T22:17:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/verification/</loc>
+    <loc>https://blog.logustus.com/verification/</loc>
     <lastmod>2016-05-28T16:37:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/aspects-of-functional-programming/</loc>
+    <loc>https://blog.logustus.com/aspects-of-functional-programming/</loc>
     <lastmod>2015-11-30T17:20:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/meetings/</loc>
+    <loc>https://blog.logustus.com/meetings/</loc>
     <lastmod>2015-10-05T20:05:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/categories/productivity/</loc>
+    <loc>https://blog.logustus.com/categories/productivity/</loc>
     <lastmod>2015-10-05T20:05:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/one-true-language/</loc>
+    <loc>https://blog.logustus.com/one-true-language/</loc>
     <lastmod>2015-09-13T13:21:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/categories/programming-tutorial/</loc>
+    <loc>https://blog.logustus.com/categories/programming-tutorial/</loc>
     <lastmod>2015-09-04T21:40:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/rest-primer/</loc>
+    <loc>https://blog.logustus.com/rest-primer/</loc>
     <lastmod>2015-09-04T21:40:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/categories/markdown/</loc>
+    <loc>https://blog.logustus.com/categories/markdown/</loc>
     <lastmod>2015-08-13T19:01:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/markdown-flavored-shoes/</loc>
+    <loc>https://blog.logustus.com/markdown-flavored-shoes/</loc>
     <lastmod>2015-08-13T19:01:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/demystifying-webpack/</loc>
+    <loc>https://blog.logustus.com/demystifying-webpack/</loc>
   </url><url>
-    <loc>http://localhost:1313/functional-programming-with-angular/</loc>
+    <loc>https://blog.logustus.com/functional-programming-with-angular/</loc>
   </url><url>
-    <loc>http://localhost:1313/procedural-generation-rant/</loc>
+    <loc>https://blog.logustus.com/procedural-generation-rant/</loc>
   </url><url>
-    <loc>http://localhost:1313/graphing/</loc>
+    <loc>https://blog.logustus.com/graphing/</loc>
   </url><url>
-    <loc>http://localhost:1313/categories/javascript/</loc>
+    <loc>https://blog.logustus.com/categories/javascript/</loc>
   </url><url>
-    <loc>http://localhost:1313/tags/</loc>
+    <loc>https://blog.logustus.com/tags/</loc>
   </url>
 </urlset>

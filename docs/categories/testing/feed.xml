@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>Testing on Logan Barnett&#39;s blog</title>
-    <link>http://localhost:1313/categories/testing/</link>
+    <link>https://blog.logustus.com/categories/testing/</link>
     <description>Recent content in Testing on Logan Barnett&#39;s blog</description>
     <generator>Hugo</generator>
     <language>en-us</language>
     <lastBuildDate>Wed, 17 May 2017 00:00:00 -0700</lastBuildDate>
-    <atom:link href="http://localhost:1313/categories/testing/feed.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://blog.logustus.com/categories/testing/feed.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Painless(er) Unit Tests</title>
-      <link>http://localhost:1313/unit-testing/</link>
+      <link>https://blog.logustus.com/unit-testing/</link>
       <pubDate>Wed, 17 May 2017 00:00:00 -0700</pubDate>
-      <guid>http://localhost:1313/unit-testing/</guid>
+      <guid>https://blog.logustus.com/unit-testing/</guid>
       <description>&lt;div class=&#34;ox-hugo-toc toc&#34;&gt;
 &lt;div class=&#34;heading&#34;&gt;Table of Contents&lt;/div&gt;
 &lt;ul&gt;
