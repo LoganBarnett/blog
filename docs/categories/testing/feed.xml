@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Testing on Logan Barnett&#39;s blog</title>
+    <link>http://localhost:1313/categories/testing/</link>
+    <description>Recent content in Testing on Logan Barnett&#39;s blog</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 17 May 2017 00:00:00 -0700</lastBuildDate>
+    <atom:link href="http://localhost:1313/categories/testing/feed.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Painless(er) Unit Tests</title>
+      <link>http://localhost:1313/unit-testing/</link>
+      <pubDate>Wed, 17 May 2017 00:00:00 -0700</pubDate>
+      <guid>http://localhost:1313/unit-testing/</guid>
+      <description>&lt;div class=&#34;ox-hugo-toc toc&#34;&gt;
+&lt;div class=&#34;heading&#34;&gt;Table of Contents&lt;/div&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#how-to-make-unit-testing-not-so-much-of-a-pain&#34;&gt;How to Make Unit Testing not so much of a pain&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#unit-testing&#34;&gt;Unit Testing&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#primer&#34;&gt;Primer&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#dress-for-success&#34;&gt;Dress for Success&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#do-not-dry-your-tests&#34;&gt;Do not DRY your tests&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#test-driven-development&#34;&gt;Test Driven Development&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#keep-your-tests&#34;&gt;Keep your tests&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#assert-a-single-truth-per-test&#34;&gt;Assert a single truth per test&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#clearly-state-your-intent&#34;&gt;Clearly state your intent&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#avoid-blob-tests&#34;&gt;Avoid blob tests&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#use-acceptance-tests-instead&#34;&gt;Use acceptance tests instead&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#or-use-an-algebraic-type-system-instead&#34;&gt;Or use an algebraic type system instead&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#admissions&#34;&gt;Admissions&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#conclusion&#34;&gt;Conclusion&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;!--endtoc--&gt;
+&lt;h2 id=&#34;how-to-make-unit-testing-not-so-much-of-a-pain&#34;&gt;How to Make Unit Testing not so much of a pain&lt;/h2&gt;
+&lt;h3 id=&#34;unit-testing&#34;&gt;Unit Testing&lt;/h3&gt;
+&lt;p&gt;I find myself talking a lot about unit testing in my current workplace. Over
+time I&amp;rsquo;ve learned things from others as well as developed some habits that have
+served me well. I&amp;rsquo;ve gotten applications up to 100% test coverage without
+Herculean effort. Granted, test coverage is not the same as test quality, it&amp;rsquo;s
+still a useful metric. I&amp;rsquo;ve demonstrated that there is at least &lt;span class=&#34;underline&#34;&gt;one case&lt;/span&gt; in
+which my code can work.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

@@ -1,0 +1,164 @@
+/* doom-one overlay for PaperMod
+ * Mirrors the user's Emacs theme so the blog reads like the editor.
+ *
+ * Light mode uses doom-one-light's palette; dark mode uses doom-one's.
+ * Both share the outline-N heading scheme borrowed from
+ * doom-themes-base.el (blue, magenta, violet, then alternating fades),
+ * so adjacent heading levels never share a color but the whole
+ * structure stays in two hues. */
+
+:root {
+  /* doom-one-light palette. */
+  --doom-red:        #e45649;
+  --doom-orange:     #da8548;
+  --doom-green:      #50a14f;
+  --doom-teal:       #4db5bd;
+  --doom-yellow:     #986801;
+  --doom-blue:       #4078f2;
+  --doom-dark-blue:  #a0bcf8;
+  --doom-magenta:    #a626a4;
+  /* Shifted from doom-one-light's stock #b751b6 — that hex is the
+   * same hue (~301°) as magenta, just lighter, so adjacent h3/h4 read
+   * as one color on the web.  Pulled toward indigo for a true violet. */
+  --doom-violet:     #6750bf;
+  --doom-cyan:       #0184bc;
+  --doom-dark-cyan:  #005478;
+
+  /* doom-one-light surface. */
+  --theme:          #fafafa;
+  --entry:          #f0f0f0;
+  --primary:        #383a42;
+  --secondary:      #6a6f78;
+  --tertiary:       #f0f0f0;
+  --content:        #383a42;
+  --code-block-bg:  #f0f0f0;
+  --code-bg:        #f0f0f0;
+  --border:         #e3e3e3;
+
+  --link-color:     var(--doom-blue);
+  --link-hover:     var(--doom-magenta);
+  --inline-code:    var(--doom-orange);
+  --quote-edge:     var(--doom-cyan);
+
+  /* Post title pinned to magenta — doom-themes sets the
+   * `org-document-title' face to `builtin', which resolves to
+   * `magenta' in both doom-one and doom-one-light.
+   *
+   * Body headings are shifted +1 from doom's outline-N scheme so
+   * that h2 (what `*' becomes after ox-hugo demotes for the title)
+   * gets outline-1 = blue, h3 gets outline-2 = magenta, and so on.
+   * h1 in body content is rare but inherits h2's color so any
+   * accidental in-body h1 doesn't read out of place. */
+  --title-color: var(--doom-magenta);
+  --h1-color: var(--doom-blue);
+  --h2-color: var(--doom-blue);
+  --h3-color: var(--doom-magenta);
+  --h4-color: var(--doom-violet);
+  --h5-color: color-mix(in srgb, var(--doom-blue)    75%, var(--primary));
+  --h6-color: color-mix(in srgb, var(--doom-magenta) 75%, var(--primary));
+}
+
+.dark {
+  /* doom-one (dark) palette. */
+  --doom-red:        #ff6c6b;
+  --doom-orange:     #da8548;
+  --doom-green:      #98be65;
+  --doom-teal:       #4db5bd;
+  --doom-yellow:     #ECBE7B;
+  --doom-blue:       #51afef;
+  --doom-dark-blue:  #2257A0;
+  --doom-magenta:    #c678dd;
+  /* Shifted from doom-one's stock #a9a1e1 — only 41° from magenta on
+   * a web display, which made adjacent h3/h4 hard to distinguish.
+   * Pulled bluer and more saturated so it reads as distinct lavender. */
+  --doom-violet:     #9c87e9;
+  --doom-cyan:       #46D9FF;
+  --doom-dark-cyan:  #5699AF;
+
+  /* doom-one surface. */
+  --theme:          #282c34;
+  --entry:          #21242b;
+  --primary:        #bbc2cf;
+  --secondary:      #5B6268;
+  --tertiary:       #21242b;
+  --content:        #bbc2cf;
+  --code-block-bg:  #21242b;
+  --code-bg:        #21242b;
+  --border:         #1B2229;
+
+  --link-color:     var(--doom-blue);
+  --link-hover:     var(--doom-magenta);
+  --inline-code:    var(--doom-orange);
+  --quote-edge:     var(--doom-cyan);
+
+  /* Post title pinned to magenta — doom-themes sets the
+   * `org-document-title' face to `builtin', which resolves to
+   * `magenta' in both doom-one and doom-one-light.
+   *
+   * Body headings are shifted +1 from doom's outline-N scheme so
+   * that h2 (what `*' becomes after ox-hugo demotes for the title)
+   * gets outline-1 = blue, h3 gets outline-2 = magenta, and so on.
+   * h1 in body content is rare but inherits h2's color so any
+   * accidental in-body h1 doesn't read out of place. */
+  --title-color: var(--doom-magenta);
+  --h1-color: var(--doom-blue);
+  --h2-color: var(--doom-blue);
+  --h3-color: var(--doom-magenta);
+  --h4-color: var(--doom-violet);
+  --h5-color: color-mix(in srgb, var(--doom-blue)    75%, var(--primary));
+  --h6-color: color-mix(in srgb, var(--doom-magenta) 75%, var(--primary));
+}
+
+/* Headings — doom-themes' outline-N pattern.  Extended to entry
+ * headers on home/list pages so post titles get the same treatment. */
+.post-title,
+.entry-hint-parent { color: var(--title-color); }
+.post-content h1,
+.entry-header h1 { color: var(--h1-color); }
+.post-content h2,
+.entry-header  h2 { color: var(--h2-color); }
+.post-content h3,
+.entry-header  h3 { color: var(--h3-color); }
+.post-content h4 { color: var(--h4-color); }
+.post-content h5 { color: var(--h5-color); }
+.post-content h6 { color: var(--h6-color); }
+
+.post-content :is(h1, h2, h3, h4, h5, h6) .anchor {
+  color: inherit;
+  opacity: 0.5;
+}
+
+/* Links — colored, underline only on hover. */
+.post-content a,
+a.entry-link,
+.post-title a {
+  color: var(--link-color);
+  text-decoration: none;
+}
+.post-content a:hover,
+a.entry-link:hover,
+.post-title a:hover {
+  color: var(--link-hover);
+  text-decoration: underline;
+}
+
+/* Inline code — accent color on the existing code background. */
+.post-content code:not(pre code) {
+  color: var(--inline-code);
+  background: var(--code-bg);
+  padding: 0.1em 0.3em;
+  border-radius: 3px;
+}
+
+/* Blockquotes — left edge in cyan. */
+.post-content blockquote {
+  border-left: 4px solid var(--quote-edge);
+  padding-left: 1em;
+  font-style: italic;
+  color: var(--secondary);
+}
+
+::selection {
+  background: var(--link-color);
+  color: var(--theme);
+}

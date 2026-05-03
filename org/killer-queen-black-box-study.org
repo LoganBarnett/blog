@@ -1,0 +1,745 @@
+
+#+title:   Killer Queen Black Box Study
+#+author:  Logan Barnett
+#+email:   logustus@gmail.com
+#+date:    <2018-01-14 Sun>
+#+tags:    killer-queen
+#+toc:     headlines 3
+#+hugo_base_dir: ..
+#+hugo_section: posts
+#+hugo_aliases: /killer-queen-black-box-study.html
+#+hugo_categories: killer-queen
+
+* changelog
+- <2018-06-05 Tue> :: add section about [[characters][character controllers]].
+- <2018-03-22 Thu> :: add section about [[game stutter][game stutter]].
+- <2018-01-21 Sun> :: add section about [[frame rate][frame rate and vsync]].
+* introduction
+
+At the Portland scene we like to talk a lot about different things we've learned
+about Killer Queen, and being that the game is effectively a hunk of software we
+wind up talking a lot about details of its internal implementation. This post is
+about the software implementation we know about Killer Queen or things we are
+able to infer about said software. The source code for Killer Queen is locked in
+a vault somewhere, guarded by a small army of the best speed warriors. As such
+we can't say for 100% certainty about everything. The game is a black box where
+we cannot see inside it. We can make some good guesses though.
+
+* background
+
+I (Logan Barnett AKA Day Logan) have done game development both professionally
+and as a hobbyist for many years now, and I'm an accomplished software engineer.
+At time of writing my current work is in web development, but I am comfortable
+straddling both worlds. I used to pay my bills making an educational game in
+Unity. Unity is the game engine that was used to build Killer Queen. My hobby
+projects have taken my experience beyond the scope of that game. I have had
+an opportunity to work with Unity's physics system (and work around it), use its
+character controller system, networking, shaders, GUI (editor and in-game), and
+its logic/behavior system. I also have an educational background in computer
+engineering, so I have a good conceptual understanding of operating systems,
+memory models, resource sharing, etc. My [[./resume.html][resume]] is here for full transparency.
+
+* reasoning
+
+If you had to build a car, there's a lot of things you could say about building
+a car without actually having to look at the blueprints. Cars need some way of
+touching the ground (wheels). They need a drive train that pushes the car in the
+direction we want to go. There needs to be some kind of steering apparatus (even
+for self driving cars) so you can make sure the car is moving the direction you
+want to go. We can do this with software too. In order to accomplish certain
+things, there's just machinery that needs to be in place. Unity has a lot of
+things built into it, and circumventing those built in things so you can do
+something custom can mean a _lot_ of work. Bumblebee Games doesn't have that
+kind of resources. So there's a lot of things we can infer about the guts of the
+game without even looking at its source code.
+
+* things
+** frames
+
+*** history
+The first time I learned about "frames" was in talk about how Street Fighter 2
+works. Keep in mind this game is ancient by today's standards. With the Street
+Fighter 2 cabinet, the hardware there focused on exactly one thing: Running
+Street Fighter 2. This meant the game could make some assumptions about its
+operation, namely its timing. Street Fighter 2 plays at 30 frames per second,
+meaning the screen redraws itself 30 times a second. Each cycle between the
+redraw is a "frame". During this time, the game does all of its computations. It
+copies pixels around, computes distances, does hit box checks, etc all in this
+tight little loop. Since frames in Street Fighter 2 are fixed to this 30 times
+per second, that means you have about 33 milliseconds to do all of your
+computations. Any smarts that are in the game have to fit in this time period.
+If that's the case, you can count on each frame being 33 milliseconds long, and
+you can derive timing in the animation system, what your grace period is to
+throw a fireball, or chain together some combo, or whatever. But the problem is
+this is a lie. It's just an infrequent one for Street Fighter.
+
+Remember Solitaire? That game that came built into Windows 3.x back when you had
+to clean mouse balls? Yeah that one. I think it's still in Windows today. If you
+beat Solitaire, you were given a wonderful little animation of the cards
+cascading out of their slots, kind of undoing everything you just did. You could
+easily go use the bathroom and come back to see it still going. This thing took
+a while. At the time if you were on Windows 3.x and you had a 66 Mhz computer,
+this would go pretty slow. Once you got a Pentium, you'd notice the animation
+completed in about a second or two. In both situations, the game was doing the
+animation as fast as possible, but one computer was significantly faster than
+the other. Computers back then often had a turbo button. You could use this
+button to slow your computer down and run older applications that had this kind
+of timing problem. Street Fighter would be one of those applications.
+
+*** complications
+
+The lie about frame counting is that sometimes the computations can't complete
+in the time period they have. This happens a lot in Chun Li's level: There's so
+many animations and other things going on that if the players add a little bit
+more and maybe step away from each other, the hardware sudden has way too much
+to do to cram into that 33 millisecond time slice, so it just takes longer, and
+as a result the game enters a strange kind of slow motion.
+
+*** the operating system
+
+Back in the day of Street Fighter 2, and most gaming consoles for that matter,
+the game you were running was the program the hardware ran. Today even the XBox
+and PSX consoles run an operating system (OS). When you boot up your mac and run
+Photoshop or whatever, you're not running Photoshop. You're running MacOS. The
+operating system is a very intricate program that makes it look like you're
+running other programs. In reality the OS grants programs the ability to execute
+a few instructions at a time before the OS interrupts and then gives another
+program a chance to run on the processor. When it does a good job about
+switching around really fast, it makes it look like you're running multiple
+programs at once. Your games are one of these programs. This makes it really
+hard to promise that you have exactly 33 milliseconds to complete your
+operations. In the middle of the frame, the OS could easily have let several
+dozen other programs run a little bit too, each eating into that precious slice
+of time.
+
+As an example, there's a small program running in this post that loops and
+prints the time since the last tick in milliseconds. Notice the variance.
+
+#+begin_export html
+<div>Time since last tick: <span data-id="millisecond-monitor"></span></div>
+#+end_export
+
+Here's the code that does this, if you want to follow along:
+#+name: time-delta-monitor
+#+begin_src javascript
+var lastTime = Date.now()
+var el = document.querySelector('[data-id="millisecond-monitor"]')
+function printMillis() {
+  var delta = Date.now() - lastTime
+  el.innerHTML = delta
+  lastTime = Date.now()
+  window.requestAnimationFrame(printMillis)
+}
+
+window.requestAnimationFrame(printMillis)
+#+end_src
+
+#+name: inline-js
+#+begin_src emacs-lisp :noweb yes :exports results :results html :var blk=""
+(concat
+ "<script type=\"text/javascript\">\n"
+ (cadr (org-babel-lob--src-info blk))
+ "</script>")
+#+end_src
+
+#+call: inline-js("time-delta-monitor")
+
+#+RESULTS:
+
+*** the solution
+
+So how do games not stutter every time your browser takes a bunch of time to
+inefficiently render a gif you're not even looking at because you're playing a
+game? Games multiply a time delta.
+
+Take this psuedo-code as an example:
+
+#+begin_example
+if player1HoldingRight
+  player1Position.x = player1Position.x + player1Speed
+#+end_example
+
+Here =player1Speed= is a simple fixed number. The speed is tuned to you playing
+the game at 30 FPS. The new =x= is the old =x= plus that speed. Simple! But a
+lie. To get around it, we use the delta since our last frame.
+
+#+begin_example
+if player1HoldingRight
+  player1Position.x = player1Position.x + (player1Speed * timeSinceLastTick)
+#+end_example
+
+Sometimes we call this a tick. Here we do multiplication. If the delta was high,
+then the amount we move the player is high. If it's low, the amount we move the
+player is low. Mathematically it scales perfectly. There's some complications
+with this approach, but rest assured _this is what everyone uses today_. Unity
+games are no exception.
+
+Here's an example of the timing scaling to your machine's speed:
+
+#+html: <iframe src="https://www.winningsolitaire.com"></iframe>
+
+*** side by side
+
+    I managed to get my hands on the up-until-now rumored purple queen sprites.
+    Many berry runners died to bring us this sprite from KQ 4 Turbo X
+    Championship Legendary Edition. You can see the queens moving horizontally
+    in separate "swim lanes". We have exaggerated artificial delays we're adding
+    to demonstrate how the varied methods work.
+
+#+begin_export html
+<div data-id="swim-lanes" style="width: 100%; height: 28em;">
+  <div style="position: absolute;">Rough delay per frame graph</div>
+  <canvas data-id="speed-graph" style="display: block;" width="0px" height="0px">
+    Speed canvas
+  </canvas>
+  <div style="position: absolute;">Fixed frame (tick)</div>
+  <canvas data-id="fixed-tick" style="display: block;" width="0px" height="0px">
+    Fixed tick canvas
+  </canvas>
+  <div style="position: absolute;">Variable frame (tick)</div>
+  <canvas data-id="variable-tick" style="display: block;" width="0px" height="0px">
+    Variable tick canvas
+  </canvas>
+  <div style="position: absolute;">Ideal variable frame (tick)</div>
+  <canvas data-id="ideal-variable-tick" style="display: block;" width="0px" height="0px">
+    Ideal variable tick canvas
+  </canvas>
+</div>
+#+end_export
+
+#+name: timing-swim-lanes
+#+begin_src javascript :exports none
+  'use strict'
+
+  function initSwimLane(container, canvas) {
+    canvas.height = container.clientHeight / 4
+    canvas.width = container.clientWidth
+    return canvas
+  }
+  var container = document.querySelector('[data-id="swim-lanes"]')
+  var speedGraphCanvas = initSwimLane(
+    container,
+    document.querySelector('[data-id="speed-graph"]')
+  )
+  var fixedTickCanvas = initSwimLane(
+    container,
+    document.querySelector('[data-id="fixed-tick"]')
+  )
+  var variableTickCanvas = initSwimLane(
+    container,
+    document.querySelector('[data-id="variable-tick"]')
+  )
+
+  var idealVariableTickCanvas = initSwimLane(
+    container,
+    document.querySelector('[data-id="ideal-variable-tick"]')
+  )
+
+  // Shamelessly lifted from https://gist.github.com/gre/1650294
+  function easeQuad (t) { return t<.5 ? 2*t*t : -1+(4-2*t)*t }
+  var lastTick = new Date()
+
+  function withinSpeedDip(width, x) {
+    return x > width - (width * 0.66) && x < width - (width * 0.33)
+  }
+
+  function calcDelay(width, x) {
+    if(withinSpeedDip(width, x)) {
+      var percent = (x - (width * 0.33)) / (width * 0.33)
+      var delay = easeQuad(percent * 1.8) * 100
+      return delay + 33
+    }
+    else {
+      return 33 // standard fixed delay
+    }
+  }
+
+  function plotSpeedGraph(canvas) {
+    var height = canvas.height
+    var width = canvas.width
+    var context = canvas.getContext('2d')
+    context.beginPath()
+    context.strokeStyle = 'lightgreen'
+    context.lineWidth = 3
+    const lineHeight = height * 0.75
+    context.moveTo(0, lineHeight)
+    context.lineTo(width * 0.33, lineHeight)
+    context.quadraticCurveTo(width * 0.5, -height * 0.5, width * 0.66, lineHeight)
+    context.lineTo(width, lineHeight)
+    context.stroke()
+  }
+
+  var reset = [ false, false, false ]
+
+  setInterval(function() {
+    reset = [ true, true, true ]
+  }, 5 * 1000)
+
+  function startFixed(img) {
+    var speed = fixedTickCanvas.width * 0.01
+    tickWithDelay(
+      0,
+      drawQueen,
+      function() { return speed },
+      img,
+      fixedTickCanvas,
+      0,
+      0
+    )
+  }
+
+  function startVariable(img) {
+    var speed = variableTickCanvas.width * 0.0003
+    tickWithDelay(
+      1,
+      drawQueen,
+      function(delay) {
+        var offset = speed * delay
+        if(offset < 0) {
+          console.log('unexpected offset', offset)
+        }
+        // Use this as a debounce because we get negative numbers sometimes.
+        return offset > 0 ? offset : -offset
+      },
+      img,
+      variableTickCanvas,
+      0,
+      0
+    )
+  }
+
+  function startIdealVariable(img) {
+    var speed = idealVariableTickCanvas.width * 0.0003
+    tickWithoutDelay(
+      2,
+      drawQueen,
+      function(delay) {
+        return speed * delay
+      },
+      img,
+      idealVariableTickCanvas,
+      0,
+      0
+    )
+  }
+
+  function loadQueen() {
+    var img = new Image()
+    img.addEventListener('load', function() {
+      startFixed(img)
+      startVariable(img)
+      startIdealVariable(img)
+    }, false)
+    img.src = '/blog/assets/kq-purple-queen-float-forward-01.png'
+  }
+
+  function tickSpeedGraph() {
+  }
+
+  function drawQueen(idx, speedFn, img, canvas, delay, x) {
+    var height = canvas.height
+    var width = canvas.width
+    var heightOffset = img.height / 2
+    var context = canvas.getContext('2d')
+    context.clearRect(0, 0, width, height)
+    x += speedFn(delay)
+    // TODO: Use .all or similar.
+    if (reset[0] || reset[1] || reset[2]) {
+      reset[idx] = false
+      x = 0
+    }
+    context.drawImage(img, x, heightOffset)
+    context.stroke()
+
+    return x
+  }
+
+  function tickWithoutDelay(idx, tickFn, speedFn, img, canvas, x) {
+    setTimeout(function() {
+      var newX = tickFn(idx, speedFn, img, canvas, 33, x)
+      tickWithoutDelay(idx, tickFn, speedFn, img, canvas, newX)
+    }, 33)
+  }
+
+  function tickWithDelay(idx, tickFn, speedFn, img, canvas, delay, x) {
+    var newDelay = calcDelay(canvas.width, x + img.width / 2)
+    setTimeout(function() {
+      var newX = tickFn(idx, speedFn, img, canvas, delay, x)
+      tickWithDelay(idx, tickFn, speedFn, img, canvas, newDelay, newX)
+    }, delay)
+  }
+
+  plotSpeedGraph(speedGraphCanvas)
+
+  loadQueen()
+#+end_src
+
+#+call: inline-js("timing-swim-lanes")
+
+#+RESULTS:
+
+*** conclusion
+
+We cannot assume all frames are created equal. Frames are not fixed slices of
+time but instead highly varied slices of time.
+
+** frame rate
+   Building upon the idea of a variable frame rate - frame rates can sometimes
+   have upper limits. We do that sometimes as a way of preventing a visual
+   artifact called "tearing". Before we explain the fix, let's explain the
+   problem.
+
+*** the problem
+    Imagine the kind of work it takes to make a stop motion movie. You
+    meticulously position all of the objects in the scene, setup your lights,
+    focus the camera (pray that you didn't nudge it), and take that picture.
+    Okay great. Computers do this too, but they can't spend minutes doing it.
+    Try 33 milliseconds at worst case.
+
+    There's a two dimensional section of memory called a buffer, and the game's
+    job is to translate the game's state into a bunch of colors. These colors
+    are destined to populate pixels on the screen, and this is how you see all
+    the pretty things in the game. The monitor that displays this information is
+    a simplistic device though. It redraws itself at some fixed rate (60 Hz to
+    75 Hz, depending on the hardware). CRTs are closer to 30 Hz if I recall. The
+    monitor shows stuff at its own rate, not the video card's. So what winds up
+    happening is the screen can start redrawing the screen using the buffer _as
+    the game is also writing to that buffer_. What this means is you wind up
+    seeing part of the last frame _and_ part of the current frame at the same
+    time, but there will be a seam (horizontal due to how the hardware works).
+
+*** enter vsync
+    =vsync= is a feature that's really easy to use on a game engine. It's a
+    simple toggle that tells the game it has to wait until that buffer is ready
+    and then it can draw to that buffer. The monitor won't see the buffer until
+    after the game has finished writing to it. The tradeoff is the game has to
+    sit on its hands when it could be calculating smoke trajectories of bong
+    stacks in weed-em-up games. It slows the game down, sometimes in a
+    noticeably adverse way.
+
+    It's worth noting there's other ways to combat tearing such as double or
+    triple buffering, but these are mitigation strategies. At the moment there's
+    not an actual fix. There's been development on gaming monitors that can
+    communicate with the video card and sync up in a less primitive way.
+
+*** does KQ use vsync?
+
+    From staring too long at the background on the game, it would seem like
+    Killer Queen does indeed not use vsync currently. When the background
+    scrolls upwards, you can see the tear. That said, I've noticed that cabinets
+    can perform a little differently when they get hooked up to streaming
+    equipment. The streaming equipment influences the frame rate of displays. So
+    it's hard to say one way or another with much certainty.
+
+*** TODO show example of vsync
+
+** pixels
+
+*** 2D as 3D
+Display sizes vary all over the place. The result is game engines don't use
+pixels directly anymore. Even 2D games are rendered using 3D libraries. In
+Unity's case 2D things will be rectangles that face the camera. The coordinate
+system Unity uses is arbitrary. You could change the size of your camera and be
+able to see further, for example. All of the coordinates used in Unity are
+floating point numbers. Floating point numbers are the poor man's numbers that
+allow for decimals. Floating point numbers are "lossy", meaning they aren't
+exact and even though it might look like the numbers are correct they actually
+aren't the same thing. This doesn't mean Unity is doing anything poorly. The
+world of 3D gaming is dominated by floating point numbers. The only things that
+become hard with floating point numbers are when you want to do exact
+comparisons and a large scaling distance.
+
+*** what about the pixel graphics?
+
+Generally what happens with pixel graphics is someone will build the images
+using fixed pixels, and then assign that image to a rectangle that'll show up on
+the screen. Most of the time there's a filter applied to the images in real-time
+that blurs and distorts the image. You want this in a vast majority of 3D games,
+as it addresses graininess and a number of other visual artifacts. In the case
+of retro graphics games, the filter is disabled so you see the raw pixels. They
+are still stretched though.
+
+*** TODO conclusion
+
+** TODO the wrap glitch
+
+** game stutter
+
+   Sometimes the game stutters. There's a variety of reasons as to why this can
+   happen that are completely independent of the game itself. The operating
+   system might have some expensive processes that wake up and do lots of work
+   suddenly and leave the game starved for resources, for example. More often
+   than not it will be garbage collection that's the cause of stutters.
+
+**** the dark ages of memory management
+
+     Let's rewind to 2018 where games are still written in C++. Yup. It still
+     happens. The common belief is that games need to run at maximum speed and
+     C++ is the closest intersection between abstractable and close to the raw
+     processor as possible. In reality it's like running a civilization without
+     running water just because you want to be closer to nature. Barbarism
+     ensues. Programmers generally don't (and can't) know exactly how much
+     memory their applications will need when they are writing software for it.
+     Even if we had an idea, it would be insanely hard to get it right. Games
+     can easily take billions of bytes of memory. So instead of declaring
+     upfront how much memory we need, we instead gradually ask the operating
+     system for more memory to use. Memory is used for things like tracking each
+     berry on the map, or the position, momentum, facing direction, etc of a
+     character. Basically anything you can see or conceptualize in the game is
+     tracked somehow in the system's memory. In the days of C/C++, we would ask
+     for memory and then we'd have to tell the operating system when we were
+     done with it. If we forgot (and we do this _all the fucking time_), we'd
+     wind up with something called a memory leak. A memory leak means our
+     program asked for memory it will never give back. If the program does this
+     too many times, we'll use up all of the memory on the computer, and then we
+     run into trouble.
+
+**** garbage collection
+
+     Unity is backed by a C/C++ engine, but as game authors everything is
+     written some .net language - usually C#. C# doesn't use direct memory
+     management like C++ does. Instead it uses a garbage collection system like
+     many other modern programming languages do. Garbage collection is like a
+     little sibling program that runs alongside your primary program. It watches
+     all the little asks for memory that your system does, and tracks what data
+     references other data. Specifically it's looking for data that nothing
+     references.
+
+     Let's see how it works with some arbitrary character setup:
+
+#+begin_src plantuml :file kq-bb-easy-memory-character-full.svg
+
+[shirt]
+[pants]
+[rat bastard sword]
+
+[program] --> [character1]
+package character1 {
+  [legs] --> [pants]
+  [torso] --> [shirt]
+  [hand] --> [rat bastard sword]
+}
+
+#+end_src
+
+#+RESULTS:
+[[file:kq-bb-easy-memory-character-full.svg]]
+
+      Here we have a character with leg, torso, and hand attributes. Each of
+      these attributes holds a "reference" to some piece of data in the system.
+      In this case it's pants, a shirt, and a rat bastard sword. The character
+      itself hangs off of the main program. These references are like little
+      links that point to the data we need. If we have this character, we can
+      get its torso item if we like. For funsies, let's remove the hand item:
+
+#+begin_src plantuml :file kq-bb-easy-memory-character-handless.svg
+[shirt]
+[pants]
+[rat bastard sword]
+
+[program] --> [character1]
+package character1 {
+  [legs] --> [pants]
+  [torso] --> [shirt]
+  [hand]
+}
+
+#+end_src
+
+#+RESULTS:
+[[file:kq-bb-easy-memory-character-handless.svg]]
+
+      When the garbage collector sees that there's no reference to the rat
+      bastard sword, it knows that it's safe to remove the rat bastard sword
+      from memory and give it back to the operating system. Things like this are
+      very simple for the garbage collector to do. Let's make it slightly more
+      complicated.
+
+
+#+begin_src plantuml :file kq-bb-easy-memory-character-double-ref-01.svg
+[shirt]
+[pants]
+
+[program] --> [treasure chest]
+[treasure chest] --> [rat bastard sword]
+package "rat bastard sword" {
+  [container] --> [treasure chest]
+}
+
+[program] -> [character1]
+package character1 {
+  [legs] --> [pants]
+  [torso] --> [shirt]
+  [hand]
+}
+
+#+end_src
+
+#+RESULTS:
+[[file:kq-bb-easy-memory-character-double-ref-01.svg]]
+
+     No surprises yet. Here we've added a treasure chest that contains our rat
+     bastard sword. We just moved the sword around. For the sake of argument,
+     let's say the rat bastard sword holds a reference to its container - the
+     treasure chest. Now here comes the curve ball: We're going to destroy the
+     treasure chest. We simply do that by unlinking it, or removing its
+     reference to keep the vernacular.
+
+#+begin_src plantuml :file kq-bb-easy-memory-character-double-ref-02.svg
+[shirt]
+[pants]
+
+[treasure chest] --> [rat bastard sword]
+package "rat bastard sword" {
+  [container] --> [treasure chest]
+}
+
+[program] -> [character1]
+package character1 {
+  [legs] --> [pants]
+  [torso] --> [shirt]
+  [hand]
+}
+
+#+end_src
+
+#+RESULTS:
+[[file:kq-bb-easy-memory-character-double-ref-02.svg]]
+
+    Wait a second - our simple rule of removing things that are no longer
+    referenced won't work here! These objects both reference each other, so they
+    elude our simple rule. _Fuck_. Whelp, welcome to software engineering. This
+    is why software conferences are also wonderful gateways to alcoholism.
+
+    Let's remove our example for a moment and show something actually
+    complicated:
+
+#+begin_src plantuml :file kq-bb-easy-memory-character-double-ref-03.svg
+[program]
+[A] -> [B]
+[B] -> [C]
+[C] -> [D]
+[D] -> [E]
+[E] -> [...]
+[...] -> [Z]
+[Z] -> [A]
+#+end_src
+
+#+RESULTS:
+[[file:kq-bb-easy-memory-character-double-ref-03.svg]]
+
+    The garbage collector has to solve this puzzle among billions of bytes of
+    memory. It's a nightmare, and it takes time to do. In the mean time, the
+    program that's using all of this memory is moving things around, creating,
+    removing, and changing references _constantly_.
+
+**** why you should care
+
+    The garbage collector _must_ pause the _entire program_ to perform a full
+    garbage collect (or GC). If there's a lot of memory to go through, this can
+    be a long pause. In games, this is death.
+
+    Unity gets away with this as a game engine not through any kind of technical
+    feat. Unity is simply used in a lot of contexts where it doesn't matter. If
+    you're playing Civ5, you won't care as a player if there's an occasional
+    hiccup. I don't care that some zombie shooter game on my sons' iPads has to
+    pause occasionally. If you're playing some single player indie game, you
+    probably don't care either. Unity is all about these kinds of games.
+
+    Remember the [[side by side][side by side]] I put together showing how different timing models
+    work with delays? You'd better fucking remember. That was a lot of work!
+
+    The garbage collector will cause these long hiccups, which sometimes are
+    less than a second, and it will ruin your day. Imagine how precise the
+    timing has to be when you perform a j-hook. Only now add that half second
+    hiccup in the middle of it. Oops.
+
+    Predicting how memory models will behave while the program is actually
+    running can be akin to predicting stock market fluctuations, except there's
+    not actually any money in it. Killer Queen doesn't have that much it needs
+    to track, but it still needs to track things. When a berry is scooped up, it
+    might be destroyed along with all the things it had hanging off of it. When
+    your drone dies, the drone may be destroyed and the berry created anew. This
+    all creates churn. Long running games might make this problem more apparent
+    due to the memory model getting fragmented over time, or memory leaks occur
+    because the code didn't release the reference when it needed to.
+
+    As game engineers we can mitigate that with something called "object
+    pooling". With object pooling, we simply have a pool of objects and we
+    return them to the pool when we're done or have no use for them. This is
+    extra work though, and most indie developers don't prioritize doing this,
+    let alone even knowing it's something they can do.
+
+    This is why certain very critical executions in the game can be absolutely
+    perilous to do. Even if _you_ are capable of executing them properly 100% of
+    the time, the game may simply decide it needs to take a break and garbage
+    collect right before you turn around, hit that button, etc. Then it
+    processes a long tick, and registers that you bumped into someone facing the
+    wrong way, and now you're down another egg.
+
+** TODO the "drip"
+
+** collision
+
+*** characters
+    In Unity, the =CharacterController= is a component you add to a game object
+    that makes it really easy to control as a player. It's not "physics",
+    similar to how Mario has never jumped around with physics. Yeah, Mario is
+    influenced by a kind of gravity, but he's propelled by you holding the jump
+    button longer (meaning more "thrust" would be applied after he left the
+    ground), and steering in the air is possible in many platformers, but on the
+    scale any of us could jump is not possible, even if we could jump 10x higher
+    than we can now. So it's not physics. It's a weird kind of game physics and
+    the =CharacterController= scratches this itch rather well. It has all kinds
+    of knobs to turn for things like gravity, max falling speed, air speed and
+    control, etc. It also is really nice because it knows how to move "around"
+    small obstacles - very small like a single stair step.
+
+    The =CharacterController= uses a 3D capsule (pill shape) as its volume for
+    knowing when it's running into things. It works really well for most "human"
+    shaped things. If you need to, you can reduce the height to get something
+    closer to a sphere. Effectively, it's a tube with two hemispheres at the top
+    and bottom. This has interesting interaction with a rectangular volume
+    though.
+
+    If you could draw the character controller over a character, this is what it
+    would look like:
+
+#+begin_export html
+<div style="position: absolute;">
+  <div
+    style="position: relative;left: 1.5em;top: 1em;width: 8em;height: 13em;border: 0.3em solid green;border-radius: 11em;"
+  ></div>
+</div>
+<img
+  style="image-rendering: pixelated; width: 13em"
+  src="/blog/assets/kq-purple-warrior-chex-standing-01.png"
+/>
+#+end_export
+
+    Cosmetic pieces will totally fall out of the bounding area, and that's okay.
+    This kind of approximation is totally fine for the kind of game KQ is, and a
+    majority of others as well. Keep in mind, this specifically for _movement_
+    and bumping into inert objects such as terrain. The =CharacterController=
+    itself is _not a collider_. We'll cover that more in another section.
+
+*** ledges vs characters                                          :noexport:
+    Ledges in the game are 100% thin rectangles. There is absolutely no
+    curvature to them at all, regardless of the map you play on. What you are
+    seeing is the curvature of the =CharcterController=.
+
+
+    Observe the ledge.
+
+    #+begin_src js
+
+    #+end_src
+
+    #+begin_export html
+    <div>
+      <img
+        style="position: relative; top: 10em; left: 10em;image-rendering: pixelated; width: 40em"
+        src="/blog/assets/kq-grassy-platform-01.png"
+      />
+    </div>
+    #+end_export

@@ -1,0 +1,12 @@
+#+title:     Jerry the Joblin
+#+author:    Logan Barnett
+#+email:     logustus@gmail.com
+#+date:      <2025-03-30 Sun>
+#+language:  en
+#+hugo_base_dir: ..
+#+hugo_section: posts
+#+hugo_aliases: /jerry-the-joblin.html
+
+This campaign now lives on the Dirshum site:
+
+[[https://loganbarnett.github.io/site-dirshum/jerry-the-joblin/][loganbarnett.github.io/site-dirshum/jerry-the-joblin/]]

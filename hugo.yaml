@@ -1,0 +1,95 @@
+title: Logan Barnett's blog
+baseURL: "https://blog.logustus.com/"
+languageCode: en-us
+theme: PaperMod
+
+pagination:
+  pagerSize: 10
+
+enableRobotsTXT: true
+
+# Required to make ox-hugo's `./foo.png' style image refs resolve correctly
+# from post pages.  Without this, an image link emitted as
+# `<img src=./foo.png>' under URL `/captain-toofsnaggle/' would resolve to
+# `/captain-toofsnaggle/foo.png' (404).  See site-dirshum/hugo.yaml and
+# https://github.com/kaushalmodi/ox-hugo/issues/295
+canonifyURLs: true
+
+buildDrafts: false
+buildFuture: false
+buildExpired: false
+
+refLinksErrorLevel: WARNING
+refLinksNotFoundURL: "#missing-ref"
+
+permalinks:
+  posts: /:filename/
+
+publishDir: docs
+
+outputFormats:
+  RSS:
+    baseName: feed
+
+minify:
+  disableXML: true
+  minifyOutput: true
+
+params:
+  env: production
+  mainSections:
+    - posts
+  description: >-
+    Thoughts of a software engineer, miniature painter, sword sparer(?),
+    father, and other labels I forgot about.  This blog is brought to you by
+    the byproducts of a dead star.
+  author: Logan Barnett
+  DateFormat: "2006-01-02"
+  defaultTheme: auto
+  disableThemeToggle: false
+  ShowReadingTime: true
+  ShowShareButtons: false
+  ShowPostNavLinks: true
+  ShowBreadCrumbs: true
+  ShowCodeCopyButtons: true
+  ShowWordCount: true
+  ShowRssButtonInSectionTermList: true
+  UseHugoToc: true
+  showtoc: false
+  tocopen: false
+  comments: false
+
+  homeInfoParams:
+    Title: "Logan Barnett's blog"
+    Content: >-
+      Thoughts of a software engineer, miniature painter, sword sparer(?),
+      father, and other labels I forgot about.
+
+  socialIcons:
+    - name: github
+      url: "https://github.com/LoganBarnett"
+    - name: rss
+      url: "/feed.xml"
+
+pygmentsUseClasses: true
+markup:
+  highlight:
+    noClasses: false
+  goldmark:
+    renderer:
+      unsafe: true
+
+menu:
+  main:
+    - identifier: about
+      name: About
+      url: /about/
+      weight: 10
+    - identifier: categories
+      name: Categories
+      url: /categories/
+      weight: 20
+    - identifier: resume
+      name: Resume
+      url: /resume/
+      weight: 30

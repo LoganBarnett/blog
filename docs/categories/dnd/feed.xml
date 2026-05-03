@@ -1,0 +1,475 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Dnd on Logan Barnett&#39;s blog</title>
+    <link>http://localhost:1313/categories/dnd/</link>
+    <description>Recent content in Dnd on Logan Barnett&#39;s blog</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 15 Jan 2025 00:00:00 -0800</lastBuildDate>
+    <atom:link href="http://localhost:1313/categories/dnd/feed.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Age of Golemancy Golemancy</title>
+      <link>http://localhost:1313/age-of-golemancy/</link>
+      <pubDate>Wed, 15 Jan 2025 00:00:00 -0800</pubDate>
+      <guid>http://localhost:1313/age-of-golemancy/</guid>
+      <description>&lt;h2 id=&#34;age-of-golemancy&#34;&gt;Age of Golemancy&lt;/h2&gt;
+&lt;div class=&#34;ox-hugo-toc toc local&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#introduction&#34;&gt;Introduction&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#history&#34;&gt;History&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#light-hold&#34;&gt;Light Hold&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#light-hold--to-the-surface&#34;&gt;To the Surface&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#light-hold--classless&#34;&gt;Classless&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#old-world&#34;&gt;Old World&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#old-world--gods-and-magic&#34;&gt;Gods and Magic&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#old-world--monsters&#34;&gt;Monsters&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#artifice&#34;&gt;Artifice&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#golems&#34;&gt;Golems&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#golems--the-golem-mind&#34;&gt;The Golem Mind&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#golems--the-golem-mind--a-tenuous-grasp&#34;&gt;A Tenuous Grasp&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#golems--the-golem-mind--artificial-bodies&#34;&gt;Artificial Bodies&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#golems--the-golem-mind--the-cohesion-system&#34;&gt;The Cohesion System&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#golems--mind-break&#34;&gt;Mind Break&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#golems--mind-break--mind-broken&#34;&gt;Mind Broken&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#golems--golem-death&#34;&gt;Golem Death&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#golems--scrapped&#34;&gt;Scrapped&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#golems--repairs&#34;&gt;Repairs&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#golems--wisp&#34;&gt;WISP&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#golems--wisp--wisp-directives&#34;&gt;WISP Directives&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#golems--wisp--memory-wipe&#34;&gt;Memory Wipe&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#golems--wisp--combat-experience&#34;&gt;Combat Experience&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#golems--golem-weapons&#34;&gt;Golem Weapons&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#golems--void-chosen&#34;&gt;Void Chosen&lt;/a&gt;:archive:&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#golems--character-creation&#34;&gt;Character Creation&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#golems--character-creation--starting-golem&#34;&gt;Starting Golem&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#golems--character-creation--golem-backgrounds&#34;&gt;Golem Backgrounds&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#golems--character-creation--golem-backgrounds--nobody&#34;&gt;Nobody&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#golems--character-creation--golem-backgrounds--heinous-criminal&#34;&gt;Heinous Criminal&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#golems--character-creation--golem-backgrounds--sacrifice&#34;&gt;Sacrifice&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#golems--character-creation--golem-backgrounds--volunteer&#34;&gt;Volunteer&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#golems--character-creation--golem-backgrounds--blank&#34;&gt;Blank&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#golems--character-creation--golem-backgrounds--reborn&#34;&gt;Reborn&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#golems--character-creation--general-abilities&#34;&gt;General abilities&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#golems--character-creation--creator-guild&#34;&gt;Creator Guild&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#golems--character-creation--creator-guild--creator---ornatum-consortium&#34;&gt;Creator - Ornatum Consortium&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#golems--character-creation--creator-guild--creator---axis-mechanica&#34;&gt;Creator - Axis Mechanica&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#golems--character-creation--creator-guild--creator---ebonspire-assembly&#34;&gt;Creator - Ebonspire Assembly&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#golems--character-creation--creator-guild--creator---nomad&#34;&gt;Creator - Nomad&lt;/a&gt;:archive:&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#golems--character-creation--production-type&#34;&gt;Production Type&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#golems--character-creation--production-type--jigged&#34;&gt;Jigged&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#golems--character-creation--production-type--specialty&#34;&gt;Specialty&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#golems--character-creation--production-type--magnum-opus&#34;&gt;Magnum Opus&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#golems--character-creation--golem-weapon&#34;&gt;Golem Weapon&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#golems--character-creation--anchor&#34;&gt;Anchor&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#golems--character-creation--golem-surge&#34;&gt;Golem Surge&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#golems--character-creation--golem-traits&#34;&gt;Golem Traits&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#golems--character-creation--golem-traits--existential-fortitude&#34;&gt;Existential Fortitude&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#golems--character-creation--golem-traits--eternal-fast&#34;&gt;Eternal Fast&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#golems--character-creation--golem-traits--quick-loader&#34;&gt;Quick Loader&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#golems--character-creation--golem-traits--narcolepsy&#34;&gt;Narcolepsy&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#golems--character-creation--golem-traits--prescience&#34;&gt;Prescience&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#golems--character-creation--golem-traits--leg-day&#34;&gt;Leg Day&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#golems--character-creation--golem-traits--martial-expert&#34;&gt;Martial Expert&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#golems--character-creation--golem-traits--stretchy&#34;&gt;Stretchy&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#golems--character-creation--golem-traits--hit-and-run&#34;&gt;Hit and Run&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#golems--character-creation--golem-traits--snap-shot&#34;&gt;Snap Shot&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#golems--character-creation--golem-traits--elemental-loader&#34;&gt;Elemental Loader&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#golems--character-creation--golem-traits--elemental-seeder&#34;&gt;Elemental Seeder&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#golems--character-creation--golem-traits--elemental-application&#34;&gt;Elemental Application&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#golems--character-creation--golem-traits--cold-affinity&#34;&gt;Cold Affinity&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#golems--character-creation--golem-traits--wisp-resistant&#34;&gt;WISP Resistant&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#golems--character-creation--golem-traits--staggering&#34;&gt;Staggering&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#golems--character-creation--golem-traits--shatter&#34;&gt;Shatter&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#golems--character-creation--golem-traits--knockback&#34;&gt;Knockback&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#golems--character-creation--golem-traits--chain-lightning&#34;&gt;Chain Lightning&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#golems--character-creation--golem-traits--volatile-combustion&#34;&gt;Volatile Combustion&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#golems--character-creation--golem-traits--glowing-hot&#34;&gt;Glowing Hot&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#golems--character-creation--golem-traits--frozen&#34;&gt;Frozen&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#golems--nomads&#34;&gt;Nomads&lt;/a&gt;:archive:&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#voidborn&#34;&gt;Voidborn&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#voidborn--taxonomy&#34;&gt;Taxonomy&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#voidborn--taxonomy--voidborn-generation&#34;&gt;Voidborn Generation&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#voidborn--taxonomy--voidborn-generation--approach-type&#34;&gt;Approach Type&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#voidborn--taxonomy--voidborn-generation--target-type&#34;&gt;Target Type&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#voidborn--taxonomy--voidborn-generation--attack-pattern&#34;&gt;Attack Pattern&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#voidborn--taxonomy--voidborn-generation--defensive-trait&#34;&gt;Defensive Trait&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#captains&#34;&gt;Captains&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#captains--purpose&#34;&gt;Purpose&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#captains--training&#34;&gt;Training&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#captains--backgrounds&#34;&gt;Backgrounds&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#captains--backgrounds--career-change&#34;&gt;Career Change&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#captains--backgrounds--naive&#34;&gt;Naive&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#captains--backgrounds--debutante&#34;&gt;Debutante&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#captains--backgrounds--petty-criminal-sentence&#34;&gt;Petty Criminal Sentence&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#captains--captain-traits&#34;&gt;Captain Traits&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#captains--captain-traits--tactically-prepared&#34;&gt;Tactically Prepared&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#captains--captain-traits--stay-in-formation&#34;&gt;Stay in Formation&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#captains--captain-traits--focus-fire&#34;&gt;Focus Fire&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#captains--captain-traits--inspired-to-greatness&#34;&gt;Inspired to Greatness&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#captains--captain-traits--emergency-field-repairs&#34;&gt;Emergency Field Repairs&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#captains--captain-traits--artifice-tinkerer&#34;&gt;Artifice Tinkerer&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#captains--captain-traits--voidborn-expert&#34;&gt;&lt;span class=&#34;org-todo todo TODO&#34;&gt;TODO&lt;/span&gt; Voidborn Expert&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#captains--captain-traits--back-from-the-brink&#34;&gt;Back from the Brink&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#organizations&#34;&gt;Organizations&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#organizations--crafting-guilds&#34;&gt;Crafting Guilds&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#organizations--crafting-guilds--ornatum-consortium&#34;&gt;Ornatum Consortium&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#organizations--crafting-guilds--axis-mechanica&#34;&gt;Axis Mechanica&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#organizations--crafting-guilds--ebonspire-assembly&#34;&gt;Ebonspire Assembly&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#organizations--crimson-line&#34;&gt;Crimson Line&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#organizations--dusk-reach&#34;&gt;Dusk Reach&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#golemancers&#34;&gt;Golemancers&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#golemancers--golemancer-specialty&#34;&gt;Golemancer Specialty&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#golemancers--golemancer-ranking&#34;&gt;Golemancer Ranking&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#golemancers--golemancer-working-conditions&#34;&gt;Golemancer Working Conditions&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#casters&#34;&gt;Casters&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#casters--caster-types&#34;&gt;Caster Types&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#casters--caster-types--scattercaster&#34;&gt;Scattercaster&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#casters--caster-types--longcaster&#34;&gt;Longcaster&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#casters--caster-types--battlecaster&#34;&gt;Battlecaster&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#casters--caster-types--sidecaster&#34;&gt;Sidecaster&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#casters--caster-types--scrapcaster&#34;&gt;Scrapcaster&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#casters--caster-types--day-breaker&#34;&gt;Day Breaker&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#casters--elemental-effects&#34;&gt;Elemental Effects&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#casters--elemental-effects--elemental-types&#34;&gt;Elemental Types&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#casters--elemental-effects--elemental-types--acid&#34;&gt;Acid&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#casters--elemental-effects--elemental-types--cold&#34;&gt;Cold&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#casters--elemental-effects--elemental-types--fire&#34;&gt;Fire&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#casters--elemental-effects--elemental-types--lightning&#34;&gt;Lightning&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#casters--elemental-effects--elemental-types--poison&#34;&gt;Poison&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#casters--elemental-effects--elemental-types--thunder&#34;&gt;Thunder&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#casters--elemental-effects--elemental-interactions&#34;&gt;Elemental Interactions&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#casters--elemental-effects--elemental-interactions--shatter&#34;&gt;Shatter&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#casters--elemental-effects--elemental-interactions--explosion&#34;&gt;Explosion&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#casters--elemental-effects--elemental-interactions--armor-softening&#34;&gt;Armor Softening&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#casters--elemental-effects--elemental-interactions--spreading-fire&#34;&gt;Spreading Fire&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#casters--elemental-effects--elemental-interactions--smoke-screen&#34;&gt;Smoke Screen&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#casters--elemental-effects--elemental-interactions--matrix&#34;&gt;Matrix&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;!--endtoc--&gt;
+&lt;h3 id=&#34;introduction&#34;&gt;Introduction&lt;/h3&gt;
+&lt;p&gt;The era of golemancy details the extinction of all sapient life on the world of
+Dirshum, a fantasy world for a Dungeons and Dragons campaign.  In this world,
+all sapient species except humans have been destroyed by nearly invincible
+monsters.  Only humans have survived, who exist in a single, underground city.
+Golems, the name given for the artificial super-humans, are the only thing
+holding back their demise.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Captain Toofsnaggle</title>
+      <link>http://localhost:1313/captain-toofsnaggle/</link>
+      <pubDate>Mon, 28 Dec 2020 00:00:00 -0800</pubDate>
+      <guid>http://localhost:1313/captain-toofsnaggle/</guid>
+      <description>&lt;div class=&#34;ox-hugo-toc toc local&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#dnd-5e--characters--captain-toofsnaggle&#34;&gt;Captain Toofsnaggle&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#dnd-5e--characters--captain-toofsnaggle--quick&#34;&gt;quick&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#dnd-5e--characters--captain-toofsnaggle--quick--combat&#34;&gt;combat&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#spells-and-abilities&#34;&gt;spells and abilities&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#dnd-5e--characters--mister-creant--quick--skills-and-saves&#34;&gt;skills and saves&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#dnd-5e--characters--captain-toofsnaggle--choices&#34;&gt;choices&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#dnd-5e--characters--captain-toofsnaggle--choices--starting-ability-scores&#34;&gt;starting ability scores&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#dnd-5e--characters--captain-toofsnaggle--choices--race&#34;&gt;race&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#dnd-5e--characters--captain-toofsnaggle--choices--starting-choices&#34;&gt;starting choices&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#dnd-5e--characters--captain-toofsnaggle--choices--levels&#34;&gt;levels&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#dnd-5e--characters--captain-toofsnaggle--choices--starting-magic-items&#34;&gt;starting magic items&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#dnd-5e--characters--captain-toofsnaggle--background&#34;&gt;background&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#dnd-5e--characters--captain-toofsnaggle--ability-scores&#34;&gt;ability scores&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#dnd-5e--characters--captain-toofsnaggle--fluff&#34;&gt;fluff&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#dnd-5e--characters--captain-toofsnaggle--fluff--appearance&#34;&gt;appearance&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#dnd-5e--characters--captain-toofsnaggle--fluff--direction&#34;&gt;direction&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#dnd-5e--characters--captain-toofsnaggle--fluff--mannerisms&#34;&gt;mannerisms&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#dnd-5e--characters--captain-toofsnaggle--fluff--rival&#34;&gt;rival&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#dnd-5e--characters--captain-toofsnaggle--fluff--road-to-adventuring&#34;&gt;road to adventuring&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#after-the-shipwreck&#34;&gt;after the shipwreck&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#quest-log&#34;&gt;quest log&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#dnd-5e--characters--captain-toofsnaggle--inventory&#34;&gt;inventory&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#dnd-5e--characters--captain-toofsnaggle--inventory--acquisition-log&#34;&gt;acquisition log&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#dnd-5e--characters--captain-toofsnaggle--inventory--current-equipment&#34;&gt;current equipment&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#dnd-5e--characters--captain-toofsnaggle--inventory--current-money&#34;&gt;current money&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#riddle&#34;&gt;riddle&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;!--endtoc--&gt;
+&lt;h2 id=&#34;dnd-5e--characters--captain-toofsnaggle&#34;&gt;Captain Toofsnaggle&lt;/h2&gt;
+&lt;p&gt;Captain Toofsnaggle is a half-orc seaman that is full of bluster. He has a
+reputation of mayhem following his every move, yet nobody seems to be able to
+confirm his claims of his legendary ship or crew.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Sans Dungeon Master</title>
+      <link>http://localhost:1313/sans-dungeon-master/</link>
+      <pubDate>Tue, 31 Mar 2020 00:00:00 -0700</pubDate>
+      <guid>http://localhost:1313/sans-dungeon-master/</guid>
+      <description>&lt;h2 id=&#34;playing-without-a-dungeon-master&#34;&gt;Playing without a Dungeon Master&lt;/h2&gt;
+&lt;p&gt;Dungeon masters can be hard to come by. It&amp;rsquo;s a lot of work to be a dungeon
+master even if you can get away with minimal preparation. It can also be
+emotionally exhausting as you try to provide incentives for your table full of
+chaotic neutral cunctors to move forward. Cat herders have it easier than
+this.&lt;/p&gt;
+&lt;h3 id=&#34;but-really-why&#34;&gt;but really, why?&lt;/h3&gt;
+&lt;p&gt;It&amp;rsquo;s worth noting that any mechanism that removes the need for a DM also
+necessarily means that, as an actual DM, you could reduce the work you need
+to do.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Dirshum</title>
+      <link>http://localhost:1313/dirshum/</link>
+      <pubDate>Fri, 17 Jan 2020 00:00:00 -0800</pubDate>
+      <guid>http://localhost:1313/dirshum/</guid>
+      <description>&lt;h2 id=&#34;dirshum&#34;&gt;Dirshum&lt;/h2&gt;
+&lt;div class=&#34;ox-hugo-toc toc local&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#map&#34;&gt;map&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#golani-grumsvelt-s-guide-to-dirshum&#34;&gt;Golani Grumsvelt&amp;rsquo;s Guide to Dirshum&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#account-of-duranae&#34;&gt;Account of Duranae&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#avandra-s-smile&#34;&gt;Avandra&amp;rsquo;s Smile&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#elves&#34;&gt;Elves&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#variety-of-blood&#34;&gt;variety of blood&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#harpies&#34;&gt;harpies&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#banshees&#34;&gt;banshees&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#eldarin&#34;&gt;eldarin&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#ghouls&#34;&gt;&lt;span class=&#34;org-todo todo TODO&#34;&gt;TODO&lt;/span&gt; ghouls&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#bel-aheldan&#34;&gt;Bel&amp;rsquo;aheldan&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#magical-wonderment&#34;&gt;magical wonderment&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#army&#34;&gt;army&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#dress&#34;&gt;dress&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#houses&#34;&gt;houses&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#magic&#34;&gt;magic&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#neighbors&#34;&gt;neighbors&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#trade&#34;&gt;trade&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#minheimia&#34;&gt;Minheimia&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#fertile-land-unspoiled&#34;&gt;fertile land unspoiled&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#military&#34;&gt;military&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#structures&#34;&gt;structures&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#neighbors&#34;&gt;neighbors&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#shrouded-past&#34;&gt;shrouded past&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#human-domains&#34;&gt;Human domains&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#tribes-of-egalstan&#34;&gt;Tribes of Egalstan&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#natural-intuition&#34;&gt;Natural Intuition&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#cyorro&#34;&gt;Cyorro&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#valan&#34;&gt;Valan&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#summary&#34;&gt;summary&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#astronomy&#34;&gt;astronomy&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#customs-based-on-valan&#34;&gt;customs based on Valan&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#valan-resolutions&#34;&gt;Valan resolutions&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#vyxt-and-dragonborn&#34;&gt;Vyxt and dragonborn&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#origins&#34;&gt;origins&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#courts&#34;&gt;courts&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#titles&#34;&gt;titles&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#trade&#34;&gt;trade&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#food&#34;&gt;food&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#army&#34;&gt;army&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#research-and-discovery&#34;&gt;research and discovery&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#religions&#34;&gt;religions&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#external-affairs&#34;&gt;external affairs&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#glintstrad&#34;&gt;Glintstrad&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#cyorro&#34;&gt;Cyorro&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#nomasgard&#34;&gt;Nomasgard&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#pirates&#34;&gt;Pirates&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#historic-characters&#34;&gt;historic characters&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#golani-grumsvelt&#34;&gt;Golani Grumsvelt&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#magic-items&#34;&gt;magic items&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#campaigns--era-of-eras--wand-of-woe--economy--magic-items--gray&#39;s-grandeurs-inventory&#34;&gt;Gray&amp;rsquo;s Grandeurs Inventory&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#campaigns--era-of-eras--wand-of-woe--economy--magic-items--magic-item-list&#34;&gt;magic item list&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#campaigns--era-of-eras--wand-of-woe--economy--magic-items--magic-item-list--bag-of-compound-interest&#34;&gt;Bag of Compound Interest&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#campaigns--era-of-eras--wand-of-woe--economy--magic-items--magic-item-list--badge&#34;&gt;Badge&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#campaigns--era-of-eras--wand-of-woe--economy--magic-items--magic-item-list--eye-of-reholding&#34;&gt;Eye of Reholding&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#campaigns--era-of-eras--wand-of-woe--economy--magic-items--magic-item-list--eidetic-diary&#34;&gt;Eidetic Diary&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#campaigns--era-of-eras--wand-of-woe--economy--magic-items--magic-item-list--goodge&#34;&gt;Goodge&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#campaigns--era-of-eras--wand-of-woe--economy--magic-items--magic-item-list--mace-of-remembrance&#34;&gt;Mace of Remembrance&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#campaigns--era-of-eras--wand-of-woe--economy--magic-items--magic-item-list--immortal-baconator&#34;&gt;Immortal Baconator&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#campaigns--era-of-eras--wand-of-woe--economy--magic-items--magic-item-list--lens-of-seeing-fine-print&#34;&gt;Lens of Seeing Fine Print&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#campaigns--era-of-eras--wand-of-woe--economy--magic-items--magic-item-list--platonic-dispenser&#34;&gt;Platonic Dispenser&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#campaigns--era-of-eras--wand-of-woe--economy--magic-items--magic-item-list--rope-of-tangling&#34;&gt;Rope of Tangling&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#campaigns--era-of-eras--wand-of-woe--economy--magic-items--magic-item-list--ruby-hilted-dagger&#34;&gt;Ruby hilted dagger&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#campaigns--era-of-eras--wand-of-woe--economy--magic-items--magic-item-list--stickers-of-weapon-dazzling&#34;&gt;Stickers of Weapon Dazzling&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#campaigns--era-of-eras--wand-of-woe--economy--magic-items--magic-item-list--shield-of-friendship&#34;&gt;Shield of Friendship&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#campaigns--era-of-eras--wand-of-woe--economy--magic-items--magic-item-list--unseen-staff&#34;&gt;Unseen Staff&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#campaigns&#34;&gt;campaigns&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#wand-of-woe&#34;&gt;Wand of Woe&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#recaps&#34;&gt;recaps&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#session-1&#34;&gt;session 1&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#session-2&#34;&gt;session 2&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#session-3&#34;&gt;session 3&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#session-4&#34;&gt;session 4&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#session-5&#34;&gt;session 5&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#session-6&#34;&gt;session 6&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#session-7&#34;&gt;session 7&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#session-8&#34;&gt;session 8&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#session-9&#34;&gt;session 9&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#session-10&#34;&gt;session 10&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#session-11&#34;&gt;session 11&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#session-12&#34;&gt;session 12&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#session-13&#34;&gt;session 13&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#session-14&#34;&gt;session 14&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#session-15&#34;&gt;session 15&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#session-16&#34;&gt;session 16&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#session-17&#34;&gt;session 17&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#session-18&#34;&gt;session 18&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#session-19&#34;&gt;session 19&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#session-20&#34;&gt;session 20&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#session-21&#34;&gt;session 21&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#session-22&#34;&gt;session 22&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#session-23&#34;&gt;session 23&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#session-24&#34;&gt;session 24&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#session-25&#34;&gt;session 25&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#session-26&#34;&gt;session 26&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#session-27&#34;&gt;session 27&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#session-28&#34;&gt;session 28&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#session-29&#34;&gt;session 29&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#session-30&#34;&gt;session 30&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#session-31&#34;&gt;session 31&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#session-32&#34;&gt;session 32&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#session-33&#34;&gt;session 33&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#session-34&#34;&gt;session 34&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#session-35&#34;&gt;session 35&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#session-36&#34;&gt;session 36&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#jerry-the-joblin&#34;&gt;Jerry the Joblin&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;!--endtoc--&gt;
+&lt;p&gt;A world made for my D&amp;amp;D campaigns. It&amp;rsquo;s easy to destroy a world that you made
+yourself!&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

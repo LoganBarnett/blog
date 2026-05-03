@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Programming on Logan Barnett&#39;s blog</title>
+    <link>http://localhost:1313/categories/programming/</link>
+    <description>Recent content in Programming on Logan Barnett&#39;s blog</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 17 Aug 2016 22:17:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/categories/programming/feed.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>asteriod generation</title>
+      <link>http://localhost:1313/asteroid-generation/</link>
+      <pubDate>Wed, 17 Aug 2016 22:17:00 +0000</pubDate>
+      <guid>http://localhost:1313/asteroid-generation/</guid>
+      <description>&lt;h1 id=&#34;introduction&#34;&gt;Introduction&lt;/h1&gt;
+&lt;p&gt;For my personal project, I&amp;rsquo;m working on a simple and relaxing asteroid mining
+game. It spent a long time as a prototype, simplified from many other
+voxel-based games into this one, which feels realistic to achieve. I&amp;rsquo;ve been
+working on it and the tech around it for years, with irregular spurts of
+activity, lots of abandoned paths, and much thrown away work. My plan is to use
+WebGL in some form and deploy it to the desktop via the web (or even
+&lt;a href=&#34;http://electron.atom.io&#34;&gt;Electron&lt;/a&gt;), and use
+&lt;a href=&#34;https://cordova.apache.org&#34;&gt;Cordova&lt;/a&gt; to handle the mobile version of it. Since
+it&amp;rsquo;s faux 2D with voxels, I think mobile is a viable target. This is pending
+tests. Mobile or not, this game needs to be made. I realized this when I was
+testing the old Unity prototype, and found myself getting lost playing it long
+after I&amp;rsquo;d tested whatever functionality I was curious about during that run.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>verification</title>
+      <link>http://localhost:1313/verification/</link>
+      <pubDate>Sat, 28 May 2016 16:37:00 +0000</pubDate>
+      <guid>http://localhost:1313/verification/</guid>
+      <description>&lt;p&gt;Unit tests, type checkers, SAT provers. These are all tools we use to verify our
+code, and it&amp;rsquo;s by no means an exhaustive list. People struggle with using them
+though. Ruby and Python engineers typically find static type systems too
+cumbersome. Instead they favor more unit tests (those that do unit testing).
+C# and Java engineers generally like the benefits of static checks to make sure
+interfaces are respected (except null - seriously wut r u doing?). On the more
+extreme end you have tools like Haskell that are statically typed in a way C#
+and Java engineers can&amp;rsquo;t even wrap their heads around without major study.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Aspects of Functional Programming</title>
+      <link>http://localhost:1313/aspects-of-functional-programming/</link>
+      <pubDate>Mon, 30 Nov 2015 17:20:00 +0000</pubDate>
+      <guid>http://localhost:1313/aspects-of-functional-programming/</guid>
+      <description>&lt;p&gt;For all of the flak Javascript gets, there is one thing it has above all of the
+&amp;ldquo;better&amp;rdquo; mainstream languages out there. I&amp;rsquo;m talking Java, C#, Python, Ruby
+(yeah you two are mainstream to me). Javascript has functions as first class
+objects. As a result, Javascript has been my gateway drug to functional
+programming.&lt;/p&gt;
+&lt;p&gt;Functional programming has a lot of interesting promises to it, but it&amp;rsquo;s been
+damn frustrating at times to learn. Everything is so damn generic that it&amp;rsquo;s hard
+to understand when it&amp;rsquo;s time to pull out certain patterns/functions/operations,
+at least as an outsider looking in. I&amp;rsquo;ve really stuck with it, and it feels like
+it&amp;rsquo;s gotten better over time. There&amp;rsquo;s still much for me to learn, but I feel
+like I&amp;rsquo;ve climbed over some humps.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>One True Language</title>
+      <link>http://localhost:1313/one-true-language/</link>
+      <pubDate>Sun, 13 Sep 2015 13:21:00 +0000</pubDate>
+      <guid>http://localhost:1313/one-true-language/</guid>
+      <description>&lt;p&gt;I&amp;rsquo;ve spent a lot of my tech career pursuing the One True Language, or One True Library, or some means of doing something in a unified way that could serve as an answer to the problems I was having. The polyglot folks would probably just say some langauges are better than others at certain things and so we should use several languages at once when building applications. I&amp;rsquo;m not sure I agree with this. I believe most of our languages are pretty good at the problem domains we select them for, or at least they could be.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

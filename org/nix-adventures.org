@@ -1,0 +1,16 @@
+
+#+title:     Nix Adventures
+#+author:    Logan Barnett
+#+email:     logustus@gmail.com
+#+date:      <2024-02-11 Sun>
+#+language:  en
+#+file_tags:
+#+tags:
+#+options:   toc:t
+#+hugo_base_dir: ..
+#+hugo_section: posts
+#+hugo_aliases: /nix-adventures.html
+#+hugo_categories: nix
+
+1. [[file:./nix-adventures-01.org][Generating a Raspberry Pi image]]
+2. [[file:./nix-adventures-02.org][Setting up Machine Learning tools]]

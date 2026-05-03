@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Markdown on Logan Barnett&#39;s blog</title>
+    <link>http://localhost:1313/categories/markdown/</link>
+    <description>Recent content in Markdown on Logan Barnett&#39;s blog</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 13 Aug 2015 19:01:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/categories/markdown/feed.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Markdown flavored shoes</title>
+      <link>http://localhost:1313/markdown-flavored-shoes/</link>
+      <pubDate>Thu, 13 Aug 2015 19:01:00 +0000</pubDate>
+      <guid>http://localhost:1313/markdown-flavored-shoes/</guid>
+      <description>&lt;p&gt;I&amp;rsquo;ve known and used Markdown here and there for some time, but I&amp;rsquo;m starting to really see its value. On the surface, Markdown is a way to take text and make decent looking HTML out of it, and the text still looks like some typical formatting in a plain text environment. I&amp;rsquo;ve sent managers these kinds of files, and they can just open these files in any text editor if they don&amp;rsquo;t have means of viewing Markdown.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

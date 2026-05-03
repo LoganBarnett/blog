@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Productivity on Logan Barnett&#39;s blog</title>
+    <link>http://localhost:1313/categories/productivity/</link>
+    <description>Recent content in Productivity on Logan Barnett&#39;s blog</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 05 Oct 2015 20:05:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/categories/productivity/feed.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Destroy Meetings</title>
+      <link>http://localhost:1313/meetings/</link>
+      <pubDate>Mon, 05 Oct 2015 20:05:00 +0000</pubDate>
+      <guid>http://localhost:1313/meetings/</guid>
+      <description>&lt;p&gt;Who hasn&amp;rsquo;t wasted tons of time in meetings? Meetings are a joke in all organizations, and the joke is always the same - they are meaningless wastes of time. I&amp;rsquo;ve heard the sweet promises of things like Scrum, pomodoros, &lt;a href=&#34;http://hackthesystem.com/blog/why-i-hired-a-girl-on-craigslist-to-slap-me-in-the-face-and-why-it-quadrupled-my-productivity/&#34;&gt;people slapping you in the face when you open Facebook&lt;/a&gt; all as means to reduce waste in the workplace. The thing is, none of them are nearly as damaging as meetings.&lt;/p&gt;
+&lt;p&gt;The reason we have meetings are noble ones, but misguided in their attempts to solve a problem. Short of a masquerade for some political agenda, meetings have a singular purpose: share information. Information sharing is hard and how many of us are just awesome at writing documentation constantly? How about grooming that documentation and making sure it&amp;rsquo;s well organized? As a result, people are left out of the loop. They want to form a meeting so they can ask questions and get people nodding heads on the path forward. The problem is that even with meeting notes, real documentation hasn&amp;rsquo;t been made. The information exchanged in a meeting is transient to the members of the meeting, and even then only to their recollection. Meeting notes without context are meaningless, and meeting notes don&amp;rsquo;t really contribute to a growing knowledge base - they are a log more than anything. Someone kept minutes.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

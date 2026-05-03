@@ -1,0 +1,1110 @@
++++
+title = "Rename me"
+author = ["Logan Barnett"]
+date = 2024-03-03T00:00:00-08:00
+aliases = ["/nix-adventures-04.html"]
+draft = false
++++
+
+## Building the Actual Derivation/Flake {#building-the-actual-derivation-flake}
+
+If you've been following along in the series, at this point I've got my
+physical, standalone machine ready for generating machine learning images.  In
+this segment, my plan is to make a derivation or flake (probably a flake) which
+handles standing up the server (server being the application, and host being the
+computer).
+
+
+### The Plan {#the-plan}
+
+My overall goals look like this:
+
+1.  Configuration is entirely controlled via the Nix flake.
+2.  Models, LoRAs, and other large entities I want to create a kind of download
+    function for.  So whether you're pulling these from <http://civitai.com> or
+    <https://huggingface.com>, you can just declare the things you want installed
+    and Nix will see to that.
+3.  New settings changes will send the appropriate signal to the web application
+    so they can be reloaded.  Restarts can be "scheduled" if the queue is
+    running.
+4.  This is more of a stretch goal, but it would be really cool to have a Nix
+    declaration for an image.  So you say what the prompt is, what settings it
+    should have, the seed, the model, etc. and the result is an image that you
+    can throw around to other Nix plumbing, or just have on disk.
+
+
+### Actually I can't do any of that yet {#actually-i-can-t-do-any-of-that-yet}
+
+Of course nothing ever just works when you're the one trail blazing.  In this
+case, I immediately ran into issues with `stable-diffusion-webui` just trying to
+run it via the `automatic1111-webui-nix` repository.
+
+
+#### Running stable-diffusion-webui via Nix {#running-stable-diffusion-webui-via-nix}
+
+<span class="timestamp-wrapper"><span class="timestamp">[2024-03-03 Sun]</span></span>
+
+```text
+RuntimeError: Torch is not able to use GPU; add --skip-torch-cuda-test to
+COMMANDLINE_ARGS variable to disable this check
+```
+
+```text
+[logan@lithium:~/stable-diffusion-webui]$ nvidia-smi
+Failed to initialize NVML: Driver/library version mismatch
+NVML library version: 550.54
+```
+
+I'm told a reboot is needed from [here](https://stackoverflow.com/questions/43022843/nvidia-nvml-driver-library-version-mismatch).  It can be done without a reboot, but I'm
+tired of being fancy.
+
+Now I get:
+
+```text
+[logan@lithium:~/stable-diffusion-webui]$ nvidia-smi
+Mon Mar  4 01:20:32 2024
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 550.54.14              Driver Version: 550.54.14      CUDA Version: 12.4     |
+|-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA GeForce GTX 1060 6GB    Off |   00000000:01:00.0 Off |                  N/A |
+| 28%   28C    P8             10W /  120W |       2MiB /   6144MiB |      0%      Default |
+|                                         |                        |                  N/A |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI        PID   Type   Process name                              GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+```
+
+./webui.sh --disable-model-loading-ram-optimization --lowvram --listen --api
+
+From all of this I was able to get `stable-diffusion-webui` up and going.  Now
+the fun part starts!  Converting all of this to an operationalized Nix
+configuration.
+
+
+### Operationalizing automatic111-webui-nix {#operationalizing-automatic111-webui-nix}
+
+One of the really big things I want to see with this is being able to do this:
+
+```nix
+services.stable-diffusion-webui.enable = true;
+```
+
+And that starts up the `systemd` unit/service for `stable-diffusion-webui`.  I
+expect before I can call that feature complete, I'll have to allow running the
+startup script with various arguments.  I expect that to look something like
+this:
+
+```nix
+services.stable-diffusion-webui = {
+  enable = true;
+  options.video-ram = "low"; # Equivalent of --lowvram.
+  options.enable-api = true; # Equivalent of --api.
+  options.allow-external-requests = true; # Equivalent of --listen.
+  # A release valve to future-proof us.
+  options.extra-options = [
+    "--future-arg"
+    "--future-arg-with-value foo"
+  ];
+};
+```
+
+I don't expect to enumerate all of the arguments, especially with
+`extra-options` in place.
+
+I start by creating a [fork](https://github.com/LoganBarnett/automatic1111-webui-nix) of [automatic1111-webui-nix](https://github.com/virchau13/automatic1111-webui-nix) as a starting point, and
+hope to contribute the changes back.  I create a new branch
+`operationalize-for-nixos`.  This is pretty basic so I won't cover it further.
+
+Based on what I've seen from other tweaks and such that I've been making to a
+NixOS `configuration.nix`, I expect I'll need create a "NixOS Module" - perhaps
+as something that goes in `imports`.  I look for documents on the topic.  This
+[Extend NixOS](https://nixos.wiki/wiki/Extend_NixOS) document looks like the perfect fit:
+
+> This tutorial shows how to extend a NixOS configuration to include custom
+> systemd units, by creating a systemd unit that initializes IRC client every time
+> a system session starts. Beginning by adding functionality directly to a
+> configuration.nix file, it then shows how to abstract the functionality into a
+> separate NixOS module.
+
+Yeah, I like that.  Adlib "IRC" for `stable-diffusion-webui` and this is exactly
+what I'm looking for.
+
+> This article assumes some familiarity with systemd, and NixOs options. The
+> following links will be helpful for providing this background:
+
+I do have a basic familiarity with `systemd`.  I've started, stopped, and
+restarted many-a-`systemd`-service in my time.  I've also peeked at the unit
+files here and there, but I've never authored one to my recollection.  Still, I
+haven't seen a lot in there that looked challenging or bespoke.  I've also
+dabbled a little bit with "options" in Nix, but I haven't dealt with "NixOS
+Options" that I know of, if that's even different than the general `mkOption`
+and `mkConfig` stuff.  Unfortunately the link to "NixOS Options" is broken.  I
+search the Wiki itself, and find [NixOS:config argument](https://nixos.wiki/wiki/NixOS:config_argument) as promising candidate.
+This might be a good place to suggest or create an edit.
+
+I skim the document.  It has this example (as a final, ideal example), which I
+find perplexing:
+
+```nix
+{config, pkgs, ...}:
+
+let
+  cfg = config.foo.bar.baz;
+
+  # ...
+in
+
+with pkgs.lib; {
+  options = {
+    foo.bar.baz = {
+      enable = mkOption { /* ... */ };
+      option1 = mkOption { /* ... */ };
+      option2 = mkOption { /* ... */ };
+      option3 = mkOption { /* ... */ };
+    };
+  };
+
+  config = mkIf cfg.enable {
+    # ...
+  };
+}
+```
+
+With this explanation:
+
+> Often, the module declare options embedded inside an attribute set. To access
+> these options, we add an attribute cfg as a shortcut notation.
+
+In the `let`, how does `config.foo.bar.baz` not fail?  When did the attributes
+get set there?  Is there some kind of magic going on with `options` or `config`
+below?  What sort of pains are we avoiding if we <span class="underline">didn't</span> use the `cfg =
+config.foo.bar.baz;` statement?  I suppose I will find out.
+
+I suppose the only way I can confirm some of this is to follow along in the
+prior document.
+
+This is how it starts:
+
+> NixOS provides a systemd module with a wide variety of configuration options. A
+> small number of those (which you can check out on NixOS search ) allows us to
+> implement this little snippet within our configuration.nix:
+
+```nix
+# pkgs is used to fetch screen & irssi.
+{pkgs, ...}:
+{
+  # ircSession is the name of the new service we'll be creating
+  systemd.services.ircSession = {
+     # this service is "wanted by" (see systemd man pages, or other tutorials) the system
+     # level that allows multiple users to login and interact with the machine non-graphically
+     # (see the Red Hat tutorial or Arch Linux Wiki for more information on what each target means)
+     # this is the "node" in the systemd dependency graph that will run the service
+     wantedBy = [ "multi-user.target" ];
+     # systemd service unit declarations involve specifying dependencies and order of execution
+     # of systemd nodes; here we are saying that we want our service to start after the network has
+     # set up (as our IRC client needs to relay over the network)
+     after = [ "network.target" ];
+     description = "Start the irc client of username.";
+     serviceConfig = {
+       # see systemd man pages for more information on the various options for "Type": "notify"
+       # specifies that this is a service that waits for notification from its predecessor (declared in
+       # `after=`) before starting
+       Type = "notify";
+       # username that systemd will look for; if it exists, it will start a service associated with that user
+       User = "username";
+       # the command to execute when the service starts up
+       ExecStart = ''${pkgs.screen}/bin/screen -dmS irc ${pkgs.irssi}/bin/irssi'';
+       # and the command to execute
+       ExecStop = ''${pkgs.screen}/bin/screen -S irc -X quit'';
+     };
+  };
+
+  environment.systemPackages = [ pkgs.screen ];
+
+  # ... usual configuration ...
+}
+```
+
+Very good!  This is great documentation, because I have something that tells me
+what virtually every line here is doing.  As a nitpick, the
+`environment.systemPackages` line could use some explanation, but I'm familiar
+enough with Nix to know that this is the `systemPackages` for <span class="underline">this</span> module and
+it'll get mushed together with other, included `systemPackages` from other
+modules later.
+
+To take my stab at it:
+
+```nix
+# pkgs is used to fetch screen & irssi.
+{pkgs, ...}:
+{
+  # stable-diffusion-webui is the name of the new service we'll be creating
+  systemd.services.stable-diffusion-webui = {
+    # This service is "wanted by" (see systemd man pages, or other tutorials)
+    # the system level that allows multiple users to login and interact with
+    # the machine non-graphically (see the Red Hat tutorial or Arch Linux Wiki
+    # for more information on what each target means) this is the "node" in the
+    # systemd dependency graph that will run the service.
+    wantedBy = [ "multi-user.target" ];
+    # The systemd service unit declarations involve specifying dependencies and
+    # order of execution of systemd nodes; here we are saying that we want our
+    # service to start after the network has set up.
+    after = [ "network.target" ];
+    description = "A machine learning image generator using Stable Diffusion.";
+    serviceConfig = {
+      # See systemd man pages for more information on the various options for
+      # "Type": "notify" specifies that this is a service that waits for
+      # notification from its predecessor (declared in `after=`) before
+      # starting.
+      Type = "notify";
+      # The username that systemd will look for; if it exists, it will start a
+      # service associated with that user.
+      User = "username";
+      # The command to execute when the service starts up.
+      ExecStart =
+        ''${pkgs.stable-diffusion-webui}/webui.sh'';
+      # The command to execute.
+      # ExecStop = ''${pkgs.screen}/bin/screen -S irc -X quit'';
+      KillSignal = "SIGINT";
+      Restart = "always";
+      RestartSec = "15s";
+    };
+  };
+  environment.systemPackages = [ ./stable-diffusion-webui.nix ];
+}
+```
+
+This is a draft, of course.  I want some arguments to pass it.  For now, I want
+to make this work.  I don't have a `./stable-diffusion-webui.nix` package to
+refer to, but I'd like to try that now.  As I start to look at this, I'm seeing
+the big chain of `if/else` in the `impl.nix` used in `automatic111-webui-nix`.
+I think the best thing to do here actually is just build separate packages for
+each of the "modes".  This is the code as it is today:
+
+```nix
+{ pkgs, variant, ... }:
+
+let
+  hardware_deps = with pkgs;
+    if variant == "CUDA" then [
+      cudatoolkit
+      linuxPackages.nvidia_x11
+      xorg.libXi
+      xorg.libXmu
+      freeglut
+      xorg.libXext
+      xorg.libX11
+      xorg.libXv
+      xorg.libXrandr
+      zlib
+
+      # for xformers
+      gcc
+    ] else if variant == "ROCM" then [
+      rocmPackages.rocm-runtime
+      pciutils
+    ] else if variant == "CPU" then [
+    ] else throw "You need to specify which variant you want: CPU, ROCm, or CUDA.";
+
+in
+pkgs.mkShell rec {
+    name = "stable-diffusion-webui";
+    buildInputs = with pkgs;
+      hardware_deps ++ [
+        git # The program instantly crashes if git is not present, even if everything is already downloaded
+        python310
+        stdenv.cc.cc.lib
+        stdenv.cc
+        ncurses5
+        binutils
+        gitRepo gnupg autoconf curl
+        procps gnumake util-linux m4 gperf unzip
+        libGLU libGL
+        glib
+      ];
+    LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath buildInputs;
+    CUDA_PATH = pkgs.lib.optionalString (variant == "CUDA") pkgs.cudatoolkit;
+    EXTRA_LDFLAGS = pkgs.lib.optionalString (variant == "CUDA") "-L${pkgs.linuxPackages.nvidia_x11}/lib";
+}
+```
+
+I'm going copy, mostly verbatim, what I see in `mkShell` into this package.  I'm
+not using the `with pkags;`, because I believe that is an anti-pattern in most
+cases (including this one).  I'm also going to grammarize, punctuate, and fill
+to 80 columns any comments I want to preserve.  Packages will be sorted, since
+their order is irrelevant and trying to "group" things leads to sadness when
+code comments would have sufficed.  This is kind of my standard treatment on
+anything I touch.  My preference would've been to comment on each of the
+dependencies, explaining why they are needed and a brief description of what
+they are.  For example, I know why `git` is needed, because there is a comment
+for it.  I don't know what `m4` is or why is it is needed.  For all I know, it's
+vestigial.
+
+```nix
+##
+# This is the base derivation where all shared dependencies, settings, and code
+# exist.
+{ pkgs, ... }: {
+  name = "stable-diffusion-webui";
+  buildInputs = [
+    pkgs.autoconf
+    pkgs.binutils
+    pkgs.curl
+    # The program instantly crashes if git is not present, even if everything is
+    # already downloaded.
+    pkgs.git
+    pkgs.gitRepo
+    pkgs.glib
+    pkgs.gnumake
+    pkgs.gnupg
+    pkgs.gperf
+    pkgs.libGL
+    pkgs.libGLU
+    pkgs.m4
+    pkgs.ncurses5
+    pkgs.procps
+    pkgs.python310
+    pkgs.stdenv.cc
+    pkgs.stdenv.cc.cc.lib
+    pkgs.unzip
+    pkgs.util-linux
+  ];
+
+  LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath buildInputs;
+  # Actually, these need to get moved to specialized derivations.
+  # CUDA_PATH = pkgs.lib.optionalString (variant == "CUDA") pkgs.cudatoolkit;
+  # EXTRA_LDFLAGS = pkgs.lib.optionalString (variant == "CUDA")
+  #   "-L${pkgs.linuxPackages.nvidia_x11}/lib";
+}
+```
+
+Okay that's a start.  When we run `webui.sh`, it installs a bunch of packages
+via `pip`.  That's not the Nix Way™.  Instead we can use some fancy tools to
+convert `requirements.txt` and its friends into Nix expressions that are totally
+reproducible.  `pip2nix` looks good enough.  Being under `nix-community` is high
+praise in my eyes.
+
+I modify the `inputs` section to have a `pip2nix` section:
+
+```nix
+inputs = {
+    nixpkgs.url = github:NixOS/nixpkgs/nixos-unstable;
+    flake-utils.url = github:numtide/flake-utils;
+    pip2nix = {
+        url = github:nix-community/pip2nix;
+        inputs.nixpkgs.follows = "nixpkgs";
+    };
+};
+```
+
+I had to do the URL over about three times to get it right, because I just
+dropped the URL in from my browser.  Derp.  The `unrecognized archive format` I
+have learned usually means I have `github.com` instead of `github`.
+
+And then make it available in the shell.  Actually, I forgot this flake is a bit
+weird.  I understand the author just wanted to get something up and running.
+Our goal here is to make it "proper".  This is what we start with:
+
+```nix
+devShells.default = throw "You need to specify which output you want: CPU, ROCm, or CUDA.";
+devShells.cpu = import ./impl.nix { inherit pkgs; variant = "CPU"; };
+devShells.cuda = import ./impl.nix { inherit pkgs; variant = "CUDA"; };
+devShells.rocm = import ./impl.nix { inherit pkgs; variant = "ROCM"; };
+```
+
+Which is really not something we want.  I want the `devShells` to be the real deal.
+I also understand why the author went with `flake-utils`, and at one point I
+would've agreed.  Though it's got (IMO) poor documentation when I recently
+looked at it, and to reap its benefits you'd need to know how to combine or
+specialize configurations that differ due to different platforms, but that's
+neigh impossible to sort out without digging into the code.  I'd rather just
+specify platforms supported, and then add new ones as we figure out how to
+support them (be it via automated tests or we find ~~suckers~~ volunteers to
+represent the various platforms).
+
+So I'm scrapping basically everything in the `outputs` section.  Now we have:
+
+```nix
+outputs = { self, nixpkgs, pip2nix }: {
+  devShells.aarch64-darwin.default = {
+    packages = [
+      # So we can generate requirements.nix from requirements.txt.
+      pip2nix
+    ];
+  };
+};
+```
+
+Also at this point, I just redo all of the formatting to 2 spaces, which I think
+is the Nix standard (and for an 80 column addict, a must).  With that in place:
+
+```nix
+{
+  description = "AUTOMATIC1111/stable-diffusion-webui flake";
+
+  inputs = {
+    nixpkgs.url = github:NixOS/nixpkgs/nixos-unstable;
+    pip2nix = {
+      url = github:nix-community/pip2nix;
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+  };
+
+  outputs = { self, nixpkgs, pip2nix }: {
+    devShells.aarch64-darwin.default = { ... }: let
+      pkgs = import nixpkgs {
+        system = "aarch64-darwin";
+      };
+    in {
+      packages = [
+        # So we can generate requirements.nix from requirements.txt.
+        pkgs.pip2nix
+      ];
+    };
+  };
+}
+```
+
+And then I try it out:
+
+Actually I flail for a moment, and then arrive at:
+
+```nix
+{
+  description = "AUTOMATIC1111/stable-diffusion-webui flake";
+
+  inputs = {
+    nixpkgs.url = github:NixOS/nixpkgs/nixos-unstable;
+    pip2nix = {
+      url = github:nix-community/pip2nix;
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+  };
+
+  outputs = { self, nixpkgs, pip2nix }: {
+    devShells.aarch64-darwin.default =  let
+      pkgs = import nixpkgs {
+        system = "aarch64-darwin";
+      };
+    in pkgs.mkShell ({ ... }: {
+      packages = [
+        # So we can generate requirements.nix from requirements.txt.
+        pip2nix
+      ];
+    }
+    );
+  };
+}
+```
+
+---
+
+<span class="timestamp-wrapper"><span class="timestamp">[2024-03-05 Tue]</span></span>
+
+I went down a rabbit hole trying to get `pip2nix` going so I could convert the
+`requirements.txt` into Nix expressions.  I learned a bit about Flakes more, and
+also learned to distrust/dislike `flake-utils` and `flake-parts` more
+(especially `flake-utils`, which seems to lack a lot of helpful documentation).
+I came across [Mach-nix, pip2nix, poetry2nix, or pynixify for Zulip provision](https://discourse.nixos.org/t/mach-nix-pip2nix-poetry2nix-or-pynixify-for-zulip-provision/18836/20)
+which does a lot of work breaking down the various options out there.  I learned
+from reading it that `poetry` is a dependency management tool for Python which
+uses `pip` under the hood.  So just because there's a `requirements.txt` doesn't
+necessarily mean the project is truly governed by `pip`.  The giveaway is
+`pyproject.toml` - `peotry`'s file.  Sure enough, `stable-diffusion-webui` has a
+`pyproject.toml` file.  Ugh.  Day wasted sort of.  I've learned a lot, but I'd
+really like to just gain some progress instead and save some learning for later.
+I'm going to have a PhD in Nix soon!
+
+TODO: Explain where I used this: <https://discourse.nixos.org/t/debugging-a-flake/14898>
+
+Front and center, `peotry2nix` has:
+
+> poetry2nix turns Poetry projects into Nix derivations without the need to
+> actually write Nix expressions. It does so by parsing pyproject.toml and
+> poetry.lock and converting them to Nix derivations on the fly.
+
+Exactly what I want!  They wrote some documentation too!  I read the docs.
+There's a list of functions with a brief summary as to what they do.  I skimmed
+them to make sure I have some awareness of what's available to me, but my eyes
+locked on `mkPoetryAppliction` early.  Later the documentation provides a
+description of the function.  Brilliant!
+
+> mkPoetryApplication
+>
+> Creates a Python application using the Python interpreter specified based on the
+> designated poetry project and lock files. mkPoetryApplication takes an attribute
+> set with the following attributes (attributes without default are mandatory):
+>
+> ...
+
+Just taking a second here.  Feel like you are bad at writing documentation?
+Feel like it's so much work?  Do you think this was a lot of work?  This prose
+is fairly direct.  But if it were wordy and full of edge cases (which is
+arguably not great for the first paragraph), that would've been fine too.  I'd
+rather get way too much information and have to sift through it than none at
+all.
+
+Okay back to this endeavor.
+
+If I can bundle `stable-diffusion-webui` as a "program" then I should be able to
+run it from `ExecStart` in the `systemd` unit file (which NixOS apparently
+handles for me).  Are we really that close?  No way.  There must be peril around
+the corner.
+
+<https://github.com/nix-community/poetry2nix/issues/1457>
+
+Ugh, I misspelled `mkPoetryApplicatgion` as `mkPythonApplication`.  Hard to make
+examples work when the identifiers aren't right.  The issue above isn't even
+relevant.
+
+```nix
+{
+  description = "AUTOMATIC1111/stable-diffusion-webui flake";
+
+  inputs = {
+    nixpkgs.url = github:NixOS/nixpkgs/nixos-unstable;
+    poetry2nix = {
+      url = "github:nix-community/poetry2nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+  };
+
+  outputs = { self, nixpkgs, poetry2nix }: {
+    devShells.aarch64-darwin.default =  let
+      system = "aarch64-darwin";
+      pkgs = import nixpkgs {
+        inherit system;
+        overlays = [
+        ];
+      };
+
+    in pkgs.mkShell {
+      packages = [];
+    };
+    packages.aarch64-darwin.default = let
+      system = "aarch64-darwin";
+      pkgs = import nixpkgs {
+        inherit system;
+      };
+      inherit
+        (poetry2nix.lib.mkPoetry2Nix { inherit pkgs; })
+        mkPoetryApplication
+      ;
+    in
+      mkPoetryApplication {
+        projectDir = pkgs.fetchFromGitHub {
+          owner = "AUTOMATIC1111";
+          repo = "stable-diffusion-webui";
+          rev = "v1.8.0";
+          hash = "sha256-HsHFY2OHgGC/WtZH8Is+xGbQUkcM1mhOSVZkJEz/t0k=";
+        };
+      };
+  };
+}
+```
+
+```text
+error: getting status of '/nix/store/mr0n59p7yp1wgsi0qr5qdmhdraa0ccrn-source/poetry.lock': No such file or directory
+```
+
+---
+
+<span class="timestamp-wrapper"><span class="timestamp">[2024-03-09 Sat]</span></span>
+
+Time has gotten away from me.  I haven't been able to keep this as updated as I
+would've liked.  I have been working on this every day since my last update -
+some days progress is made, others... nothing.
+
+Some things I recall from memory:
+
+1.  `poetry` is not being used here.  In fact, all that is used is `pip`.
+2.  Many Python packages have broken tests - at least within the Nix ecosystem.
+3.  Some of the Python packages involved with this endeavor lack tagged releases,
+    and even <span class="underline">commits</span> are missing for the releases.
+4.  `tzdata` is [broken](https://github.com/NixOS/nixpkgs/pull/292480), but it hasn't moved to `nixpkgs-unstable` because somehow
+    it's [better that way](https://github.com/NixOS/nixpkgs/pull/292480#issuecomment-1972722709)?   This is beyond me.
+5.  Now I'm seeing build failures from `pixman` due to tests timing out.  I have
+    not seen a ticket about this yet.
+6.  I think the `tzdata` fix is now in `nixpkgs-unstable`, which I'm trying a
+    build for again.  These package updates are so incredibly fundamental but
+    I'm doing hour-long builds trying to get all of the packages built - and for
+    whatever reason there's no cache hits I get to enjoy.
+
+None of the "high level" package managers for Python.  I have learned there are
+many, and there seems to be some convergence happening with `pyproject.toml`,
+which is a sort of funnel that gathers all of various package managers into one,
+standardized file.  Each package manager has its own settings in this file
+though, so it's very much a baby step on standardizing package management in the
+Python ecosystem.
+
+These problems are so frequent that Nix's Python builders have `disabledTests`
+and `disabledTestFiles` as properties, where one can list tests by names or test
+files in order to exclude them.  Some of this is because tests are not
+hermetic - meaning they make HTTP calls to some service external to everything,
+or they reach outside of the allocated area in the Nix store.  The other is that
+the tests are legitimately broken.  I've also seen a lot of instances where
+various tests time out.  I believe this is because my machine is running many
+builds in parallel (Nix's doing, not mine).  I can observe all cores used during
+the build.  My theory is that this high utilization is making the individual
+tests run slowly.
+
+---
+
+While I've been playing whack-a-mole with what feels like the entire Python
+ecosystem, I did some thinking - this is actually a performance critical
+application.  I need speed and memory.  I don't know if it's all on the GPU or
+not, but I suspect it isn't.  If it isn't, it's got me thinking that having all
+of this machine learning tech sitting on a Python stack probably isn't the best,
+even if much of it is deferred to the GPU and natively compiled libraries.
+
+From that line of thinking, I quickly came across [AIrtifex](https://github.com/vv9k/AIrtifex).  It covers more than
+just image generation, which is my ultimate goal.  That said, there's not a lot
+of users on this so I would very much be beta testing things in a sense.  Though
+arguably by doing this via Nix, I would be doing that already.  I suspect the
+intersection with Nix and Rust is a more pleasant one than I've encountered with
+the likes of Python in this endeavor and Ruby in my workplace.  I suspect that I
+will need to learn a lot more direct things about machine learning generation in
+order to use AIrtifex, but that isn't necessarily a bad thing.  Since these
+builds take so immensely long, I'm tempted to spin off a separate branch of work
+just to try to see if I can make it happen.
+
+These long builds, heavy downloads, and heavy amounts of disk have me thinking
+about setting up some builders and substitutors.
+
+---
+
+<span class="timestamp-wrapper"><span class="timestamp">[2024-03-22 Fri]</span></span>
+
+It's been three weeks.  Three weeks where I've worked every day on this without
+fail, for at least a couple of hours every day.  I've been chasing all kinds of
+threads trying to get things working.  I've done a bad job journaling the
+process, but here's what I recount:
+
+AIrtifex was a bust.  I couldn't figure out what magic version to use for Rust
+itself.  Rust's evolving syntax has made them embrace a sort of macro/feature
+flag suite that allows folks on "nightly" (read: everyone) to use the latest and
+greatest stuff.  The problem is that it's really hard to tell which minimum
+version is needed.  Also, these bleeding edge language and toolchain features
+are disabled once the features are pulled into the stable release line.  This
+makes for both a maximum and <span class="underline">minimum</span> window in which particular piece of
+latest-and-greatest features can work.
+
+`fenix` just seems to track nightly, which is a little weird because it doesn't
+seem to be good at tracking an arbitrary version or even a dated version.  It
+seems to be touted as the best plugin for the job, but I haven't found that to
+be the case, despite having used it before.  I found &lt;insert version&gt; to be
+ideal here.
+
+In order to better share my work I've been doing, I've moved my Nix setup for my
+various hosts on my network and/or possession into my public dotfiles
+repository.  I'll be updating links in my old posts accordingly.  This has also
+allowed me to get significant reuse.
+
+I switched to ComfyUI and found a pull request out by zaro06.  It got pretty
+flooded with feedback and the author was overwhelmed to the point of just
+stepping away from the pull request, which I absolutely cannot fault them for.
+I don't know that I can fault the reviewers either, but I will admit I have seen
+this a lot and feel that ultimately the barriers we make to contributions
+actually hurt open source, even if it is done to spare the maintainers (and
+important goal).  I feel there is another, better answer out there, but I'm not
+in the position to sort it out right now.
+
+I had a lot of trouble trying to get `torch` et. al. to build.  These were some
+`invalid memory reference` errors.  I thought this might be a regression with
+the pin I bent back, even though it passed a memory test.  I have come to find
+out that my NixOS installer no longer boots.  I have tried using different
+drives.  I might have a USB port issue, but I somehow doubt it.  Either way, I
+did another memory test and was satisfied with the results.
+
+I was able to finally come across this post in Discourse which basically laid
+out the current state of all things `torch`, `CUDA`, etc.  This was the trove I
+was looking for.  It was something I found via a link in another post.  From
+this I was able to get a working build of `ComfyUI`, even if it wasn't ready to
+actually use yet.
+
+I think the fact that this is just a post somewhere and not part of the
+documentation speaks greatly to the curse of Nix.  Documentation allergies seem
+to be everywhere - although it's at least <span class="underline">something</span>.  Perhaps I can help
+migrate this to some official documentation.
+
+I've done a lot of work for Nix so far.  I've shared everything I could here,
+and that's not great documentation either, but it's not nothing.  It's also a
+substantial amount of work for me.  I have also publicly stated I will be
+helping with the requests made on the pull request for ComfyUI.  All in all,
+I'll be a major Nix contributor soon, even though that wasn't really what I'd
+set out to do.
+
+
+### Operationalizing ComfyUI {#operationalizing-comfyui}
+
+<span class="timestamp-wrapper"><span class="timestamp">[2024-03-23 Sat]</span></span>
+
+It didn't take long for me to get some things up and going - ComfyUI now listens
+on `0.0.0.0` for me.  The port it uses on the firewall is open.  I even got a
+primitive form of downloading working for the various kinds of models.  It took
+me a bit to realize that with no extensions, ComfyUI cannot find the models.  So
+I need a better linking and/or declaration mechanism.
+
+I've loaded SDXL models, which actually fit on my video card.  The
+manually-installed version I had of `stable-diffusion-webui` on the same host
+couldn't fit it.  This was one of the reasons I decided to try ComfyUI, so I'm
+really glad to see it made a difference too.
+
+This interface is far more difficult than `stable-diffusion-webui`, but I think
+during this whole journey, I've done myself a disservice by not RTFMing first.
+I would like to just read the documentation on Stable Diffusion, so I better
+understand what latent space is, denoising, and some of the other terms that get
+tossed around.
+
+I almost want ComfyUI to use code instead of being graphical.  Something like
+Verilog or VHDL comes to mind.  I could even use... Nix!  So far, I've been
+putzing around and losing settings very easily, and having to click, drag, and
+sometimes do the multi-finger allioop on a touch pad.  I may soon grow sick of
+this interface soon, even if it does offer immense power.
+
+---
+
+<span class="timestamp-wrapper"><span class="timestamp">[2024-03-28 Thu]</span></span>
+
+At this point I've gotten it such that I can declare a configuration for the
+service with the models pulled down via a "fetcher" (my term, I don't think Nix
+uses such a notion directly).  There's a little data massaging that happens that
+gets the naming setup correctly, and some intermediate derivations are created
+so that symlinks can be aggregated.  This all seems to work nicely.  I've also
+found `toGNUCommandLine` (which was in there already), and I've begun adding all
+of the stated arguments for `comfyui` into the options it takes.  Many are
+trivial fits, and others may require some cleverness.  I also need to figure out
+what some defaults should be, and how to handle enumerations for this plumbing.
+
+I haven't read up on Nix's contributing/style guide much, and I suspect it won't
+be something I prefer.  I see a lot of trippy `camelCase` used (which ultimately
+becomes inconsistent in the face of initialisms and acronyms).  If a language
+allows it, I always prefer `kebab-case`.  It works the most generously as file
+names, URL paths, and staying away from lots of capital letters increases
+readability on screens as is held as the current body of research.  I also stick
+pretty strictly to 80 columns because I really love working in splits, and no I
+don't suffer from "my monitor is too small on a laptop" syndrome.  If you do, I
+suggest learning splits!
+
+That's a lot of digression.  Let's look at the configuration I've created.  The
+intention I started with was this:
+
+```nix
+service.comfyui = {
+  # ... other attributes.
+  models = {
+    checkpoints = {
+      pony-xl-v6 = (fetchModel {
+        # It's critical that the extension is present, or comfyui won't find
+        # the file.
+        format = "safetensors";
+        url = "https://civitai.com/api/download/models/290640?type=Model&format=SafeTensor&size=pruned&fp=fp16";
+        sha256 = "1cxh5450k3y9mkrf9dby7hbaydj3ymjwq5fvzsrqk6j3xkc2zav7";
+      });
+    };
+    clip = {};
+    clip_vision = {};
+    configs = {};
+    controlnet = {
+      controlnet-v1_1_f1e-sd15-tile = (fetchModel {
+        format = "pth";
+        url = "https://huggingface.co/lllyasviel/ControlNet-v1-1/blob/main/control_v11f1e_sd15_tile.pth";
+        sha256 = "11qndcrfz5jrjghn6v9is813igfd8310knl1l9rwxbf8lvwjncbc";
+      });
+    };
+    embeddings = {};
+    loras = {
+      # https://civitai.com/models/264290?modelVersionId=398292
+      ponx-xl-v6-artist-styles = (fetchModel {
+        format = "safetensors";
+        url = "https://civitai.com/api/download/models/398292?type=Model&format=SafeTensor";
+        sha256 = "01m4zq2i1hyzvx95nq2v3n18b2m98iz0ryizdkyc1y42f1rwd0kx";
+      });
+      # https://civitai.com/models/200255/hands-xl-sd-15?modelVersionId=254267
+      # Requires an auth token.
+      # (fetchModel {
+      #   name = "hands-sdxl.safetensors";
+      #   url = "https://civitai.com/api/download/models/254267?type=Model&format=SafeTensor";
+      #   sha256 = "00f65fia7g0ammwjw2vw1yhijw5kd2c54ksv3d64mgw6inplamr3";
+      # })
+    };
+  };
+  # Even more attributes...
+};
+```
+
+Essentially, I have a bunch of known model types (`checkpoint`, `vae`, `clip`,
+and so on).  Under those model types are the models, as an `attrset`, where the
+keys are the names of the model (as will they will appear on the filesystem and
+therefore the `comfyui` nodes).  The values come from this `fetchModel`
+function, which is a fancy wrapper over `fetchUrl` that will populate `name` in
+a way that pleases Nix - Nix doesn't allow just any arbitrary string and so
+defaulting as part of the URL as `fetchUrl` does won't work in this
+circumstance.  `civitai.com`, for example, uses query strings to delineate
+models by their IDs, and Nix does not like the characters used there, such as
+the question mark.
+
+Let's take a tour through what that looks like, because this shows off some of
+Nix's quirks and the power of a properly functional language.
+
+The `comfyui` service package declaration has a `preStart` hook that runs a
+bunch of shell invocations.  As part of that, `/var/lib/comfyui` is laid down,
+and files are copied or symlinked there as appropriate.  This is where we use
+`linkModels`, a home rolled function for this package that knows how to walk the
+configuration's `models` attribute, and convert those into the necessary symlink
+invocations.  So if I have this:
+
+```nix
+services.comfrui = {
+  models = {
+    checkpoints = {
+      pony-xl-v6 = (fetchModel {
+        # It's critical that the extension is present, or comfyui won't find
+        # the file.
+        format = "safetensors";
+        url = "https://civitai.com/api/download/models/290640?type=Model&format=SafeTensor&size=pruned&fp=fp16";
+        sha256 = "1cxh5450k3y9mkrf9dby7hbaydj3ymjwq5fvzsrqk6j3xkc2zav7";
+      });
+    };
+  };
+};
+```
+
+Then I should have a `/var/lib/comfyui/models/checkpoints` directory.  Within
+that directory is checkpoint files.  Some or all of these may be symlinks, and
+that is an implementation detail.  I did test in advance if `comfyui` respects
+symlinks, and it does.  Some systems have trouble with symlinks and insist on
+treating them differently.
+
+I've not looked much into the Nix manual - just a few references and skims here
+and there to keep me moving.  I really should dive into it!  If you haven't read
+it, I highly recommend it.  It's worth it - Nix is not like other languages and
+frameworks where you can just bumble your way through it and everything looks
+great - it's a lot of pain instead.  Some of this is its syntax choices, and
+some of it is the APIs, and some of it is straight up functional language
+concepts.
+
+Here's a functional language concept:  Partial application.  First, let's
+establish what a function looks like in Nix.  Here's a really naive
+implementation of `concat` that concatenates two strings:
+
+```nix
+x: y: x + y
+```
+
+Most of the time, the parenthesis are not optional around it, but that's the
+basic form.  `x` is a parameter, declared via `x:`, with `y` as `y:`.  You
+might've seen some functions with it declared like this:
+
+```nix
+{ x, y }: x + y
+```
+
+These are named arguments, instead of positional arguments.  Named arguments
+won't be covered right now.
+
+In the example we had above:
+
+```nix
+x: y: x + y
+```
+
+There's one function nested in another.  The form for functions in Nix ix simply
+`<var>: <body>`, here our variable here is `x`, and our body is `y: x + y`.
+Seems weird, yeah?  So the body is itself another function declaration.  We say
+that this function is "curried".  Many modern functional languages give special
+treatment to them, or implicitly model every function as if it were curried,
+with multiple parameters being syntax sugar for a curried function.
+
+What does this mean?  Well on one hand, I can use this to "bake" a function with
+a preset value.  The first parameter in our `concat` (`x`) could be set to some
+value ahead of time, and reused multiple times or used in a circumstance where I
+know only one more parameter will be given.  For example:
+
+```nix
+let
+  concat = x: y: x + y;
+  prefix-foo = concat "foo-";
+in
+  prefix-foo "bar"
+```
+
+This will return the string `"foo-bar"` .  To stress again, I called `concat`
+with `"foo-"`, and that gave me a function where `x` is already set to a value
+(`"foo-"`).  Remember that we said that we have one argument, (`x`), and the
+body is the function `y: x + y`.  But since we know what `x` is, we can express
+the returned function like this: `y: "foo-" + y`.  Hopefully this makes sense on
+why I called it `prefix-foo`.  A function that has a value pre-set like this
+that was returned from another (typically curried) function is called "partially
+applied".  You could think of that as "partially invoked", but in the realm of
+functional programming, functions are "applied" instead of "invoked".
+
+Later, when we call `prefix-foo`, we pass it `"bar"`, which becomes the value
+for `y`.  So then the function evaluates to `"foo-" + "bar"`, so we get
+`"foo-bar"`.  I'm not saying you would necessarily write functions like this in
+the wild.  It's common in functional programming to skip saving the intermediate
+function to a variable unless clarity or re-use is involved.
+
+Here, I chose to save it for re-use, and also a degree of clarity:
+
+```nix
+preStart = let
+  # This form of inherit allows us to avoid fully qualifying the functions used.
+  # Without this, we would have to express `lib.strings.concatStrings` instead
+  # of `concatStrings`.
+  inherit (lib.strings) concatStrings intersperse;
+  join = (sep: (xs: concatStrings (intersperse sep xs)));
+```
+
+I wanted a simple `join` function that takes a list of strings, and gives me a
+single string back with the two values joined by a separator (which I have named
+`sep`).  In functional programming, there's an art form of loading your
+"configuration" arguments first in the argument list so you can achieve
+favorable composition.  In this case `sep` is the configuration argument, and
+`xs` is the "data" argument.  `xs` is a common convention in functional
+programming which you can basically interpret as "many x's" or more accurately
+"a list of x's".  Simply,  `xs` is the plural of `x`.  What is `x`?  It's the
+thing we're working on.  I could've called it `strings` but the function is so
+small and simple that I chose to leave that part out.  I could've left `xs` out
+entirely to achieve "zero point programming", but that's way beyond our scope
+here.
+
+We can interpret "imperatively" what this function does by reading the
+inner-most expressions and working our way outwards.  It takes a `sep` and an
+`xs`, and calls `interperse`.  This will take our `xs` and inject `sep` in
+between them.  If our `sep` is `"1"` and our list is `["a" "b" "c"]`, then our
+result would be `["a" "1" "b" "1" "c"]`.  This result is this passed directly to
+`concatStrings`, which simply takes a list of strings and makes them one string,
+preserving the order.  This will give us `a1b1c`.  I want this because I need to
+join lines together.  I plan on using `"\n"` for `sep`, and the list will be a
+list of shell invocations.  Adding the line break will make the shell treat them
+as separate statements.  I could use semi-colons, but that makes the shell
+statements hard to read later, and you can run into goofy order-of-operations
+issues with semi-colons.
+
+As I said, I want to join strings into separate lines.  I want something like
+this:
+
+```nix
+[
+  "touch foo"
+  "touch bar"
+  "touch baz"
+]
+```
+
+To become:
+
+```nix
+"touch foo
+touch bar
+touch baz"
+```
+
+To get this, I can simply do the partial application we talked about earlier
+with `"\n"`.  Here's what it looks like:
+
+```nix
+preStart = let
+  # This form of inherit allows us to avoid fully qualifying the functions used.
+  # Without this, we would have to express `lib.strings.concatStrings` instead
+  # of `concatStrings`.
+  inherit (lib.strings) concatStrings intersperse;
+  join = (sep: (xs: concatStrings (intersperse sep xs)));
+  join-lines = join "\n";
+```
+
+I could've written the whole thing together like this:
+
+```nix
+preStart = let
+  # This form of inherit allows us to avoid fully qualifying the functions used.
+  # Without this, we would have to express `lib.strings.concatStrings` instead
+  # of `concatStrings`.
+  inherit (lib.strings) concatStrings intersperse;
+  join-lines = (xs: concatStrings (intersperse "\n" xs));
+```
+
+But I find this form of composition is easier to reason about, and creates a lot
+of re-use.  Since this functions remain very simple, it's very easy to say what
+they do and expect them to work in certain ways.  This is perhaps one of the
+most critical skills relating directly to code you can have as a software
+engineer.  When you are new, it's hard to see this though.  You haven't see
+sprawling code bases yet where it's really hard to figure out what's going on,
+and you're tracking dozens of variables at once.  Reducing those things so you
+can maintain laser focus on small problems is always going to be better.  You
+don't need to be a genius to get this stuff, instead you bring the stuff down
+your (and the rest of humanity's) level.
+
+That's about as much as I'll subject for functional programming lessons for now.
+Here's the next bits:
+
+```nix
+preStart = let
+  inherit (lib.trivial) throwIfNot;
+  inherit (lib) isAttr isString;
+  inherit (lib.strings) concatStrings intersperse;
+  inherit (lib.lists) flatten;
+  inherit (lib.attrsets) attrValues mapAttrsToList;
+  # And here is ++leftPad++ sorry `join`.
+  join = (sep: (xs: concatStrings (intersperse sep xs)));
+  join-lines = join "\n";
+  # We don't have a type system and this is pretty deep in the call stack,
+  # so do some checking on the inputs so we have fewer stones to overturn
+  # when something goes wrong later.
+  throw-if-not-fetched = fetched:
+    throwIfNot (isAttrs fetched) "fetched must be an attrset."
+    throwIfNot (isString fetched.format) "fetched.format must be a string."
+    throwIfNot (isString fetched.path) "fetched.path must be a string."
+  ;
+  fetched-to-symlink = path: name: fetched: (
+    throwIfNot (isString path) "path must be a string."
+    throwIfNot (isString name) "name must be a string."
+    throw-if-not-fetched fetched
+      ''
+       ln -snf ${fetched.path} $out/${name}.${fetched.format}
+      ''
+  );
+
+```
+
+I created `throw-if-not-fetched` as a way of telling me if a `fetched` is the
+right structure or not.  This was never wrong in my construction of this code,
+but it could've been.  I <span class="underline">knew</span> it was never wrong because I never saw this as
+an error message.  It's really nice to have comfort it knowing that these stones
+remain unturned all the time.  Don't get me wrong - I had a lot of trouble with
+this code as I wrote it, but I knew it wasn't here. due to its sanitation.
+
+This is a very unfortunate aspect for languages which insist on being untyped.
+While being untyped can let you seemingly move more quickly, I find it just
+begets lots of unit tests (that pretend to be a type system), sanitation, and
+whoopsies.  The apology is typically "it wasn't supposed to be called with
+invalid data", but if it were typed that would never be possible.  The
+correction is typically to go to the <span class="underline">call site</span> and make sure it passes the
+right data.  Then do that again for all of the call sites.  If you did any
+mocking, well you need to remember to update those mocks.  If you didn't, well
+you now have a runtime bug that snuck right past your unit tests.
+
+So anytime anything gets tricky, I just sanitize everything and let everyone
+know that type systems are great and we wouldn't be doing this if we had them.
+It does make me wonder if Nix could be better expressed with Scheme, a typed
+Lisp.  I'm not going to do that here, and there are perils with imposing a
+progressive type system on an untyped language.
+
+By the way you might be thinking "Ugh I hate types and Factory patterns and all
+that stuff!", and if that's the case, you haven't used a Real Type System™.
+Instead you've used the Fischer Price My First Type System.  You can quickly
+identify if you're in one of those type systems if you don't know what a sum
+type is, or if your type system supports `null`.  Sorry, it's a faux type
+system.  But exciting discoveries await you!  I won't be going into it more
+here.

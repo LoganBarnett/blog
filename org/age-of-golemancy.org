@@ -1,0 +1,23 @@
+#+title:     Age of Golemancy
+#+author:    Logan Barnett
+#+email:     logustus@gmail.com
+#+date:      <2025-01-15 Wed>
+#+language:  en
+#+file_tags:
+#+tags:
+#+hugo_base_dir: ..
+#+hugo_section: posts
+#+hugo_aliases: /age-of-golemancy.html
+#+hugo_categories: dnd
+
+
+* Age of Golemancy
+# This tells us to only export local headlines, not headlines included from
+# other org-mode files.
+#+toc: headlines 5 local
+# Even though the #+toc definition above indicates the headline level, it
+# isn't actually respected and has been using the default.  Using the
+# #+options below actually sets the headline level.
+#+options: H:5
+
+#+include: "../../../notes/golemology.org"

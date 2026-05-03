@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Xml on Logan Barnett&#39;s blog</title>
+    <link>http://localhost:1313/categories/xml/</link>
+    <description>Recent content in Xml on Logan Barnett&#39;s blog</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 23 Aug 2021 00:00:00 -0700</lastBuildDate>
+    <atom:link href="http://localhost:1313/categories/xml/feed.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>XML Namespaces</title>
+      <link>http://localhost:1313/xml-namespaces/</link>
+      <pubDate>Mon, 23 Aug 2021 00:00:00 -0700</pubDate>
+      <guid>http://localhost:1313/xml-namespaces/</guid>
+      <description>&lt;div class=&#34;ox-hugo-toc toc local&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#xml-namespaces&#34;&gt;XML Namespaces&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#the-skinny&#34;&gt;The Skinny&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#depth&#34;&gt;Depth&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#namespaces&#34;&gt;Namespaces&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#prefixes&#34;&gt;Prefixes&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#default-namespaces&#34;&gt;Default Namespaces&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#querying-an-xml-document-with-namespaces&#34;&gt;Querying an XML Document with Namespaces&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;!--endtoc--&gt;
+&lt;h2 id=&#34;xml-namespaces&#34;&gt;XML Namespaces&lt;/h2&gt;
+&lt;p&gt;This post covers the importance of namespaces in XML. Anyone doing XML
+transformations or data aggregation from these documents needs to be aware of
+them.  This document assumes familiarity with XML to at least a minor degree.&lt;/p&gt;
+&lt;p&gt;I am not claiming this document is complete but it should hopefully serve as a
+quick primer for anyone wanting to wrap their heads around XML namespaces.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

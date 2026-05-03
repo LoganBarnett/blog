@@ -1,0 +1,280 @@
+#+title:     Checklist for Good Command Line Programs
+#+author:    Logan Barnett
+#+email:     logustus@gmail.com
+#+date:      <2022-08-29 Mon>
+#+language:  en
+#+file_tags:
+#+tags:
+#+hugo_base_dir: ..
+#+hugo_section: posts
+#+hugo_aliases: /command-line-programs.html
+
+* Introduction
+
+This is to provide a detailed checklist on what makes for a good command line
+program.
+
+The quick list:
+
+1. Provide usage information.
+2. Output parse-able output to =stdout=.
+3. Output logging to =stderr=.
+4. Have a =--help= that describes basic usage and general purpose.
+5. Use exit code 0 for expected results, and positive, non-zero exit codes for
+   unexpected results.
+
+* Disclaimer
+
+You can always view my [[file:./resume.org][résumé]] here on the blog.  From that you can infer a lot
+about my experience and things I've done.  I don't wish to appeal to authority,
+but having some experience in the field should amount to something.  I deal with
+this stuff on a day to day basis, and from that I've learned some things.  You
+can decide for yourself if it's poorly acquired trauma or wisdom that comes with
+age.
+
+I tend to examine "standards" with high levels of scrutiny, as they can be put
+together by almost anyone with vast quantities of spare time and an unhealthy
+addiction to work.  I hope my work here is placed under similar scrutiny.  Bad
+ideas should perish and good ideas should thrive.  Of course, the real world
+contains a lot of nuance.  I find it best to know what the ideal course is, and
+then deviate as needs dictate.
+
+You will not gain my support by quoting my words as truth.  But use this to be
+inspired to pitch your own arguments and form your own ideas.
+
+In short: I know some things.  I think to think for myself.  So should you,
+including scrutinizing anything I emit.
+
+* Help and Usage
+
+The [[https://agilemanifesto.org][Agile Manifesto]] tells us to favor "working software over comprehensive
+documentation", but I find this akin to waiting until someone falls in a hole
+and dies before you decide to put up a sign that there's a hole where one could
+fall in and die.
+
+Providing a help/usage information for your program is a must-have. Even
+simplistic programs should provide a brief description of what they do and any
+arguments they expect. The _program_ must provide this information, not your
+code (though that has incredible merit as well).
+
+When a program isn't provided the information it needs, the *minimal* operation
+is to display the usage information and quit with a non-zero exit code.
+
+The usage information itself describes the arguments available, order (if
+applicable), required arguments vs. optional, and if the argument can be
+repeated (such as file names).
+
+IEEE has a [[https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap12.html][Utility Conventions]] document that covers a standard formatting
+convention to use. Most programs I've seen use this convention, and there's not
+really a great reason to abandon it. Many command line argument libraries
+provide this usage information automatically, but the onus is always on the
+program maintainer to provide documentation as to the purpose of the arguments
+themselves.
+
+Some programs can be very complicated and so require lots of explanations,
+examples, warnings, etc. This is where a [[https://liw.fi/manpages/][manual page]] (or "man page") comes in
+handy. I wouldn't worry too much about the ancient =troff= format. [[https://pandoc.org/][Pandoc]]
+supports [[https://www.gnu.org/software/groff/groff.html][groff]] (GNU's =troff=) and therefore can convert Markdown and Org-mode
+documents to man pages. Though I would check to make sure the output is rendered
+in a canonical fashion: There might be things in =troff= that a format like
+Markdown doesn't represent well like glossary definitions, for example.
+
+Your bare minimum can include the script name (which can typically be determined
+automatically), and any arguments you need.
+
+Here's an example of a bash script with zero arguments. You can use =$0= to
+refer to the script itself, and subsequent numbers refer to the ordered
+arguments. So =$1= is the first argument after the script name.
+
+#+begin_src shell :results none
+#!/usr/bin/env bash
+
+if [[ $1 == '--help' || $1 == '-h' ]]; then
+  echo "usage: $0
+
+Frobnicates anything needing frobnication.
+"
+  exit 0
+fi
+
+# The rest of the script goes below.
+#+end_src
+
+
+* Logging and Output
+
+Typically a lot of command line programs are rather silent - they don't output
+much. It's totally fine though to sprinkle logging throughout your program - in
+fact, for all but the most trivial programs I encourage this! But be sure to
+provide a distinction between *logging* and *output*.
+
+The [[https://en.wikipedia.org/wiki/Unix_philosophy][Unix philosopy]] has a lot of useful tidbits in it, but of particular note is
+this item:
+
+#+begin_quote
+Expect the output of every program to become the input to another, as yet
+unknown, program. Don't clutter output with extraneous information. Avoid
+stringently columnar or binary input formats. Don't insist on interactive input.
+#+end_quote
+
+This flows into very practical advice for logging and your program output.
+
+** Logging and Log Levels
+
+Logging is the program printing out diagnostic or progress information to the
+user. "Found file X", "Calling server with $URL", and "Server rejected our call
+with message..." are all great things to have in your logs. Logs should always
+go to =stderr= (standard error). Different languages tend to use different names
+for this. Ruby's writing to =stderr= is called =warn= and Node.JS uses
+=console.error=. That said, it's recommended to use a logger with log levels.
+This way you can distinguish apart messages for errors, general information,
+warnings, debugging statements, and so on. Most loggers can be configured to
+point at a particular destination. One of those can be whatever your languages
+uses for =stderr=, which is covered in your language's documentation. Logging
+always goes to =stderr= so that other programs (usually shells) can use program
+output without having to be aware of any kind of logging. We'll cover this more
+in [[Output]].
+
+Additionally for logging, this sort of information can be provided via
+arguments. I've seen =--debug=, =--verbose=, =--info= and other flags like this.
+I don't prefer them because they are both subjective. I've seen a suite of
+programs inconsistently use =--debug= and =--verbose= for the same thing, for
+example. Additionally, if both =--debug= and =--info= arrive as a result of some
+automation gone wonky, what happens there? Does it log =--debug=? =--info=? Does
+your documentation state which one wins? Or do you put in login into the
+argument handling to make sure these are exclusive arguments? I really like how
+=ssh= handles it: There is a single short-hand =-v= argument for verbosity. You
+can dial up the verbosity with additional "v"s. So =-vvv= is the 3rd level of
+verbosity.
+
+** Output
+
+Output should always be printed to =stdout= (apart from logging, which goes to
+=stderr=). This allows other programs (such as shells) to easily work with
+output. For example, =curl= uses this pattern to much obviousness:
+
+ #+begin_src shell :results output drawer scalar
+ echo '* foo'
+ #+end_src
+
+ #+RESULTS:
+ :results:
+ * foo
+ :end:
+
+
+ #+begin_src shell :results output drawer
+ curl -k --verbose --silent https://google.com > /dev/null
+ #+end_src
+
+ #+RESULTS:
+ :results:
+ *   Trying 172.217.165.142:443...
+ * Connected to google.com (172.217.165.142) port 443
+ * ALPN: curl offers h2,http/1.1
+ } [5 bytes data]
+ * TLSv1.3 (OUT), TLS handshake, Client hello (1):
+ } [512 bytes data]
+ * TLSv1.3 (IN), TLS handshake, Server hello (2):
+ { [122 bytes data]
+ * TLSv1.3 (IN), TLS handshake, Encrypted Extensions (8):
+ { [15 bytes data]
+ * TLSv1.3 (IN), TLS handshake, Certificate (11):
+ { [6486 bytes data]
+ * TLSv1.3 (IN), TLS handshake, CERT verify (15):
+ { [79 bytes data]
+ * TLSv1.3 (IN), TLS handshake, Finished (20):
+ { [52 bytes data]
+ * TLSv1.3 (OUT), TLS change cipher, Change cipher spec (1):
+ } [1 bytes data]
+ * TLSv1.3 (OUT), TLS handshake, Finished (20):
+ } [52 bytes data]
+ * SSL connection using TLSv1.3 / TLS_AES_256_GCM_SHA384
+ * ALPN: server accepted h2
+ * Server certificate:
+ *  subject: CN=*.google.com
+ *  start date: Oct 16 08:02:35 2023 GMT
+ *  expire date: Jan  8 08:02:34 2024 GMT
+ *  issuer: C=US; O=Google Trust Services LLC; CN=GTS CA 1C3
+ *  SSL certificate verify result: unable to get local issuer certificate (20), continuing anyway.
+ } [5 bytes data]
+ * using HTTP/2
+ * [HTTP/2] [1] OPENED stream for https://google.com/
+ * [HTTP/2] [1] [:method: GET]
+ * [HTTP/2] [1] [:scheme: https]
+ * [HTTP/2] [1] [:authority: google.com]
+ * [HTTP/2] [1] [:path: /]
+ * [HTTP/2] [1] [user-agent: curl/8.4.0]
+ * [HTTP/2] [1] [accept: */*]
+ } [5 bytes data]
+ > GET / HTTP/2
+ > Host: google.com
+ > User-Agent: curl/8.4.0
+ > Accept: */*
+ > 
+ { [5 bytes data]
+ * TLSv1.3 (IN), TLS handshake, Newsession Ticket (4):
+ { [282 bytes data]
+ * TLSv1.3 (IN), TLS handshake, Newsession Ticket (4):
+ { [282 bytes data]
+ * old SSL session ID is stale, removing
+ { [5 bytes data]
+ < HTTP/2 301 
+ < location: https://www.google.com/
+ < content-type: text/html; charset=UTF-8
+ < content-security-policy-report-only: object-src 'none';base-uri 'self';script-src 'nonce--OE5YCTTXd0EHjveIPRvtg' 'strict-dynamic' 'report-sample' 'unsafe-eval' 'unsafe-inline' https: http:;report-uri https://csp.withgoogle.com/csp/gws/other-hp
+ < date: Thu, 16 Nov 2023 02:27:21 GMT
+ < expires: Sat, 16 Dec 2023 02:27:21 GMT
+ < cache-control: public, max-age=2592000
+ < server: gws
+ < content-length: 220
+ < x-xss-protection: 0
+ < x-frame-options: SAMEORIGIN
+ < alt-svc: h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+ < 
+ { [220 bytes data]
+ * Connection #0 to host google.com left intact
+ :end:
+
+Here, you can see all of the verbose information that curl prints - headers in
+both the request and response, as well as the SSL handshake. We could redirect
+that to a saved file.
+
+
+* Exit Codes
+
+Exit codes are unsigned 8 bit numbers (0-255). 0 is interpreted as success.
+Everything else is a failure. These are used to not only detect failures in a
+series of programs, but also determine what kind of failure.
+
+#+begin_src shell :results output :prologue exec 2>&1 :epilogue "true"
+nosuchcommand # Run a fake command to create a failure.
+#+end_src
+
+#+RESULTS:
+: bash: line 2: nosuchcommand: command not found
+
+By default, shells will keep running commands regardless of failure. This can
+have poor consequences.
+
+#+begin_src shell :results output :prologue exec 2>&1 :epilogue "true"
+create-report-now-please my-report.rpt # Fake command. Will fail.
+# my-report.rpt was never created by the time we get here. Since there are no
+# reports, this publish-all-reports command could omit any errors since there
+# are no reports found to publish, or perhaps it found some reports, but just
+# not "my-report.rpt".
+publish-all-reports
+#+end_src
+
+** Standard Exit Codes :archive:
+
+I need to vet this before publishing it.
+
+There are some standards for exit codes as well.  The advanced Bash guide covers
+[[https://tldp.org/LDP/abs/html/exitcodes.html][exit codes of reserved meaning in Bash]].  This is not quite the same as a
+standard for which all outcomes could be cataloged.  Instead this gives us some
+predictable outcome.
+
+While I have found many to find this kind of thing archaic.  It's not terribly
+different from how the vaunted HTTP standard works.  [[https://developer.mozilla.org/en-US/docs/Web/HTTP/Status][HTTP codes]] rain [[https://http.cat][cats]] and
+[[https://http.dog][dogs]] from the standard.

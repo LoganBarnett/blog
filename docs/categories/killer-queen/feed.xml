@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Killer-Queen on Logan Barnett&#39;s blog</title>
+    <link>http://localhost:1313/categories/killer-queen/</link>
+    <description>Recent content in Killer-Queen on Logan Barnett&#39;s blog</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 14 Jan 2018 00:00:00 -0800</lastBuildDate>
+    <atom:link href="http://localhost:1313/categories/killer-queen/feed.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Killer Queen</title>
+      <link>http://localhost:1313/killer-queen/</link>
+      <pubDate>Sun, 14 Jan 2018 00:00:00 -0800</pubDate>
+      <guid>http://localhost:1313/killer-queen/</guid>
+      <description>&lt;p&gt;I&amp;rsquo;ve played some Killer Queen and helped put together streaming. Though the tech
+for Portland&amp;rsquo;s streaming setup has dramatically improved, the streaming guide is
+left up for posterity.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://localhost:1313/killer-queen-black-box-study/&#34;&gt;Killer Queen black box study&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://localhost:1313/killer-queen-streaming-guide/&#34;&gt;Killer Queen streaming guide&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</description>
+    </item>
+    <item>
+      <title>Killer Queen Black Box Study</title>
+      <link>http://localhost:1313/killer-queen-black-box-study/</link>
+      <pubDate>Sun, 14 Jan 2018 00:00:00 -0800</pubDate>
+      <guid>http://localhost:1313/killer-queen-black-box-study/</guid>
+      <description>&lt;div class=&#34;ox-hugo-toc toc&#34;&gt;
+&lt;div class=&#34;heading&#34;&gt;Table of Contents&lt;/div&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#changelog&#34;&gt;changelog&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#introduction&#34;&gt;introduction&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#background&#34;&gt;background&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#reasoning&#34;&gt;reasoning&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#things&#34;&gt;things&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#frames&#34;&gt;frames&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#history&#34;&gt;history&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#complications&#34;&gt;complications&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#the-operating-system&#34;&gt;the operating system&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#the-solution&#34;&gt;the solution&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#side-by-side&#34;&gt;side by side&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#conclusion&#34;&gt;conclusion&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#frame-rate&#34;&gt;frame rate&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#the-problem&#34;&gt;the problem&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#enter-vsync&#34;&gt;enter vsync&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#does-kq-use-vsync&#34;&gt;does KQ use vsync?&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#show-example-of-vsync&#34;&gt;&lt;span class=&#34;org-todo todo TODO&#34;&gt;TODO&lt;/span&gt; show example of vsync&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#pixels&#34;&gt;pixels&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#2d-as-3d&#34;&gt;2D as 3D&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#what-about-the-pixel-graphics&#34;&gt;what about the pixel graphics?&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#conclusion&#34;&gt;&lt;span class=&#34;org-todo todo TODO&#34;&gt;TODO&lt;/span&gt; conclusion&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#the-wrap-glitch&#34;&gt;&lt;span class=&#34;org-todo todo TODO&#34;&gt;TODO&lt;/span&gt; the wrap glitch&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#game-stutter&#34;&gt;game stutter&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#the-drip&#34;&gt;&lt;span class=&#34;org-todo todo TODO&#34;&gt;TODO&lt;/span&gt; the &amp;ldquo;drip&amp;rdquo;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#collision&#34;&gt;collision&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#characters&#34;&gt;characters&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;!--endtoc--&gt;
+&lt;h2 id=&#34;changelog&#34;&gt;changelog&lt;/h2&gt;
+&lt;dl&gt;
+&lt;dt&gt;&lt;span class=&#34;timestamp-wrapper&#34;&gt;&lt;span class=&#34;timestamp&#34;&gt;&amp;lt;2018-06-05 Tue&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;/dt&gt;
+&lt;dd&gt;add section about &lt;a href=&#34;#characters&#34;&gt;character controllers&lt;/a&gt;.&lt;/dd&gt;
+&lt;dt&gt;&lt;span class=&#34;timestamp-wrapper&#34;&gt;&lt;span class=&#34;timestamp&#34;&gt;&amp;lt;2018-03-22 Thu&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;/dt&gt;
+&lt;dd&gt;add section about &lt;a href=&#34;#game-stutter&#34;&gt;game stutter&lt;/a&gt;.&lt;/dd&gt;
+&lt;dt&gt;&lt;span class=&#34;timestamp-wrapper&#34;&gt;&lt;span class=&#34;timestamp&#34;&gt;&amp;lt;2018-01-21 Sun&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;/dt&gt;
+&lt;dd&gt;add section about &lt;a href=&#34;#frame-rate&#34;&gt;frame rate and vsync&lt;/a&gt;.&lt;/dd&gt;
+&lt;/dl&gt;
+&lt;h2 id=&#34;introduction&#34;&gt;introduction&lt;/h2&gt;
+&lt;p&gt;At the Portland scene we like to talk a lot about different things we&amp;rsquo;ve learned
+about Killer Queen, and being that the game is effectively a hunk of software we
+wind up talking a lot about details of its internal implementation. This post is
+about the software implementation we know about Killer Queen or things we are
+able to infer about said software. The source code for Killer Queen is locked in
+a vault somewhere, guarded by a small army of the best speed warriors. As such
+we can&amp;rsquo;t say for 100% certainty about everything. The game is a black box where
+we cannot see inside it. We can make some good guesses though.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Killer Queen Streaming Guide</title>
+      <link>http://localhost:1313/killer-queen-streaming-guide/</link>
+      <pubDate>Sun, 05 Nov 2017 00:00:00 -0700</pubDate>
+      <guid>http://localhost:1313/killer-queen-streaming-guide/</guid>
+      <description>&lt;div class=&#34;ox-hugo-toc toc&#34;&gt;
+&lt;div class=&#34;heading&#34;&gt;Table of Contents&lt;/div&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#introduction&#34;&gt;introduction&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#changelog&#34;&gt;changelog&lt;/a&gt;
+- &lt;a href=&#34;#b07b0c&#34;&gt;&lt;span class=&#34;timestamp-wrapper&#34;&gt;&lt;span class=&#34;timestamp&#34;&gt;&amp;lt;2018-03-26 Mon&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#challonge-integration&#34;&gt;challonge integration&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#workarounds&#34;&gt;workarounds&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#video-flow&#34;&gt;video flow&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#audio-flow&#34;&gt;audio flow&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#pdx-setup&#34;&gt;pdx setup&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#facilities&#34;&gt;facilities&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#hardware&#34;&gt;hardware&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#video&#34;&gt;video&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#audio&#34;&gt;audio&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#all-together-now&#34;&gt;all together now&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#anti-trip-trick&#34;&gt;anti trip trick&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#software&#34;&gt;software&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#challonge&#34;&gt;challonge&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#kq-tournament&#34;&gt;kq-tournament&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#obs&#34;&gt;OBS&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#troubleshooting&#34;&gt;troubleshooting&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#the-usb-webcam-freezes-after-transmitting-for-a-little-bit&#34;&gt;The USB webcam freezes after transmitting for a little bit&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#if-the-input-is-not-recognized-on-the-computer-s-end&#34;&gt;If the input is not recognized on the computer&amp;rsquo;s end&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;!--endtoc--&gt;
+&lt;h2 id=&#34;introduction&#34;&gt;introduction&lt;/h2&gt;
+&lt;p&gt;As part of trying to reduce the Portland scene&amp;rsquo;s &lt;a href=&#34;https://en.wikipedia.org/wiki/Bus_factor&#34;&gt;bus number&lt;/a&gt; in regards to our
+streaming setup I&amp;rsquo;ve recorded notes here as best I can. The dream is to have a
+pretty foolproof setup that anyone mildly technically competent could apply to
+their scene&amp;rsquo;s cab. People can and should provide suggestions and corrections so
+our community can better thrive. As a general policy I won&amp;rsquo;t use a comment
+system on this site because static hosting is awesome and also because
+&lt;a href=&#34;https://github.com/tessalt/echo-chamber-js&#34;&gt;echo-chamber.js&lt;/a&gt; makes an excellent point. Feel free to contact me via email,
+Twitter, or carrier pigeon for any improvements we can make here.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

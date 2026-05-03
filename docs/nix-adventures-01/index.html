@@ -1,0 +1,1083 @@
+<!doctype html><html lang=en dir=auto data-theme=auto><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no"><meta name=robots content="index, follow"><title>Nix Adventures (part 1 of ?) | Logan Barnett's blog</title><meta name=keywords content><meta name=description content="
+Table of Contents
+
+What is this?
+Introduction
+Nix Thus Far
+Today&rsquo;s Project: Working on a Raspberry Pi
+Somehow Write to the Pi SD card
+
+Empower Editing SD Card Files from macOS Directly
+Making Edits to the SD Card
+
+sshd
+
+
+Connecting to the Pi (USB-C fail)
+Imaging the Pi Correctly
+
+
+Abandon Nix and Just Get it Done:private:
+Building the Image
+
+Prior Art
+Doing Real Nix Things on macOS
+Building the NixOS Pi image
+
+Trying to Make it Work with digga
+Just Use nix-generators
+Extracting the Image
+
+
+No Joy on Boot
+Back, and Display Ports
+Actually Joy on Boot
+
+
+Conclusion
+
+
+
+Nix Adventures part 1!"><meta name=author content="Logan Barnett"><link rel=canonical href=http://localhost:1313/nix-adventures-01/><link crossorigin=anonymous href=http://localhost:1313/assets/css/stylesheet.06e1a6d1bc6bc13a21df21252705abc04a049c880328b236f9d3484cca5ac0f3.css integrity="sha256-BuGm0bxrwToh3yElJwWrwEoEnIgDKLI2+dNITMpawPM=" rel="preload stylesheet" as=style><link rel=icon href=http://localhost:1313/favicon.ico><link rel=icon type=image/png sizes=16x16 href=http://localhost:1313/favicon-16x16.png><link rel=icon type=image/png sizes=32x32 href=http://localhost:1313/favicon-32x32.png><link rel=apple-touch-icon href=http://localhost:1313/apple-touch-icon.png><link rel=mask-icon href=http://localhost:1313/safari-pinned-tab.svg><meta name=theme-color content="#2e2e33"><meta name=msapplication-TileColor content="#2e2e33"><link rel=alternate hreflang=en href=http://localhost:1313/nix-adventures-01/><noscript><style>#theme-toggle,.top-link{display:none}</style><style>@media(prefers-color-scheme:dark){:root{--theme:rgb(29, 30, 32);--entry:rgb(46, 46, 51);--primary:rgb(218, 218, 219);--secondary:rgb(155, 156, 157);--tertiary:rgb(65, 66, 68);--content:rgb(196, 196, 197);--code-block-bg:rgb(46, 46, 51);--code-bg:rgb(55, 56, 62);--border:rgb(51, 51, 51);color-scheme:dark}.list{background:var(--theme)}.toc{background:var(--entry)}}</style></noscript><script>localStorage.getItem("pref-theme")==="dark"?document.querySelector("html").dataset.theme="dark":localStorage.getItem("pref-theme")==="light"?document.querySelector("html").dataset.theme="light":window.matchMedia("(prefers-color-scheme: dark)").matches?document.querySelector("html").dataset.theme="dark":document.querySelector("html").dataset.theme="light"</script><meta property="og:url" content="http://localhost:1313/nix-adventures-01/"><meta property="og:site_name" content="Logan Barnett's blog"><meta property="og:title" content="Nix Adventures (part 1 of ?)"><meta property="og:description" content="Table of Contents What is this? Introduction Nix Thus Far Today’s Project: Working on a Raspberry Pi Somehow Write to the Pi SD card Empower Editing SD Card Files from macOS Directly Making Edits to the SD Card sshd Connecting to the Pi (USB-C fail) Imaging the Pi Correctly Abandon Nix and Just Get it Done:private: Building the Image Prior Art Doing Real Nix Things on macOS Building the NixOS Pi image Trying to Make it Work with digga Just Use nix-generators Extracting the Image No Joy on Boot Back, and Display Ports Actually Joy on Boot Conclusion Nix Adventures part 1!"><meta property="og:locale" content="en_us"><meta property="og:type" content="article"><meta property="article:section" content="posts"><meta property="article:published_time" content="2023-12-22T00:00:00-08:00"><meta property="article:modified_time" content="2023-12-22T00:00:00-08:00"><meta name=twitter:card content="summary"><meta name=twitter:title content="Nix Adventures (part 1 of ?)"><meta name=twitter:description content="Table of Contents What is this? Introduction Nix Thus Far Today’s Project: Working on a Raspberry Pi Somehow Write to the Pi SD card Empower Editing SD Card Files from macOS Directly Making Edits to the SD Card sshd Connecting to the Pi (USB-C fail) Imaging the Pi Correctly Abandon Nix and Just Get it Done:private: Building the Image Prior Art Doing Real Nix Things on macOS Building the NixOS Pi image Trying to Make it Work with digga Just Use nix-generators Extracting the Image No Joy on Boot Back, and Display Ports Actually Joy on Boot Conclusion Nix Adventures part 1!"><script type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Posts","item":"http://localhost:1313/posts/"},{"@type":"ListItem","position":2,"name":"Nix Adventures (part 1 of ?)","item":"http://localhost:1313/nix-adventures-01/"}]}</script><script type=application/ld+json>{"@context":"https://schema.org","@type":"BlogPosting","headline":"Nix Adventures (part 1 of ?)","name":"Nix Adventures (part 1 of ?)","description":" Table of Contents What is this? Introduction Nix Thus Far Today\u0026rsquo;s Project: Working on a Raspberry Pi Somehow Write to the Pi SD card Empower Editing SD Card Files from macOS Directly Making Edits to the SD Card sshd Connecting to the Pi (USB-C fail) Imaging the Pi Correctly Abandon Nix and Just Get it Done:private: Building the Image Prior Art Doing Real Nix Things on macOS Building the NixOS Pi image Trying to Make it Work with digga Just Use nix-generators Extracting the Image No Joy on Boot Back, and Display Ports Actually Joy on Boot Conclusion Nix Adventures part 1!\n","keywords":[],"articleBody":" Table of Contents What is this? Introduction Nix Thus Far Today’s Project: Working on a Raspberry Pi Somehow Write to the Pi SD card Empower Editing SD Card Files from macOS Directly Making Edits to the SD Card sshd Connecting to the Pi (USB-C fail) Imaging the Pi Correctly Abandon Nix and Just Get it Done:private: Building the Image Prior Art Doing Real Nix Things on macOS Building the NixOS Pi image Trying to Make it Work with digga Just Use nix-generators Extracting the Image No Joy on Boot Back, and Display Ports Actually Joy on Boot Conclusion Nix Adventures part 1!\nWhat is this? I recently (re?)read some posts from Ian Henry’s own adventures with Nix. I find the series both amusing (because watching someone suffer as I have suffered can be amusing if done well), and because it’s actually encouraging to see someone actually struggling with this. Nix feels a lot like Rust to me. In many ways it represents the future of computing. In others, I see a select few people with deep understanding of the topic spouting off what is the equivalent of total nonsense to me. I am glad these people are helping, and I am positive they are 100% correct in their statements. I just don’t understand any of it. There’s some knowledge I was supposed to acquire while skimming reading through a colossal set of documentation.\nNow, before this goes further, I want to make it really clear here: I fully understand and appreciate for most people working on these projects that it’s a passion project and open source burnout is very real. Posts like Ian’s and now mine walk a dangerous line of contributing to that burnout. I will make immense effort to keep my observations tasteful and respectful, while still capturing a degree of frustration so that maybe someone will have an experience similar to mine as I read Ian’s posts.\nI tried finding the origin to this, but Google really has been letting me down lately. Likely paraphrased, it goes like this:\nThere are two kinds of things in the world: Things people complain about, and things nobody has heard of.\nThat Nix now has at least two blog series on this topic speaks well of Nix, its promise, and its progress.\nIntroduction As is stamped all over this blog, I am Logan Barnett. I like working with computers more than working with humans, and I’ve been doing it for a while now. There are significant gaps in my knowledge and I am comfortable with that. I have a penchant for functional programming, documentation of all kinds, and overall I want the computer to work for me, not the other way around. I have a resume if you want to get into more specifics of my technical background.\nNix Thus Far I have been using Nix for well over a year at time of writing. Since then I have moved to using Nix with Home-manager, and now some combination of Home-manager and Flakes that still puzzles me. I use it extensively for managing my machine’s local configuration (historically “dotfiles”). I also use it for managing repository dependencies (a generalized version of tfswitch, rbenv, pyenv, nodenv, etc). I always have to look up how to make a derivation or even the simplest overlay.\nI’ve gotten to the point where installing my settings on a new machine requires very little adjusting. A vast majority of my local software is governed by Nix. The only thing I’m truly missing is Homebrew’s cask functionality, and that’s mostly because Alfred.app refuses to follow symlinks as a design decision (I plan to rectify that eventually).\nI am getting to the point where I can make my own derivations that simply follow build-from-source instructions on a README.\nToday’s Project: Working on a Raspberry Pi I have some work I want to do on a Raspberry Pi involving Wireguard. I have some prior experience with Wireguard and also with working on Raspberry Pis. I have a complication: I have no displays nor display adapters (micro-HDMI) with which I could use to interface with the Pi. I have no extra keyboard or mouse at the moment. For a system I should be able build an image for, this kind of hardware requirement really seems like overkill.\nsshd is disabled by default on a Raspberry Pi, so I cannot ssh to it, even if I could find it on a local link (this would take hours because nmap is pretty slow at this).\nSo my next best activity is to either build the image in the state I want it in, or edit the files on the SD card whose state is setup by a pre-built image. I have a pre-built image already, and I’m on macOS. Being on macOS prevents me from building new Linux images of any kind without a Docker image (which needs a VM) or setting up a Linux VM (which needs a VM too, ha!). My bandwidth is low, as is my disk space. I can solve the disk space issue, but that’s a project for another day.\nIn comes a tool called macfuse, previously known as osxfuse. They followed the rebrand that Apple did, apparently. I’ve learned recently that this tool no longer requires disabling the SIP on macOS, which I have found to be a deal-breaker for my standards. It’s just a user-land kernel extension. I don’t know who to thank for that, but I am grateful for it.\nSomehow Write to the Pi SD card Whether I have some way to bake an image in the desired state (such as with a fixed IP for link-local and sshd enabled), or I just edit the SD card directly doesn’t strictly matter to me. Because I wanted to keep things “simple”, I elected to just go for the edits directly on what I believe is an already functional SD card, and save the NixOS-on-Pi activity for another day.\nEmpower Editing SD Card Files from macOS Directly First, getting macfuse setup on my system via Nix isn’t something directly supported. I had to go into the Nix derivation for e2fsprogs and remove the guards against running on darwin. Additionally I found e2fsprogs doesn’t even compile. setxattr and getxattr can’t be assigned to because the function signatures don’t match. So I make them match with best guess by adding some parameters and declaring a couple of others as unsigned (link will come to the commit by the time I publish). I believe this is because osxfuse has some differences in the API, or perhaps there are version incompatibilities. It builds after that. I struggle with nix-flakes for a bit but eventually I notice that fuse-ext2 is indeed on my PATH - but I’m not certain which of my incantations brought it about. I’m still very new to nix-flakes and much of it was forced upon me from other things I desired. I basically jumped in the cockpit seat of the nix-flakes plane and grabbed the stick, hoping for the best. I haven’t collided with the planet Earth yet but there’s still time for that.\nI try to mount my disk with invocations such as these:\nsudo fuse-ext2 /dev/disk4s1 /Volumes/4s1 sudo fuse-ext2 /dev/disk4s2 /Volumes/4s2 Because I don’t know which one is which and there are only two partitions for disk4.\nI don’t have the exact message or dialog screenshots unfortunately, but this is where I find out that I indeed need to disable SIP (System Integrity Protection). This involves rebooting the system into recovery mode, firing up the terminal there, and running csrutil disable. uptime reports I’m at 70 days - a lot of days earned via hard won knowledge on battery draining activities on my laptop (such as bluetooth). My pride suffers a blow, but I sally forth. Then I spend about 7 reboots or so trying to get my laptop to actually boot into recovery mode.\nmacOS has changed their reboot key bindings more than they’ve changed their power adapter connections, and that’s saying a lot. Naturally I searched for how to do this, and was happy with the holding of Cmd+R during the boot-up. It doesn’t work, which in my experience means the timing is wrong, so I try it several more time. The technical timing is important so I try it more than once, which is how we wind up with me going to 7. The 7th attempt was me finding out those instructions were for Intel Macs and I’m on Apple Silicon. Right - glad we have that distinguishment. My mind immediately demands “Why? Why make these different?” but answers I can come up with are depressing in a very literal way.\nI do the csrutil disable which prompts me but works anyways. Knowing I have done the nasty successfully and my work here is done, I reboot to go back to my normal runtime. I attempt to mount again with:\nsudo fuse-ext2 /dev/disk4s2 /Volumes/4s2 But again am prompted - my Mac tells me it has blocked the kernel extension, and I must reboot to bless it. Great. Couldn’t we have just done that earlier? Or maybe just let me queue up here at least so I don’t need to go into a mode where I can’t call upon my lifelines for help. Alas, more reboots ahoy. At least this time they give me really vague instructions. This probably would’ve confused me into doing more reboots and searching, but I’ve already been here. Now that I’ve blessed this kernel extension from Benjamin (who is that?), I go back to try it again. Still blocked. The System Settings section tells me there’s a kernel extension that needs to be blessed - it doesn’t give me indication that I’ve blessed anything already. Ugh. Why is this such a miserable experience? Again I reboot into recovery mode, bring up the Security Utility, and bless the kernel extension. This time it goes away. I was operating in the suspicion that there might be more than one kernel extension involved, and all of them must be blessed individually.\nNow I try again. I have some vague memory that mount processes don’t typically create the actual mount point directory in Linux, so I assume it’s the same here.\nsudo mkdir /Volumes/4s2 sudo fuse-ext2 /dev/disk4s2 /Volumes/4s2 Nothing happens. The directory is empty and I have exit code 253 from fuse-ext2 (having your prompt show the last exit code is so incredibly useful). What’s 253 mean? I check the man page - nothing. From searching on other people trying things out, I add a -o debug to the invocation. No output, same code. I add -v to the front of the from/to arguments. No change in output/code. I worry this is resulting from my hack earlier to e2fsprogs. But I would expect to see something here. There is mention of a /var/log/fuse-ext2_util.log in some tickets I see, but I don’t have that.\nI try:\nsudo mount -t fuse-ext2 /dev/disk4s2 /Volumes/4s2 mount: exec /Library/Filesystems/fuse-ext2.fs/Contents/Resources/mount_fuse-ext2 for /Volumes/4s2: No such file or directory mount: /Volumes/4s2 failed with 72 The No such file or directory portion can’t be correct on the latter path - /Volumes/4s2 exists. I check the /Library/Filesystems/... path and it is indeed non-existent. Curious, looking in /Library/Filesystems directly shows me something of relevance:\nls /Library/Filesystems NetFSPlugins macfuse.fs So I try this modified mount:\nsudo mount -t macfuse.fs /dev/disk4s2 /Volumes/4s2 macFUSE mount version 4.5.0 This program is not meant to be called directly. The macFUSE library calls it. Available mount options: -o allow_other allow access to others besides the user who mounted the file system -o allow_recursion allow a mount point that itself resides on a macFUSE volume (by default, such mounting is disallowed) -o allow_root allow access to root (can't be used with allow_other) -o auto_xattr handle extended attributes entirely through ._ files -o blocksize= specify block size in bytes of \"storage\" -o daemon_timeout= timeout in seconds for kernel calls to daemon -o debug turn on debug information printing -o default_permissions let the kernel handle permission checks locally -o defer_permissions defer permission checks to file operations themselves -o direct_io use alternative (direct) path for kernel-user I/O -o extended_security turn on macOS extended security (ACLs) -o fsid= set the second 32-bit component of the fsid -o fsname= set the file system's name -o fssubtype= set the file system's fssubtype identifier -o fstypename= set the file system's type name -o iosize= specify maximum I/O size in bytes -o jail_symlinks contain symbolic links within the mount -o local mark the volume as \"local\" (default is \"nonlocal\") -o negative_vncache enable vnode name caching of non-existent objects -o sparse enable support for sparse files -o volname= set the file system's volume name Available negative mount options: -o noalerts disable all graphical alerts (if any) in macFUSE Core -o noappledouble ignore Apple Double (._) and .DS_Store files entirely -o noapplexattr ignore all \"com.apple.*\" extended attributes -o nobrowse mark the volume as non-browsable by the Finder -o nolocalcaches meta option equivalent to noreadahead,noubc,novncache -o noreadahead disable I/O read-ahead behavior for this file system -o nosynconclose disable sync-on-close behavior (enabled by default) -o nosyncwrites disable synchronous-writes behavior (dangerous) -o noubc disable the unified buffer cache for this file system -o novncache disable the vnode name cache for this file system mount: /Volumes/4s2 failed with 64 So mount is looking less promising. This appears to be mount just spewing the usage information of macfuse because it is giving macfuse an erroneous invocation. Is this intended to ever work? I found this invocation from other lost souls who were experiencing no luck here as well, so it might not mean much.\nFollowing some other tickets, I want to just confirm that everything I have is in order. Oftentimes errors come from the user, not the software. I find sudo diskutil list gives some good answers.\n/dev/disk6 (internal, physical): #: TYPE NAME SIZE IDENTIFIER 0: FDisk_partition_scheme *127.9 GB disk6 1: DOS_FAT_32 FIRMWARE 31.5 MB disk6s1 2: Linux 127.8 GB disk6s2 I have been operating with the notion that I was using disk4, but between reboots and swapping the physical card out to stow my laptop between attempts, it must have moved. Sigh. Let’s do this again. At least I know with confidence that I want to be mounting the “2” partition.\nsudo fuse-ext2 /dev/disk6s2 /Volumes/4s2 I didn’t rename the directory to a matching 6s2 because I just want to try something. Results are promising and with a delay:\nMounting /dev/disk6s2 Read-Only. Use 'force' or 'rw+' options to enable Read-Write mode And then:\nls /Volumes/4s2 Wow something worked! I’m going to treat myself.\nNow let’s clean up the directory name, and make it read+write.\nsudo umount /Volumes/4s2 sudo mv /Volumes/{4,6}s2 sudo fuse-ext2 -o rw+ /dev/disk6s2 /Volumes/4s2 Actually just trying to scroll through some shell history wound up making the machine unusable, and it eventually necessitated a reboot. I’ve lost any home-made directories under /Volume and so I can just make them the way I want them. I am a little worried that maybe my hacks I made to g2fsprogs have introduced some critical instability to my kernel, but I fail to see how the xattrs stuff would have anything to do with my shell history. Perhaps it’s due to some zsh magic?\nThe commands again, and note that now we’re back to disk4:\nsudo mkdir /Volumes/picard sudo fuse-ext2 -o rw+ /dev/disk4s2 /Volumes/picard And that worked! Now to make edits to the card.\nMaking Edits to the SD Card sshd I need to “enable” sshd, assuming it comes installed. If it does not come installed, this will have been a very wasteful effort.\nSearching on this topic, I find an article with this:\nThere are also mechanisms to preconfigure an image without using Imager. To set up a user on first boot and bypass the wizard completely, create a file called userconf or userconf.txt in the boot partition of the SD card; this is the part of the SD card which can be seen when it is mounted in a Windows or MacOS computer.\nThis section doesn’t detail how to enable sshd, but the original post that lead me to this article has some additional instructions:\nThe empty ‘ssh’ (or ssh.txt) file should act as a toggle (turn SSH on, and it will stay on unless you explicitly disable it later). If that’s not how it’s working for you, then something else that was done to the system has messed that up.\nRight. So I didn’t need to do any of the prior section at all? Let’s look and be sure. I happen to recall that the default name of the SD card is FIRMWARE for whatever reason.\nOkay, I’m going to try really hard not to swear off computers forever.\ntouch /Volumes/FIRMWARE/ssh echo \"$USER:$(echo 'lolno' | openssl passwd -stdin)\" \u003e /Volumes/FIRMWARE/userconf The instructions use a -6 argument, but that doesn’t work for my openssl:\nopenssl version LibreSSL 3.3.6 Which I believe is the stock version running on my MacBook, based on:\nwhich openssl /usr/bin/openssl Otherwise it would be a deep path under /nix.\nA quick check of the files shows they are there and in the desired state:\nls /Volumes/FIRMWARE/ssh cat /Volumes/FIRMWARE/userconf /Volumes/FIRMWARE/ssh logan:oKYG/fePTExgs I have no worries about the password here - it will be changed before this device connects to anything outside of my laptop.\nOkay let’s give it a go. I eject the mounts (picard needs a sudo umount /Volumes/picard but works without a hitch).\nAn import caveat: I found from How the Raspberry Pi enables SSH when /boot/ssh.txt is present that these files are removed on boot - so we only get one shot, and if it fails we have to run it again. This is one of the benefits of blogging as I do this - the command history is at my fingertips.\nThe files are listed the configuration boot section documentation.\nConnecting to the Pi (USB-C fail) I did forget about networking, which isn’t covered in the boot section linked above. I had worked on this earlier but the 169.254.0.0/16 address space is way too large to nmap over. Instead I read in the boot section there’s an “OTG” (On The Go) USB setting that is enabled by default in config.txt (at least in my case, being it’s a Pi 4B). I don’t want to just plug it in and find out, and I actually did try raspberrypi.local earlier, I thought, and that didn’t work. I found a ping in my history to it in fact, so I know this was attempted and failed. There may be something else involved. This answer specifically talks about macOS and OTG. It does mention to use Bonjour to find the Pi, which apparently it advertises on.\nThe command link invocation is provided in this answer:\ndns-sd -Gv4v6 raspberrypi.local That doesn’t work. I do recall some chatter in the OTG+MacBook answer that talked about some problems with OTG and certain cables. It links to an article about an issue with USB-C on the Pi that is probably causing me problems. Essentially it means that the Pi isn’t powered properly if the USB-C cable is “e-marked” (meaning it can identify/query additional features).\nSo how do I know if the Pi got sufficient power or not? I can check the SD card to see if the configuration files were removed on-boot.\nls /Volumes/FIRMWARE | grep ssh ls /Volumes/FIRMWARE | grep userconf ssh userconf Sure enough, they are both present. So the Pi didn’t boot properly. I did have a solid red light, with an occasionally blinking green light. I don’t know what that means yet, but perhaps I should learn. I have read it is programmable and may have changed over time, so I don’t want to go too far down that path. In any case, we didn’t make it. For what it’s worth, the Pi was connected for a solid 5-10 minutes.\nI only glanced at the USB-C diagrams in the article linked prior. I also skimmed through parts of the article itself. I would need a specifically bad USB-C cable - it would need to transmit data but not be “e-marked”. I suspect that would be hard to find.\nI did learn somewhat recently that USB cables (even USB-C) sometimes are hard-wired to actually be a true “charging cable” in that all they do is provide power, and all of the data pins are grounded or shared. That’s not part of the spec, and it explains why a lot of people get cables that “work” but sometimes don’t (via reviews or one’s own personal experience). It’s a real shame we don’t have standard, human-readable markings for these differences. This video was really enlightening on the topic, and also shows off some fascinating circuitry in the thunderbolt cables which share the USB-C form factor.\nSo I need to plug this in via a battery or wall outlet, and I need to run an Ethernet cable between the Pi and my laptop. I do have the equipment on hand for all of this.\nImaging the Pi Correctly I have blinking Ethernet lights. The Pi has a solid red light, and the green light is doing a dot-dot kind of pattern, repeatedly.\nI’ve done a little looking into for the light patterns. The Pi 4B uses a new set of patterns. However my 2 pattern (two of anything but nothing else) doesn’t show up on the list. Checking my command history from earlier, I can see that I’m using a NixOS image. Perhaps that is related. I got that from this instruction available on the official NixOS documentation. It does assume a 4B model, but might be demanding more RAM than what I gave the Pi. My purchase order for the Pi shows it as 2 GB, but the documentation says it should be 4GB. I don’t know how hard that limitation is. Also, and perhaps most critically, this cannot work because it doesn’t use the Pi’s normal configuration. Okay now I think we’re onto something. I did want to do this via NixOS but I think I might be best off saving that for another day. This post has gotten enormous from all of the research and attempts already. I’ve also noticed the documentation tails behind the current NixOS image version. Ugh. I just need to do this myself - later.\nAbandon Nix and Just Get it Done private As much as I wanted this to be something about Nix, it turned into a series of other hardships. NixOS introduced other, undocumented complications to the process. I still lack the ability to manage the Pi’s packages, let alone via the “Nix way”.\nI used:\nwget https://downloads.raspberrypi.com/raspios_arm64/images/raspios_arm64-2023-12-06/2023-12-05-raspios-bookworm-arm64.img.xz\\?_gl\\=1\\*qvoa7r\\*_ga\\*MjYzMjA4NTA3LjE3MDMyMzk1Nzc.\\*_ga_22FD70LWDS\\*MTcwMzMzMTYzMi4yLjAuMTcwMzMzMTYzMi4wLjAuMA.. mv \\ '2023-12-05-raspios-bookworm-arm64.img.xz?_gl=1*qvoa7r*_ga*MjYzMjA4NTA3LjE3MDMyMzk1Nzc.*_ga_22FD70LWDS*MTcwMzMzMTYzMi4yLjAuMTcwMzMzMTYzMi4wLjAuMA..' \\ 2023-12-05-raspios-bookworm-arm64.img.xz unxz 2023-12-05-raspios-bookworm-arm64.img.xz Oh oh, I did get to use Nix a little! I had to install the xz package to get unxz.\nAnd then flashed the card with:\nsudo dd if=2023-12-05-raspios-bookworm-arm64.img of=/dev/disk4 bs=1M status=progress conv=fsync Building the Image Okay, let’s build our own NixOS image for the Pi.\nPrior Art I came across Headless Raspberry Pi on NixOS Discourse and user Sweenu states they have a working version of NixOS being deployed to a Raspberry Pi. The source is all posted to https://github.com/sweenu/nixfiles. From some brief research, it does use a tool called digga that states that it is no longer recommended for use, which is expanded upon in issue#503 for the repository. In essence, digga seems to have some customization / scaling difficulties because it focused on ergonomics first. There isn’t any real alternatives recommended that are purpose built for what digga does (which, to be honest, I’m not entirely sure what it does). I’d prefer to keep my research to shiny new things to a minimum, so I hope I can adlib what should be already working for someone else, but to fit my needs. Primarily I want image generation that gives me a working NixOS based Raspberry Pi image, but also have it configured in such a way that I don’t have to re-flash the SD card every time I want to make a change. In other words, I want to be able to build an image but also be able to manage the host configuration via a standard Nix configuration.\nIn the Discourse, Sweenu states the Pi can be updated thusly:\nnix flake update deploy \".#grunfeld\" Where grunfeld is the name of the Raspberry Pi.\nIn the repository’s README, it states the image can be created and copied like so:\nnixos-generate --flake '.#grunfeld' --format sd-aarch64 --system aarch64-linux unzstd -d {the output path from the command above} -o nixos-sd-image.img sudo dd if=nixos-sd-image.img of=/dev/sda bs=64K status=progress This is all very promising. I’ve done some copying/adlibing of the repository in my proton-nix repository, which I plan on using to declare my local network configuration. I do have some security concerns about open sourcing it, especially because both public and private keys seem to be present in the repository (even if the private keys are encrypted at rest). I would like a way to share this, without the private bits hanging out for all to see. This has been something I’ve looked into before with Nix and nix-flakes in particular because flakes really wants everything to be self contained, lest it be marked as “impure”. From reading Ian’s blog I mentioned earlier, it does seem like one can reference a file using a git repository link. If flakes is happy with this, then I think I could be very happy with it as well.\nBut first, we need a detour. I don’t have a means of actually using NixOS because I’m on macOS. As I understand, this does require work with a container or VM.\nDoing Real Nix Things on macOS On this current MacBook, I’ve successfully avoided running Docker. I’ve come to liken Docker to bloatware (whether that’s fair or not). On my home network, I’ve had a degree of success with Podman. However there’s hitches with it, as there always is. I also have a very small amount of space available on my MacBook, and containerd containers aren’t known for their small size - unless they use Alpine, I guess. Either way it will need an entire VM to work - because macOS doesn’t have cgroups et. al. There appears to be some promising work done to make containers work on macOS but it’s way too immature (as of [2023-12-24 Sun]) for the kind of work we’re doing here.\nMy detour needs an additional detour: I have to clean up some space. I presently have \u003c 30GB free and I would love to be running with closer to 100GB to feel like I can quickly iterate on things without constantly needing to do a nix gc or docker system prune --force, and also thereby increasing my build iteration times significantly (those caches are present for good reason).\nBegin space cleaning montage!\nAlright I’ve deleted a bunch of things I had no business keeping, and things I probably won’t remember that I deleted later. ncdu was instrumental there!\nIn a vacuum I’d prefer podman to avoid my perceived bloatware of Docker proper. I don’t recall any current perils, and there does appear to be some support for running podman on aarch64-darwin (my specific setup), so let’s give it a shot.\nI did find nixpkgs#169118 which outlines some issues with podman on macOS, but they seem to be resolved and nobody feels confident enough to declare it done. This commit that refers to the ticket just installs qemu and podman together (but with no direct relationship - I don’t know how that’s supposed to work). qemu is a significant part of working with the VM, I’ve gathered.\nI found Just, Nix Shell And Podman Are A Killer Combo and learned that Just is a thing. The post has some great incantations in it that I was happy to leverage into this with-podman.sh script:\n#!/usr/bin/env bash set -euo pipefail container_name=\"nix-run\" script=\"$@\" podman machine init --cpus 12 --memory 8192 --disk-size 50 \\ --volume $HOME:$HOME || true podman machine start || true podman container ls -a | grep $container_name \u003e /dev/null || \\ podman create -t --name $container_name -w /workdir \\ -v $PWD:/workdir nixos/nix container_id=$(podman start $container_name) echo \"$container_id\" podman exec $container_id $script podman stop $container_name || true podman machine stop Which basically sets up the Podman VM, starts the container nixos/nix container (named nix-run), executes the script (whatever I pass in for args), and then cleans it all up. It’s very expensive but it’s also something I can use thoughtlessly and I really like that.\nHere’s an example run:\n@ ./with-podman.sh ls -al Error: podman-machine-default: VM already exists Error: cannot start VM podman-machine-default: VM already running or starting a34354199be6cca047309f9d29ecefeeb1c4521d776536cc6305bad8380874b6 nix-run total 12 drwxr-xr-x 11 root nobody 352 Dec 24 13:17 . dr-xr-xr-x 1 root root 77 Dec 24 13:26 .. drwxr-xr-x 10 root nobody 320 Dec 24 13:23 .git -rw-r--r-- 1 root nobody 283 Dec 22 00:50 README.org -rw-r--r-- 1 root nobody 3809 Dec 24 00:29 flake.nix drwxr-xr-x 3 root nobody 96 Dec 24 00:30 hosts drwxr-xr-x 4 root nobody 128 Dec 24 00:40 modules drwxr-xr-x 3 root nobody 96 Dec 24 00:42 pkgs drwxr-xr-x 3 root nobody 96 Dec 24 00:52 profiles drwxr-xr-x 4 root nobody 128 Dec 24 00:41 shell -rwxr-xr-x 1 root nobody 529 Dec 24 13:26 with-podman.sh nix-run Waiting for VM to exit... Machine \"podman-machine-default\" stopped successfully ~/dev/proton-nix logan@scandium 0 [22:27:20] 75s $ Note it took 75 seconds to run on my system just to do ls but it works without me doing anything fancy, I’m running NixOS, and the repository I’m working in is properly volume mounted. I’m not really worried about speed here, especially because these invocations I’m about to do will generate disk images - an already lengthy affair I expect to take on the order of minutes. Perhaps I will find short cuts to speed up iteration as I experience pain with building the image improperly, but I want to reserve my grease until the wheels begin to squeak.\nA couple of asides:\nI looked at Just since this is my first exposure to it. From some quick reading around, it seems to be a marginally better make. make is portable, standard, and yes it has aged but I believe it has aged moderately well. I would not drop portability and familiarity (due to it being fairly standard) just for a marginal improvement. Plus, if the file starts to get too squirrelly, I’d rather just break out the complex bits into standalone scripts. If I really could wave a wand and have anything I wanted in terms of love to make, it would be to give me something like rake -T where I can simply print all of the tasks available to me. Reading the code is not documentation, even if it is a Makefile. I tend to go down the rabbit hole on a lot of these ventures, but I’m not posting all of it as I go. Indeed, I just closed a tab pointing to r/programminganimememes, which was serving as nothing other than pure distraction. I’d followed link to it from the same article linked above. Now that I have a real Nix system available to me, I need to try to run my paired down repository from sweenu and see if I can build an image from it.\nBuilding the NixOS Pi image Trying to Make it Work with digga From sweenu’s earlier invocations, I have adapted it to be:\n./with-podman.sh \" nixos-generate --flake '.#iron' --format sd-aarch64 --system aarch64-linux; \" Which outputs:\nError: crun: executable file `nixos-generate` not found in $PATH: No such file or directory: OCI runtime attempted to invoke a command that was not found Error: read unixpacket @-\u003e/proc/self/fd/13/attach: read: connection reset by peer I hope that unixpacket error is just some weirdness with error handling - an error of an error. I’ll test again with ls -al… and the results are the same successful results I had before. I even tried with \"ls -al\" to make sure there isn’t some weird quoting issues, but there isn’t - all is well.\nI tried a nix invocation I know to work:\n./with-podman.sh nix-channel --list And I get:\nnixpkgs https://nixos.org/channels/nixpkgs-unstable Which is a very reasonable/expected output. So some nix tools are available, but why can’t it find nixos-genereate? This is literally my first time using any command prefixed with nixos, so I’m assuming that this command actually exists under normal circumstances and that might be too heavy an assumption. Some searching reveals… nothing? Not at all what I expected. I expected something, but just not on my path for whatever reason. I double check and realize I’m searching for nix-generate instead of nixos-generate, whoops.\nnixos-genereate is supplied by nixos-generators and it requires installation - it’s not something that ships with nixos.\n./with-podman.sh \" nix run github:nix-community/nixos-generators -- \\ --flake '.#iron' --format sd-aarch64 --system aarch64-linux; \" And I get:\nerror: experimental Nix feature 'nix-command' is disabled; add '--extra-experimental-features nix-command' to enable it Ah. I’ve seen these before. This just makes our invocation a little more tricky with:\n./with-podman.sh \" nix --extra-experimental-features nix-command \\ run github:nix-community/nixos-generators -- \\ --flake '.#iron' --format sd-aarch64 --system aarch64-linux; \" The complexity and nesting here is starting to make me a little nervous. Prior trauma experience tells me that I will soon be running into shell quoting issues.\nNow I see:\nerror: experimental Nix feature 'flakes' is disabled; add '--extra-experimental-features flakes' to enable it Sigh. Nix, you couldn’t have told me about both of them at once? Furthermore, it would’ve told me the proper thing to do for enabling multiple experimental features at once. So I wing it:\n./with-podman.sh \" nix \\ --extra-experimental-features nix-command \\ --extra-experimental-features flakes \\ run github:nix-community/nixos-generators -- \\ --flake '.#iron' --format sd-aarch64 --system aarch64-linux; \" I see a lot of stuff going on with the nix store - a sign of progress!\nBut we end with:\nwarning: Ignoring setting 'auto-allocate-uids' because experimental feature 'auto-allocate-uids' is not enabled warning: Ignoring setting 'impure-env' because experimental feature 'configurable-impure-env' is not enabled building '/nix/store/531cw9n4lxqx3w830ijackc5xffgz27k-nixos-generate.drv'... /nix/store/7nkr6ysd859f6pwsn0k32qr8w368rmcz-nixos-generate/bin/.nixos-generate-wrapped: line 72: awk: command not found You’d think nixos-generators would just include awk. Maybe I can submit a PR…? Let’s cook a new invocation:\n./with-podman.sh \" nix \\ --extra-experimental-features nix-command \\ --extra-experimental-features flakes \\ run awk github:nix-community/nixos-generators -- \\ --flake '.#iron' --format sd-aarch64 --system aarch64-linux; \" I get:\nerror: cannot find flake 'flake:awk' in the flake registries It should be noted the pkg1 pkg2... notation I used is taken from the explanation in this Discourse about nix shell vs nix run but the help/man page for nix run gives no indication that this can be done. If anything it indicates that this cannot be done because the invocation demands installable as a single argument and other arguments have flags.\nMore reading in that same Discourse shows that nix run might not be suitable for this, or is otherwise a work in progress. Okay fine. I find some suggestions on nix shell that do what I want in the same Discourse once again. Let’s try it out.\nActually I try several things out, and eventually land on:\n./with-podman.sh \" nix \\ --extra-experimental-features nix-command \\ --extra-experimental-features flakes \\ shell awk github:nix-community/nixos-generators -- \\ --flake '.#iron' --format sd-aarch64 --system aarch64-linux; \" I ran into:\npath '/workdir/--flake' does not contain a 'flake.nix', searching up error: getting status of '/workdir/--flake': No such file or directory So I just remove --flake and use:\n./with-podman.sh \" nix \\ --extra-experimental-features nix-command \\ --extra-experimental-features flakes \\ run 'nixpkgs#awk' github:LoganBarnett/nixos-generators#with-awk -- \\ --flake '.#iron' --format sd-aarch64 --system aarch64-linux; \" To get:\n./with-podman.sh \" nix \\ --extra-experimental-features nix-command \\ --extra-experimental-features flakes \\ shell \\ -c \\ \"'\"'\"nixos-generate \\ --flake '.#iron' \\ --format sd-aarch64 \\ --system aarch64-linux \\ \"'\"'\" \" Ugh I really went off the tracks trying things out. I have an incantation that finally exercises the bits I want, but the actual nix code is busted somehow. I suspect the version of digga that sweenu uses and my own differ. I need to look into some more things. I wonder if I can just use nixos-generate by itself, without all of this extra stuff? My other two paths are to either pin my repo to the same version that sweenu has in the flake.lock or follow another example (https://github.com/divnix/digga/pull/501 for a working(?) one).\n./with-podman.sh \" \\ ls -al . ; nix \\ --extra-experimental-features nix-command \\ --extra-experimental-features flakes \\ build '.#iron' \\ \" This invocation helps a lot, and keeps it so I don’t need to keep running directly on the VM while still working out silly issues.\nnix flake check --show-trace This is the point where I just tried a bunch of different things. Many a straw were grasped. I tried following obscure error messages. The sight of broken “magic” is not new to me, and this section of stuff really felt like it. So I abandoned digga entirely.\nJust Use nix-generators Now I have the following configuration:\nThe flake.nix:\n{ description = ''iron.proton imaging and configuration. iron.proton is a cross-region routing device. ''; inputs = { nixpkgs.url = \"nixpkgs/nixos-unstable\"; nixos-generators = { url = \"github:nix-community/nixos-generators\"; inputs.nixpkgs.follows = \"nixpkgs\"; }; }; outputs = { self, nixpkgs, nixos-generators, ... }: { packages.aarch64-linux = { iron = nixos-generators.nixosGenerate { format = \"sd-aarch64\"; modules = [ ./iron-configuration.nix ]; system = \"aarch64-linux\"; }; }; }; } The linked iron-configuration.nix is this:\n# This is the NixOS configuration for iron.proton. It is drawn from the example # here: # https://github.com/Misterio77/nix-starter-configs/blob/main/minimal/nixos/configuration.nix { inputs, lib, config, pkgs, ... }: { imports = [ ./hardware-configuration.nix ]; nixpkgs = { overlays = [ ]; config = { allowUnfree = true; }; }; nix.nixPath = [\"/etc/nix/path\"]; environment.etc = lib.mapAttrs' (name: value: { name = \"nix/path/${name}\"; value.source = value.flake; }) config.nix.registry; nix.settings = { experimental-features = \"nix-command flakes\"; auto-optimise-store = true; }; networking.hostName = \"iron\"; # TODO: This is just an example, be sure to use whatever bootloader you prefer # I guess grub or whatever is used implicitly somewhere? Keeping this (which # comes from the example verbatim) results in: # The option `system.build.installBootLoader' is defined multiple times # while it's expected to be unique. # boot.loader.systemd-boot.enable = true; users.users = { logan = { # TODO: You can set an initial password for your user. # If you do, you can skip setting a root password by passing # '--no-root-passwd' to nixos-install. # Be sure to change it (using passwd) after rebooting! initialPassword = \"correcthorsebatterystaple\"; isNormalUser = true; openssh.authorizedKeys.keys = [ \"my public key\" ]; extraGroups = [\"wheel\"]; }; }; services.openssh = { enable = true; settings = { # Forbid root login through SSH. PermitRootLogin = \"no\"; # Use keys only. Remove if you want to SSH using password (not # recommended). PasswordAuthentication = false; }; }; system.stateVersion = \"23.05\"; } And then hardware-configuration.nix is this:\n{ fileSystems.\"/\" = { # Must match what sd-image expects exactly. This is found by trying to run # anything and then encountering an error. device = \"/dev/disk/by-label/NIXOS_SD\"; fsType = \"ext4\"; }; nixpkgs.hostPlatform = \"aarch64-linux\"; } If you’re comparing from the example mentioned in the comments, this does without the nix.registry setting because that was causing problems. I also removed the boot loader declaration, because that seems to be implicit or configured in some other way that is not obvious to me.\nThe error for the boot loader is this:\nerror: The option `system.build.installBootLoader' is defined multiple times while it's expected to be unique. Only one bootloader can be enabled at a time. This requirement has not been checked until NixOS 22.05. Earlier versions defaulted to the last definition. Change your configuration to enable only one bootloader. Unfortunately I don’t have an error capture for nix.registry.\nThe nix.registry error:\nerror: … while calling the 'derivationStrict' builtin at /derivation-internal.nix:9:12: 8| 9| strict = derivationStrict drvAttrs; | ^ 10| … while evaluating derivation 'nixos-sd-image-24.05.20231222.6df37dc-aarch64-linux.img' whose name attribute is located at /nix/store/55ql4j8d47xjvfa8xggjddgfwny4n9j7-source/pkgs/stdenv/generic/make-derivation.nix:348:7 … while evaluating attribute 'buildCommand' of derivation 'nixos-sd-image-24.05.20231222.6df37dc-aarch64-linux.img' at /nix/store/55ql4j8d47xjvfa8xggjddgfwny4n9j7-source/nixos/modules/installer/sd-card/sd-image.nix:182:7: 181| 182| buildCommand = '' | ^ 183| mkdir -p $out/nix-support $out/sd-image (stack trace truncated; use '--show-trace' to show the full trace) error: attribute 'inputs' missing at /nix/store/55ql4j8d47xjvfa8xggjddgfwny4n9j7-source/lib/modules.nix:508:28: 507| builtins.addErrorContext (context name) 508| (args.${name} or config._module.args.${name}) | ^ 509| ) (lib.functionArgs f); Divining the fix was mostly a guess, but based on:\nThe inputs missing. The nix.registry line has inputs in there. The nix.registry line has a comment saying “To make nix3 commands consistent with your flake” and this looks like speculative future-proofing to me. The future is likely now, and the speculation proven false. I have inputs very clearly in the flake. Everything else looks “tidy”. Okay so this all generates an image by running:\n./with-podman.sh \" \\ nix \\ --extra-experimental-features nix-command \\ --extra-experimental-features flakes \\ build '.#iron' \\ \" I get no meaningful output, but no news is good news in the Unix world. I see that my local directory gets an result file. It’s a symlink.\nresult -\u003e /nix/store/dv21jmin4aqq4m0zvlbfbw2d6c1d47sr-nixos-sd-image-24.05.20231222.6df37dc-aarch64-linux.img Extracting the Image I quickly discovered that the symlink is orphaned.\nls -al $(readlink result) 2\u003e\u00261 ls: cannot access '/nix/store/dv21jmin4aqq4m0zvlbfbw2d6c1d47sr-nixos-sd-image-24.05.20231222.6df37dc-aarch64-linux.img': No such file or directory I bet there is some containerd trickery going on here. Here’s what I think is happening:\nI know from my script in with-podman.sh, the container is volume-mounting $HOME. It is not volume mounting /nix. The file is actually written to /nix in the container. This is inaccessible to me once the container is shut down. The symlink emitted isn’t translated to whatever temporary file that podman is actually writing to. Thus I am left with a dead symlink. I think the way we can fix this is to copy the image and then remove symlink (to keep things clean, it’s not strictly necessary).\n./with-podman.sh \" \\ nix \\ --extra-experimental-features nix-command \\ --extra-experimental-features flakes \\ build '.#iron' cp \\$(readlink result) /workdir/nixos-pi.img rm result \" This doesn’t work because the symlink points a directory, and not the image file itself. I did some digging and found I can do this:\n./with-podman.sh \" \\ nix \\ --extra-experimental-features nix-command \\ --extra-experimental-features flakes \\ build '.#iron' cp \\$(readlink result)/sd-image/* /workdir/nixos-pi.img.zst rm result \" Note the added .zst. Also there is another directory adjacent to sd-image called nix-support. I’ll take a look at that as I do more runs.\nI do need to add the ability to decompress this image in preparation for dd. Let’s yank our earlier invocation and place it in this command chain. If I wanted to muck around with the container image itself, I could use the unzstd invocation to specify an output directory, which means we avoid a cp of the entire image. I don’t want to muck around with the container image as much as I can though.\n./with-podman.sh \" \\ nix \\ --extra-experimental-features nix-command \\ --extra-experimental-features flakes \\ build '.#iron' ls -al \\$(readlink result)/nix-support cp \\$(readlink result)/sd-image/* /workdir/nixos-pi-sd-image.img.zst rm result \" unzstd -d nixos-pi-sd-image.img.zst -o nixos-pi-sd-image.img One of the things I really like about this journaled approach to exploration is that it slows me down enough to ask questions that make me avoid pitfalls. As I am writing, I am thinking “How do I know the result from unzstd is actually a valid image without having to push it through dd and then slotting the card into the Pi?\nSome quick searching reveals I can use hdiutil imageinfo to get this information.\nLet’s see if it tells us that it is not looking at a valid image:\nhdiutil imageinfo nixos-pi-sd-image.img.zst 2\u003e\u00261 echo $? hdiutil: imageinfo failed - image not recognized 1 Excellent! And the positive case?\nhdiutil imageinfo nixos-pi-sd-image.img 2\u003e\u00261 echo $? Class Name: CRawDiskImage Size Information: Total Bytes: 2829352960 Compressed Ratio: 1 Sector Count: 5526080 Total Non-Empty Bytes: 2829352960 Compressed Bytes: 2829352960 Total Empty Bytes: 0 Checksum Type: none Format: UDRW partitions: partition-scheme: fdisk block-size: 512 partitions: 0: partition-name: Master Boot Record partition-start: 0 partition-synthesized: true partition-length: 1 partition-hint: MBR boot-code: 0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000004E6978210000 1: partition-name: partition-start: 1 partition-synthesized: true partition-length: 16383 partition-hint: Apple_Free 2: partition-start: 16384 partition-number: 1 partition-length: 61440 partition-hint: DOS_FAT_32 partition-filesystems: FAT16: FIRMWARE 3: partition-start: 77824 partition-number: 2 partition-length: 5448256 partition-hint: Linux_Ext2FS burnable: false Format Description: raw read/write Checksum Value: Properties: Encrypted: false Kernel Compatible: true Checksummed: false Software License Agreement: false Partitioned: false Compressed: no Segments: 0: /Users/logan/dev/proton-nix/nixos-pi-sd-image.img Backing Store Information: URL: file:///Users/logan/dev/proton-nix/nixos-pi-sd-image.img Name: nixos-pi-sd-image.img Class Name: CBSDBackingStore Resize limits (per hdiutil resize -limits): 5526080\t5526080\t181452016 0 Wonderful!\nWe can incorporate that into our eventual script we’ll be creating, just to check on things.\n./with-podman.sh \" \\ nix \\ --extra-experimental-features nix-command \\ --extra-experimental-features flakes \\ build '.#iron' ls -al \\$(readlink result)/nix-support cp \\$(readlink result)/sd-image/* /workdir/nixos-pi-sd-image.img.zst rm result \" unzstd -d nixos-pi-sd-image.img.zst -o nixos-pi-sd-image.img rm nixos-pi-sd-image.img.zst hdiutil imageinfo nixos-pi-sd-image.img And then we can incorporate the dd invocation into it:\n./with-podman.sh \" \\ nix \\ --extra-experimental-features nix-command \\ --extra-experimental-features flakes \\ build '.#iron' ls -al \\$(readlink result)/nix-support cp \\$(readlink result)/sd-image/* /workdir/nixos-pi-sd-image.img.zst rm result \" unzstd -d nixos-pi-sd-image.img.zst -o nixos-pi-sd-image.img rm nixos-pi-sd-image.img.zst hdiutil imageinfo nixos-pi-sd-image.img sudo dd if=nixos-pi-sd-image.img of=/dev/disk4 bs=1M status=progress conv=fsync Let’s not run that yet, because just blindly doing dd on things under /dev is inherently dangerous. Is there a way we can query for a detachable disk?\nThere is for macOS, but it’s not portable. I have seen some mention that lsusb works for non-USB storage devices (and by extension, cyme would as well), but I have not observed that on my system. Still, learning of cyme is useful and it’s been added to my toolbox for later.\nThis is what I came up with:\nsystem_profiler SPStorageDataType -json \\ | jq -r \\ '.SPStorageDataType.[] | select(.physical_drive.protocol == \"Secure Digital\") | .bsd_name' \\ | sed -E 's/s[0-9]+//' Note that this might not work if using a USB attached SD card. This could be the case if you’re using a docking station setup on your Mac/MacBook, instead of preferring the on-board SD card reader.\nOkay so now we have the disk, dynamically. We can just idiotically bail out if more than one is found. We should only find one and only one result.\nUgh. I really wish we could actually replace Bash with a stronger scripting language but with the same level of ubiquitousness. This is what I was able to put together for giving me a one-and-only-one search:\n#!/usr/bin/env bash # Can't use -u here because empty arrays are \"unset\" according to some kind of # Bashism, and figuring out the incantation to work around it has not been # fruitful. See # https://stackoverflow.com/questions/7577052/bash-empty-array-expansion-with-set-u # for some of those details. set -eo pipefail IFS=$'\\n' result=( $(system_profiler SPStorageDataType -json \\ | jq -r \\ '.SPStorageDataType.[] | select( .physical_drive.protocol == \"Secure Digital\" or .physical_drive.protocol == \"USB\" ) | .bsd_name' \\ | sed -E 's/s[0-9]+//' ) ) unset IFS count=\"${#result[*]}\" if [[ $count != '1' || ${result[0]} == '' ]]; then echo \"Error: '$result' has $count results but we expect exactly 1 non-empty \\ result.\" 1\u003e\u00262 exit 1 else echo -n $result fi Update: I thought I could safely add set -euo pipefail to polish up my script and no further testing was needing, but it turned out it needed some updating. This is the final result I was able to come to. Bash seems to only really thrive with the most trivial of scripts, and it takes so little to start pulling out some nasty stuff.\nI tested with 1 device and 4 devices, and got the results I wanted.\nThis leaves us with a final script of:\n#!/usr/bin/env bash ./with-podman.sh \" \\ nix \\ --extra-experimental-features nix-command \\ --extra-experimental-features flakes \\ build '.#iron' ls -al \\$(readlink result)/nix-support cp \\$(readlink result)/sd-image/* /workdir/nixos-pi-sd-image.img.zst rm result \" unzstd -d nixos-pi-sd-image.img.zst -o nixos-pi-sd-image.img rm nixos-pi-sd-image.img.zst hdiutil imageinfo nixos-pi-sd-image.img sudo dd \\ if=nixos-pi-sd-image.img \\ of=/dev/$(./sd-card-dev-find.sh) \\ bs=1M \\ status=progress \\ conv=fsync I found as part of futzing with this that SPStorageDataType only works for mounted devices but not available devices. However I need things to be unmounted to use dd on them. This does not make it easy to do ephemeral runs. If I wanted to always use SPStorageDataType, then I’d need to know what to mount, which is what I’m trying to determine in the first place. Additionally, the disk might be totally fresh or using some unknown filesystem - both of which would render the device unmountable. With some checking around from system_profiler -listDataTypes I found SPCardReaderDataType which looks promising:\nsystem_profiler SPCardReaderDataType And now the JSON form:\nsystem_profiler SPCardReaderDataType -json That gives me a jq query of:\nsystem_profiler SPCardReaderDataType -json \\ | jq -r \\ '.SPCardReaderDataType[]._items[].bsd_name' This leaves me with a final script for sd-card-dev-find.sh of:\n#!/usr/bin/env bash ## # Finds the device file for the attached SD card (eg. /dev/disk4) or USB drive. # It will assume /dev as a relative directory to make consumption easier. # # This has a non-zero exit code if more than one disk is found, or no disks are # found. ## set -euo pipefail while true; do case \"${1:-}\" in -h | --help) cat \u003c","wordCount":"9234","inLanguage":"en","datePublished":"2023-12-22T00:00:00-08:00","dateModified":"2023-12-22T00:00:00-08:00","author":[{"@type":"Person","name":"Logan Barnett"}],"mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:1313/nix-adventures-01/"},"publisher":{"@type":"Organization","name":"Logan Barnett's blog","logo":{"@type":"ImageObject","url":"http://localhost:1313/favicon.ico"}}}</script></head><body id=top><header class=header><nav class=header-nav><div class=logo><a href=http://localhost:1313/ accesskey=h title="Logan Barnett's blog (Alt + H)">Logan Barnett's blog</a><div class=logo-switches><button id=theme-toggle class=theme-toggle accesskey=t title="(Alt + T)" aria-label="Toggle theme">
+<svg class="moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+<svg class="sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button></div></div><ul id=menu class=menu><li><a href=http://localhost:1313/about/ title=About><span>About</span></a></li><li><a href=http://localhost:1313/categories/ title=Categories><span>Categories</span></a></li><li><a href=http://localhost:1313/resume/ title=Resume><span>Resume</span></a></li></ul></nav></header><main class=main><article class=post-single><header class=post-header><nav class=breadcrumbs role=navigation aria-label=Breadcrumb><a href=http://localhost:1313/>Home</a>
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right"><polyline points="9 18 15 12 9 6"/></svg>
+<a href=http://localhost:1313/posts/>Posts</a></nav><h1 class="post-title entry-hint-parent">Nix Adventures (part 1 of ?)</h1><div class=post-meta><span title='2023-12-22 00:00:00 -0800 PST'>2023-12-22</span>&nbsp;·&nbsp;<span>44 min</span>&nbsp;·&nbsp;<span>9234 words</span>&nbsp;·&nbsp;<span>Logan Barnett</span></div></header><div class="post-content md-content"><div class="ox-hugo-toc toc"><div class=heading>Table of Contents</div><ul><li><a href=#what-is-this>What is this?</a></li><li><a href=#introduction>Introduction</a></li><li><a href=#nix-thus-far>Nix Thus Far</a></li><li><a href=#today-s-project-working-on-a-raspberry-pi>Today&rsquo;s Project: Working on a Raspberry Pi</a></li><li><a href=#somehow-write-to-the-pi-sd-card>Somehow Write to the Pi SD card</a><ul><li><a href=#empower-editing-sd-card-files-from-macos-directly>Empower Editing SD Card Files from macOS Directly</a></li><li><a href=#making-edits-to-the-sd-card>Making Edits to the SD Card</a><ul><li><a href=#sshd><code>sshd</code></a></li></ul></li><li><a href=#connecting-to-the-pi--usb-c-fail>Connecting to the Pi (USB-C fail)</a></li><li><a href=#imaging-the-pi-correctly>Imaging the Pi Correctly</a></li></ul></li><li><a href=#abandon-nix-and-just-get-it-done>Abandon Nix and Just Get it Done</a>:private:</li><li><a href=#building-the-image>Building the Image</a><ul><li><a href=#prior-art>Prior Art</a></li><li><a href=#doing-real-nix-things-on-macos>Doing Real Nix Things on macOS</a></li><li><a href=#building-the-nixos-pi-image>Building the NixOS Pi image</a><ul><li><a href=#trying-to-make-it-work-with-digga>Trying to Make it Work with <code>digga</code></a></li><li><a href=#just-use-nix-generators>Just Use <code>nix-generators</code></a></li><li><a href=#extracting-the-image>Extracting the Image</a></li></ul></li><li><a href=#no-joy-on-boot>No Joy on Boot</a></li><li><a href=#back-and-display-ports>Back, and Display Ports</a></li><li><a href=#actually-joy-on-boot>Actually Joy on Boot</a></li></ul></li><li><a href=#conclusion>Conclusion</a></li></ul></div><p>Nix Adventures part 1!</p><h2 id=what-is-this>What is this?<a hidden class=anchor aria-hidden=true href=#what-is-this>#</a></h2><p>I recently (re?)read some posts from <a href=https://ianthehenry.com/posts/how-to-learn-nix/>Ian Henry&rsquo;s own adventures with Nix</a>. I find
+the series both amusing (because watching someone suffer as I have suffered can
+be amusing if done well), and because it&rsquo;s actually encouraging to see someone
+actually struggling with this. Nix feels a lot like Rust to me. In many ways
+it represents the future of computing. In others, I see a select few people
+with <span class=underline>deep</span> understanding of the topic spouting off what is the equivalent of
+total nonsense to me. I am glad these people are helping, and I am positive
+they are 100% correct in their statements. I just don&rsquo;t understand any of it.
+There&rsquo;s some knowledge I was supposed to acquire while <del>skimming</del> reading
+through a colossal set of documentation.</p><p>Now, before this goes further, I want to make it really clear here: I fully
+understand and appreciate for most people working on these projects that it&rsquo;s a
+passion project and open source burnout is very real. Posts like Ian&rsquo;s and now
+mine walk a dangerous line of contributing to that burnout. I will make immense
+effort to keep my observations tasteful and respectful, while still capturing a
+degree of frustration so that maybe someone will have an experience similar to
+mine as I read Ian&rsquo;s posts.</p><p>I tried finding the origin to this, but Google really has been letting me down
+lately. Likely paraphrased, it goes like this:</p><blockquote><p>There are two kinds of things in the world: Things people complain about, and
+things nobody has heard of.</p></blockquote><p>That Nix now has at least two blog series on this topic speaks well of Nix, its
+promise, and its progress.</p><h2 id=introduction>Introduction<a hidden class=anchor aria-hidden=true href=#introduction>#</a></h2><p>As is stamped all over this blog, I am Logan Barnett. I like working with
+computers more than working with humans, and I&rsquo;ve been doing it for a while now.
+There are significant gaps in my knowledge and I am comfortable with that. I
+have a penchant for functional programming, documentation of all kinds, and
+overall I want the computer to work for me, not the other way around. I have a
+<a href=http://localhost:1313/resume/>resume</a> if you want to get into more specifics of my technical background.</p><h2 id=nix-thus-far>Nix Thus Far<a hidden class=anchor aria-hidden=true href=#nix-thus-far>#</a></h2><p>I have been using Nix for well over a year at time of writing. Since then I
+have moved to using Nix with Home-manager, and now some combination of
+Home-manager and Flakes that still puzzles me. I use it extensively for
+managing <a href=https://github.com/LoganBarnett/dotfiles>my machine&rsquo;s local configuration</a> (historically &ldquo;dotfiles&rdquo;). I also use
+it for managing repository dependencies (a generalized version of <code>tfswitch</code>,
+<code>rbenv</code>, <code>pyenv</code>, <code>nodenv</code>, etc). I always have to look up how to make a
+derivation or even the simplest overlay.</p><p>I&rsquo;ve gotten to the point where installing my settings on a new machine requires
+very little adjusting. A vast majority of my local software is governed by Nix.
+The only thing I&rsquo;m truly missing is Homebrew&rsquo;s <code>cask</code> functionality, and that&rsquo;s
+mostly because <code>Alfred.app</code> refuses to follow symlinks as a design decision (I
+plan to rectify that eventually).</p><p>I am getting to the point where I can make my own derivations that simply follow
+build-from-source instructions on a <code>README</code>.</p><h2 id=today-s-project-working-on-a-raspberry-pi>Today&rsquo;s Project: Working on a Raspberry Pi<a hidden class=anchor aria-hidden=true href=#today-s-project-working-on-a-raspberry-pi>#</a></h2><p>I have some work I want to do on a Raspberry Pi involving Wireguard. I have
+some prior experience with Wireguard and also with working on Raspberry Pis.
+I have a complication: I have no displays nor display adapters (micro-HDMI) with
+which I could use to interface with the Pi. I have no extra keyboard or mouse
+at the moment. For a system I should be able build an image for, this kind of
+hardware requirement really seems like overkill.</p><p><code>sshd</code> is disabled by default on a Raspberry Pi, so I cannot <code>ssh</code> to it, even
+if I could find it on a local link (this would take hours because <code>nmap</code> is
+pretty slow at this).</p><p>So my next best activity is to either build the image in the state I want it in,
+or edit the files on the SD card whose state is setup by a pre-built image. I
+have a pre-built image already, and I&rsquo;m on macOS. Being on macOS prevents me
+from building new Linux images of any kind without a Docker image (which needs a
+VM) or setting up a Linux VM (which needs a VM too, ha!). My bandwidth is low,
+as is my disk space. I can solve the disk space issue, but that&rsquo;s a project for
+another day.</p><p>In comes a tool called <code>macfuse</code>, previously known as <code>osxfuse</code>. They followed the
+rebrand that Apple did, apparently. I&rsquo;ve learned recently that this tool no
+longer requires disabling the SIP on macOS, which I have found to be a
+deal-breaker for my standards. It&rsquo;s just a user-land kernel extension. I don&rsquo;t
+know who to thank for that, but I am grateful for it.</p><h2 id=somehow-write-to-the-pi-sd-card>Somehow Write to the Pi SD card<a hidden class=anchor aria-hidden=true href=#somehow-write-to-the-pi-sd-card>#</a></h2><p>Whether I have some way to bake an image in the desired state (such as with a
+fixed IP for link-local and <code>sshd</code> enabled), or I just edit the SD card directly
+doesn&rsquo;t strictly matter to me. Because I wanted to keep things &ldquo;simple&rdquo;, I
+elected to just go for the edits directly on what I believe is an already
+functional SD card, and save the NixOS-on-Pi activity for another day.</p><h3 id=empower-editing-sd-card-files-from-macos-directly>Empower Editing SD Card Files from macOS Directly<a hidden class=anchor aria-hidden=true href=#empower-editing-sd-card-files-from-macos-directly>#</a></h3><p>First, getting <code>macfuse</code> setup on my system via Nix isn&rsquo;t something directly
+supported. I had to go into the Nix derivation for <code>e2fsprogs</code> and remove the
+guards against running on <code>darwin</code>. Additionally I found <code>e2fsprogs</code> doesn&rsquo;t
+even compile. <code>setxattr</code> and <code>getxattr</code> can&rsquo;t be assigned to because the
+function signatures don&rsquo;t match. So I make them match with best guess by adding
+some parameters and declaring a couple of others as unsigned (link will come to
+the commit by the time I publish). I believe this is because <code>osxfuse</code> has some
+differences in the API, or perhaps there are version incompatibilities. It
+builds after that. I struggle with <code>nix-flakes</code> for a bit but eventually I
+notice that <code>fuse-ext2</code> is indeed on my <code>PATH</code> - but I&rsquo;m not certain which of my
+incantations brought it about. I&rsquo;m still very new to <code>nix-flakes</code> and much of
+it was forced upon me from other things I desired. I basically jumped in the
+cockpit seat of the <code>nix-flakes</code> plane and grabbed the stick, hoping for the
+best. I haven&rsquo;t collided with the planet Earth yet but there&rsquo;s still time for
+that.</p><p>I try to mount my disk with invocations such as these:</p><p><a id=code-snippet--fuse-ext2-mount-disks></a></p><div class=highlight><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>sudo fuse-ext2 /dev/disk4s1 /Volumes/4s1
+</span></span><span class=line><span class=cl>sudo fuse-ext2 /dev/disk4s2 /Volumes/4s2
+</span></span></code></pre></div><p>Because I don&rsquo;t know which one is which and there are only two partitions for
+<code>disk4</code>.</p><p>I don&rsquo;t have the exact message or dialog screenshots unfortunately, but this is
+where I find out that I indeed need to disable SIP (System Integrity
+Protection). This involves rebooting the system into recovery mode, firing up
+the terminal there, and running <code>csrutil disable</code>. <code>uptime</code> reports I&rsquo;m at 70
+days - a lot of days earned via hard won knowledge on battery draining
+activities on my laptop (such as bluetooth). My pride suffers a blow, but I
+sally forth. Then I spend about 7 reboots or so trying to get my laptop to
+actually boot into recovery mode.</p><p>macOS has changed their reboot key bindings more than they&rsquo;ve changed their
+power adapter connections, and that&rsquo;s saying a lot. Naturally I searched for
+how to do this, and was happy with the holding of <code>Cmd+R</code> during the boot-up.
+It doesn&rsquo;t work, which in my experience means the timing is wrong, so I try it
+several more time. The technical timing is important so I try it more than
+once, which is how we wind up with me going to 7. The 7th attempt was me
+finding out those instructions were for <span class=underline>Intel</span> Macs and I&rsquo;m on Apple Silicon.
+Right - glad we have that distinguishment. My mind immediately demands &ldquo;Why?
+Why make these different?&rdquo; but answers I can come up with are depressing in a
+very literal way.</p><p>I do the <code>csrutil disable</code> which prompts me but works anyways. Knowing I have
+done the nasty successfully and my work here is done, I reboot to go back to my
+normal runtime. I attempt to mount again with:</p><p><a id=code-snippet--fuse-ext2-mount-disk></a></p><div class=highlight><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>sudo fuse-ext2 /dev/disk4s2 /Volumes/4s2
+</span></span></code></pre></div><p>But again am prompted - my Mac tells me it has blocked the kernel extension, and
+I must reboot to bless it. Great. Couldn&rsquo;t we have just done that earlier? Or
+maybe just let me queue up here at least so I don&rsquo;t need to go into a mode where
+I can&rsquo;t call upon my lifelines for help. Alas, more reboots ahoy. At least
+this time they give me really vague instructions. This probably would&rsquo;ve
+confused me into doing more reboots and searching, but I&rsquo;ve already been here.
+Now that I&rsquo;ve blessed this kernel extension from Benjamin (who is that?), I go
+back to try it again. Still blocked. The System Settings section tells me
+there&rsquo;s a kernel extension that needs to be blessed - it doesn&rsquo;t give me
+indication that I&rsquo;ve blessed anything already. Ugh. Why is this such a
+miserable experience? Again I reboot into recovery mode, bring up the Security
+Utility, and bless the kernel extension. This time it goes away. I was
+operating in the suspicion that there might be more than one kernel extension
+involved, and all of them must be blessed individually.</p><p>Now I try again. I have some vague memory that mount processes don&rsquo;t typically
+create the actual mount point directory in Linux, so I assume it&rsquo;s the same
+here.</p><p><a id=code-snippet--fuse-ext2-pre-create-directory></a></p><div class=highlight><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>sudo mkdir /Volumes/4s2
+</span></span><span class=line><span class=cl>sudo fuse-ext2 /dev/disk4s2 /Volumes/4s2
+</span></span></code></pre></div><p>Nothing happens. The directory is empty and I have exit code 253 from
+<code>fuse-ext2</code> (having your prompt show the last exit code is so incredibly
+useful). What&rsquo;s 253 mean? I check the man page - nothing. From searching on
+other people trying things out, I add a <code>-o debug</code> to the invocation. No
+output, same code. I add <code>-v</code> to the front of the from/to arguments. No change
+in output/code. I worry this is resulting from my hack earlier to <code>e2fsprogs</code>.
+But I would expect to see <span class=underline>something</span> here. There is mention of a
+<code>/var/log/fuse-ext2_util.log</code> in some tickets I see, but I don&rsquo;t have that.</p><p>I try:</p><p><a id=code-snippet--fuse-ext2-mount></a></p><div class=highlight><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>sudo mount -t fuse-ext2 /dev/disk4s2 /Volumes/4s2
+</span></span></code></pre></div><div class=highlight><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>mount: exec /Library/Filesystems/fuse-ext2.fs/Contents/Resources/mount_fuse-ext2 for /Volumes/4s2: No such file or directory
+</span></span><span class=line><span class=cl>mount: /Volumes/4s2 failed with 72
+</span></span></code></pre></div><p>The <code>No such file or directory</code> portion can&rsquo;t be correct on the latter path -
+<code>/Volumes/4s2</code> exists. I check the <code>/Library/Filesystems/...</code> path and it is
+indeed non-existent. Curious, looking in <code>/Library/Filesystems</code> directly shows
+me <span class=underline>something</span> of relevance:</p><p><a id=code-snippet--filesystems-list></a></p><div class=highlight><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>ls /Library/Filesystems
+</span></span></code></pre></div><div class=highlight><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>NetFSPlugins
+</span></span><span class=line><span class=cl>macfuse.fs
+</span></span></code></pre></div><p>So I try this modified <code>mount</code>:</p><p><a id=code-snippet--macfuse-mount></a></p><div class=highlight><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>sudo mount -t macfuse.fs /dev/disk4s2 /Volumes/4s2
+</span></span></code></pre></div><div class=highlight><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>macFUSE mount version 4.5.0
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>This program is not meant to be called directly. The macFUSE library calls it.
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Available mount options:
+</span></span><span class=line><span class=cl>    -o allow_other         allow access to others besides the user who mounted
+</span></span><span class=line><span class=cl>                           the file system
+</span></span><span class=line><span class=cl>    -o allow_recursion     allow a mount point that itself resides on a macFUSE
+</span></span><span class=line><span class=cl>                           volume (by default, such mounting is disallowed)
+</span></span><span class=line><span class=cl>    -o allow_root          allow access to root (can&#39;t be used with allow_other)
+</span></span><span class=line><span class=cl>    -o auto_xattr          handle extended attributes entirely through ._ files
+</span></span><span class=line><span class=cl>    -o blocksize=&lt;size&gt;    specify block size in bytes of &#34;storage&#34;
+</span></span><span class=line><span class=cl>    -o daemon_timeout=&lt;s&gt;  timeout in seconds for kernel calls to daemon
+</span></span><span class=line><span class=cl>    -o debug               turn on debug information printing
+</span></span><span class=line><span class=cl>    -o default_permissions let the kernel handle permission checks locally
+</span></span><span class=line><span class=cl>    -o defer_permissions   defer permission checks to file operations themselves
+</span></span><span class=line><span class=cl>    -o direct_io           use alternative (direct) path for kernel-user I/O
+</span></span><span class=line><span class=cl>    -o extended_security   turn on macOS extended security (ACLs)
+</span></span><span class=line><span class=cl>    -o fsid=&lt;fsid&gt;         set the second 32-bit component of the fsid
+</span></span><span class=line><span class=cl>    -o fsname=&lt;name&gt;       set the file system&#39;s name
+</span></span><span class=line><span class=cl>    -o fssubtype=&lt;num&gt;     set the file system&#39;s fssubtype identifier
+</span></span><span class=line><span class=cl>    -o fstypename=&lt;name&gt;   set the file system&#39;s type name
+</span></span><span class=line><span class=cl>    -o iosize=&lt;size&gt;       specify maximum I/O size in bytes
+</span></span><span class=line><span class=cl>    -o jail_symlinks       contain symbolic links within the mount
+</span></span><span class=line><span class=cl>    -o local               mark the volume as &#34;local&#34; (default is &#34;nonlocal&#34;)
+</span></span><span class=line><span class=cl>    -o negative_vncache    enable vnode name caching of non-existent objects
+</span></span><span class=line><span class=cl>    -o sparse              enable support for sparse files
+</span></span><span class=line><span class=cl>    -o volname=&lt;name&gt;      set the file system&#39;s volume name
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Available negative mount options:
+</span></span><span class=line><span class=cl>    -o noalerts            disable all graphical alerts (if any) in macFUSE Core
+</span></span><span class=line><span class=cl>    -o noappledouble       ignore Apple Double (._) and .DS_Store files entirely
+</span></span><span class=line><span class=cl>    -o noapplexattr        ignore all &#34;com.apple.*&#34; extended attributes
+</span></span><span class=line><span class=cl>    -o nobrowse            mark the volume as non-browsable by the Finder
+</span></span><span class=line><span class=cl>    -o nolocalcaches       meta option equivalent to noreadahead,noubc,novncache
+</span></span><span class=line><span class=cl>    -o noreadahead         disable I/O read-ahead behavior for this file system
+</span></span><span class=line><span class=cl>    -o nosynconclose       disable sync-on-close behavior (enabled by default)
+</span></span><span class=line><span class=cl>    -o nosyncwrites        disable synchronous-writes behavior (dangerous)
+</span></span><span class=line><span class=cl>    -o noubc               disable the unified buffer cache for this file system
+</span></span><span class=line><span class=cl>    -o novncache           disable the vnode name cache for this file system
+</span></span><span class=line><span class=cl>mount: /Volumes/4s2 failed with 64
+</span></span></code></pre></div><p>So <code>mount</code> is looking less promising. This appears to be <code>mount</code> just spewing
+the usage information of <code>macfuse</code> because it is giving <code>macfuse</code> an erroneous
+invocation. Is this intended to ever work? I found this invocation from other
+lost souls who were experiencing no luck here as well, so it might not mean
+much.</p><p>Following some other tickets, I want to just confirm that everything I have is
+in order. Oftentimes errors come from the user, not the software. I find <code>sudo diskutil list</code> gives some good answers.</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>&lt;snip&gt;
+</span></span><span class=line><span class=cl>/dev/disk6 (internal, physical):
+</span></span><span class=line><span class=cl>   #:                       TYPE NAME                    SIZE       IDENTIFIER
+</span></span><span class=line><span class=cl>   0:     FDisk_partition_scheme                        *127.9 GB   disk6
+</span></span><span class=line><span class=cl>   1:                 DOS_FAT_32 FIRMWARE                31.5 MB    disk6s1
+</span></span><span class=line><span class=cl>   2:                      Linux                         127.8 GB   disk6s2
+</span></span></code></pre></div><p>I have been operating with the notion that I was using <code>disk4</code>, but between
+reboots and swapping the physical card out to stow my laptop between attempts,
+it must have moved. Sigh. Let&rsquo;s do this again. At least I know with
+confidence that I want to be mounting the &ldquo;2&rdquo; partition.</p><p><a id=code-snippet--fuse-ext2-mount-try-again></a></p><div class=highlight><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>sudo fuse-ext2 /dev/disk6s2 /Volumes/4s2
+</span></span></code></pre></div><p>I didn&rsquo;t rename the directory to a matching <code>6s2</code> because I just want to <span class=underline>try</span>
+something. Results are promising and with a delay:</p><p><a id=org-example-block--fuse-ext2-read-only-mount-output></a></p><div class=highlight><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>Mounting /dev/disk6s2 Read-Only.
+</span></span><span class=line><span class=cl>Use &#39;force&#39; or &#39;rw+&#39; options to enable Read-Write mode
+</span></span></code></pre></div><p>And then:</p><p><a id=code-snippet--ext2-file-listing></a></p><div class=highlight><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>ls /Volumes/4s2
+</span></span></code></pre></div><p>Wow something worked! I&rsquo;m going to treat myself.</p><p>Now let&rsquo;s clean up the directory name, and make it read+write.</p><p><a id=code-snippet--fuse-ext2-mount-clean></a></p><div class=highlight><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>sudo umount /Volumes/4s2
+</span></span><span class=line><span class=cl>sudo mv /Volumes/<span class=o>{</span>4,6<span class=o>}</span>s2
+</span></span><span class=line><span class=cl>sudo fuse-ext2 -o rw+ /dev/disk6s2 /Volumes/4s2
+</span></span></code></pre></div><p>Actually just trying to scroll through some shell history wound up making the
+machine unusable, and it eventually necessitated a reboot. I&rsquo;ve lost any
+home-made directories under <code>/Volume</code> and so I can just make them the way I want
+them. I am a little worried that maybe my hacks I made to <code>g2fsprogs</code> have
+introduced some critical instability to my kernel, but I fail to see how the
+<code>xattrs</code> stuff would have anything to do with my shell history. Perhaps it&rsquo;s
+due to some <code>zsh</code> magic?</p><p>The commands again, and note that now we&rsquo;re back to <code>disk4</code>:</p><p><a id=code-snippet--fuse-ext2-mount-clean-picard></a></p><div class=highlight><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>sudo mkdir /Volumes/picard
+</span></span><span class=line><span class=cl>sudo fuse-ext2 -o rw+ /dev/disk4s2 /Volumes/picard
+</span></span></code></pre></div><p>And that worked! Now to make edits to the card.</p><h3 id=making-edits-to-the-sd-card>Making Edits to the SD Card<a hidden class=anchor aria-hidden=true href=#making-edits-to-the-sd-card>#</a></h3><h4 id=sshd><code>sshd</code><a hidden class=anchor aria-hidden=true href=#sshd>#</a></h4><p>I need to &ldquo;enable&rdquo; <code>sshd</code>, assuming it comes installed. If it does not come
+installed, this will have been a very wasteful effort.</p><p>Searching on this topic, I find <a href=https://www.raspberrypi.com/news/raspberry-pi-bullseye-update-april-2022/>an article</a> with this:</p><blockquote><p>There are also mechanisms to preconfigure an image without using Imager. To set
+up a user on first boot and bypass the wizard completely, create a file called
+userconf or userconf.txt in the boot partition of the SD card; this is the part
+of the SD card which can be seen when it is mounted in a Windows or MacOS
+computer.</p></blockquote><p>This section doesn&rsquo;t detail how to enable <code>sshd</code>, but the original post that
+lead me to this article has some additional instructions:</p><blockquote><p>The empty &lsquo;ssh&rsquo; (or ssh.txt) file should act as a toggle (turn SSH on, and it
+will stay on unless you explicitly disable it later). If that&rsquo;s not how it&rsquo;s
+working for you, then something else that was done to the system has messed that
+up.</p></blockquote><p>Right. So I didn&rsquo;t need to do any of the prior section at all? Let&rsquo;s look and
+be sure. I happen to recall that the default name of the SD card is <code>FIRMWARE</code>
+for whatever reason.</p><p>Okay, I&rsquo;m going to try really hard not to swear off computers forever.</p><p><a id=code-snippet--pi-ssh-touch-file></a></p><div class=highlight><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>touch /Volumes/FIRMWARE/ssh
+</span></span><span class=line><span class=cl><span class=nb>echo</span> <span class=s2>&#34;</span><span class=nv>$USER</span><span class=s2>:</span><span class=k>$(</span><span class=nb>echo</span> <span class=s1>&#39;lolno&#39;</span> <span class=p>|</span> openssl passwd -stdin<span class=k>)</span><span class=s2>&#34;</span> &gt; /Volumes/FIRMWARE/userconf
+</span></span></code></pre></div><p>The instructions use a <code>-6</code> argument, but that doesn&rsquo;t work for my <code>openssl</code>:</p><p><a id=code-snippet--openssl-version></a></p><div class=highlight><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>openssl version
+</span></span></code></pre></div><div class=highlight><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>LibreSSL 3.3.6
+</span></span></code></pre></div><p>Which I believe is the stock version running on my MacBook, based on:</p><p><a id=code-snippet--openssl-which></a></p><div class=highlight><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>which openssl
+</span></span></code></pre></div><div class=highlight><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>/usr/bin/openssl
+</span></span></code></pre></div><p>Otherwise it would be a deep path under <code>/nix</code>.</p><p>A quick check of the files shows they are there and in the desired state:</p><p><a id=code-snippet--pi-image-ssh-and-userconf></a></p><div class=highlight><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>ls /Volumes/FIRMWARE/ssh
+</span></span><span class=line><span class=cl>cat /Volumes/FIRMWARE/userconf
+</span></span></code></pre></div><div class=highlight><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>/Volumes/FIRMWARE/ssh
+</span></span><span class=line><span class=cl>logan:oKYG/fePTExgs
+</span></span></code></pre></div><p>I have no worries about the password here - it will be changed before this
+device connects to anything outside of my laptop.</p><p>Okay let&rsquo;s give it a go. I eject the mounts (<code>picard</code> needs a <code>sudo umount /Volumes/picard</code> but works without a hitch).</p><p>An import caveat: I found from <a href=https://gijs-de-jong.nl/posts/how-raspberry-pi-enbales-ssh-when-boot-ssh-file-is-present/>How the Raspberry Pi enables SSH when
+/boot/ssh.txt is present</a> that these files are removed on boot - so we only get
+one shot, and if it fails we have to run it again. This is one of the benefits
+of blogging as I do this - the command history is at my fingertips.</p><p>The files are listed the <a href=https://www.raspberrypi.com/documentation/computers/configuration.html#the-boot-folder>configuration boot section documentation</a>.</p><h3 id=connecting-to-the-pi--usb-c-fail>Connecting to the Pi (USB-C fail)<a hidden class=anchor aria-hidden=true href=#connecting-to-the-pi--usb-c-fail>#</a></h3><p>I did forget about networking, which isn&rsquo;t covered in the boot section linked
+above. I had worked on this earlier but the <code>169.254.0.0/16</code> address space is
+way too large to <code>nmap</code> over. Instead I read in the boot section there&rsquo;s an
+&ldquo;OTG&rdquo; (On The Go) USB setting that is enabled by default in <code>config.txt</code> (at
+least in my case, being it&rsquo;s a Pi 4B). I don&rsquo;t want to just plug it in and find
+out, and I actually did try <code>raspberrypi.local</code> earlier, I thought, and that
+didn&rsquo;t work. I found a <code>ping</code> in my history to it in fact, so I know this was
+attempted and failed. There may be something else involved. This <a href=https://raspberrypi.stackexchange.com/a/100727>answer</a>
+specifically talks about macOS and OTG. It does mention to use Bonjour to find
+the Pi, which apparently it advertises on.</p><p>The command link invocation is provided in this <a href=https://apple.stackexchange.com/a/362741>answer</a>:</p><p><a id=code-snippet--pi-discover-dns-sd></a></p><div class=highlight><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>dns-sd -Gv4v6 raspberrypi.local
+</span></span></code></pre></div><p>That doesn&rsquo;t work. I do recall some chatter in the OTG+MacBook answer that
+talked about some problems with OTG and certain cables. It links to an article
+about an <a href=https://hackaday.com/2019/07/16/exploring-the-raspberry-pi-4-usb-c-issue-in-depth/>issue with USB-C on the Pi</a> that is probably causing me problems.
+Essentially it means that the Pi isn&rsquo;t powered properly if the USB-C cable is
+&ldquo;e-marked&rdquo; (meaning it can identify/query additional features).</p><p>So how do I know if the Pi got sufficient power or not? I can check the SD card
+to see if the configuration files were removed on-boot.</p><p><a id=code-snippet--pi-image-list-ssh-and-userconf></a></p><div class=highlight><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>ls /Volumes/FIRMWARE <span class=p>|</span> grep ssh
+</span></span><span class=line><span class=cl>ls /Volumes/FIRMWARE <span class=p>|</span> grep userconf
+</span></span></code></pre></div><div class=highlight><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>ssh
+</span></span><span class=line><span class=cl>userconf
+</span></span></code></pre></div><p>Sure enough, they are both present. So the Pi didn&rsquo;t boot properly. I did have
+a solid red light, with an occasionally blinking green light. I don&rsquo;t know what
+that means yet, but perhaps I should learn. I have read it is programmable and
+may have changed over time, so I don&rsquo;t want to go too far down that path. In
+any case, we didn&rsquo;t make it. For what it&rsquo;s worth, the Pi was connected for a
+solid 5-10 minutes.</p><p>I only glanced at the USB-C diagrams in the article linked prior. I also
+skimmed through parts of the article itself. I would need a specifically bad
+USB-C cable - it would need to transmit data but not be &ldquo;e-marked&rdquo;. I suspect
+that would be hard to find.</p><p>I did learn somewhat recently that USB cables (even USB-C) sometimes are
+hard-wired to actually be a true &ldquo;charging cable&rdquo; in that all they do is provide
+power, and all of the data pins are grounded or shared. That&rsquo;s not part of the
+spec, and it explains why a lot of people get cables that &ldquo;work&rdquo; but sometimes
+don&rsquo;t (via reviews or one&rsquo;s own personal experience). It&rsquo;s a real shame we
+don&rsquo;t have standard, human-readable markings for these differences. This <a href="https://www.youtube.com/watch?v=AD5aAd8Oy84">video</a>
+was really enlightening on the topic, and also shows off some fascinating
+circuitry in the thunderbolt cables which share the USB-C form factor.</p><p>So I need to plug this in via a battery or wall outlet, and I need to run an
+Ethernet cable between the Pi and my laptop. I do have the equipment on hand
+for all of this.</p><h3 id=imaging-the-pi-correctly>Imaging the Pi Correctly<a hidden class=anchor aria-hidden=true href=#imaging-the-pi-correctly>#</a></h3><p>I have blinking Ethernet lights. The Pi has a solid red light, and the green
+light is doing a dot-dot kind of pattern, repeatedly.</p><p>I&rsquo;ve done a little looking into for the light patterns. The Pi 4B uses a new
+set of patterns. However my 2 pattern (two of anything but nothing else)
+doesn&rsquo;t show up on the list. Checking my command history from earlier, I can
+see that I&rsquo;m using a NixOS image. Perhaps that is related. I got that from
+this <a href=https://nix.dev/tutorials/nixos/installing-nixos-on-a-raspberry-pi.html>instruction</a> available on the official NixOS documentation. It does assume
+a 4B model, but might be demanding more RAM than what I gave the Pi. My
+purchase order for the Pi shows it as 2 GB, but the documentation says it should
+be 4GB. I don&rsquo;t know how hard that limitation is. Also, and perhaps most
+critically, this cannot work because it doesn&rsquo;t use the Pi&rsquo;s normal
+configuration. Okay now I think we&rsquo;re onto something. I did want to do this
+via NixOS but I think I might be best off saving that for another day. This
+post has gotten enormous from all of the research and attempts already. I&rsquo;ve
+also noticed the documentation tails behind the current NixOS image version.
+Ugh. I just need to do this myself - later.</p><h2 id=abandon-nix-and-just-get-it-done>Abandon Nix and Just Get it Done <span class=tag><span class=private>private</span></span><a hidden class=anchor aria-hidden=true href=#abandon-nix-and-just-get-it-done>#</a></h2><p>As much as I wanted this to be something about Nix, it turned into a series of
+other hardships. NixOS introduced other, undocumented complications to the
+process. I still lack the ability to manage the Pi&rsquo;s packages, let alone via
+the &ldquo;Nix way&rdquo;.</p><p>I used:</p><p><a id=code-snippet--pi-image-wget></a></p><div class=highlight><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>wget https://downloads.raspberrypi.com/raspios_arm64/images/raspios_arm64-2023-12-06/2023-12-05-raspios-bookworm-arm64.img.xz<span class=se>\?</span>_gl<span class=se>\=</span>1<span class=se>\*</span>qvoa7r<span class=se>\*</span>_ga<span class=se>\*</span>MjYzMjA4NTA3LjE3MDMyMzk1Nzc.<span class=se>\*</span>_ga_22FD70LWDS<span class=se>\*</span>MTcwMzMzMTYzMi4yLjAuMTcwMzMzMTYzMi4wLjAuMA..
+</span></span><span class=line><span class=cl>mv <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>  <span class=s1>&#39;2023-12-05-raspios-bookworm-arm64.img.xz?_gl=1*qvoa7r*_ga*MjYzMjA4NTA3LjE3MDMyMzk1Nzc.*_ga_22FD70LWDS*MTcwMzMzMTYzMi4yLjAuMTcwMzMzMTYzMi4wLjAuMA..&#39;</span> <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>  2023-12-05-raspios-bookworm-arm64.img.xz
+</span></span><span class=line><span class=cl>unxz 2023-12-05-raspios-bookworm-arm64.img.xz
+</span></span></code></pre></div><p>Oh oh, I did get to use Nix a little! I had to install the <code>xz</code> package to get
+<code>unxz</code>.</p><p>And then flashed the card with:</p><p><a id=code-snippet--pi-image-dd></a></p><div class=highlight><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>sudo dd <span class=k>if</span><span class=o>=</span>2023-12-05-raspios-bookworm-arm64.img <span class=nv>of</span><span class=o>=</span>/dev/disk4 <span class=nv>bs</span><span class=o>=</span>1M <span class=nv>status</span><span class=o>=</span>progress <span class=nv>conv</span><span class=o>=</span>fsync
+</span></span></code></pre></div><h2 id=building-the-image>Building the Image<a hidden class=anchor aria-hidden=true href=#building-the-image>#</a></h2><p>Okay, let&rsquo;s build our own NixOS image for the Pi.</p><h3 id=prior-art>Prior Art<a hidden class=anchor aria-hidden=true href=#prior-art>#</a></h3><p>I came across <a href=https://discourse.nixos.org/t/headless-raspberry-pi-setup/17664/7>Headless Raspberry Pi on NixOS Discourse</a> and user Sweenu states
+they have a working version of NixOS being deployed to a Raspberry Pi. The
+source is all posted to <a href=https://github.com/sweenu/nixfiles>https://github.com/sweenu/nixfiles</a>. From some brief
+research, it does use a tool called <a href=https://github.com/divnix/digga>digga</a> that states that it is no longer
+recommended for use, which is expanded upon in <a href=https://github.com/divnix/digga/issues/503>issue#503</a> for the repository. In
+essence, <code>digga</code> seems to have some customization / scaling difficulties because
+it focused on ergonomics first. There isn&rsquo;t any real alternatives recommended
+that are purpose built for what <code>digga</code> does (which, to be honest, I&rsquo;m not
+entirely sure <span class=underline>what</span> it does). I&rsquo;d prefer to keep my research to shiny new
+things to a minimum, so I hope I can adlib what should be already working for
+someone else, but to fit my needs. Primarily I want image generation that gives
+me a working NixOS based Raspberry Pi image, but also have it configured in such
+a way that I don&rsquo;t have to re-flash the SD card every time I want to make a
+change. In other words, I want to be able to build an image but also be able to
+manage the host configuration via a standard Nix configuration.</p><p>In the Discourse, Sweenu states the Pi can be updated thusly:</p><p><a id=code-snippet--nix-flake-grunfeld-deploy-example></a></p><div class=highlight><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>nix flake update
+</span></span><span class=line><span class=cl>deploy <span class=s2>&#34;.#grunfeld&#34;</span>
+</span></span></code></pre></div><p>Where <code>grunfeld</code> is the name of the Raspberry Pi.</p><p>In the repository&rsquo;s README, it states the image can be created and copied like
+so:</p><p><a id=code-snippet--nix-flake-grunfeld-generate-attempt></a></p><div class=highlight><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>nixos-generate --flake <span class=s1>&#39;.#grunfeld&#39;</span> --format sd-aarch64 --system aarch64-linux
+</span></span><span class=line><span class=cl>unzstd -d <span class=o>{</span>the output path from the <span class=nb>command</span> above<span class=o>}</span> -o nixos-sd-image.img
+</span></span><span class=line><span class=cl>sudo dd <span class=k>if</span><span class=o>=</span>nixos-sd-image.img <span class=nv>of</span><span class=o>=</span>/dev/sda <span class=nv>bs</span><span class=o>=</span>64K <span class=nv>status</span><span class=o>=</span>progress
+</span></span></code></pre></div><p>This is all very promising. I&rsquo;ve done some copying/adlibing of the repository
+in my <code>proton-nix</code> repository, which I plan on using to declare my local network
+configuration. I do have some security concerns about open sourcing it,
+especially because both public and private keys seem to be present in the
+repository (even if the private keys are encrypted at rest). I would like a way
+to share this, without the private bits hanging out for all to see. This has
+been something I&rsquo;ve looked into before with Nix and <code>nix-flakes</code> in particular
+because <code>flakes</code> really wants everything to be self contained, lest it be marked
+as &ldquo;impure&rdquo;. From reading Ian&rsquo;s blog I mentioned earlier, it does seem like one
+can reference a file using a git repository link. If <code>flakes</code> is happy with
+this, then I think I could be very happy with it as well.</p><p>But first, we need a detour. I don&rsquo;t have a means of actually using <code>NixOS</code>
+because I&rsquo;m on macOS. As I understand, this does require work with a container
+or VM.</p><h3 id=doing-real-nix-things-on-macos>Doing Real Nix Things on macOS<a hidden class=anchor aria-hidden=true href=#doing-real-nix-things-on-macos>#</a></h3><p>On this current MacBook, I&rsquo;ve successfully avoided running Docker. I&rsquo;ve come to
+liken Docker to bloatware (whether that&rsquo;s fair or not). On my home network,
+I&rsquo;ve had a degree of success with Podman. However there&rsquo;s hitches with it, as
+there always is. I also have a very small amount of space available on my
+MacBook, and <code>containerd</code> containers aren&rsquo;t known for their small size - unless
+they use Alpine, I guess. Either way it will need an entire VM to work -
+because macOS doesn&rsquo;t have cgroups et. al. There appears to be some promising
+work done to <a href=https://earthly.dev/blog/macos-native-containers/>make containers work on macOS</a> but it&rsquo;s way too immature (as of
+<span class=timestamp-wrapper><span class=timestamp>[2023-12-24 Sun]</span></span>) for the kind of work we&rsquo;re doing here.</p><p>My detour needs an additional detour: I have to clean up some space. I
+presently have &lt; 30GB free and I would love to be running with closer to 100GB
+to feel like I can quickly iterate on things without constantly needing to do a
+<code>nix gc</code> or <code>docker system prune --force</code>, and also thereby increasing my build
+iteration times significantly (those caches are present for good reason).</p><p>Begin space cleaning montage!</p><p>Alright I&rsquo;ve deleted a bunch of things I had no business keeping, and things I
+probably won&rsquo;t remember that I deleted later. <a href=https://dev.yorhel.nl/ncdu>ncdu</a> was instrumental there!</p><p>In a vacuum I&rsquo;d prefer <code>podman</code> to avoid my perceived bloatware of Docker
+proper. I don&rsquo;t recall any current perils, and there does appear to be some
+support for running <code>podman</code> on <code>aarch64-darwin</code> (my specific setup), so let&rsquo;s
+give it a shot.</p><p>I did find <a href=https://github.com/NixOS/nixpkgs/issues/169118>nixpkgs#169118</a> which outlines some issues with <code>podman</code> on macOS, but
+they seem to be resolved and nobody feels confident enough to declare it done.
+This <a href=https://github.com/skogsbrus/os/commit/2b10be2d1a48727470a72f9e7b1f307d327adee3>commit</a> that refers to the ticket just installs <code>qemu</code> and <code>podman</code> together
+(but with no direct relationship - I don&rsquo;t know how that&rsquo;s supposed to work).
+<code>qemu</code> is a significant part of working with the VM, I&rsquo;ve gathered.</p><p>I found <a href=https://notes.abhinavsarkar.net/2022/just-nix-podman-combo>Just, Nix Shell And Podman Are A Killer Combo</a> and learned that Just is a
+thing. The post has some great incantations in it that I was happy to leverage
+into this <code>with-podman.sh</code> script:</p><p><a id=code-snippet--podman-run-script-clean></a></p><div class=highlight><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl><span class=cp>#!/usr/bin/env bash
+</span></span></span><span class=line><span class=cl><span class=cp></span><span class=nb>set</span> -euo pipefail
+</span></span><span class=line><span class=cl><span class=nv>container_name</span><span class=o>=</span><span class=s2>&#34;nix-run&#34;</span>
+</span></span><span class=line><span class=cl><span class=nv>script</span><span class=o>=</span><span class=s2>&#34;</span><span class=nv>$@</span><span class=s2>&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>podman machine init --cpus <span class=m>12</span> --memory <span class=m>8192</span> --disk-size <span class=m>50</span> <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      --volume <span class=nv>$HOME</span>:<span class=nv>$HOME</span> <span class=o>||</span> <span class=nb>true</span>
+</span></span><span class=line><span class=cl>podman machine start <span class=o>||</span> <span class=nb>true</span>
+</span></span><span class=line><span class=cl>podman container ls -a <span class=p>|</span> grep <span class=nv>$container_name</span> &gt; /dev/null <span class=o>||</span> <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>        podman create -t --name <span class=nv>$container_name</span> -w /workdir <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>            -v <span class=nv>$PWD</span>:/workdir nixos/nix
+</span></span><span class=line><span class=cl><span class=nv>container_id</span><span class=o>=</span><span class=k>$(</span>podman start <span class=nv>$container_name</span><span class=k>)</span>
+</span></span><span class=line><span class=cl><span class=nb>echo</span> <span class=s2>&#34;</span><span class=nv>$container_id</span><span class=s2>&#34;</span>
+</span></span><span class=line><span class=cl>podman <span class=nb>exec</span> <span class=nv>$container_id</span> <span class=nv>$script</span>
+</span></span><span class=line><span class=cl>podman stop <span class=nv>$container_name</span> <span class=o>||</span> <span class=nb>true</span>
+</span></span><span class=line><span class=cl>podman machine stop
+</span></span></code></pre></div><p>Which basically sets up the Podman VM, starts the container <code>nixos/nix</code>
+container (named <code>nix-run</code>), executes the script (whatever I pass in for args),
+and then cleans it all up. It&rsquo;s very expensive but it&rsquo;s also something I can
+use thoughtlessly and I really like that.</p><p>Here&rsquo;s an example run:</p><p><a id=org-example-block--podman-script-example></a></p><div class=highlight><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>@ ./with-podman.sh ls -al
+</span></span><span class=line><span class=cl>Error: podman-machine-default: VM already exists
+</span></span><span class=line><span class=cl>Error: cannot start VM podman-machine-default: VM already running or starting
+</span></span><span class=line><span class=cl>a34354199be6cca047309f9d29ecefeeb1c4521d776536cc6305bad8380874b6
+</span></span><span class=line><span class=cl>nix-run
+</span></span><span class=line><span class=cl>total 12
+</span></span><span class=line><span class=cl>drwxr-xr-x 11 root nobody  352 Dec 24 13:17 .
+</span></span><span class=line><span class=cl>dr-xr-xr-x  1 root root     77 Dec 24 13:26 ..
+</span></span><span class=line><span class=cl>drwxr-xr-x 10 root nobody  320 Dec 24 13:23 .git
+</span></span><span class=line><span class=cl>-rw-r--r--  1 root nobody  283 Dec 22 00:50 README.org
+</span></span><span class=line><span class=cl>-rw-r--r--  1 root nobody 3809 Dec 24 00:29 flake.nix
+</span></span><span class=line><span class=cl>drwxr-xr-x  3 root nobody   96 Dec 24 00:30 hosts
+</span></span><span class=line><span class=cl>drwxr-xr-x  4 root nobody  128 Dec 24 00:40 modules
+</span></span><span class=line><span class=cl>drwxr-xr-x  3 root nobody   96 Dec 24 00:42 pkgs
+</span></span><span class=line><span class=cl>drwxr-xr-x  3 root nobody   96 Dec 24 00:52 profiles
+</span></span><span class=line><span class=cl>drwxr-xr-x  4 root nobody  128 Dec 24 00:41 shell
+</span></span><span class=line><span class=cl>-rwxr-xr-x  1 root nobody  529 Dec 24 13:26 with-podman.sh
+</span></span><span class=line><span class=cl>nix-run
+</span></span><span class=line><span class=cl>Waiting for VM to exit...
+</span></span><span class=line><span class=cl>Machine &#34;podman-machine-default&#34; stopped successfully
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>~/dev/proton-nix logan@scandium 0 [22:27:20] 75s
+</span></span><span class=line><span class=cl>$
+</span></span></code></pre></div><p>Note it took 75 seconds to run on my system just to do <code>ls</code> but it works without
+me doing anything fancy, I&rsquo;m running <code>NixOS</code>, and the repository I&rsquo;m working in
+is properly volume mounted. I&rsquo;m not really worried about speed here, especially
+because these invocations I&rsquo;m about to do will generate disk images - an already
+lengthy affair I expect to take on the order of minutes. Perhaps I will find
+short cuts to speed up iteration as I experience pain with building the image
+improperly, but I want to reserve my grease until the wheels begin to squeak.</p><p>A couple of asides:</p><ol><li>I looked at <code>Just</code> since this is my first exposure to it. From some quick
+reading around, it seems to be a marginally better <code>make</code>. <code>make</code> is
+portable, standard, and yes it has aged but I believe it has aged moderately
+well. I would not drop portability and familiarity (due to it being fairly
+standard) just for a marginal improvement. Plus, if the file starts to get
+too squirrelly, I&rsquo;d rather just break out the complex bits into standalone
+scripts. If I really could wave a wand and have anything I wanted in terms
+of love to <code>make</code>, it would be to give me something like <code>rake -T</code> where I
+can simply print all of the tasks available to me. Reading the code is <span class=underline>not</span>
+documentation, even if it is a <code>Makefile</code>.</li><li>I tend to go down the rabbit hole on a lot of these ventures, but I&rsquo;m not
+posting all of it as I go. Indeed, I just closed a tab pointing to
+<code>r/programminganimememes</code>, which was serving as nothing other than pure
+distraction. I&rsquo;d followed link to it from the same article linked above.</li></ol><p>Now that I have a real Nix system available to me, I need to try to run my
+paired down repository from <code>sweenu</code> and see if I can build an image from it.</p><h3 id=building-the-nixos-pi-image>Building the NixOS Pi image<a hidden class=anchor aria-hidden=true href=#building-the-nixos-pi-image>#</a></h3><h4 id=trying-to-make-it-work-with-digga>Trying to Make it Work with <code>digga</code><a hidden class=anchor aria-hidden=true href=#trying-to-make-it-work-with-digga>#</a></h4><p>From <code>sweenu</code>&rsquo;s earlier invocations, I have adapted it to be:</p><p><a id=code-snippet--podman-nix-pi-generate-for-iron></a></p><div class=highlight><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>./with-podman.sh <span class=s2>&#34;
+</span></span></span><span class=line><span class=cl><span class=s2>nixos-generate --flake &#39;.#iron&#39; --format sd-aarch64 --system aarch64-linux;
+</span></span></span><span class=line><span class=cl><span class=s2>&#34;</span>
+</span></span></code></pre></div><p>Which outputs:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>Error: crun: executable file `nixos-generate` not found in $PATH: No such file or directory: OCI runtime attempted to invoke a command that was not found
+</span></span><span class=line><span class=cl>Error: read unixpacket @-&gt;/proc/self/fd/13/attach: read: connection reset by peer
+</span></span></code></pre></div><p>I hope that <code>unixpacket</code> error is just some weirdness with error handling - an
+error of an error. I&rsquo;ll test again with <code>ls -al</code>&mldr; and the results are the
+same successful results I had before. I even tried with <code>"ls -al"</code> to make sure
+there isn&rsquo;t some weird quoting issues, but there isn&rsquo;t - all is well.</p><p>I tried a nix invocation I know to work:</p><p><a id=code-snippet--podman-nix-pi-channel-list></a></p><div class=highlight><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>./with-podman.sh nix-channel --list
+</span></span></code></pre></div><p>And I get:</p><p><a id=code-snippet--podman-nix-pi-channel-list-output></a></p><pre tabindex=0><code class=language-:exports data-lang=:exports>nixpkgs https://nixos.org/channels/nixpkgs-unstable
+</code></pre><p>Which is a very reasonable/expected output. So some nix tools are available,
+but why can&rsquo;t it find <code>nixos-genereate</code>? This is literally my first time using
+any command prefixed with <code>nixos</code>, so I&rsquo;m assuming that this command <span class=underline>actually
+exists under normal circumstances</span> and that might be too heavy an assumption.
+Some searching reveals&mldr; nothing? Not at all what I expected. I expected
+<span class=underline>something</span>, but just not on my path for whatever reason. I double check and
+realize I&rsquo;m searching for <code>nix-generate</code> instead of <code>nixos-generate</code>, whoops.</p><p><code>nixos-genereate</code> is supplied by <a href=https://github.com/nix-community/nixos-generators>nixos-generators</a> and it requires installation -
+it&rsquo;s not something that ships with <code>nixos</code>.</p><p><a id=code-snippet--podman-nix-pi-genereate-with-nix-run></a></p><div class=highlight><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>./with-podman.sh <span class=s2>&#34;
+</span></span></span><span class=line><span class=cl><span class=s2>nix run github:nix-community/nixos-generators -- \
+</span></span></span><span class=line><span class=cl><span class=s2>  --flake &#39;.#iron&#39; --format sd-aarch64 --system aarch64-linux;
+</span></span></span><span class=line><span class=cl><span class=s2>&#34;</span>
+</span></span></code></pre></div><p>And I get:</p><p><a id=org-example-block--podman-nix-pi-genereate-with-nix-run-output></a></p><div class=highlight><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>error: experimental Nix feature &#39;nix-command&#39; is disabled; add &#39;--extra-experimental-features nix-command&#39; to enable it
+</span></span></code></pre></div><p>Ah. I&rsquo;ve seen these before. This just makes our invocation a little more
+tricky with:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>./with-podman.sh <span class=s2>&#34;
+</span></span></span><span class=line><span class=cl><span class=s2>nix --extra-experimental-features nix-command \
+</span></span></span><span class=line><span class=cl><span class=s2>  run github:nix-community/nixos-generators -- \
+</span></span></span><span class=line><span class=cl><span class=s2>    --flake &#39;.#iron&#39; --format sd-aarch64 --system aarch64-linux;
+</span></span></span><span class=line><span class=cl><span class=s2>&#34;</span>
+</span></span></code></pre></div><p>The complexity and nesting here is starting to make me a little nervous. Prior
+<del>trauma</del> experience tells me that I will soon be running into shell quoting
+issues.</p><p>Now I see:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>error: experimental Nix feature &#39;flakes&#39; is disabled; add &#39;--extra-experimental-features flakes&#39; to enable it
+</span></span></code></pre></div><p>Sigh. Nix, you couldn&rsquo;t have told me about <span class=underline>both</span> of them at once?
+Furthermore, it would&rsquo;ve told me the proper thing to do for enabling multiple
+experimental features at once. So I wing it:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>./with-podman.sh <span class=s2>&#34;
+</span></span></span><span class=line><span class=cl><span class=s2>nix \
+</span></span></span><span class=line><span class=cl><span class=s2>  --extra-experimental-features nix-command \
+</span></span></span><span class=line><span class=cl><span class=s2>  --extra-experimental-features flakes \
+</span></span></span><span class=line><span class=cl><span class=s2>  run github:nix-community/nixos-generators -- \
+</span></span></span><span class=line><span class=cl><span class=s2>    --flake &#39;.#iron&#39; --format sd-aarch64 --system aarch64-linux;
+</span></span></span><span class=line><span class=cl><span class=s2>&#34;</span>
+</span></span></code></pre></div><p>I see a lot of stuff going on with the nix store - a sign of progress!</p><p>But we end with:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>warning: Ignoring setting &#39;auto-allocate-uids&#39; because experimental feature &#39;auto-allocate-uids&#39; is not enabled
+</span></span><span class=line><span class=cl>warning: Ignoring setting &#39;impure-env&#39; because experimental feature &#39;configurable-impure-env&#39; is not enabled
+</span></span><span class=line><span class=cl>building &#39;/nix/store/531cw9n4lxqx3w830ijackc5xffgz27k-nixos-generate.drv&#39;...
+</span></span><span class=line><span class=cl>/nix/store/7nkr6ysd859f6pwsn0k32qr8w368rmcz-nixos-generate/bin/.nixos-generate-wrapped: line 72: awk: command not found
+</span></span></code></pre></div><p>You&rsquo;d think <code>nixos-generators</code> would just include <code>awk</code>. Maybe I can submit a
+PR&mldr;? Let&rsquo;s cook a new invocation:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>./with-podman.sh <span class=s2>&#34;
+</span></span></span><span class=line><span class=cl><span class=s2>nix \
+</span></span></span><span class=line><span class=cl><span class=s2>  --extra-experimental-features nix-command \
+</span></span></span><span class=line><span class=cl><span class=s2>  --extra-experimental-features flakes \
+</span></span></span><span class=line><span class=cl><span class=s2>  run awk github:nix-community/nixos-generators -- \
+</span></span></span><span class=line><span class=cl><span class=s2>    --flake &#39;.#iron&#39; --format sd-aarch64 --system aarch64-linux;
+</span></span></span><span class=line><span class=cl><span class=s2>&#34;</span>
+</span></span></code></pre></div><p>I get:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>error: cannot find flake &#39;flake:awk&#39; in the flake registries
+</span></span></code></pre></div><p>It should be noted the <code>pkg1 pkg2...</code> notation I used is taken from the
+explanation in this <a href=https://discourse.nixos.org/t/difference-between-nix-shell-and-nix-run/2951>Discourse about nix shell vs nix run</a> but the help/man page
+for <code>nix run</code> gives no indication that this can be done. If anything it
+indicates that this <span class=underline>cannot</span> be done because the invocation demands
+<code>installable</code> as a single argument and other arguments have flags.</p><p>More reading in that same Discourse shows that <code>nix run</code> might not be suitable
+for this, or is otherwise a work in progress. Okay fine. I find some
+suggestions on <code>nix shell</code> that do what I want in the same Discourse once again.
+Let&rsquo;s try it out.</p><p>Actually I try several things out, and eventually land on:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>./with-podman.sh <span class=s2>&#34;
+</span></span></span><span class=line><span class=cl><span class=s2>nix \
+</span></span></span><span class=line><span class=cl><span class=s2>  --extra-experimental-features nix-command \
+</span></span></span><span class=line><span class=cl><span class=s2>  --extra-experimental-features flakes \
+</span></span></span><span class=line><span class=cl><span class=s2>  shell awk github:nix-community/nixos-generators -- \
+</span></span></span><span class=line><span class=cl><span class=s2>    --flake &#39;.#iron&#39; --format sd-aarch64 --system aarch64-linux;
+</span></span></span><span class=line><span class=cl><span class=s2>&#34;</span>
+</span></span></code></pre></div><p>I ran into:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>path &#39;/workdir/--flake&#39; does not contain a &#39;flake.nix&#39;, searching up
+</span></span><span class=line><span class=cl>error: getting status of &#39;/workdir/--flake&#39;: No such file or directory
+</span></span></code></pre></div><p>So I just remove <code>--flake</code> and use:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>./with-podman.sh <span class=s2>&#34;
+</span></span></span><span class=line><span class=cl><span class=s2>nix \
+</span></span></span><span class=line><span class=cl><span class=s2>  --extra-experimental-features nix-command \
+</span></span></span><span class=line><span class=cl><span class=s2>  --extra-experimental-features flakes \
+</span></span></span><span class=line><span class=cl><span class=s2>  run &#39;nixpkgs#awk&#39; github:LoganBarnett/nixos-generators#with-awk -- \
+</span></span></span><span class=line><span class=cl><span class=s2>    --flake &#39;.#iron&#39; --format sd-aarch64 --system aarch64-linux;
+</span></span></span><span class=line><span class=cl><span class=s2>&#34;</span>
+</span></span></code></pre></div><p>To get:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>./with-podman.sh <span class=s2>&#34;
+</span></span></span><span class=line><span class=cl><span class=s2>nix \
+</span></span></span><span class=line><span class=cl><span class=s2>  --extra-experimental-features nix-command \
+</span></span></span><span class=line><span class=cl><span class=s2>  --extra-experimental-features flakes \
+</span></span></span><span class=line><span class=cl><span class=s2>  shell \
+</span></span></span><span class=line><span class=cl><span class=s2>      -c \
+</span></span></span><span class=line><span class=cl><span class=s2>         &#34;</span><span class=s1>&#39;&#34;&#39;</span><span class=s2>&#34;nixos-generate \
+</span></span></span><span class=line><span class=cl><span class=s2>                             --flake &#39;.#iron&#39; \
+</span></span></span><span class=line><span class=cl><span class=s2>                             --format sd-aarch64 \
+</span></span></span><span class=line><span class=cl><span class=s2>                             --system aarch64-linux \
+</span></span></span><span class=line><span class=cl><span class=s2>         &#34;</span><span class=s1>&#39;&#34;&#39;</span><span class=s2>&#34;
+</span></span></span><span class=line><span class=cl><span class=s2>&#34;</span>
+</span></span></code></pre></div><p>Ugh I really went off the tracks trying things out. I have an incantation that
+finally exercises the bits I want, but the actual nix code is busted somehow. I
+suspect the version of <code>digga</code> that <code>sweenu</code> uses and my own differ. I need to
+look into some more things. I wonder if I can just use <code>nixos-generate</code> by
+itself, without all of this extra stuff? My other two paths are to either pin
+my repo to the same version that <code>sweenu</code> has in the <code>flake.lock</code> or follow
+another example (<a href=https://github.com/divnix/digga/pull/501>https://github.com/divnix/digga/pull/501</a> for a working(?) one).</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>./with-podman.sh <span class=s2>&#34; \
+</span></span></span><span class=line><span class=cl><span class=s2>ls -al . ;
+</span></span></span><span class=line><span class=cl><span class=s2>nix \
+</span></span></span><span class=line><span class=cl><span class=s2>  --extra-experimental-features nix-command \
+</span></span></span><span class=line><span class=cl><span class=s2>  --extra-experimental-features flakes \
+</span></span></span><span class=line><span class=cl><span class=s2>  build &#39;.#iron&#39; \
+</span></span></span><span class=line><span class=cl><span class=s2>&#34;</span>
+</span></span></code></pre></div><p>This invocation helps a lot, and keeps it so I don&rsquo;t need to keep running
+directly on the VM while still working out silly issues.</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>nix flake check --show-trace
+</span></span></code></pre></div><p>This is the point where I just tried a bunch of different things. Many a straw
+were grasped. I tried following obscure error messages. The sight of broken
+&ldquo;magic&rdquo; is not new to me, and this section of stuff really felt like it. So I
+abandoned <code>digga</code> entirely.</p><h4 id=just-use-nix-generators>Just Use <code>nix-generators</code><a hidden class=anchor aria-hidden=true href=#just-use-nix-generators>#</a></h4><p>Now I have the following configuration:</p><p>The <code>flake.nix</code>:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-nix data-lang=nix><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=n>description</span> <span class=o>=</span> <span class=s1>&#39;&#39;iron.proton imaging and configuration.
+</span></span></span><span class=line><span class=cl><span class=s1>iron.proton is a cross-region routing device.
+</span></span></span><span class=line><span class=cl><span class=s1>&#39;&#39;</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>  <span class=n>inputs</span> <span class=o>=</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=n>nixpkgs</span><span class=o>.</span><span class=n>url</span> <span class=o>=</span> <span class=s2>&#34;nixpkgs/nixos-unstable&#34;</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=n>nixos-generators</span> <span class=o>=</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>      <span class=n>url</span> <span class=o>=</span> <span class=s2>&#34;github:nix-community/nixos-generators&#34;</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>      <span class=n>inputs</span><span class=o>.</span><span class=n>nixpkgs</span><span class=o>.</span><span class=n>follows</span> <span class=o>=</span> <span class=s2>&#34;nixpkgs&#34;</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=p>};</span>
+</span></span><span class=line><span class=cl>  <span class=p>};</span>
+</span></span><span class=line><span class=cl>  <span class=n>outputs</span> <span class=o>=</span> <span class=p>{</span> <span class=n>self</span><span class=o>,</span> <span class=n>nixpkgs</span><span class=o>,</span> <span class=n>nixos-generators</span><span class=o>,</span> <span class=o>...</span> <span class=p>}:</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=n>packages</span><span class=o>.</span><span class=n>aarch64-linux</span> <span class=o>=</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>      <span class=n>iron</span> <span class=o>=</span> <span class=n>nixos-generators</span><span class=o>.</span><span class=n>nixosGenerate</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=n>format</span> <span class=o>=</span> <span class=s2>&#34;sd-aarch64&#34;</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>        <span class=n>modules</span> <span class=o>=</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>          <span class=sr>./iron-configuration.nix</span>
+</span></span><span class=line><span class=cl>        <span class=p>];</span>
+</span></span><span class=line><span class=cl>        <span class=n>system</span> <span class=o>=</span> <span class=s2>&#34;aarch64-linux&#34;</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>      <span class=p>};</span>
+</span></span><span class=line><span class=cl>    <span class=p>};</span>
+</span></span><span class=line><span class=cl>  <span class=p>};</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></div><p>The linked <code>iron-configuration.nix</code> is this:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-nix data-lang=nix><span class=line><span class=cl><span class=c1># This is the NixOS configuration for iron.proton.  It is drawn from the example</span>
+</span></span><span class=line><span class=cl><span class=c1># here:</span>
+</span></span><span class=line><span class=cl><span class=c1># https://github.com/Misterio77/nix-starter-configs/blob/main/minimal/nixos/configuration.nix</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=n>inputs</span><span class=o>,</span>
+</span></span><span class=line><span class=cl>  <span class=n>lib</span><span class=o>,</span>
+</span></span><span class=line><span class=cl>  <span class=n>config</span><span class=o>,</span>
+</span></span><span class=line><span class=cl>  <span class=n>pkgs</span><span class=o>,</span>
+</span></span><span class=line><span class=cl>  <span class=o>...</span>
+</span></span><span class=line><span class=cl><span class=p>}:</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=n>imports</span> <span class=o>=</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>    <span class=sr>./hardware-configuration.nix</span>
+</span></span><span class=line><span class=cl>  <span class=p>];</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>  <span class=n>nixpkgs</span> <span class=o>=</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=n>overlays</span> <span class=o>=</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>    <span class=p>];</span>
+</span></span><span class=line><span class=cl>    <span class=n>config</span> <span class=o>=</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>      <span class=n>allowUnfree</span> <span class=o>=</span> <span class=no>true</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=p>};</span>
+</span></span><span class=line><span class=cl>  <span class=p>};</span>
+</span></span><span class=line><span class=cl>  <span class=n>nix</span><span class=o>.</span><span class=n>nixPath</span> <span class=o>=</span> <span class=p>[</span><span class=s2>&#34;/etc/nix/path&#34;</span><span class=p>];</span>
+</span></span><span class=line><span class=cl>  <span class=n>environment</span><span class=o>.</span><span class=n>etc</span> <span class=o>=</span>
+</span></span><span class=line><span class=cl>    <span class=n>lib</span><span class=o>.</span><span class=n>mapAttrs&#39;</span>
+</span></span><span class=line><span class=cl>    <span class=p>(</span><span class=n>name</span><span class=p>:</span> <span class=n>value</span><span class=p>:</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>      <span class=n>name</span> <span class=o>=</span> <span class=s2>&#34;nix/path/</span><span class=si>${</span><span class=n>name</span><span class=si>}</span><span class=s2>&#34;</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>      <span class=n>value</span><span class=o>.</span><span class=n>source</span> <span class=o>=</span> <span class=n>value</span><span class=o>.</span><span class=n>flake</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=p>})</span>
+</span></span><span class=line><span class=cl>    <span class=n>config</span><span class=o>.</span><span class=n>nix</span><span class=o>.</span><span class=n>registry</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>  <span class=n>nix</span><span class=o>.</span><span class=n>settings</span> <span class=o>=</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=n>experimental-features</span> <span class=o>=</span> <span class=s2>&#34;nix-command flakes&#34;</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=n>auto-optimise-store</span> <span class=o>=</span> <span class=no>true</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>  <span class=p>};</span>
+</span></span><span class=line><span class=cl>  <span class=n>networking</span><span class=o>.</span><span class=n>hostName</span> <span class=o>=</span> <span class=s2>&#34;iron&#34;</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>  <span class=c1># TODO: This is just an example, be sure to use whatever bootloader you prefer</span>
+</span></span><span class=line><span class=cl>  <span class=c1># I guess grub or whatever is used implicitly somewhere?  Keeping this (which</span>
+</span></span><span class=line><span class=cl>  <span class=c1># comes from the example verbatim) results in:</span>
+</span></span><span class=line><span class=cl>  <span class=c1>#   The option `system.build.installBootLoader&#39; is defined multiple times</span>
+</span></span><span class=line><span class=cl>  <span class=c1>#   while it&#39;s expected to be unique.</span>
+</span></span><span class=line><span class=cl>  <span class=c1># boot.loader.systemd-boot.enable = true;</span>
+</span></span><span class=line><span class=cl>  <span class=n>users</span><span class=o>.</span><span class=n>users</span> <span class=o>=</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=n>logan</span> <span class=o>=</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>      <span class=c1># TODO: You can set an initial password for your user.</span>
+</span></span><span class=line><span class=cl>      <span class=c1># If you do, you can skip setting a root password by passing</span>
+</span></span><span class=line><span class=cl>      <span class=c1># &#39;--no-root-passwd&#39; to nixos-install.</span>
+</span></span><span class=line><span class=cl>      <span class=c1># Be sure to change it (using passwd) after rebooting!</span>
+</span></span><span class=line><span class=cl>      <span class=n>initialPassword</span> <span class=o>=</span> <span class=s2>&#34;correcthorsebatterystaple&#34;</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>      <span class=n>isNormalUser</span> <span class=o>=</span> <span class=no>true</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>      <span class=n>openssh</span><span class=o>.</span><span class=n>authorizedKeys</span><span class=o>.</span><span class=n>keys</span> <span class=o>=</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>        <span class=s2>&#34;my public key&#34;</span>
+</span></span><span class=line><span class=cl>      <span class=p>];</span>
+</span></span><span class=line><span class=cl>      <span class=n>extraGroups</span> <span class=o>=</span> <span class=p>[</span><span class=s2>&#34;wheel&#34;</span><span class=p>];</span>
+</span></span><span class=line><span class=cl>    <span class=p>};</span>
+</span></span><span class=line><span class=cl>  <span class=p>};</span>
+</span></span><span class=line><span class=cl>  <span class=n>services</span><span class=o>.</span><span class=n>openssh</span> <span class=o>=</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=n>enable</span> <span class=o>=</span> <span class=no>true</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=n>settings</span> <span class=o>=</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>      <span class=c1># Forbid root login through SSH.</span>
+</span></span><span class=line><span class=cl>      <span class=n>PermitRootLogin</span> <span class=o>=</span> <span class=s2>&#34;no&#34;</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>      <span class=c1># Use keys only. Remove if you want to SSH using password (not</span>
+</span></span><span class=line><span class=cl>      <span class=c1># recommended).</span>
+</span></span><span class=line><span class=cl>      <span class=n>PasswordAuthentication</span> <span class=o>=</span> <span class=no>false</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=p>};</span>
+</span></span><span class=line><span class=cl>  <span class=p>};</span>
+</span></span><span class=line><span class=cl>  <span class=n>system</span><span class=o>.</span><span class=n>stateVersion</span> <span class=o>=</span> <span class=s2>&#34;23.05&#34;</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></div><p>And then <code>hardware-configuration.nix</code> is this:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-nix data-lang=nix><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=n>fileSystems</span><span class=o>.</span><span class=s2>&#34;/&#34;</span> <span class=o>=</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=c1># Must match what sd-image expects exactly.  This is found by trying to run</span>
+</span></span><span class=line><span class=cl>    <span class=c1># anything and then encountering an error.</span>
+</span></span><span class=line><span class=cl>    <span class=n>device</span> <span class=o>=</span> <span class=s2>&#34;/dev/disk/by-label/NIXOS_SD&#34;</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=n>fsType</span> <span class=o>=</span> <span class=s2>&#34;ext4&#34;</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>  <span class=p>};</span>
+</span></span><span class=line><span class=cl>  <span class=n>nixpkgs</span><span class=o>.</span><span class=n>hostPlatform</span> <span class=o>=</span> <span class=s2>&#34;aarch64-linux&#34;</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></div><p>If you&rsquo;re comparing from the <a href=https://github.com/Misterio77/nix-starter-configs/blob/main/minimal/nixos/configuration.nix>example</a> mentioned in the comments, this does
+without the <code>nix.registry</code> setting because that was causing problems. I also
+removed the boot loader declaration, because that seems to be implicit or
+configured in some other way that is not obvious to me.</p><p>The error for the boot loader is this:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>error: The option `system.build.installBootLoader&#39; is defined multiple times while it&#39;s expected to be unique.
+</span></span><span class=line><span class=cl>       Only one bootloader can be enabled at a time. This requirement has not
+</span></span><span class=line><span class=cl>       been checked until NixOS 22.05. Earlier versions defaulted to the last
+</span></span><span class=line><span class=cl>       definition. Change your configuration to enable only one bootloader.
+</span></span></code></pre></div><p>Unfortunately I don&rsquo;t have an error capture for <code>nix.registry</code>.</p><p>The <code>nix.registry</code> error:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>error:
+</span></span><span class=line><span class=cl>       … while calling the &#39;derivationStrict&#39; builtin
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>         at /derivation-internal.nix:9:12:
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>            8|
+</span></span><span class=line><span class=cl>            9|   strict = derivationStrict drvAttrs;
+</span></span><span class=line><span class=cl>             |            ^
+</span></span><span class=line><span class=cl>           10|
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>       … while evaluating derivation &#39;nixos-sd-image-24.05.20231222.6df37dc-aarch64-linux.img&#39;
+</span></span><span class=line><span class=cl>         whose name attribute is located at /nix/store/55ql4j8d47xjvfa8xggjddgfwny4n9j7-source/pkgs/stdenv/generic/make-derivation.nix:348:7
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>       … while evaluating attribute &#39;buildCommand&#39; of derivation &#39;nixos-sd-image-24.05.20231222.6df37dc-aarch64-linux.img&#39;
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>         at /nix/store/55ql4j8d47xjvfa8xggjddgfwny4n9j7-source/nixos/modules/installer/sd-card/sd-image.nix:182:7:
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>          181|
+</span></span><span class=line><span class=cl>          182|       buildCommand = &#39;&#39;
+</span></span><span class=line><span class=cl>             |       ^
+</span></span><span class=line><span class=cl>          183|         mkdir -p $out/nix-support $out/sd-image
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>       (stack trace truncated; use &#39;--show-trace&#39; to show the full trace)
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>       error: attribute &#39;inputs&#39; missing
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>       at /nix/store/55ql4j8d47xjvfa8xggjddgfwny4n9j7-source/lib/modules.nix:508:28:
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>          507|         builtins.addErrorContext (context name)
+</span></span><span class=line><span class=cl>          508|           (args.${name} or config._module.args.${name})
+</span></span><span class=line><span class=cl>             |                            ^
+</span></span><span class=line><span class=cl>          509|       ) (lib.functionArgs f);
+</span></span></code></pre></div><p>Divining the fix was mostly a guess, but based on:</p><ol><li>The <code>inputs</code> missing. The <code>nix.registry</code> line has <code>inputs</code> in there.</li><li>The <code>nix.registry</code> line has a comment saying &ldquo;To make nix3 commands
+consistent with your flake&rdquo; and this looks like speculative future-proofing
+to me. The future is likely now, and the speculation proven false.</li><li>I have <code>inputs</code> very clearly in the flake. Everything else looks &ldquo;tidy&rdquo;.</li></ol><p>Okay so this all generates an image by running:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>./with-podman.sh <span class=s2>&#34; \
+</span></span></span><span class=line><span class=cl><span class=s2>nix \
+</span></span></span><span class=line><span class=cl><span class=s2>  --extra-experimental-features nix-command \
+</span></span></span><span class=line><span class=cl><span class=s2>  --extra-experimental-features flakes \
+</span></span></span><span class=line><span class=cl><span class=s2>  build &#39;.#iron&#39; \
+</span></span></span><span class=line><span class=cl><span class=s2>&#34;</span>
+</span></span></code></pre></div><p>I get no meaningful output, but no news is good news in the Unix world. I see
+that my local directory gets an <code>result</code> file. It&rsquo;s a symlink.</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>result -&gt; /nix/store/dv21jmin4aqq4m0zvlbfbw2d6c1d47sr-nixos-sd-image-24.05.20231222.6df37dc-aarch64-linux.img
+</span></span></code></pre></div><h4 id=extracting-the-image>Extracting the Image<a hidden class=anchor aria-hidden=true href=#extracting-the-image>#</a></h4><p>I quickly discovered that the symlink is orphaned.</p><p><a id=code-snippet--image-extract-ls></a></p><div class=highlight><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>ls -al <span class=k>$(</span>readlink result<span class=k>)</span> 2&gt;<span class=p>&amp;</span><span class=m>1</span>
+</span></span></code></pre></div><div class=highlight><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>ls: cannot access &#39;/nix/store/dv21jmin4aqq4m0zvlbfbw2d6c1d47sr-nixos-sd-image-24.05.20231222.6df37dc-aarch64-linux.img&#39;: No such file or directory
+</span></span></code></pre></div><p>I bet there is some <code>containerd</code> trickery going on here. Here&rsquo;s what I think
+is happening:</p><ol><li>I know from my script in <code>with-podman.sh</code>, the container is volume-mounting
+<code>$HOME</code>. It is <span class=underline>not</span> volume mounting <code>/nix</code>.</li><li>The file is actually written to <code>/nix</code> in the container. This is
+inaccessible to me once the container is shut down.</li><li>The symlink emitted isn&rsquo;t translated to whatever temporary file that podman
+is actually writing to.</li><li>Thus I am left with a dead symlink.</li></ol><p>I think the way we can fix this is to copy the image and then remove symlink (to
+keep things clean, it&rsquo;s not strictly necessary).</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>./with-podman.sh <span class=s2>&#34; \
+</span></span></span><span class=line><span class=cl><span class=s2>nix \
+</span></span></span><span class=line><span class=cl><span class=s2>  --extra-experimental-features nix-command \
+</span></span></span><span class=line><span class=cl><span class=s2>  --extra-experimental-features flakes \
+</span></span></span><span class=line><span class=cl><span class=s2>  build &#39;.#iron&#39;
+</span></span></span><span class=line><span class=cl><span class=s2>cp \$(readlink result) /workdir/nixos-pi.img
+</span></span></span><span class=line><span class=cl><span class=s2>rm result
+</span></span></span><span class=line><span class=cl><span class=s2>&#34;</span>
+</span></span></code></pre></div><p>This doesn&rsquo;t work because the symlink points a directory, and not the image file
+itself. I did some digging and found I can do this:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>./with-podman.sh <span class=s2>&#34; \
+</span></span></span><span class=line><span class=cl><span class=s2>nix \
+</span></span></span><span class=line><span class=cl><span class=s2>  --extra-experimental-features nix-command \
+</span></span></span><span class=line><span class=cl><span class=s2>  --extra-experimental-features flakes \
+</span></span></span><span class=line><span class=cl><span class=s2>  build &#39;.#iron&#39;
+</span></span></span><span class=line><span class=cl><span class=s2>cp \$(readlink result)/sd-image/* /workdir/nixos-pi.img.zst
+</span></span></span><span class=line><span class=cl><span class=s2>rm result
+</span></span></span><span class=line><span class=cl><span class=s2>&#34;</span>
+</span></span></code></pre></div><p>Note the added <code>.zst</code>. Also there is another directory adjacent to <code>sd-image</code>
+called <code>nix-support</code>. I&rsquo;ll take a look at that as I do more runs.</p><p>I do need to add the ability to decompress this image in preparation for <code>dd</code>.
+Let&rsquo;s yank our earlier invocation and place it in this command chain. If I
+wanted to muck around with the container image itself, I could use
+the <code>unzstd</code> invocation to specify an output directory, which means we avoid a
+<code>cp</code> of the entire image. I don&rsquo;t want to muck around with the container image
+as much as I can though.</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>./with-podman.sh <span class=s2>&#34; \
+</span></span></span><span class=line><span class=cl><span class=s2>nix \
+</span></span></span><span class=line><span class=cl><span class=s2>  --extra-experimental-features nix-command \
+</span></span></span><span class=line><span class=cl><span class=s2>  --extra-experimental-features flakes \
+</span></span></span><span class=line><span class=cl><span class=s2>  build &#39;.#iron&#39;
+</span></span></span><span class=line><span class=cl><span class=s2>ls -al \$(readlink result)/nix-support
+</span></span></span><span class=line><span class=cl><span class=s2>cp \$(readlink result)/sd-image/* /workdir/nixos-pi-sd-image.img.zst
+</span></span></span><span class=line><span class=cl><span class=s2>rm result
+</span></span></span><span class=line><span class=cl><span class=s2>&#34;</span>
+</span></span><span class=line><span class=cl>unzstd -d nixos-pi-sd-image.img.zst -o nixos-pi-sd-image.img
+</span></span></code></pre></div><p>One of the things I really like about this journaled approach to exploration is
+that it slows me down enough to ask questions that make me avoid pitfalls. As I
+am writing, I am thinking &ldquo;How do I know the result from <code>unzstd</code> is <span class=underline>actually</span>
+a valid image without having to push it through <code>dd</code> and then slotting the card
+into the Pi?</p><p>Some quick searching reveals I can use <code>hdiutil imageinfo &lt;file></code> to get this
+information.</p><p>Let&rsquo;s see if it tells us that it is <span class=underline>not</span> looking at a valid image:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>hdiutil imageinfo nixos-pi-sd-image.img.zst 2&gt;<span class=p>&amp;</span><span class=m>1</span>
+</span></span><span class=line><span class=cl><span class=nb>echo</span> <span class=nv>$?</span>
+</span></span></code></pre></div><div class=highlight><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>hdiutil: imageinfo failed - image not recognized
+</span></span><span class=line><span class=cl>1
+</span></span></code></pre></div><p>Excellent! And the positive case?</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>hdiutil imageinfo nixos-pi-sd-image.img 2&gt;<span class=p>&amp;</span><span class=m>1</span>
+</span></span><span class=line><span class=cl><span class=nb>echo</span> <span class=nv>$?</span>
+</span></span></code></pre></div><div class=highlight><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>Class Name: CRawDiskImage
+</span></span><span class=line><span class=cl>Size Information:
+</span></span><span class=line><span class=cl>	Total Bytes: 2829352960
+</span></span><span class=line><span class=cl>	Compressed Ratio: 1
+</span></span><span class=line><span class=cl>	Sector Count: 5526080
+</span></span><span class=line><span class=cl>	Total Non-Empty Bytes: 2829352960
+</span></span><span class=line><span class=cl>	Compressed Bytes: 2829352960
+</span></span><span class=line><span class=cl>	Total Empty Bytes: 0
+</span></span><span class=line><span class=cl>Checksum Type: none
+</span></span><span class=line><span class=cl>Format: UDRW
+</span></span><span class=line><span class=cl>partitions:
+</span></span><span class=line><span class=cl>	partition-scheme: fdisk
+</span></span><span class=line><span class=cl>	block-size: 512
+</span></span><span class=line><span class=cl>	partitions:
+</span></span><span class=line><span class=cl>		0:
+</span></span><span class=line><span class=cl>			partition-name: Master Boot Record
+</span></span><span class=line><span class=cl>			partition-start: 0
+</span></span><span class=line><span class=cl>			partition-synthesized: true
+</span></span><span class=line><span class=cl>			partition-length: 1
+</span></span><span class=line><span class=cl>			partition-hint: MBR
+</span></span><span class=line><span class=cl>			boot-code: 0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000004E6978210000
+</span></span><span class=line><span class=cl>		1:
+</span></span><span class=line><span class=cl>			partition-name:
+</span></span><span class=line><span class=cl>			partition-start: 1
+</span></span><span class=line><span class=cl>			partition-synthesized: true
+</span></span><span class=line><span class=cl>			partition-length: 16383
+</span></span><span class=line><span class=cl>			partition-hint: Apple_Free
+</span></span><span class=line><span class=cl>		2:
+</span></span><span class=line><span class=cl>			partition-start: 16384
+</span></span><span class=line><span class=cl>			partition-number: 1
+</span></span><span class=line><span class=cl>			partition-length: 61440
+</span></span><span class=line><span class=cl>			partition-hint: DOS_FAT_32
+</span></span><span class=line><span class=cl>			partition-filesystems:
+</span></span><span class=line><span class=cl>				FAT16: FIRMWARE
+</span></span><span class=line><span class=cl>		3:
+</span></span><span class=line><span class=cl>			partition-start: 77824
+</span></span><span class=line><span class=cl>			partition-number: 2
+</span></span><span class=line><span class=cl>			partition-length: 5448256
+</span></span><span class=line><span class=cl>			partition-hint: Linux_Ext2FS
+</span></span><span class=line><span class=cl>	burnable: false
+</span></span><span class=line><span class=cl>Format Description: raw read/write
+</span></span><span class=line><span class=cl>Checksum Value:
+</span></span><span class=line><span class=cl>Properties:
+</span></span><span class=line><span class=cl>	Encrypted: false
+</span></span><span class=line><span class=cl>	Kernel Compatible: true
+</span></span><span class=line><span class=cl>	Checksummed: false
+</span></span><span class=line><span class=cl>	Software License Agreement: false
+</span></span><span class=line><span class=cl>	Partitioned: false
+</span></span><span class=line><span class=cl>	Compressed: no
+</span></span><span class=line><span class=cl>Segments:
+</span></span><span class=line><span class=cl>	0: /Users/logan/dev/proton-nix/nixos-pi-sd-image.img
+</span></span><span class=line><span class=cl>Backing Store Information:
+</span></span><span class=line><span class=cl>	URL: file:///Users/logan/dev/proton-nix/nixos-pi-sd-image.img
+</span></span><span class=line><span class=cl>	Name: nixos-pi-sd-image.img
+</span></span><span class=line><span class=cl>	Class Name: CBSDBackingStore
+</span></span><span class=line><span class=cl>Resize limits (per hdiutil resize -limits):
+</span></span><span class=line><span class=cl>5526080	5526080	181452016
+</span></span><span class=line><span class=cl>0
+</span></span></code></pre></div><p>Wonderful!</p><p>We can incorporate that into our eventual script we&rsquo;ll be creating, just to
+check on things.</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>./with-podman.sh <span class=s2>&#34; \
+</span></span></span><span class=line><span class=cl><span class=s2>nix \
+</span></span></span><span class=line><span class=cl><span class=s2>  --extra-experimental-features nix-command \
+</span></span></span><span class=line><span class=cl><span class=s2>  --extra-experimental-features flakes \
+</span></span></span><span class=line><span class=cl><span class=s2>  build &#39;.#iron&#39;
+</span></span></span><span class=line><span class=cl><span class=s2>ls -al \$(readlink result)/nix-support
+</span></span></span><span class=line><span class=cl><span class=s2>cp \$(readlink result)/sd-image/* /workdir/nixos-pi-sd-image.img.zst
+</span></span></span><span class=line><span class=cl><span class=s2>rm result
+</span></span></span><span class=line><span class=cl><span class=s2>&#34;</span>
+</span></span><span class=line><span class=cl>unzstd -d nixos-pi-sd-image.img.zst -o nixos-pi-sd-image.img
+</span></span><span class=line><span class=cl>rm nixos-pi-sd-image.img.zst
+</span></span><span class=line><span class=cl>hdiutil imageinfo nixos-pi-sd-image.img
+</span></span></code></pre></div><p>And then we can incorporate the <code>dd</code> invocation into it:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>./with-podman.sh <span class=s2>&#34; \
+</span></span></span><span class=line><span class=cl><span class=s2>nix \
+</span></span></span><span class=line><span class=cl><span class=s2>  --extra-experimental-features nix-command \
+</span></span></span><span class=line><span class=cl><span class=s2>  --extra-experimental-features flakes \
+</span></span></span><span class=line><span class=cl><span class=s2>  build &#39;.#iron&#39;
+</span></span></span><span class=line><span class=cl><span class=s2>ls -al \$(readlink result)/nix-support
+</span></span></span><span class=line><span class=cl><span class=s2>cp \$(readlink result)/sd-image/* /workdir/nixos-pi-sd-image.img.zst
+</span></span></span><span class=line><span class=cl><span class=s2>rm result
+</span></span></span><span class=line><span class=cl><span class=s2>&#34;</span>
+</span></span><span class=line><span class=cl>unzstd -d nixos-pi-sd-image.img.zst -o nixos-pi-sd-image.img
+</span></span><span class=line><span class=cl>rm nixos-pi-sd-image.img.zst
+</span></span><span class=line><span class=cl>hdiutil imageinfo nixos-pi-sd-image.img
+</span></span><span class=line><span class=cl>sudo dd <span class=k>if</span><span class=o>=</span>nixos-pi-sd-image.img <span class=nv>of</span><span class=o>=</span>/dev/disk4 <span class=nv>bs</span><span class=o>=</span>1M <span class=nv>status</span><span class=o>=</span>progress <span class=nv>conv</span><span class=o>=</span>fsync
+</span></span></code></pre></div><p>Let&rsquo;s not run that yet, because just blindly doing <code>dd</code> on things under <code>/dev</code>
+is inherently dangerous. Is there a way we can query for a detachable disk?</p><p>There is for macOS, but it&rsquo;s not portable. I have seen some mention that
+<code>lsusb</code> works for non-USB storage devices (and by extension, <code>cyme</code> would as
+well), but I have not observed that on my system. Still, learning of <code>cyme</code> is
+useful and it&rsquo;s been added to my toolbox for later.</p><p>This is what I came up with:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>system_profiler SPStorageDataType -json <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>  <span class=p>|</span> jq -r <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      <span class=s1>&#39;.SPStorageDataType.[]
+</span></span></span><span class=line><span class=cl><span class=s1>        | select(.physical_drive.protocol == &#34;Secure Digital&#34;)
+</span></span></span><span class=line><span class=cl><span class=s1>        | .bsd_name&#39;</span> <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>  <span class=p>|</span> sed -E <span class=s1>&#39;s/s[0-9]+//&#39;</span>
+</span></span></code></pre></div><p>Note that this might not work if using a USB attached SD card. This could be
+the case if you&rsquo;re using a docking station setup on your Mac/MacBook, instead of
+preferring the on-board SD card reader.</p><p>Okay so now we have the disk, dynamically. We can just idiotically bail out if
+more than one is found. We should only find one and only one result.</p><p>Ugh. I really wish we could actually replace Bash with a stronger scripting
+language but with the same level of ubiquitousness. This is what I was able to
+put together for giving me a one-and-only-one search:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl><span class=cp>#!/usr/bin/env bash
+</span></span></span><span class=line><span class=cl><span class=cp></span>
+</span></span><span class=line><span class=cl><span class=c1># Can&#39;t use -u here because empty arrays are &#34;unset&#34; according to some kind of</span>
+</span></span><span class=line><span class=cl><span class=c1># Bashism, and figuring out the incantation to work around it has not been</span>
+</span></span><span class=line><span class=cl><span class=c1># fruitful.  See</span>
+</span></span><span class=line><span class=cl><span class=c1># https://stackoverflow.com/questions/7577052/bash-empty-array-expansion-with-set-u</span>
+</span></span><span class=line><span class=cl><span class=c1># for some of those details.</span>
+</span></span><span class=line><span class=cl><span class=nb>set</span> -eo pipefail
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=nv>IFS</span><span class=o>=</span><span class=s1>$&#39;\n&#39;</span>
+</span></span><span class=line><span class=cl><span class=nv>result</span><span class=o>=(</span> <span class=k>$(</span>system_profiler SPStorageDataType -json <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>  <span class=p>|</span> jq -r <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      <span class=s1>&#39;.SPStorageDataType.[]
+</span></span></span><span class=line><span class=cl><span class=s1>        | select(
+</span></span></span><span class=line><span class=cl><span class=s1>           .physical_drive.protocol == &#34;Secure Digital&#34; or
+</span></span></span><span class=line><span class=cl><span class=s1>           .physical_drive.protocol == &#34;USB&#34;
+</span></span></span><span class=line><span class=cl><span class=s1>        )
+</span></span></span><span class=line><span class=cl><span class=s1>        | .bsd_name&#39;</span> <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>  <span class=p>|</span> sed -E <span class=s1>&#39;s/s[0-9]+//&#39;</span>
+</span></span><span class=line><span class=cl><span class=k>)</span> <span class=o>)</span>
+</span></span><span class=line><span class=cl><span class=nb>unset</span> IFS
+</span></span><span class=line><span class=cl><span class=nv>count</span><span class=o>=</span><span class=s2>&#34;</span><span class=si>${#</span><span class=nv>result</span><span class=p>[*]</span><span class=si>}</span><span class=s2>&#34;</span>
+</span></span><span class=line><span class=cl><span class=k>if</span> <span class=o>[[</span> <span class=nv>$count</span> !<span class=o>=</span> <span class=s1>&#39;1&#39;</span> <span class=o>||</span> <span class=si>${</span><span class=nv>result</span><span class=p>[0]</span><span class=si>}</span> <span class=o>==</span> <span class=s1>&#39;&#39;</span> <span class=o>]]</span><span class=p>;</span> <span class=k>then</span>
+</span></span><span class=line><span class=cl>  <span class=nb>echo</span> <span class=s2>&#34;Error: &#39;</span><span class=nv>$result</span><span class=s2>&#39; has </span><span class=nv>$count</span><span class=s2> results but we expect exactly 1 non-empty \
+</span></span></span><span class=line><span class=cl><span class=s2>result.&#34;</span> 1&gt;<span class=p>&amp;</span><span class=m>2</span>
+</span></span><span class=line><span class=cl>  <span class=nb>exit</span> <span class=m>1</span>
+</span></span><span class=line><span class=cl><span class=k>else</span>
+</span></span><span class=line><span class=cl>  <span class=nb>echo</span> -n <span class=nv>$result</span>
+</span></span><span class=line><span class=cl><span class=k>fi</span>
+</span></span></code></pre></div><p>Update: I thought I could safely add <code>set -euo pipefail</code> to polish up my script
+and no further testing was needing, but it turned out it needed some updating.
+This is the final result I was able to come to. Bash seems to only really
+thrive with the most trivial of scripts, and it takes so little to start pulling
+out some nasty stuff.</p><p>I tested with 1 device and 4 devices, and got the results I wanted.</p><p>This leaves us with a final script of:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl><span class=cp>#!/usr/bin/env bash
+</span></span></span><span class=line><span class=cl><span class=cp></span>
+</span></span><span class=line><span class=cl>./with-podman.sh <span class=s2>&#34; \
+</span></span></span><span class=line><span class=cl><span class=s2>nix \
+</span></span></span><span class=line><span class=cl><span class=s2>  --extra-experimental-features nix-command \
+</span></span></span><span class=line><span class=cl><span class=s2>  --extra-experimental-features flakes \
+</span></span></span><span class=line><span class=cl><span class=s2>  build &#39;.#iron&#39;
+</span></span></span><span class=line><span class=cl><span class=s2>ls -al \$(readlink result)/nix-support
+</span></span></span><span class=line><span class=cl><span class=s2>cp \$(readlink result)/sd-image/* /workdir/nixos-pi-sd-image.img.zst
+</span></span></span><span class=line><span class=cl><span class=s2>rm result
+</span></span></span><span class=line><span class=cl><span class=s2>&#34;</span>
+</span></span><span class=line><span class=cl>unzstd -d nixos-pi-sd-image.img.zst -o nixos-pi-sd-image.img
+</span></span><span class=line><span class=cl>rm nixos-pi-sd-image.img.zst
+</span></span><span class=line><span class=cl>hdiutil imageinfo nixos-pi-sd-image.img
+</span></span><span class=line><span class=cl>sudo dd <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>     <span class=k>if</span><span class=o>=</span>nixos-pi-sd-image.img <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>     <span class=nv>of</span><span class=o>=</span>/dev/<span class=k>$(</span>./sd-card-dev-find.sh<span class=k>)</span> <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>     <span class=nv>bs</span><span class=o>=</span>1M <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>     <span class=nv>status</span><span class=o>=</span>progress <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>     <span class=nv>conv</span><span class=o>=</span>fsync
+</span></span></code></pre></div><p>I found as part of futzing with this that <code>SPStorageDataType</code> only works for
+mounted devices but not available devices. However I need things to be
+unmounted to use <code>dd</code> on them. This does not make it easy to do ephemeral runs.
+If I wanted to always use <code>SPStorageDataType</code>, then I&rsquo;d need to know <span class=underline>what</span> to
+mount, which is what I&rsquo;m trying to determine in the first place. Additionally,
+the disk might be totally fresh or using some unknown filesystem - both of which
+would render the device unmountable. With some checking around from
+<code>system_profiler -listDataTypes</code> I found <code>SPCardReaderDataType</code> which looks
+promising:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>system_profiler SPCardReaderDataType
+</span></span></code></pre></div><p>And now the JSON form:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>system_profiler SPCardReaderDataType -json
+</span></span></code></pre></div><p>That gives me a <code>jq</code> query of:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>system_profiler SPCardReaderDataType -json <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>  <span class=p>|</span> jq -r <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      <span class=s1>&#39;.SPCardReaderDataType[]._items[].bsd_name&#39;</span>
+</span></span></code></pre></div><p>This leaves me with a final script for <code>sd-card-dev-find.sh</code> of:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl><span class=cp>#!/usr/bin/env bash
+</span></span></span><span class=line><span class=cl><span class=cp></span><span class=c1>##</span>
+</span></span><span class=line><span class=cl><span class=c1># Finds the device file for the attached SD card (eg. /dev/disk4) or USB drive.</span>
+</span></span><span class=line><span class=cl><span class=c1># It will assume /dev as a relative directory to make consumption easier.</span>
+</span></span><span class=line><span class=cl><span class=c1>#</span>
+</span></span><span class=line><span class=cl><span class=c1># This has a non-zero exit code if more than one disk is found, or no disks are</span>
+</span></span><span class=line><span class=cl><span class=c1># found.</span>
+</span></span><span class=line><span class=cl><span class=c1>##</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=nb>set</span> -euo pipefail
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>while</span> true<span class=p>;</span> <span class=k>do</span>
+</span></span><span class=line><span class=cl>  <span class=k>case</span> <span class=s2>&#34;</span><span class=si>${</span><span class=nv>1</span><span class=k>:-</span><span class=si>}</span><span class=s2>&#34;</span> in
+</span></span><span class=line><span class=cl>    -h <span class=p>|</span> --help<span class=o>)</span>
+</span></span><span class=line><span class=cl>      cat <span class=s>&lt;&lt;EOH
+</span></span></span><span class=line><span class=cl><span class=s>Usage: $0
+</span></span></span><span class=line><span class=cl><span class=s>
+</span></span></span><span class=line><span class=cl><span class=s>Finds the device file for the attached SD card (eg. /dev/disk4) or USB drive.
+</span></span></span><span class=line><span class=cl><span class=s>It will assume /dev as a relative directory to make consumption easier.
+</span></span></span><span class=line><span class=cl><span class=s>EOH</span>
+</span></span><span class=line><span class=cl>      <span class=nb>exit</span>
+</span></span><span class=line><span class=cl>      <span class=p>;;</span>
+</span></span><span class=line><span class=cl>    * <span class=o>)</span> <span class=nb>break</span> <span class=p>;;</span>
+</span></span><span class=line><span class=cl>  <span class=k>esac</span>
+</span></span><span class=line><span class=cl><span class=k>done</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=nv>IFS</span><span class=o>=</span><span class=s1>$&#39;\n&#39;</span>
+</span></span><span class=line><span class=cl><span class=nv>sd_results</span><span class=o>=</span><span class=k>$(</span>
+</span></span><span class=line><span class=cl>  system_profiler SPCardReaderDataType -json <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>    <span class=p>|</span> jq -r <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      <span class=s1>&#39;.SPCardReaderDataType[]._items[].bsd_name&#39;</span>
+</span></span><span class=line><span class=cl><span class=k>)</span>
+</span></span><span class=line><span class=cl><span class=nv>usb_results</span><span class=o>=</span><span class=k>$(</span>
+</span></span><span class=line><span class=cl>  system_profiler SPUSBDataType -json <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>    <span class=p>|</span> jq -r <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      <span class=s1>&#39;.. | select(.bsd_name? and .volumes?).bsd_name&#39;</span>
+</span></span><span class=line><span class=cl><span class=k>)</span>
+</span></span><span class=line><span class=cl><span class=nb>unset</span> IFS
+</span></span><span class=line><span class=cl><span class=nv>array</span><span class=o>=(</span> <span class=s2>&#34;</span><span class=si>${</span><span class=nv>sd_results</span><span class=p>[@]</span><span class=si>}</span><span class=s2>&#34;&#34;</span><span class=si>${</span><span class=nv>usb_results</span><span class=p>[@]</span><span class=si>}</span><span class=s2>&#34;</span> <span class=o>)</span>
+</span></span><span class=line><span class=cl><span class=nv>count</span><span class=o>=</span><span class=s2>&#34;</span><span class=si>${#</span><span class=nv>array</span><span class=p>[@]</span><span class=si>}</span><span class=s2>&#34;</span>
+</span></span><span class=line><span class=cl><span class=k>if</span> <span class=o>[[</span> <span class=nv>$count</span> !<span class=o>=</span> <span class=m>1</span> <span class=o>]]</span><span class=p>;</span> <span class=k>then</span>
+</span></span><span class=line><span class=cl>  <span class=nb>echo</span> <span class=s2>&#34;Error: Query result &#39;</span><span class=si>${</span><span class=nv>array</span><span class=p>[@]</span><span class=si>}</span><span class=s2>&#39; has </span><span class=nv>$count</span><span class=s2> results but we expect exactly \
+</span></span></span><span class=line><span class=cl><span class=s2>1.&#34;</span> 1&gt;<span class=p>&amp;</span><span class=m>2</span>
+</span></span><span class=line><span class=cl>  <span class=nb>exit</span> <span class=m>1</span>
+</span></span><span class=line><span class=cl><span class=k>else</span>
+</span></span><span class=line><span class=cl>  <span class=nb>echo</span> -n <span class=s2>&#34;</span><span class=si>${</span><span class=nv>array</span><span class=p>[@]</span><span class=si>}</span><span class=s2>&#34;</span>
+</span></span><span class=line><span class=cl><span class=k>fi</span>
+</span></span></code></pre></div><p>Update: I added the capability to also check for USB drives.</p><p>Which also includes <code>-h</code> / <code>--help</code> and a comment describing how it works. It
+might seem obvious, and it is, but that&rsquo;s because it&rsquo;s fresh. I&rsquo;ve made life
+easier for future-me.</p><p>Here&rsquo;s the same treatment for <code>image-create.sh</code>:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl><span class=cp>#!/usr/bin/env bash
+</span></span></span><span class=line><span class=cl><span class=cp></span><span class=c1>##</span>
+</span></span><span class=line><span class=cl><span class=c1># Creates a bootable Raspberry Pi image with NixOS.  This image should contain</span>
+</span></span><span class=line><span class=cl><span class=c1># the entirety of the configuration, sans password updates (until I can get</span>
+</span></span><span class=line><span class=cl><span class=c1># secret management going).</span>
+</span></span><span class=line><span class=cl><span class=c1>#</span>
+</span></span><span class=line><span class=cl><span class=c1># The image file name is printed upon success.</span>
+</span></span><span class=line><span class=cl><span class=c1>##</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=nb>set</span> -euo pipefail
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>while</span> true<span class=p>;</span> <span class=k>do</span>
+</span></span><span class=line><span class=cl>  <span class=k>case</span> <span class=s2>&#34;</span><span class=si>${</span><span class=nv>1</span><span class=k>:-</span><span class=si>}</span><span class=s2>&#34;</span> in
+</span></span><span class=line><span class=cl>    -h <span class=p>|</span> --help<span class=o>)</span>
+</span></span><span class=line><span class=cl>      cat <span class=s>&lt;&lt;EOH
+</span></span></span><span class=line><span class=cl><span class=s>Usage: $0
+</span></span></span><span class=line><span class=cl><span class=s>
+</span></span></span><span class=line><span class=cl><span class=s>Creates a bootable Raspberry Pi image with NixOS.  This image should contain
+</span></span></span><span class=line><span class=cl><span class=s>the entirety of the configuration, sans password updates (until I can get
+</span></span></span><span class=line><span class=cl><span class=s>secret management going).
+</span></span></span><span class=line><span class=cl><span class=s>
+</span></span></span><span class=line><span class=cl><span class=s>The image file name is printed upon success.
+</span></span></span><span class=line><span class=cl><span class=s>EOH</span>
+</span></span><span class=line><span class=cl>      <span class=nb>exit</span>
+</span></span><span class=line><span class=cl>      <span class=p>;;</span>
+</span></span><span class=line><span class=cl>    * <span class=o>)</span> <span class=nb>break</span> <span class=p>;;</span>
+</span></span><span class=line><span class=cl>  <span class=k>esac</span>
+</span></span><span class=line><span class=cl><span class=k>done</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=nv>image_name</span><span class=o>=</span><span class=s1>&#39;nixos-pi-sd-image.img&#39;</span>
+</span></span><span class=line><span class=cl>./with-podman.sh <span class=s2>&#34; \
+</span></span></span><span class=line><span class=cl><span class=s2>nix \
+</span></span></span><span class=line><span class=cl><span class=s2>  --extra-experimental-features nix-command \
+</span></span></span><span class=line><span class=cl><span class=s2>  --extra-experimental-features flakes \
+</span></span></span><span class=line><span class=cl><span class=s2>  build &#39;.#iron&#39;
+</span></span></span><span class=line><span class=cl><span class=s2>ls -al \$(readlink result)/nix-support
+</span></span></span><span class=line><span class=cl><span class=s2>cp \$(readlink result)/sd-image/* /workdir/</span><span class=nv>$image_name</span><span class=s2>.zst
+</span></span></span><span class=line><span class=cl><span class=s2>rm result
+</span></span></span><span class=line><span class=cl><span class=s2>&#34;</span>
+</span></span><span class=line><span class=cl>unzstd <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>  --force <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>  --decompress <span class=nv>$image_name</span>.zst <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>  -o <span class=nv>$image_name</span>
+</span></span><span class=line><span class=cl>rm --force <span class=nv>$image_name</span>.zst
+</span></span><span class=line><span class=cl>hdiutil imageinfo <span class=nv>$image_name</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=nb>echo</span> <span class=s1>&#39;Image built successfully.&#39;</span> 1&gt;<span class=p>&amp;</span><span class=m>2</span>
+</span></span><span class=line><span class=cl><span class=c1># Print the name used so we can use it elsewhere, and scripts needn&#39;t be tightly</span>
+</span></span><span class=line><span class=cl><span class=c1># coupled.</span>
+</span></span><span class=line><span class=cl><span class=nb>echo</span> <span class=nv>$image_name</span>
+</span></span></code></pre></div><p>And I further broke things apart, such that <code>image-deploy.sh</code> actually installs
+it. I have done this because building the image is its own ordeal, and
+something I might want to test separately. Note that <code>image-create.sh</code> prints
+the file name of the image so <code>image-deploy.sh</code> can use it, and doesn&rsquo;t need to
+have intimate knowledge of the file name. I have one place I can change the
+image file name (or parameterize it), and nothing else needs to be updated.</p><h3 id=no-joy-on-boot>No Joy on Boot<a hidden class=anchor aria-hidden=true href=#no-joy-on-boot>#</a></h3><p>The Pi seems to &ldquo;boot&rdquo;, but results in the double-green flashes I had before I
+went down the NixOS image approach. I happen to have a second Pi with me, and
+have tried it there, as well as a second card with the same image. I don&rsquo;t feel
+like this has ruled out hardware problems.</p><p>My card is from SanDisk, and is the SanDisk Ultra 128GB microSDXC UHS-I Card
+(<code>SDSQUNC-128G-GN6MA</code>) variant. <a href=https://elinux.org/RPi_SD_cards>https://elinux.org/RPi_SD_cards</a> indicates that
+this should work. Many of the recent SanDisk cards are reported as working.
+The Amazon reviews say that they specifically work for Raspberry Pis as well.
+Even though I got them from the same batch (as well as the Pis), I <span class=underline>suspect</span>
+this is not a hardware issue, but I haven&rsquo;t ruled it out.</p><p>I need a display to see if there&rsquo;s some other critical information before I can
+continue.</p><p>I did install <code>f3</code> utilities to test it (with <code>f3read</code> and <code>f3write</code>) but I
+haven&rsquo;t taken them for a spin yet.</p><h3 id=back-and-display-ports>Back, and Display Ports<a hidden class=anchor aria-hidden=true href=#back-and-display-ports>#</a></h3><p>My travels are now complete, and I&rsquo;m able to inspect things with my home
+network. A curious thing that came up was the displays ports. The new
+(circa 2023) Raspberry Pi&rsquo;s come with micro-HDMI connections for display. I did
+some searching around and found that HDMI actually requires royalties are paid
+(perhaps the Pis are exempt?) at the cost of $0.15 USD or $0.05 (or lower) if
+the HDMI logo is displayed per <a href=https://en.wikipedia.org/wiki/HDMI#HDMI_fee_structure>Wikipedia&rsquo;s HDMI article</a>. The Pi has the logo
+printed on PCB. The capabilities between HDMI. are on par with each other, from
+what various posts I could find. Apologists have reported that HDMI is more
+universal, and thus more in line with the goals of the Pi to make cheaply
+accessible computers. I still had to buy an adapter to connect it to any of my
+displays made in the last 10 years. Granted, the adapter wasn&rsquo;t terribly
+expensive. It did halt my work though. Now I have one, and a display to
+connect it to. The results were surprising!</p><h3 id=actually-joy-on-boot>Actually Joy on Boot<a hidden class=anchor aria-hidden=true href=#actually-joy-on-boot>#</a></h3><p>I can see the Pi has actually booted up, and it works! It successfully boots,
+and the flashing green light must just be &ldquo;activity&rdquo; that is on some regular
+interval. The Bluetooth or WiFi radio, perhaps? Either way, I have a working
+Pi! Let&rsquo;s see if I can log in.</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>$ ssh iron.proton
+</span></span><span class=line><span class=cl>The authenticity of host &#39;iron.proton (192.168.254.102)&#39; can&#39;t be established.
+</span></span><span class=line><span class=cl>ED25519 key fingerprint is SHA256:E3b/T0lQiqItcIKbh2n6Wb/sOEV9nFbrVojJXlKmHrQ.
+</span></span><span class=line><span class=cl>This key is not known by any other names.
+</span></span><span class=line><span class=cl>Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+</span></span><span class=line><span class=cl>Warning: Permanently added &#39;iron.proton&#39; (ED25519) to the list of known hosts.
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>[logan@iron:~]$
+</span></span></code></pre></div><p>Wow! I&rsquo;d forgotten I&rsquo;d added one of my authorized keys to the list. I have to
+admit, I&rsquo;m pretty giddy. I do have a password to update. A quick <code>passwd</code>
+invocation shows the <code>initialPassword</code> field is good, but you won&rsquo;t see
+anything interesting here:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>[logan@iron:~]$ passwd
+</span></span><span class=line><span class=cl>Changing password for logan.
+</span></span><span class=line><span class=cl>Current password:
+</span></span><span class=line><span class=cl>New password:
+</span></span><span class=line><span class=cl>Retype new password:
+</span></span><span class=line><span class=cl>passwd: password updated successfully
+</span></span></code></pre></div><p>And then to see if I can use <code>sudo</code>:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>[logan@iron:~]$ sudo ls
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>We trust you have received the usual lecture from the local System
+</span></span><span class=line><span class=cl>Administrator. It usually boils down to these three things:
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    #1) Respect the privacy of others.
+</span></span><span class=line><span class=cl>    #2) Think before you type.
+</span></span><span class=line><span class=cl>    #3) With great power comes great responsibility.
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>For security reasons, the password you type will not be visible.
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>[sudo] password for logan:
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>[logan@iron:~]$
+</span></span></code></pre></div><p>So this ticks all of my boxes for getting a Pi
+configured on the baseline, but lets go through the list to be sure:</p><ul><li><input checked disabled type=checkbox> The Pi has the desired hostname.</li><li><input checked disabled type=checkbox> The Pi has my user.</li><li><input checked disabled type=checkbox> My user can be logged into via SSH.</li><li><input checked disabled type=checkbox> My user is a sudoer.</li></ul><p>That&rsquo;s everything!</p><h2 id=conclusion>Conclusion<a hidden class=anchor aria-hidden=true href=#conclusion>#</a></h2><p>I&rsquo;ll wrap this up here. The next part of this adventure will be to get
+Wireguard configured on the Pi. That&rsquo;s a bit beyond the scope of what I feel
+safe sharing here.</p><p>I have noticed during my searching about that there are
+these <code>age</code> secrets that I intend to read up on, though I find it hard to
+believe these secrets are safely shared on public repositories. Offline brute
+force attacks are highly effective, from what I understand.</p></div><footer class=post-footer><ul class=post-tags></ul><nav class=paginav><a class=prev href=http://localhost:1313/nix-adventures-02/><span class=title>« Prev</span>
+<span>Nix Adventures Part 2: Machine Learning Servers</span>
+</a><a class=next href=http://localhost:1313/message-to-students-and-alumni/><span class=title>Next »</span>
+<span>A Message to Students and Alumni</span></a></nav></footer></article></main><footer class=footer><span>&copy; 2026 <a href=http://localhost:1313/>Logan Barnett's blog</a></span> ·
+<span>Powered by
+<a href=https://gohugo.io/ rel="noopener noreferrer" target=_blank>Hugo</a> &
+<a href=https://github.com/adityatelange/hugo-PaperMod/ rel=noopener target=_blank>PaperMod</a></span></footer><a href=#top id=top-link class="top-link hidden" aria-label="go to top" title="Go to Top (Alt + G)" accesskey=g><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevrons-up"><polyline points="17 11 12 6 7 11"/><polyline points="17 18 12 13 7 18"/></svg>
+</a><script>let menu=document.getElementById("menu");if(menu){const e=localStorage.getItem("menu-scroll-position");e&&(menu.scrollLeft=parseInt(e,10)),menu.onscroll=function(){localStorage.setItem("menu-scroll-position",menu.scrollLeft)}}document.querySelectorAll('a[href^="#"]').forEach(e=>{e.addEventListener("click",function(e){e.preventDefault();var t=this.getAttribute("href").substr(1);window.matchMedia("(prefers-reduced-motion: reduce)").matches?document.querySelector(`[id='${decodeURIComponent(t)}']`).scrollIntoView():document.querySelector(`[id='${decodeURIComponent(t)}']`).scrollIntoView({behavior:"smooth"}),t==="top"?history.replaceState(null,null," "):history.pushState(null,null,`#${t}`)})})</script><script>var toplink=document.getElementById("top-link");window.onscroll=function(){const e=window.innerHeight;document.body.scrollTop>e||document.documentElement.scrollTop>e?toplink.classList.remove("hidden"):toplink.classList.add("hidden")}</script><script>document.getElementById("theme-toggle").addEventListener("click",()=>{const e=document.querySelector("html");e.dataset.theme==="dark"?(e.dataset.theme="light",localStorage.setItem("pref-theme","light")):(e.dataset.theme="dark",localStorage.setItem("pref-theme","dark"))})</script><script>document.querySelectorAll("pre > code").forEach(e=>{const n=e.parentNode.parentNode,t=document.createElement("button");t.classList.add("copy-code"),t.innerHTML="copy";function s(){t.innerHTML="copied!",setTimeout(()=>{t.innerHTML="copy"},2e3)}t.addEventListener("click",t=>{if("clipboard"in navigator){navigator.clipboard.writeText(e.textContent),s();return}const n=document.createRange();n.selectNodeContents(e);const o=window.getSelection();o.removeAllRanges(),o.addRange(n);try{document.execCommand("copy"),s()}catch{}o.removeRange(n)}),n.classList.contains("highlight")?n.appendChild(t):n.parentNode.firstChild==n||(e.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName=="TABLE"?e.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(t):e.parentNode.appendChild(t))})</script></body></html>

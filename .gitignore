@@ -6,19 +6,12 @@
 #
 # Please justify all ignore entries with comments.
 
-# Ignore Jekyll generated files.
-_site
-.sass-cache
-# Ignore location of installed Ruby gems.
-vendor/bundle
-# Ignore `jekyll serve --incremental` cache.
-.jekyll-metadata
+# Hugo build lock — written by `hugo` while building.
+.hugo_build.lock
 
-# Ignore generated PDF files.
+# Generated dated resume copies — keep the source resume.pdf tracked,
+# but don't track every snapshot from the resume-stamp recipe.
 *-resume-*.pdf
 
-# Ignore generated LaTeX files.
+# LaTeX intermediates from generating the resume PDF.
 *.tex
-
-# Ignore generated Markdown files.
-*.md

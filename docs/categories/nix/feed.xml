@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Nix on Logan Barnett&#39;s blog</title>
+    <link>http://localhost:1313/categories/nix/</link>
+    <description>Recent content in Nix on Logan Barnett&#39;s blog</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 16 Feb 2024 00:00:00 -0800</lastBuildDate>
+    <atom:link href="http://localhost:1313/categories/nix/feed.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Nix Adventures Part 3: stable-diffusion-webui</title>
+      <link>http://localhost:1313/nix-adventures-03/</link>
+      <pubDate>Fri, 16 Feb 2024 00:00:00 -0800</pubDate>
+      <guid>http://localhost:1313/nix-adventures-03/</guid>
+      <description>&lt;div class=&#34;ox-hugo-toc toc&#34;&gt;
+&lt;div class=&#34;heading&#34;&gt;Table of Contents&lt;/div&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#what-is-this&#34;&gt;What is this?&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#adventure-standing-up-a-stable-diffusion-webui-server-on-a-new-host&#34;&gt;Adventure: Standing up a &lt;code&gt;stable-diffusion-webui&lt;/code&gt; server on a new host&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#preparing-the-host&#34;&gt;Preparing the Host&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#refactor-the-host-repository&#34;&gt;Refactor the Host repository&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#fixing-all-of-the-errors&#34;&gt;Fixing all of the errors&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#direct-builds&#34;&gt;Direct builds&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;!--endtoc--&gt;
+&lt;h2 id=&#34;what-is-this&#34;&gt;What is this?&lt;/h2&gt;
+&lt;p&gt;See &lt;a href=&#34;http://localhost:1313/nix-adventures-01/&#34;&gt;Nix Adventures Part 1&lt;/a&gt; for the introduction for all of this.&lt;/p&gt;
+&lt;h2 id=&#34;adventure-standing-up-a-stable-diffusion-webui-server-on-a-new-host&#34;&gt;Adventure: Standing up a &lt;code&gt;stable-diffusion-webui&lt;/code&gt; server on a new host&lt;/h2&gt;
+&lt;p&gt;This is going to loosely be broken up into two parts:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Build an &lt;code&gt;x86_64-linux&lt;/code&gt; or &lt;code&gt;i686-linux&lt;/code&gt; image for the new host.&lt;/li&gt;
+&lt;li&gt;Improve upon the existing &lt;code&gt;stable-diffusion-webui&lt;/code&gt; Nix Flakes setup such that
+the server can be installed and configured via Nix itself.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;preparing-the-host&#34;&gt;Preparing the Host&lt;/h3&gt;
+&lt;p&gt;Preparing the host entails getting cross compilation working on the host
+repository.  Since I&amp;rsquo;ve done that earlier for a Raspberry Pi image, I want this
+new host&amp;rsquo;s base image to leverage that prior work.  As part of doing this, I
+expect to refactor the repository a bit such that reusable bits needn&amp;rsquo;t be
+repeated, and there are clean, free standing modules that can be included a la
+carte for new hosts.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Nix Adventures</title>
+      <link>http://localhost:1313/nix-adventures/</link>
+      <pubDate>Sun, 11 Feb 2024 00:00:00 -0800</pubDate>
+      <guid>http://localhost:1313/nix-adventures/</guid>
+      <description>&lt;ol&gt;
+&lt;li&gt;&lt;a href=&#34;http://localhost:1313/nix-adventures-01/&#34;&gt;Generating a Raspberry Pi image&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://localhost:1313/nix-adventures-02/&#34;&gt;Setting up Machine Learning tools&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;</description>
+    </item>
+    <item>
+      <title>Nix Adventures Part 2: Machine Learning Servers</title>
+      <link>http://localhost:1313/nix-adventures-02/</link>
+      <pubDate>Fri, 19 Jan 2024 00:00:00 -0800</pubDate>
+      <guid>http://localhost:1313/nix-adventures-02/</guid>
+      <description>&lt;div class=&#34;ox-hugo-toc toc&#34;&gt;
+&lt;div class=&#34;heading&#34;&gt;Table of Contents&lt;/div&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#what-is-this&#34;&gt;What is this?&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#today-s-adventure-building-a-suite-of-machine-learning-servers&#34;&gt;Today&amp;rsquo;s adventure: Building a Suite of Machine Learning Servers&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#building-on-macos--localai&#34;&gt;Building on macOS (LocalAI)&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#building-on-macos--stable-diffusion-webui&#34;&gt;Building on macOS (stable-diffusion-webui)&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;!--endtoc--&gt;
+&lt;h2 id=&#34;what-is-this&#34;&gt;What is this?&lt;/h2&gt;
+&lt;p&gt;See &lt;a href=&#34;http://localhost:1313/nix-adventures-01/&#34;&gt;Nix Adventures Part 1&lt;/a&gt; for the introduction for all of this.&lt;/p&gt;
+&lt;h2 id=&#34;today-s-adventure-building-a-suite-of-machine-learning-servers&#34;&gt;Today&amp;rsquo;s adventure: Building a Suite of Machine Learning Servers&lt;/h2&gt;
+&lt;p&gt;I want to get a machine learning platform setup in my local network.  I love the
+power of the Internet and I hate how dependent we are upon it, and the lack of
+privacy and control we have as a result.  But with lots of spare time anyone can
+setup their own servers with this stuff.  &lt;a href=&#34;https://localai.io&#34;&gt;LocalAI&lt;/a&gt; looks good for this.  Cool
+kids can tell me if there&amp;rsquo;s something better.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Nix Adventures (part 1 of ?)</title>
+      <link>http://localhost:1313/nix-adventures-01/</link>
+      <pubDate>Fri, 22 Dec 2023 00:00:00 -0800</pubDate>
+      <guid>http://localhost:1313/nix-adventures-01/</guid>
+      <description>&lt;div class=&#34;ox-hugo-toc toc&#34;&gt;
+&lt;div class=&#34;heading&#34;&gt;Table of Contents&lt;/div&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#what-is-this&#34;&gt;What is this?&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#introduction&#34;&gt;Introduction&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#nix-thus-far&#34;&gt;Nix Thus Far&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#today-s-project-working-on-a-raspberry-pi&#34;&gt;Today&amp;rsquo;s Project: Working on a Raspberry Pi&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#somehow-write-to-the-pi-sd-card&#34;&gt;Somehow Write to the Pi SD card&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#empower-editing-sd-card-files-from-macos-directly&#34;&gt;Empower Editing SD Card Files from macOS Directly&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#making-edits-to-the-sd-card&#34;&gt;Making Edits to the SD Card&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#sshd&#34;&gt;&lt;code&gt;sshd&lt;/code&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#connecting-to-the-pi--usb-c-fail&#34;&gt;Connecting to the Pi (USB-C fail)&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#imaging-the-pi-correctly&#34;&gt;Imaging the Pi Correctly&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#abandon-nix-and-just-get-it-done&#34;&gt;Abandon Nix and Just Get it Done&lt;/a&gt;:private:&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#building-the-image&#34;&gt;Building the Image&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#prior-art&#34;&gt;Prior Art&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#doing-real-nix-things-on-macos&#34;&gt;Doing Real Nix Things on macOS&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#building-the-nixos-pi-image&#34;&gt;Building the NixOS Pi image&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#trying-to-make-it-work-with-digga&#34;&gt;Trying to Make it Work with &lt;code&gt;digga&lt;/code&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#just-use-nix-generators&#34;&gt;Just Use &lt;code&gt;nix-generators&lt;/code&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#extracting-the-image&#34;&gt;Extracting the Image&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#no-joy-on-boot&#34;&gt;No Joy on Boot&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#back-and-display-ports&#34;&gt;Back, and Display Ports&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#actually-joy-on-boot&#34;&gt;Actually Joy on Boot&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#conclusion&#34;&gt;Conclusion&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;!--endtoc--&gt;
+&lt;p&gt;Nix Adventures part 1!&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

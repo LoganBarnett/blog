@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Software-Engineering on Logan Barnett&#39;s blog</title>
+    <link>http://localhost:1313/categories/software-engineering/</link>
+    <description>Recent content in Software-Engineering on Logan Barnett&#39;s blog</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 16 Aug 2022 00:00:00 -0700</lastBuildDate>
+    <atom:link href="http://localhost:1313/categories/software-engineering/feed.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Acing Interviews for Software Engineering Positions</title>
+      <link>http://localhost:1313/acing-interviews/</link>
+      <pubDate>Tue, 16 Aug 2022 00:00:00 -0700</pubDate>
+      <guid>http://localhost:1313/acing-interviews/</guid>
+      <description>&lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;
+&lt;p&gt;I&amp;rsquo;ve seen a lot of clamor over trying to &amp;ldquo;ace&amp;rdquo; interviews for software
+engineering positions. While interviews can definitely go well and poorly, there
+generally isn&amp;rsquo;t a prescribed &amp;ldquo;right way&amp;rdquo; to do something. In this article, we&amp;rsquo;ll
+cover how interviews are put together, and what they target. We&amp;rsquo;ll identify
+objectively &amp;ldquo;bad&amp;rdquo; interviews, and we&amp;rsquo;ll describe how good interviews work.&lt;/p&gt;
+&lt;h2 id=&#34;who-puts-together-interviews&#34;&gt;Who Puts Together Interviews&lt;/h2&gt;
+&lt;p&gt;Interviews are generally put together by a team lead. Higher-ups want to give
+teams the agency for teams to do the filtering they want, so they stay out of
+that process. I&amp;rsquo;ve seen some interview processes where higher-ups get involved
+in a &amp;ldquo;meet and greet&amp;rdquo; fashion, so in a sense they retain some kind of veto
+power. &amp;ldquo;Boss is an institution of mistrust&amp;rdquo;. It makes them feel better. Let them
+have it.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>How to Avoid Edge Cases and Crushing Tech Debt</title>
+      <link>http://localhost:1313/data-modeling/</link>
+      <pubDate>Sat, 21 May 2022 00:00:00 -0700</pubDate>
+      <guid>http://localhost:1313/data-modeling/</guid>
+      <description>&lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;
+&lt;p&gt;When writing any kind of real world applications, &amp;ldquo;edge cases&amp;rdquo; arise - wrinkles
+placed into your beautiful applications which start off as simple &lt;code&gt;if&lt;/code&gt;
+statements and later lead to great sources of confusion and kind of a dumping
+ground for all of the organization&amp;rsquo;s wacky needs. This later takes on the form
+of crushing technical debt and you&amp;rsquo;re wondering how your pristine application
+got here, and how you might avoid it on your next one. Fortunately it is
+avoidable through a simple technique called data modeling.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Function Composition</title>
+      <link>http://localhost:1313/function-composition/</link>
+      <pubDate>Wed, 11 May 2022 00:00:00 -0700</pubDate>
+      <guid>http://localhost:1313/function-composition/</guid>
+      <description>&lt;h2 id=&#34;function-composition&#34;&gt;Function Composition&lt;/h2&gt;
+&lt;p&gt;Function composition is the act of treating functions like small lego bricks
+that you tie together. Composing simple, well known functions to achieve complex
+behavior is like having and advanced vocabulary used to discuss a complex topic.&lt;/p&gt;
+&lt;p&gt;If you want to try some of this out, I recommend &lt;a href=&#34;https://ramdajs.com/repl/&#34;&gt;Ramda&amp;rsquo;s REPL&lt;/a&gt; for experimenting
+with different JavaScript features such as this.&lt;/p&gt;
+&lt;h3 id=&#34;bespoke-average&#34;&gt;Bespoke: Average&lt;/h3&gt;
+&lt;p&gt;Here&amp;rsquo;s some code for writing an &lt;code&gt;average&lt;/code&gt; function. It computes an average value
+from a list of numbers. For reference, an average is all of the numbers added
+together and divided by the number of values.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Consider Not Doing That Rewrite</title>
+      <link>http://localhost:1313/stop-rewrites/</link>
+      <pubDate>Wed, 08 Dec 2021 00:00:00 -0800</pubDate>
+      <guid>http://localhost:1313/stop-rewrites/</guid>
+      <description>&lt;h2 id=&#34;introduction&#34;&gt;&lt;span class=&#34;section-num&#34;&gt;1&lt;/span&gt; Introduction&lt;/h2&gt;
+&lt;p&gt;I&amp;rsquo;ve always heard the software engineering industry is a rapidly changing
+industry. One of the things that contributes to it (and not the other way
+around) is the frequency at which we abandon a pile of work and just start anew.&lt;/p&gt;
+&lt;p&gt;I have not had good experience with this, and this post will go into why. At a
+very high level, here&amp;rsquo;s there&amp;rsquo;s one really big point I want to drive home:
+Rewrites won&amp;rsquo;t unburden a project from technical debt.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Promise and map with JavaScript</title>
+      <link>http://localhost:1313/javascript-promise-and-map/</link>
+      <pubDate>Sat, 01 Aug 2020 00:00:00 -0700</pubDate>
+      <guid>http://localhost:1313/javascript-promise-and-map/</guid>
+      <description>&lt;p&gt;Typically when we think of &lt;code&gt;map&lt;/code&gt; we think of lists, but we can widen our
+thinking of &lt;code&gt;map&lt;/code&gt; and through it get a simpler understanding of how the elusive
+JavaScript &lt;code&gt;Promise&lt;/code&gt; works.&lt;/p&gt;
+&lt;h2 id=&#34;the-type-signature-of-map&#34;&gt;the type signature of map&lt;/h2&gt;
+&lt;p&gt;Let&amp;rsquo;s take the ML notation for &lt;code&gt;map&lt;/code&gt; of a list:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;((a -&amp;gt; b) -&amp;gt; List a -&amp;gt; List b)
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;With ML notation, the best way to read this is that the last arrow is the return
+type. The reason the notation exists this way is because functions in a
+functional language can be modeled as unary, or meaning they only have one
+argument. One can imagine multiple argument functions as sytactic sugar.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Software Engineering - Starter Web app 4</title>
+      <link>http://localhost:1313/software-engineering-starter-web-04/</link>
+      <pubDate>Tue, 21 Aug 2018 00:00:00 -0700</pubDate>
+      <guid>http://localhost:1313/software-engineering-starter-web-04/</guid>
+      <description>&lt;p&gt;In this episode, our hero (that&amp;rsquo;s you!) will be learning a tool that is helpful
+in virtually any kind of development you will wind up working in: Version
+control. Version control is rarely taught in school. It can be somewhat a deep
+topic, but we&amp;rsquo;ll go over some basics of how you see it in the open source world,
+which can carry over significantly to the commercial world.&lt;/p&gt;
+&lt;h2 id=&#34;what-s-version-control&#34;&gt;what&amp;rsquo;s version control?&lt;/h2&gt;
+&lt;p&gt;Version control is like the double-entry bookkeeping technique of saving all
+of your hard work. If you recall on the last lesson, there was an off-the-cuff
+statement about how your computer is just a fancy interface for working with
+files. Version control typically excels at handling text files. This blog post
+is a text file. HTML is text files. The original file that the blog post is
+generated from is a text file. SVG images are also text files. There&amp;rsquo;s also
+non-text files. Generally we call these binary files, but really we could also
+call them shit-files. That&amp;rsquo;s a completely objective industry term and not me
+showing any bias at all. Honest.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Software Engineering - Starter Web app 3</title>
+      <link>http://localhost:1313/software-engineering-starter-web-03/</link>
+      <pubDate>Tue, 10 Jul 2018 00:00:00 -0700</pubDate>
+      <guid>http://localhost:1313/software-engineering-starter-web-03/</guid>
+      <description>&lt;p&gt;This is the third installment of this &lt;a href=&#34;http://localhost:1313/software-engineering-starter-web/&#34;&gt;Starter Web App&lt;/a&gt; series I&amp;rsquo;m doing. In
+&lt;a href=&#34;http://localhost:1313/software-engineering-starter-web-02/&#34;&gt;part 2&lt;/a&gt; we made our app server respond with different formats based on headers
+the client sends. Now we&amp;rsquo;re going to use dynamic data!&lt;/p&gt;
+&lt;p&gt;If you&amp;rsquo;re still on lesson 2, this will be cheating to continue. Spoiler alert!&lt;/p&gt;
+&lt;p&gt;This is about what we should have had from lesson 2.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-js&#34; data-lang=&#34;js&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;kr&#34;&gt;const&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;express&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;require&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;express&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;kr&#34;&gt;const&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;app&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;express&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;()&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nx&#34;&gt;app&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;get&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;/&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;req&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;res&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;k&#34;&gt;if&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;req&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;accepts&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;text/html&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;))&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;nx&#34;&gt;res&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;set&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;Content-Type&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;s1&#34;&gt;&amp;#39;text/html&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;nx&#34;&gt;res&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;send&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s1&#34;&gt;     &amp;lt;html&amp;gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s1&#34;&gt;       &amp;lt;body&amp;gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s1&#34;&gt;         Welcome to the official site for &amp;lt;em&amp;gt;justified&amp;lt;/em&amp;gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s1&#34;&gt;         &amp;lt;strong&amp;gt;cat hatred&amp;lt;/strong&amp;gt;.\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s1&#34;&gt;       &amp;lt;/body&amp;gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s1&#34;&gt;     &amp;lt;/html&amp;gt;&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;else&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;nx&#34;&gt;res&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;set&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;Content-Type&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;s1&#34;&gt;&amp;#39;text/plain&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;nx&#34;&gt;res&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;send&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;ohai&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;})&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nx&#34;&gt;app&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;listen&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;3000&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;()&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;console&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;log&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;Example app listening on port 3000!&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;))&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;providing-data&#34;&gt;providing data&lt;/h2&gt;
+&lt;p&gt;Let&amp;rsquo;s add an endpoint (request handler) that gets us a list of cats. We&amp;rsquo;re going
+to model our endpoints after REST. I have a post that gives a very high level
+overview of REST, which you can read but isn&amp;rsquo;t required to move forward. The
+real basic gist is that with REST, our endpoints are modeled as noun-like
+things, and we have a very small number of fixed verb-like things we can do with
+the noun-like things.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Software Engineering - Starter Web app 2</title>
+      <link>http://localhost:1313/software-engineering-starter-web-02/</link>
+      <pubDate>Fri, 15 Jun 2018 00:00:00 -0700</pubDate>
+      <guid>http://localhost:1313/software-engineering-starter-web-02/</guid>
+      <description>&lt;p&gt;As a continuation of &lt;a href=&#34;http://localhost:1313/software-engineering-starter-web/&#34;&gt;Starter Web App&lt;/a&gt;, we&amp;rsquo;ll be making our server respond with
+some well formatted HTML. We want this so we can also test our web server with
+a real web browser.&lt;/p&gt;
+&lt;h2 id=&#34;why&#34;&gt;why?&lt;/h2&gt;
+&lt;p&gt;If your server is already running, you can visit it in your browser by
+navigating to &lt;a href=&#34;http://localhost:3000&#34;&gt;http://localhost:3000&lt;/a&gt;. You will see the &amp;ldquo;ohai&amp;rdquo; we added earlier
+in a very flat, ugly &amp;ldquo;page&amp;rdquo;. It&amp;rsquo;s not actually a page, but instead how the
+browser displays plain text content. We want to give back some actual HTML so
+we can make a pretty page with meaningful content.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Software Engineering - Starter Web app</title>
+      <link>http://localhost:1313/software-engineering-starter-web/</link>
+      <pubDate>Wed, 13 Jun 2018 00:00:00 -0700</pubDate>
+      <guid>http://localhost:1313/software-engineering-starter-web/</guid>
+      <description>&lt;p&gt;Hi there! I believe questions are wonderful opportunities to enhance
+documentation. In this case I&amp;rsquo;ve put together a series of posts for putting
+together your first web application using this buzzword list: HTML, CSS,
+Node.js, Express.js, bash (or just a shell), yarn, git, Homebrew, and maybe some
+other stuff I forgot to include.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://localhost:1313/software-engineering-starter-web-01/&#34;&gt;part 1 - getting set up with your local environment, and a tiny server&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://localhost:1313/software-engineering-starter-web-02/&#34;&gt;part 2 - using curl, mime types, and fulfilling an automated test&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://localhost:1313/software-engineering-starter-web-03/&#34;&gt;part 3 - working with data&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://localhost:1313/software-engineering-starter-web-04/&#34;&gt;part 4 - backing it all up with git&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;While this isn&amp;rsquo;t complete, I&amp;rsquo;ll expand upon it anytime I get a chance to help
+someone pick up the trade. Don&amp;rsquo;t worry if it seems like a lot! Fairly consistent
+exposure will keep you moving along the never-ending fractal that is learning
+about software engineering.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Software Engineering - Starter Web app 1</title>
+      <link>http://localhost:1313/software-engineering-starter-web-01/</link>
+      <pubDate>Wed, 13 Jun 2018 00:00:00 -0700</pubDate>
+      <guid>http://localhost:1313/software-engineering-starter-web-01/</guid>
+      <description>&lt;p&gt;The purpose here is to go over some basic web stuff and get a server up and
+running, with maybe a web interface.&lt;/p&gt;
+&lt;h2 id=&#34;legend&#34;&gt;legend&lt;/h2&gt;
+&lt;h3 id=&#34;terminal-commands&#34;&gt;terminal commands&lt;/h3&gt;
+&lt;p&gt;A source block with a &lt;code&gt;$&lt;/code&gt; in front generally means this is a command you
+should run as your normal user from within a terminal or shell. Commands on
+your system are programs, and you should either only run commands you
+understand and/or originate from a trusted (by you) source. If the command is
+prefixed with a &lt;code&gt;#&lt;/code&gt; it means to run the command with elevated permissions,
+such as the &lt;code&gt;root&lt;/code&gt; user or as a &lt;code&gt;sudoer&lt;/code&gt; using &lt;code&gt;sudo&lt;/code&gt;. Generally commands that
+want elevated permissions should be treated with greater scrutiny.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>The Ultimate CI/CD Setup</title>
+      <link>http://localhost:1313/ultimate-cicd-setup/</link>
+      <pubDate>Mon, 01 Jan 2018 00:00:00 -0800</pubDate>
+      <guid>http://localhost:1313/ultimate-cicd-setup/</guid>
+      <description>&lt;h2 id=&#34;introduction&#34;&gt;&lt;span class=&#34;section-num&#34;&gt;1&lt;/span&gt; introduction&lt;/h2&gt;
+&lt;p&gt;CI/CD stands for Continuous Integration / Continous (Delivery|Deployment).
+Roughly when we refer to this, we&amp;rsquo;re talking about an automated
+build/test/deployment suite of tools. Virtually all of your big programs you
+write are useless if they just run on your personal computer. You need to put
+them somewhere so they can run when your computer is off, or other people need
+to be able to use the software you made. So we need to deploy the software
+somewhere, and the software needs to be consumable in a way that doesn&amp;rsquo;t require
+your machine&amp;rsquo;s development setup for those who need to consume said software.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

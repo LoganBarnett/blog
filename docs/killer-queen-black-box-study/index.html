@@ -1,0 +1,384 @@
+<!doctype html><html lang=en dir=auto data-theme=auto><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no"><meta name=robots content="index, follow"><title>Killer Queen Black Box Study | Logan Barnett's blog</title><meta name=keywords content><meta name=description content="
+Table of Contents
+
+changelog
+introduction
+background
+reasoning
+things
+
+frames
+
+history
+complications
+the operating system
+the solution
+side by side
+conclusion
+
+
+frame rate
+
+the problem
+enter vsync
+does KQ use vsync?
+TODO show example of vsync
+
+
+pixels
+
+2D as 3D
+what about the pixel graphics?
+TODO conclusion
+
+
+TODO the wrap glitch
+game stutter
+TODO the &ldquo;drip&rdquo;
+collision
+
+characters
+
+
+
+
+
+
+
+changelog
+
+<2018-06-05 Tue>
+add section about character controllers.
+<2018-03-22 Thu>
+add section about game stutter.
+<2018-01-21 Sun>
+add section about frame rate and vsync.
+
+introduction
+At the Portland scene we like to talk a lot about different things we&rsquo;ve learned
+about Killer Queen, and being that the game is effectively a hunk of software we
+wind up talking a lot about details of its internal implementation. This post is
+about the software implementation we know about Killer Queen or things we are
+able to infer about said software. The source code for Killer Queen is locked in
+a vault somewhere, guarded by a small army of the best speed warriors. As such
+we can&rsquo;t say for 100% certainty about everything. The game is a black box where
+we cannot see inside it. We can make some good guesses though."><meta name=author content="Logan Barnett"><link rel=canonical href=http://localhost:1313/killer-queen-black-box-study/><link crossorigin=anonymous href=http://localhost:1313/assets/css/stylesheet.06e1a6d1bc6bc13a21df21252705abc04a049c880328b236f9d3484cca5ac0f3.css integrity="sha256-BuGm0bxrwToh3yElJwWrwEoEnIgDKLI2+dNITMpawPM=" rel="preload stylesheet" as=style><link rel=icon href=http://localhost:1313/favicon.ico><link rel=icon type=image/png sizes=16x16 href=http://localhost:1313/favicon-16x16.png><link rel=icon type=image/png sizes=32x32 href=http://localhost:1313/favicon-32x32.png><link rel=apple-touch-icon href=http://localhost:1313/apple-touch-icon.png><link rel=mask-icon href=http://localhost:1313/safari-pinned-tab.svg><meta name=theme-color content="#2e2e33"><meta name=msapplication-TileColor content="#2e2e33"><link rel=alternate hreflang=en href=http://localhost:1313/killer-queen-black-box-study/><noscript><style>#theme-toggle,.top-link{display:none}</style><style>@media(prefers-color-scheme:dark){:root{--theme:rgb(29, 30, 32);--entry:rgb(46, 46, 51);--primary:rgb(218, 218, 219);--secondary:rgb(155, 156, 157);--tertiary:rgb(65, 66, 68);--content:rgb(196, 196, 197);--code-block-bg:rgb(46, 46, 51);--code-bg:rgb(55, 56, 62);--border:rgb(51, 51, 51);color-scheme:dark}.list{background:var(--theme)}.toc{background:var(--entry)}}</style></noscript><script>localStorage.getItem("pref-theme")==="dark"?document.querySelector("html").dataset.theme="dark":localStorage.getItem("pref-theme")==="light"?document.querySelector("html").dataset.theme="light":window.matchMedia("(prefers-color-scheme: dark)").matches?document.querySelector("html").dataset.theme="dark":document.querySelector("html").dataset.theme="light"</script><meta property="og:url" content="http://localhost:1313/killer-queen-black-box-study/"><meta property="og:site_name" content="Logan Barnett's blog"><meta property="og:title" content="Killer Queen Black Box Study"><meta property="og:description" content="Table of Contents changelog introduction background reasoning things frames history complications the operating system the solution side by side conclusion frame rate the problem enter vsync does KQ use vsync? TODO show example of vsync pixels 2D as 3D what about the pixel graphics? TODO conclusion TODO the wrap glitch game stutter TODO the “drip” collision characters changelog <2018-06-05 Tue> add section about character controllers. <2018-03-22 Thu> add section about game stutter. <2018-01-21 Sun> add section about frame rate and vsync. introduction At the Portland scene we like to talk a lot about different things we’ve learned about Killer Queen, and being that the game is effectively a hunk of software we wind up talking a lot about details of its internal implementation. This post is about the software implementation we know about Killer Queen or things we are able to infer about said software. The source code for Killer Queen is locked in a vault somewhere, guarded by a small army of the best speed warriors. As such we can’t say for 100% certainty about everything. The game is a black box where we cannot see inside it. We can make some good guesses though."><meta property="og:locale" content="en_us"><meta property="og:type" content="article"><meta property="article:section" content="posts"><meta property="article:published_time" content="2018-01-14T00:00:00-08:00"><meta property="article:modified_time" content="2018-01-14T00:00:00-08:00"><meta name=twitter:card content="summary"><meta name=twitter:title content="Killer Queen Black Box Study"><meta name=twitter:description content="Table of Contents changelog introduction background reasoning things frames history complications the operating system the solution side by side conclusion frame rate the problem enter vsync does KQ use vsync? TODO show example of vsync pixels 2D as 3D what about the pixel graphics? TODO conclusion TODO the wrap glitch game stutter TODO the “drip” collision characters changelog <2018-06-05 Tue> add section about character controllers. <2018-03-22 Thu> add section about game stutter. <2018-01-21 Sun> add section about frame rate and vsync. introduction At the Portland scene we like to talk a lot about different things we’ve learned about Killer Queen, and being that the game is effectively a hunk of software we wind up talking a lot about details of its internal implementation. This post is about the software implementation we know about Killer Queen or things we are able to infer about said software. The source code for Killer Queen is locked in a vault somewhere, guarded by a small army of the best speed warriors. As such we can’t say for 100% certainty about everything. The game is a black box where we cannot see inside it. We can make some good guesses though."><script type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Posts","item":"http://localhost:1313/posts/"},{"@type":"ListItem","position":2,"name":"Killer Queen Black Box Study","item":"http://localhost:1313/killer-queen-black-box-study/"}]}</script><script type=application/ld+json>{"@context":"https://schema.org","@type":"BlogPosting","headline":"Killer Queen Black Box Study","name":"Killer Queen Black Box Study","description":" Table of Contents changelog introduction background reasoning things frames history complications the operating system the solution side by side conclusion frame rate the problem enter vsync does KQ use vsync? TODO show example of vsync pixels 2D as 3D what about the pixel graphics? TODO conclusion TODO the wrap glitch game stutter TODO the \u0026ldquo;drip\u0026rdquo; collision characters changelog \u0026lt;2018-06-05 Tue\u0026gt; add section about character controllers. \u0026lt;2018-03-22 Thu\u0026gt; add section about game stutter. \u0026lt;2018-01-21 Sun\u0026gt; add section about frame rate and vsync. introduction At the Portland scene we like to talk a lot about different things we\u0026rsquo;ve learned about Killer Queen, and being that the game is effectively a hunk of software we wind up talking a lot about details of its internal implementation. This post is about the software implementation we know about Killer Queen or things we are able to infer about said software. The source code for Killer Queen is locked in a vault somewhere, guarded by a small army of the best speed warriors. As such we can\u0026rsquo;t say for 100% certainty about everything. The game is a black box where we cannot see inside it. We can make some good guesses though.\n","keywords":[],"articleBody":" Table of Contents changelog introduction background reasoning things frames history complications the operating system the solution side by side conclusion frame rate the problem enter vsync does KQ use vsync? TODO show example of vsync pixels 2D as 3D what about the pixel graphics? TODO conclusion TODO the wrap glitch game stutter TODO the “drip” collision characters changelog \u003c2018-06-05 Tue\u003e add section about character controllers. \u003c2018-03-22 Thu\u003e add section about game stutter. \u003c2018-01-21 Sun\u003e add section about frame rate and vsync. introduction At the Portland scene we like to talk a lot about different things we’ve learned about Killer Queen, and being that the game is effectively a hunk of software we wind up talking a lot about details of its internal implementation. This post is about the software implementation we know about Killer Queen or things we are able to infer about said software. The source code for Killer Queen is locked in a vault somewhere, guarded by a small army of the best speed warriors. As such we can’t say for 100% certainty about everything. The game is a black box where we cannot see inside it. We can make some good guesses though.\nbackground I (Logan Barnett AKA Day Logan) have done game development both professionally and as a hobbyist for many years now, and I’m an accomplished software engineer. At time of writing my current work is in web development, but I am comfortable straddling both worlds. I used to pay my bills making an educational game in Unity. Unity is the game engine that was used to build Killer Queen. My hobby projects have taken my experience beyond the scope of that game. I have had an opportunity to work with Unity’s physics system (and work around it), use its character controller system, networking, shaders, GUI (editor and in-game), and its logic/behavior system. I also have an educational background in computer engineering, so I have a good conceptual understanding of operating systems, memory models, resource sharing, etc. My resume is here for full transparency.\nreasoning If you had to build a car, there’s a lot of things you could say about building a car without actually having to look at the blueprints. Cars need some way of touching the ground (wheels). They need a drive train that pushes the car in the direction we want to go. There needs to be some kind of steering apparatus (even for self driving cars) so you can make sure the car is moving the direction you want to go. We can do this with software too. In order to accomplish certain things, there’s just machinery that needs to be in place. Unity has a lot of things built into it, and circumventing those built in things so you can do something custom can mean a lot of work. Bumblebee Games doesn’t have that kind of resources. So there’s a lot of things we can infer about the guts of the game without even looking at its source code.\nthings frames history The first time I learned about “frames” was in talk about how Street Fighter 2 works. Keep in mind this game is ancient by today’s standards. With the Street Fighter 2 cabinet, the hardware there focused on exactly one thing: Running Street Fighter 2. This meant the game could make some assumptions about its operation, namely its timing. Street Fighter 2 plays at 30 frames per second, meaning the screen redraws itself 30 times a second. Each cycle between the redraw is a “frame”. During this time, the game does all of its computations. It copies pixels around, computes distances, does hit box checks, etc all in this tight little loop. Since frames in Street Fighter 2 are fixed to this 30 times per second, that means you have about 33 milliseconds to do all of your computations. Any smarts that are in the game have to fit in this time period. If that’s the case, you can count on each frame being 33 milliseconds long, and you can derive timing in the animation system, what your grace period is to throw a fireball, or chain together some combo, or whatever. But the problem is this is a lie. It’s just an infrequent one for Street Fighter.\nRemember Solitaire? That game that came built into Windows 3.x back when you had to clean mouse balls? Yeah that one. I think it’s still in Windows today. If you beat Solitaire, you were given a wonderful little animation of the cards cascading out of their slots, kind of undoing everything you just did. You could easily go use the bathroom and come back to see it still going. This thing took a while. At the time if you were on Windows 3.x and you had a 66 Mhz computer, this would go pretty slow. Once you got a Pentium, you’d notice the animation completed in about a second or two. In both situations, the game was doing the animation as fast as possible, but one computer was significantly faster than the other. Computers back then often had a turbo button. You could use this button to slow your computer down and run older applications that had this kind of timing problem. Street Fighter would be one of those applications.\ncomplications The lie about frame counting is that sometimes the computations can’t complete in the time period they have. This happens a lot in Chun Li’s level: There’s so many animations and other things going on that if the players add a little bit more and maybe step away from each other, the hardware sudden has way too much to do to cram into that 33 millisecond time slice, so it just takes longer, and as a result the game enters a strange kind of slow motion.\nthe operating system Back in the day of Street Fighter 2, and most gaming consoles for that matter, the game you were running was the program the hardware ran. Today even the XBox and PSX consoles run an operating system (OS). When you boot up your mac and run Photoshop or whatever, you’re not running Photoshop. You’re running MacOS. The operating system is a very intricate program that makes it look like you’re running other programs. In reality the OS grants programs the ability to execute a few instructions at a time before the OS interrupts and then gives another program a chance to run on the processor. When it does a good job about switching around really fast, it makes it look like you’re running multiple programs at once. Your games are one of these programs. This makes it really hard to promise that you have exactly 33 milliseconds to complete your operations. In the middle of the frame, the OS could easily have let several dozen other programs run a little bit too, each eating into that precious slice of time.\nAs an example, there’s a small program running in this post that loops and prints the time since the last tick in milliseconds. Notice the variance.\nTime since last tick: Here’s the code that does this, if you want to follow along:\nvar lastTime = Date.now() var el = document.querySelector('[data-id=\"millisecond-monitor\"]') function printMillis() { var delta = Date.now() - lastTime el.innerHTML = delta lastTime = Date.now() window.requestAnimationFrame(printMillis) } window.requestAnimationFrame(printMillis) the solution So how do games not stutter every time your browser takes a bunch of time to inefficiently render a gif you’re not even looking at because you’re playing a game? Games multiply a time delta.\nTake this psuedo-code as an example:\nif player1HoldingRight player1Position.x = player1Position.x + player1Speed Here player1Speed is a simple fixed number. The speed is tuned to you playing the game at 30 FPS. The new x is the old x plus that speed. Simple! But a lie. To get around it, we use the delta since our last frame.\nif player1HoldingRight player1Position.x = player1Position.x + (player1Speed * timeSinceLastTick) Sometimes we call this a tick. Here we do multiplication. If the delta was high, then the amount we move the player is high. If it’s low, the amount we move the player is low. Mathematically it scales perfectly. There’s some complications with this approach, but rest assured this is what everyone uses today. Unity games are no exception.\nHere’s an example of the timing scaling to your machine’s speed:\nside by side I managed to get my hands on the up-until-now rumored purple queen sprites. Many berry runners died to bring us this sprite from KQ 4 Turbo X Championship Legendary Edition. You can see the queens moving horizontally in separate “swim lanes”. We have exaggerated artificial delays we’re adding to demonstrate how the varied methods work.\nRough delay per frame graph Speed canvas Fixed frame (tick) Fixed tick canvas Variable frame (tick) Variable tick canvas Ideal variable frame (tick) Ideal variable tick canvas conclusion We cannot assume all frames are created equal. Frames are not fixed slices of time but instead highly varied slices of time.\nframe rate Building upon the idea of a variable frame rate - frame rates can sometimes have upper limits. We do that sometimes as a way of preventing a visual artifact called “tearing”. Before we explain the fix, let’s explain the problem.\nthe problem Imagine the kind of work it takes to make a stop motion movie. You meticulously position all of the objects in the scene, setup your lights, focus the camera (pray that you didn’t nudge it), and take that picture. Okay great. Computers do this too, but they can’t spend minutes doing it. Try 33 milliseconds at worst case.\nThere’s a two dimensional section of memory called a buffer, and the game’s job is to translate the game’s state into a bunch of colors. These colors are destined to populate pixels on the screen, and this is how you see all the pretty things in the game. The monitor that displays this information is a simplistic device though. It redraws itself at some fixed rate (60 Hz to 75 Hz, depending on the hardware). CRTs are closer to 30 Hz if I recall. The monitor shows stuff at its own rate, not the video card’s. So what winds up happening is the screen can start redrawing the screen using the buffer as the game is also writing to that buffer. What this means is you wind up seeing part of the last frame and part of the current frame at the same time, but there will be a seam (horizontal due to how the hardware works).\nenter vsync vsync is a feature that’s really easy to use on a game engine. It’s a simple toggle that tells the game it has to wait until that buffer is ready and then it can draw to that buffer. The monitor won’t see the buffer until after the game has finished writing to it. The tradeoff is the game has to sit on its hands when it could be calculating smoke trajectories of bong stacks in weed-em-up games. It slows the game down, sometimes in a noticeably adverse way.\nIt’s worth noting there’s other ways to combat tearing such as double or triple buffering, but these are mitigation strategies. At the moment there’s not an actual fix. There’s been development on gaming monitors that can communicate with the video card and sync up in a less primitive way.\ndoes KQ use vsync? From staring too long at the background on the game, it would seem like Killer Queen does indeed not use vsync currently. When the background scrolls upwards, you can see the tear. That said, I’ve noticed that cabinets can perform a little differently when they get hooked up to streaming equipment. The streaming equipment influences the frame rate of displays. So it’s hard to say one way or another with much certainty.\nTODO show example of vsync pixels 2D as 3D Display sizes vary all over the place. The result is game engines don’t use pixels directly anymore. Even 2D games are rendered using 3D libraries. In Unity’s case 2D things will be rectangles that face the camera. The coordinate system Unity uses is arbitrary. You could change the size of your camera and be able to see further, for example. All of the coordinates used in Unity are floating point numbers. Floating point numbers are the poor man’s numbers that allow for decimals. Floating point numbers are “lossy”, meaning they aren’t exact and even though it might look like the numbers are correct they actually aren’t the same thing. This doesn’t mean Unity is doing anything poorly. The world of 3D gaming is dominated by floating point numbers. The only things that become hard with floating point numbers are when you want to do exact comparisons and a large scaling distance.\nwhat about the pixel graphics? Generally what happens with pixel graphics is someone will build the images using fixed pixels, and then assign that image to a rectangle that’ll show up on the screen. Most of the time there’s a filter applied to the images in real-time that blurs and distorts the image. You want this in a vast majority of 3D games, as it addresses graininess and a number of other visual artifacts. In the case of retro graphics games, the filter is disabled so you see the raw pixels. They are still stretched though.\nTODO conclusion TODO the wrap glitch game stutter Sometimes the game stutters. There’s a variety of reasons as to why this can happen that are completely independent of the game itself. The operating system might have some expensive processes that wake up and do lots of work suddenly and leave the game starved for resources, for example. More often than not it will be garbage collection that’s the cause of stutters.\nthe dark ages of memory management\nLet’s rewind to 2018 where games are still written in C++. Yup. It still happens. The common belief is that games need to run at maximum speed and C++ is the closest intersection between abstractable and close to the raw processor as possible. In reality it’s like running a civilization without running water just because you want to be closer to nature. Barbarism ensues. Programmers generally don’t (and can’t) know exactly how much memory their applications will need when they are writing software for it. Even if we had an idea, it would be insanely hard to get it right. Games can easily take billions of bytes of memory. So instead of declaring upfront how much memory we need, we instead gradually ask the operating system for more memory to use. Memory is used for things like tracking each berry on the map, or the position, momentum, facing direction, etc of a character. Basically anything you can see or conceptualize in the game is tracked somehow in the system’s memory. In the days of C/C++, we would ask for memory and then we’d have to tell the operating system when we were done with it. If we forgot (and we do this all the fucking time), we’d wind up with something called a memory leak. A memory leak means our program asked for memory it will never give back. If the program does this too many times, we’ll use up all of the memory on the computer, and then we run into trouble.\ngarbage collection\nUnity is backed by a C/C++ engine, but as game authors everything is written some .net language - usually C#. C# doesn’t use direct memory management like C++ does. Instead it uses a garbage collection system like many other modern programming languages do. Garbage collection is like a little sibling program that runs alongside your primary program. It watches all the little asks for memory that your system does, and tracks what data references other data. Specifically it’s looking for data that nothing references.\nLet’s see how it works with some arbitrary character setup:\n[shirt] [pants] [rat bastard sword] [program] --\u003e [character1] package character1 { [legs] --\u003e [pants] [torso] --\u003e [shirt] [hand] --\u003e [rat bastard sword] } Here we have a character with leg, torso, and hand attributes. Each of these attributes holds a “reference” to some piece of data in the system. In this case it’s pants, a shirt, and a rat bastard sword. The character itself hangs off of the main program. These references are like little links that point to the data we need. If we have this character, we can get its torso item if we like. For funsies, let’s remove the hand item:\n[shirt] [pants] [rat bastard sword] [program] --\u003e [character1] package character1 { [legs] --\u003e [pants] [torso] --\u003e [shirt] [hand] } When the garbage collector sees that there’s no reference to the rat bastard sword, it knows that it’s safe to remove the rat bastard sword from memory and give it back to the operating system. Things like this are very simple for the garbage collector to do. Let’s make it slightly more complicated.\n[shirt] [pants] [program] --\u003e [treasure chest] [treasure chest] --\u003e [rat bastard sword] package \"rat bastard sword\" { [container] --\u003e [treasure chest] } [program] -\u003e [character1] package character1 { [legs] --\u003e [pants] [torso] --\u003e [shirt] [hand] } No surprises yet. Here we’ve added a treasure chest that contains our rat bastard sword. We just moved the sword around. For the sake of argument, let’s say the rat bastard sword holds a reference to its container - the treasure chest. Now here comes the curve ball: We’re going to destroy the treasure chest. We simply do that by unlinking it, or removing its reference to keep the vernacular.\n[shirt] [pants] [treasure chest] --\u003e [rat bastard sword] package \"rat bastard sword\" { [container] --\u003e [treasure chest] } [program] -\u003e [character1] package character1 { [legs] --\u003e [pants] [torso] --\u003e [shirt] [hand] } Wait a second - our simple rule of removing things that are no longer referenced won’t work here! These objects both reference each other, so they elude our simple rule. Fuck. Whelp, welcome to software engineering. This is why software conferences are also wonderful gateways to alcoholism.\nLet’s remove our example for a moment and show something actually complicated:\n[program] [A] -\u003e [B] [B] -\u003e [C] [C] -\u003e [D] [D] -\u003e [E] [E] -\u003e [...] [...] -\u003e [Z] [Z] -\u003e [A] The garbage collector has to solve this puzzle among billions of bytes of memory. It’s a nightmare, and it takes time to do. In the mean time, the program that’s using all of this memory is moving things around, creating, removing, and changing references constantly.\nwhy you should care\nThe garbage collector must pause the entire program to perform a full garbage collect (or GC). If there’s a lot of memory to go through, this can be a long pause. In games, this is death.\nUnity gets away with this as a game engine not through any kind of technical feat. Unity is simply used in a lot of contexts where it doesn’t matter. If you’re playing Civ5, you won’t care as a player if there’s an occasional hiccup. I don’t care that some zombie shooter game on my sons’ iPads has to pause occasionally. If you’re playing some single player indie game, you probably don’t care either. Unity is all about these kinds of games.\nRemember the side by side I put together showing how different timing models work with delays? You’d better fucking remember. That was a lot of work!\nThe garbage collector will cause these long hiccups, which sometimes are less than a second, and it will ruin your day. Imagine how precise the timing has to be when you perform a j-hook. Only now add that half second hiccup in the middle of it. Oops.\nPredicting how memory models will behave while the program is actually running can be akin to predicting stock market fluctuations, except there’s not actually any money in it. Killer Queen doesn’t have that much it needs to track, but it still needs to track things. When a berry is scooped up, it might be destroyed along with all the things it had hanging off of it. When your drone dies, the drone may be destroyed and the berry created anew. This all creates churn. Long running games might make this problem more apparent due to the memory model getting fragmented over time, or memory leaks occur because the code didn’t release the reference when it needed to.\nAs game engineers we can mitigate that with something called “object pooling”. With object pooling, we simply have a pool of objects and we return them to the pool when we’re done or have no use for them. This is extra work though, and most indie developers don’t prioritize doing this, let alone even knowing it’s something they can do.\nThis is why certain very critical executions in the game can be absolutely perilous to do. Even if you are capable of executing them properly 100% of the time, the game may simply decide it needs to take a break and garbage collect right before you turn around, hit that button, etc. Then it processes a long tick, and registers that you bumped into someone facing the wrong way, and now you’re down another egg.\nTODO the “drip” collision characters In Unity, the CharacterController is a component you add to a game object that makes it really easy to control as a player. It’s not “physics”, similar to how Mario has never jumped around with physics. Yeah, Mario is influenced by a kind of gravity, but he’s propelled by you holding the jump button longer (meaning more “thrust” would be applied after he left the ground), and steering in the air is possible in many platformers, but on the scale any of us could jump is not possible, even if we could jump 10x higher than we can now. So it’s not physics. It’s a weird kind of game physics and the CharacterController scratches this itch rather well. It has all kinds of knobs to turn for things like gravity, max falling speed, air speed and control, etc. It also is really nice because it knows how to move “around” small obstacles - very small like a single stair step.\nThe CharacterController uses a 3D capsule (pill shape) as its volume for knowing when it’s running into things. It works really well for most “human” shaped things. If you need to, you can reduce the height to get something closer to a sphere. Effectively, it’s a tube with two hemispheres at the top and bottom. This has interesting interaction with a rectangular volume though.\nIf you could draw the character controller over a character, this is what it would look like:\nCosmetic pieces will totally fall out of the bounding area, and that’s okay. This kind of approximation is totally fine for the kind of game KQ is, and a majority of others as well. Keep in mind, this specifically for movement and bumping into inert objects such as terrain. The CharacterController itself is not a collider. We’ll cover that more in another section.\n","wordCount":"3851","inLanguage":"en","datePublished":"2018-01-14T00:00:00-08:00","dateModified":"2018-01-14T00:00:00-08:00","author":[{"@type":"Person","name":"Logan Barnett"}],"mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:1313/killer-queen-black-box-study/"},"publisher":{"@type":"Organization","name":"Logan Barnett's blog","logo":{"@type":"ImageObject","url":"http://localhost:1313/favicon.ico"}}}</script></head><body id=top><header class=header><nav class=header-nav><div class=logo><a href=http://localhost:1313/ accesskey=h title="Logan Barnett's blog (Alt + H)">Logan Barnett's blog</a><div class=logo-switches><button id=theme-toggle class=theme-toggle accesskey=t title="(Alt + T)" aria-label="Toggle theme">
+<svg class="moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+<svg class="sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button></div></div><ul id=menu class=menu><li><a href=http://localhost:1313/about/ title=About><span>About</span></a></li><li><a href=http://localhost:1313/categories/ title=Categories><span>Categories</span></a></li><li><a href=http://localhost:1313/resume/ title=Resume><span>Resume</span></a></li></ul></nav></header><main class=main><article class=post-single><header class=post-header><nav class=breadcrumbs role=navigation aria-label=Breadcrumb><a href=http://localhost:1313/>Home</a>
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right"><polyline points="9 18 15 12 9 6"/></svg>
+<a href=http://localhost:1313/posts/>Posts</a></nav><h1 class="post-title entry-hint-parent">Killer Queen Black Box Study</h1><div class=post-meta><span title='2018-01-14 00:00:00 -0800 PST'>2018-01-14</span>&nbsp;·&nbsp;<span>19 min</span>&nbsp;·&nbsp;<span>3851 words</span>&nbsp;·&nbsp;<span>Logan Barnett</span></div></header><div class="post-content md-content"><div class="ox-hugo-toc toc"><div class=heading>Table of Contents</div><ul><li><a href=#changelog>changelog</a></li><li><a href=#introduction>introduction</a></li><li><a href=#background>background</a></li><li><a href=#reasoning>reasoning</a></li><li><a href=#things>things</a><ul><li><a href=#frames>frames</a><ul><li><a href=#history>history</a></li><li><a href=#complications>complications</a></li><li><a href=#the-operating-system>the operating system</a></li><li><a href=#the-solution>the solution</a></li><li><a href=#side-by-side>side by side</a></li><li><a href=#conclusion>conclusion</a></li></ul></li><li><a href=#frame-rate>frame rate</a><ul><li><a href=#the-problem>the problem</a></li><li><a href=#enter-vsync>enter vsync</a></li><li><a href=#does-kq-use-vsync>does KQ use vsync?</a></li><li><a href=#show-example-of-vsync><span class="org-todo todo TODO">TODO</span> show example of vsync</a></li></ul></li><li><a href=#pixels>pixels</a><ul><li><a href=#2d-as-3d>2D as 3D</a></li><li><a href=#what-about-the-pixel-graphics>what about the pixel graphics?</a></li><li><a href=#conclusion><span class="org-todo todo TODO">TODO</span> conclusion</a></li></ul></li><li><a href=#the-wrap-glitch><span class="org-todo todo TODO">TODO</span> the wrap glitch</a></li><li><a href=#game-stutter>game stutter</a></li><li><a href=#the-drip><span class="org-todo todo TODO">TODO</span> the &ldquo;drip&rdquo;</a></li><li><a href=#collision>collision</a><ul><li><a href=#characters>characters</a></li></ul></li></ul></li></ul></div><h2 id=changelog>changelog<a hidden class=anchor aria-hidden=true href=#changelog>#</a></h2><dl><dt><span class=timestamp-wrapper><span class=timestamp>&lt;2018-06-05 Tue></span></span></dt><dd>add section about <a href=#characters>character controllers</a>.</dd><dt><span class=timestamp-wrapper><span class=timestamp>&lt;2018-03-22 Thu></span></span></dt><dd>add section about <a href=#game-stutter>game stutter</a>.</dd><dt><span class=timestamp-wrapper><span class=timestamp>&lt;2018-01-21 Sun></span></span></dt><dd>add section about <a href=#frame-rate>frame rate and vsync</a>.</dd></dl><h2 id=introduction>introduction<a hidden class=anchor aria-hidden=true href=#introduction>#</a></h2><p>At the Portland scene we like to talk a lot about different things we&rsquo;ve learned
+about Killer Queen, and being that the game is effectively a hunk of software we
+wind up talking a lot about details of its internal implementation. This post is
+about the software implementation we know about Killer Queen or things we are
+able to infer about said software. The source code for Killer Queen is locked in
+a vault somewhere, guarded by a small army of the best speed warriors. As such
+we can&rsquo;t say for 100% certainty about everything. The game is a black box where
+we cannot see inside it. We can make some good guesses though.</p><h2 id=background>background<a hidden class=anchor aria-hidden=true href=#background>#</a></h2><p>I (Logan Barnett AKA Day Logan) have done game development both professionally
+and as a hobbyist for many years now, and I&rsquo;m an accomplished software engineer.
+At time of writing my current work is in web development, but I am comfortable
+straddling both worlds. I used to pay my bills making an educational game in
+Unity. Unity is the game engine that was used to build Killer Queen. My hobby
+projects have taken my experience beyond the scope of that game. I have had
+an opportunity to work with Unity&rsquo;s physics system (and work around it), use its
+character controller system, networking, shaders, GUI (editor and in-game), and
+its logic/behavior system. I also have an educational background in computer
+engineering, so I have a good conceptual understanding of operating systems,
+memory models, resource sharing, etc. My <a href=http://localhost:1313/resume.html>resume</a> is here for full transparency.</p><h2 id=reasoning>reasoning<a hidden class=anchor aria-hidden=true href=#reasoning>#</a></h2><p>If you had to build a car, there&rsquo;s a lot of things you could say about building
+a car without actually having to look at the blueprints. Cars need some way of
+touching the ground (wheels). They need a drive train that pushes the car in the
+direction we want to go. There needs to be some kind of steering apparatus (even
+for self driving cars) so you can make sure the car is moving the direction you
+want to go. We can do this with software too. In order to accomplish certain
+things, there&rsquo;s just machinery that needs to be in place. Unity has a lot of
+things built into it, and circumventing those built in things so you can do
+something custom can mean a <span class=underline>lot</span> of work. Bumblebee Games doesn&rsquo;t have that
+kind of resources. So there&rsquo;s a lot of things we can infer about the guts of the
+game without even looking at its source code.</p><h2 id=things>things<a hidden class=anchor aria-hidden=true href=#things>#</a></h2><h3 id=frames>frames<a hidden class=anchor aria-hidden=true href=#frames>#</a></h3><h4 id=history>history<a hidden class=anchor aria-hidden=true href=#history>#</a></h4><p>The first time I learned about &ldquo;frames&rdquo; was in talk about how Street Fighter 2
+works. Keep in mind this game is ancient by today&rsquo;s standards. With the Street
+Fighter 2 cabinet, the hardware there focused on exactly one thing: Running
+Street Fighter 2. This meant the game could make some assumptions about its
+operation, namely its timing. Street Fighter 2 plays at 30 frames per second,
+meaning the screen redraws itself 30 times a second. Each cycle between the
+redraw is a &ldquo;frame&rdquo;. During this time, the game does all of its computations. It
+copies pixels around, computes distances, does hit box checks, etc all in this
+tight little loop. Since frames in Street Fighter 2 are fixed to this 30 times
+per second, that means you have about 33 milliseconds to do all of your
+computations. Any smarts that are in the game have to fit in this time period.
+If that&rsquo;s the case, you can count on each frame being 33 milliseconds long, and
+you can derive timing in the animation system, what your grace period is to
+throw a fireball, or chain together some combo, or whatever. But the problem is
+this is a lie. It&rsquo;s just an infrequent one for Street Fighter.</p><p>Remember Solitaire? That game that came built into Windows 3.x back when you had
+to clean mouse balls? Yeah that one. I think it&rsquo;s still in Windows today. If you
+beat Solitaire, you were given a wonderful little animation of the cards
+cascading out of their slots, kind of undoing everything you just did. You could
+easily go use the bathroom and come back to see it still going. This thing took
+a while. At the time if you were on Windows 3.x and you had a 66 Mhz computer,
+this would go pretty slow. Once you got a Pentium, you&rsquo;d notice the animation
+completed in about a second or two. In both situations, the game was doing the
+animation as fast as possible, but one computer was significantly faster than
+the other. Computers back then often had a turbo button. You could use this
+button to slow your computer down and run older applications that had this kind
+of timing problem. Street Fighter would be one of those applications.</p><h4 id=complications>complications<a hidden class=anchor aria-hidden=true href=#complications>#</a></h4><p>The lie about frame counting is that sometimes the computations can&rsquo;t complete
+in the time period they have. This happens a lot in Chun Li&rsquo;s level: There&rsquo;s so
+many animations and other things going on that if the players add a little bit
+more and maybe step away from each other, the hardware sudden has way too much
+to do to cram into that 33 millisecond time slice, so it just takes longer, and
+as a result the game enters a strange kind of slow motion.</p><h4 id=the-operating-system>the operating system<a hidden class=anchor aria-hidden=true href=#the-operating-system>#</a></h4><p>Back in the day of Street Fighter 2, and most gaming consoles for that matter,
+the game you were running was the program the hardware ran. Today even the XBox
+and PSX consoles run an operating system (OS). When you boot up your mac and run
+Photoshop or whatever, you&rsquo;re not running Photoshop. You&rsquo;re running MacOS. The
+operating system is a very intricate program that makes it look like you&rsquo;re
+running other programs. In reality the OS grants programs the ability to execute
+a few instructions at a time before the OS interrupts and then gives another
+program a chance to run on the processor. When it does a good job about
+switching around really fast, it makes it look like you&rsquo;re running multiple
+programs at once. Your games are one of these programs. This makes it really
+hard to promise that you have exactly 33 milliseconds to complete your
+operations. In the middle of the frame, the OS could easily have let several
+dozen other programs run a little bit too, each eating into that precious slice
+of time.</p><p>As an example, there&rsquo;s a small program running in this post that loops and
+prints the time since the last tick in milliseconds. Notice the variance.</p><div>Time since last tick: <span data-id=millisecond-monitor></span></div><p>Here&rsquo;s the code that does this, if you want to follow along:</p><p><a id=code-snippet--time-delta-monitor></a></p><div class=highlight><pre tabindex=0 class=chroma><code class=language-javascript data-lang=javascript><span class=line><span class=cl><span class=kd>var</span> <span class=nx>lastTime</span> <span class=o>=</span> <span class=nb>Date</span><span class=p>.</span><span class=nx>now</span><span class=p>()</span>
+</span></span><span class=line><span class=cl><span class=kd>var</span> <span class=nx>el</span> <span class=o>=</span> <span class=nb>document</span><span class=p>.</span><span class=nx>querySelector</span><span class=p>(</span><span class=s1>&#39;[data-id=&#34;millisecond-monitor&#34;]&#39;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=kd>function</span> <span class=nx>printMillis</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=kd>var</span> <span class=nx>delta</span> <span class=o>=</span> <span class=nb>Date</span><span class=p>.</span><span class=nx>now</span><span class=p>()</span> <span class=o>-</span> <span class=nx>lastTime</span>
+</span></span><span class=line><span class=cl>  <span class=nx>el</span><span class=p>.</span><span class=nx>innerHTML</span> <span class=o>=</span> <span class=nx>delta</span>
+</span></span><span class=line><span class=cl>  <span class=nx>lastTime</span> <span class=o>=</span> <span class=nb>Date</span><span class=p>.</span><span class=nx>now</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>  <span class=nb>window</span><span class=p>.</span><span class=nx>requestAnimationFrame</span><span class=p>(</span><span class=nx>printMillis</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=nb>window</span><span class=p>.</span><span class=nx>requestAnimationFrame</span><span class=p>(</span><span class=nx>printMillis</span><span class=p>)</span>
+</span></span></code></pre></div><script type=text/javascript></script><script type=text/javascript>var lastTime=Date.now(),el=document.querySelector('[data-id="millisecond-monitor"]');function printMillis(){var e=Date.now()-lastTime;el.innerHTML=e,lastTime=Date.now(),window.requestAnimationFrame(printMillis)}window.requestAnimationFrame(printMillis)</script><h4 id=the-solution>the solution<a hidden class=anchor aria-hidden=true href=#the-solution>#</a></h4><p>So how do games not stutter every time your browser takes a bunch of time to
+inefficiently render a gif you&rsquo;re not even looking at because you&rsquo;re playing a
+game? Games multiply a time delta.</p><p>Take this psuedo-code as an example:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>if player1HoldingRight
+</span></span><span class=line><span class=cl>  player1Position.x = player1Position.x + player1Speed
+</span></span></code></pre></div><p>Here <code>player1Speed</code> is a simple fixed number. The speed is tuned to you playing
+the game at 30 FPS. The new <code>x</code> is the old <code>x</code> plus that speed. Simple! But a
+lie. To get around it, we use the delta since our last frame.</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>if player1HoldingRight
+</span></span><span class=line><span class=cl>  player1Position.x = player1Position.x + (player1Speed * timeSinceLastTick)
+</span></span></code></pre></div><p>Sometimes we call this a tick. Here we do multiplication. If the delta was high,
+then the amount we move the player is high. If it&rsquo;s low, the amount we move the
+player is low. Mathematically it scales perfectly. There&rsquo;s some complications
+with this approach, but rest assured <span class=underline>this is what everyone uses today</span>. Unity
+games are no exception.</p><p>Here&rsquo;s an example of the timing scaling to your machine&rsquo;s speed:</p><iframe src=https://www.winningsolitaire.com></iframe><h4 id=side-by-side>side by side<a hidden class=anchor aria-hidden=true href=#side-by-side>#</a></h4><p>I managed to get my hands on the up-until-now rumored purple queen sprites.
+Many berry runners died to bring us this sprite from KQ 4 Turbo X
+Championship Legendary Edition. You can see the queens moving horizontally
+in separate &ldquo;swim lanes&rdquo;. We have exaggerated artificial delays we&rsquo;re adding
+to demonstrate how the varied methods work.</p><div data-id=swim-lanes style=width:100%;height:28em><div style=position:absolute>Rough delay per frame graph</div><canvas data-id=speed-graph style=display:block width=0px height=0px>
+Speed canvas</canvas><div style=position:absolute>Fixed frame (tick)</div><canvas data-id=fixed-tick style=display:block width=0px height=0px>
+Fixed tick canvas</canvas><div style=position:absolute>Variable frame (tick)</div><canvas data-id=variable-tick style=display:block width=0px height=0px>
+Variable tick canvas</canvas><div style=position:absolute>Ideal variable frame (tick)</div><canvas data-id=ideal-variable-tick style=display:block width=0px height=0px>
+Ideal variable tick canvas</canvas></div><script type=text/javascript>"use strict";function initSwimLane(e,t){return t.height=e.clientHeight/4,t.width=e.clientWidth,t}var lastTick,reset,container=document.querySelector('[data-id="swim-lanes"]'),speedGraphCanvas=initSwimLane(container,document.querySelector('[data-id="speed-graph"]')),fixedTickCanvas=initSwimLane(container,document.querySelector('[data-id="fixed-tick"]')),variableTickCanvas=initSwimLane(container,document.querySelector('[data-id="variable-tick"]')),idealVariableTickCanvas=initSwimLane(container,document.querySelector('[data-id="ideal-variable-tick"]'));function easeQuad(e){return e<.5?2*e*e:-1+(4-2*e)*e}lastTick=new Date;function withinSpeedDip(e,t){return t>e-e*.66&&t<e-e*.33}function calcDelay(e,t){if(withinSpeedDip(e,t)){var n=(t-e*.33)/(e*.33),s=easeQuad(n*1.8)*100;return s+33}return 33}function plotSpeedGraph(e){var o=e.height,n=e.width,t=e.getContext("2d");t.beginPath(),t.strokeStyle="lightgreen",t.lineWidth=3;const s=o*.75;t.moveTo(0,s),t.lineTo(n*.33,s),t.quadraticCurveTo(n*.5,-o*.5,n*.66,s),t.lineTo(n,s),t.stroke()}reset=[!1,!1,!1],setInterval(function(){reset=[!0,!0,!0]},5*1e3);function startFixed(e){var t=fixedTickCanvas.width*.01;tickWithDelay(0,drawQueen,function(){return t},e,fixedTickCanvas,0,0)}function startVariable(e){var t=variableTickCanvas.width*3e-4;tickWithDelay(1,drawQueen,function(e){var n=t*e;return n<0&&console.log("unexpected offset",n),n>0?n:-n},e,variableTickCanvas,0,0)}function startIdealVariable(e){var t=idealVariableTickCanvas.width*3e-4;tickWithoutDelay(2,drawQueen,function(e){return t*e},e,idealVariableTickCanvas,0,0)}function loadQueen(){var e=new Image;e.addEventListener("load",function(){startFixed(e),startVariable(e),startIdealVariable(e)},!1),e.src="/blog/assets/kq-purple-queen-float-forward-01.png"}function tickSpeedGraph(){}function drawQueen(e,t,n,s,o,i){var r=s.height,c=s.width,l=n.height/2,a=s.getContext("2d");return a.clearRect(0,0,c,r),i+=t(o),(reset[0]||reset[1]||reset[2])&&(reset[e]=!1,i=0),a.drawImage(n,i,l),a.stroke(),i}function tickWithoutDelay(e,t,n,s,o,i){setTimeout(function(){var a=t(e,n,s,o,33,i);tickWithoutDelay(e,t,n,s,o,a)},33)}function tickWithDelay(e,t,n,s,o,i,a){var r=calcDelay(o.width,a+s.width/2);setTimeout(function(){var c=t(e,n,s,o,i,a);tickWithDelay(e,t,n,s,o,r,c)},i)}plotSpeedGraph(speedGraphCanvas),loadQueen()</script><h4 id=conclusion>conclusion<a hidden class=anchor aria-hidden=true href=#conclusion>#</a></h4><p>We cannot assume all frames are created equal. Frames are not fixed slices of
+time but instead highly varied slices of time.</p><h3 id=frame-rate>frame rate<a hidden class=anchor aria-hidden=true href=#frame-rate>#</a></h3><p>Building upon the idea of a variable frame rate - frame rates can sometimes
+have upper limits. We do that sometimes as a way of preventing a visual
+artifact called &ldquo;tearing&rdquo;. Before we explain the fix, let&rsquo;s explain the
+problem.</p><h4 id=the-problem>the problem<a hidden class=anchor aria-hidden=true href=#the-problem>#</a></h4><p>Imagine the kind of work it takes to make a stop motion movie. You
+meticulously position all of the objects in the scene, setup your lights,
+focus the camera (pray that you didn&rsquo;t nudge it), and take that picture.
+Okay great. Computers do this too, but they can&rsquo;t spend minutes doing it.
+Try 33 milliseconds at worst case.</p><p>There&rsquo;s a two dimensional section of memory called a buffer, and the game&rsquo;s
+job is to translate the game&rsquo;s state into a bunch of colors. These colors
+are destined to populate pixels on the screen, and this is how you see all
+the pretty things in the game. The monitor that displays this information is
+a simplistic device though. It redraws itself at some fixed rate (60 Hz to
+75 Hz, depending on the hardware). CRTs are closer to 30 Hz if I recall. The
+monitor shows stuff at its own rate, not the video card&rsquo;s. So what winds up
+happening is the screen can start redrawing the screen using the buffer <span class=underline>as
+the game is also writing to that buffer</span>. What this means is you wind up
+seeing part of the last frame <span class=underline>and</span> part of the current frame at the same
+time, but there will be a seam (horizontal due to how the hardware works).</p><h4 id=enter-vsync>enter vsync<a hidden class=anchor aria-hidden=true href=#enter-vsync>#</a></h4><p><code>vsync</code> is a feature that&rsquo;s really easy to use on a game engine. It&rsquo;s a
+simple toggle that tells the game it has to wait until that buffer is ready
+and then it can draw to that buffer. The monitor won&rsquo;t see the buffer until
+after the game has finished writing to it. The tradeoff is the game has to
+sit on its hands when it could be calculating smoke trajectories of bong
+stacks in weed-em-up games. It slows the game down, sometimes in a
+noticeably adverse way.</p><p>It&rsquo;s worth noting there&rsquo;s other ways to combat tearing such as double or
+triple buffering, but these are mitigation strategies. At the moment there&rsquo;s
+not an actual fix. There&rsquo;s been development on gaming monitors that can
+communicate with the video card and sync up in a less primitive way.</p><h4 id=does-kq-use-vsync>does KQ use vsync?<a hidden class=anchor aria-hidden=true href=#does-kq-use-vsync>#</a></h4><p>From staring too long at the background on the game, it would seem like
+Killer Queen does indeed not use vsync currently. When the background
+scrolls upwards, you can see the tear. That said, I&rsquo;ve noticed that cabinets
+can perform a little differently when they get hooked up to streaming
+equipment. The streaming equipment influences the frame rate of displays. So
+it&rsquo;s hard to say one way or another with much certainty.</p><h4 id=show-example-of-vsync><span class="org-todo todo TODO">TODO</span> show example of vsync<a hidden class=anchor aria-hidden=true href=#show-example-of-vsync>#</a></h4><h3 id=pixels>pixels<a hidden class=anchor aria-hidden=true href=#pixels>#</a></h3><h4 id=2d-as-3d>2D as 3D<a hidden class=anchor aria-hidden=true href=#2d-as-3d>#</a></h4><p>Display sizes vary all over the place. The result is game engines don&rsquo;t use
+pixels directly anymore. Even 2D games are rendered using 3D libraries. In
+Unity&rsquo;s case 2D things will be rectangles that face the camera. The coordinate
+system Unity uses is arbitrary. You could change the size of your camera and be
+able to see further, for example. All of the coordinates used in Unity are
+floating point numbers. Floating point numbers are the poor man&rsquo;s numbers that
+allow for decimals. Floating point numbers are &ldquo;lossy&rdquo;, meaning they aren&rsquo;t
+exact and even though it might look like the numbers are correct they actually
+aren&rsquo;t the same thing. This doesn&rsquo;t mean Unity is doing anything poorly. The
+world of 3D gaming is dominated by floating point numbers. The only things that
+become hard with floating point numbers are when you want to do exact
+comparisons and a large scaling distance.</p><h4 id=what-about-the-pixel-graphics>what about the pixel graphics?<a hidden class=anchor aria-hidden=true href=#what-about-the-pixel-graphics>#</a></h4><p>Generally what happens with pixel graphics is someone will build the images
+using fixed pixels, and then assign that image to a rectangle that&rsquo;ll show up on
+the screen. Most of the time there&rsquo;s a filter applied to the images in real-time
+that blurs and distorts the image. You want this in a vast majority of 3D games,
+as it addresses graininess and a number of other visual artifacts. In the case
+of retro graphics games, the filter is disabled so you see the raw pixels. They
+are still stretched though.</p><h4 id=conclusion><span class="org-todo todo TODO">TODO</span> conclusion<a hidden class=anchor aria-hidden=true href=#conclusion>#</a></h4><h3 id=the-wrap-glitch><span class="org-todo todo TODO">TODO</span> the wrap glitch<a hidden class=anchor aria-hidden=true href=#the-wrap-glitch>#</a></h3><h3 id=game-stutter>game stutter<a hidden class=anchor aria-hidden=true href=#game-stutter>#</a></h3><p>Sometimes the game stutters. There&rsquo;s a variety of reasons as to why this can
+happen that are completely independent of the game itself. The operating
+system might have some expensive processes that wake up and do lots of work
+suddenly and leave the game starved for resources, for example. More often
+than not it will be garbage collection that&rsquo;s the cause of stutters.</p><ul><li><p>the dark ages of memory management</p><p>Let&rsquo;s rewind to 2018 where games are still written in C++. Yup. It still
+happens. The common belief is that games need to run at maximum speed and
+C++ is the closest intersection between abstractable and close to the raw
+processor as possible. In reality it&rsquo;s like running a civilization without
+running water just because you want to be closer to nature. Barbarism
+ensues. Programmers generally don&rsquo;t (and can&rsquo;t) know exactly how much
+memory their applications will need when they are writing software for it.
+Even if we had an idea, it would be insanely hard to get it right. Games
+can easily take billions of bytes of memory. So instead of declaring
+upfront how much memory we need, we instead gradually ask the operating
+system for more memory to use. Memory is used for things like tracking each
+berry on the map, or the position, momentum, facing direction, etc of a
+character. Basically anything you can see or conceptualize in the game is
+tracked somehow in the system&rsquo;s memory. In the days of C/C++, we would ask
+for memory and then we&rsquo;d have to tell the operating system when we were
+done with it. If we forgot (and we do this <span class=underline>all the fucking time</span>), we&rsquo;d
+wind up with something called a memory leak. A memory leak means our
+program asked for memory it will never give back. If the program does this
+too many times, we&rsquo;ll use up all of the memory on the computer, and then we
+run into trouble.</p></li></ul><ul><li><p>garbage collection</p><p>Unity is backed by a C/C++ engine, but as game authors everything is
+written some .net language - usually C#. C# doesn&rsquo;t use direct memory
+management like C++ does. Instead it uses a garbage collection system like
+many other modern programming languages do. Garbage collection is like a
+little sibling program that runs alongside your primary program. It watches
+all the little asks for memory that your system does, and tracks what data
+references other data. Specifically it&rsquo;s looking for data that nothing
+references.</p><p>Let&rsquo;s see how it works with some arbitrary character setup:</p><pre tabindex=0><code class=language-plantuml data-lang=plantuml>
+[shirt]
+[pants]
+[rat bastard sword]
+
+[program] --&gt; [character1]
+package character1 {
+  [legs] --&gt; [pants]
+  [torso] --&gt; [shirt]
+  [hand] --&gt; [rat bastard sword]
+}
+</code></pre><p>Here we have a character with leg, torso, and hand attributes. Each of
+these attributes holds a &ldquo;reference&rdquo; to some piece of data in the system.
+In this case it&rsquo;s pants, a shirt, and a rat bastard sword. The character
+itself hangs off of the main program. These references are like little
+links that point to the data we need. If we have this character, we can
+get its torso item if we like. For funsies, let&rsquo;s remove the hand item:</p><pre tabindex=0><code class=language-plantuml data-lang=plantuml>[shirt]
+[pants]
+[rat bastard sword]
+
+[program] --&gt; [character1]
+package character1 {
+  [legs] --&gt; [pants]
+  [torso] --&gt; [shirt]
+  [hand]
+}
+</code></pre><p>When the garbage collector sees that there&rsquo;s no reference to the rat
+bastard sword, it knows that it&rsquo;s safe to remove the rat bastard sword
+from memory and give it back to the operating system. Things like this are
+very simple for the garbage collector to do. Let&rsquo;s make it slightly more
+complicated.</p><pre tabindex=0><code class=language-plantuml data-lang=plantuml>[shirt]
+[pants]
+
+[program] --&gt; [treasure chest]
+[treasure chest] --&gt; [rat bastard sword]
+package &#34;rat bastard sword&#34; {
+  [container] --&gt; [treasure chest]
+}
+
+[program] -&gt; [character1]
+package character1 {
+  [legs] --&gt; [pants]
+  [torso] --&gt; [shirt]
+  [hand]
+}
+</code></pre><p>No surprises yet. Here we&rsquo;ve added a treasure chest that contains our rat
+bastard sword. We just moved the sword around. For the sake of argument,
+let&rsquo;s say the rat bastard sword holds a reference to its container - the
+treasure chest. Now here comes the curve ball: We&rsquo;re going to destroy the
+treasure chest. We simply do that by unlinking it, or removing its
+reference to keep the vernacular.</p><pre tabindex=0><code class=language-plantuml data-lang=plantuml>[shirt]
+[pants]
+
+[treasure chest] --&gt; [rat bastard sword]
+package &#34;rat bastard sword&#34; {
+  [container] --&gt; [treasure chest]
+}
+
+[program] -&gt; [character1]
+package character1 {
+  [legs] --&gt; [pants]
+  [torso] --&gt; [shirt]
+  [hand]
+}
+</code></pre><p>Wait a second - our simple rule of removing things that are no longer
+referenced won&rsquo;t work here! These objects both reference each other, so they
+elude our simple rule. <span class=underline>Fuck</span>. Whelp, welcome to software engineering. This
+is why software conferences are also wonderful gateways to alcoholism.</p><p>Let&rsquo;s remove our example for a moment and show something actually
+complicated:</p><pre tabindex=0><code class=language-plantuml data-lang=plantuml>[program]
+[A] -&gt; [B]
+[B] -&gt; [C]
+[C] -&gt; [D]
+[D] -&gt; [E]
+[E] -&gt; [...]
+[...] -&gt; [Z]
+[Z] -&gt; [A]
+</code></pre><p>The garbage collector has to solve this puzzle among billions of bytes of
+memory. It&rsquo;s a nightmare, and it takes time to do. In the mean time, the
+program that&rsquo;s using all of this memory is moving things around, creating,
+removing, and changing references <span class=underline>constantly</span>.</p></li></ul><ul><li><p>why you should care</p><p>The garbage collector <span class=underline>must</span> pause the <span class=underline>entire program</span> to perform a full
+garbage collect (or GC). If there&rsquo;s a lot of memory to go through, this can
+be a long pause. In games, this is death.</p><p>Unity gets away with this as a game engine not through any kind of technical
+feat. Unity is simply used in a lot of contexts where it doesn&rsquo;t matter. If
+you&rsquo;re playing Civ5, you won&rsquo;t care as a player if there&rsquo;s an occasional
+hiccup. I don&rsquo;t care that some zombie shooter game on my sons&rsquo; iPads has to
+pause occasionally. If you&rsquo;re playing some single player indie game, you
+probably don&rsquo;t care either. Unity is all about these kinds of games.</p><p>Remember the <a href=#side-by-side>side by side</a> I put together showing how different timing models
+work with delays? You&rsquo;d better fucking remember. That was a lot of work!</p><p>The garbage collector will cause these long hiccups, which sometimes are
+less than a second, and it will ruin your day. Imagine how precise the
+timing has to be when you perform a j-hook. Only now add that half second
+hiccup in the middle of it. Oops.</p><p>Predicting how memory models will behave while the program is actually
+running can be akin to predicting stock market fluctuations, except there&rsquo;s
+not actually any money in it. Killer Queen doesn&rsquo;t have that much it needs
+to track, but it still needs to track things. When a berry is scooped up, it
+might be destroyed along with all the things it had hanging off of it. When
+your drone dies, the drone may be destroyed and the berry created anew. This
+all creates churn. Long running games might make this problem more apparent
+due to the memory model getting fragmented over time, or memory leaks occur
+because the code didn&rsquo;t release the reference when it needed to.</p><p>As game engineers we can mitigate that with something called &ldquo;object
+pooling&rdquo;. With object pooling, we simply have a pool of objects and we
+return them to the pool when we&rsquo;re done or have no use for them. This is
+extra work though, and most indie developers don&rsquo;t prioritize doing this,
+let alone even knowing it&rsquo;s something they can do.</p><p>This is why certain very critical executions in the game can be absolutely
+perilous to do. Even if <span class=underline>you</span> are capable of executing them properly 100% of
+the time, the game may simply decide it needs to take a break and garbage
+collect right before you turn around, hit that button, etc. Then it
+processes a long tick, and registers that you bumped into someone facing the
+wrong way, and now you&rsquo;re down another egg.</p></li></ul><h3 id=the-drip><span class="org-todo todo TODO">TODO</span> the &ldquo;drip&rdquo;<a hidden class=anchor aria-hidden=true href=#the-drip>#</a></h3><h3 id=collision>collision<a hidden class=anchor aria-hidden=true href=#collision>#</a></h3><h4 id=characters>characters<a hidden class=anchor aria-hidden=true href=#characters>#</a></h4><p>In Unity, the <code>CharacterController</code> is a component you add to a game object
+that makes it really easy to control as a player. It&rsquo;s not &ldquo;physics&rdquo;,
+similar to how Mario has never jumped around with physics. Yeah, Mario is
+influenced by a kind of gravity, but he&rsquo;s propelled by you holding the jump
+button longer (meaning more &ldquo;thrust&rdquo; would be applied after he left the
+ground), and steering in the air is possible in many platformers, but on the
+scale any of us could jump is not possible, even if we could jump 10x higher
+than we can now. So it&rsquo;s not physics. It&rsquo;s a weird kind of game physics and
+the <code>CharacterController</code> scratches this itch rather well. It has all kinds
+of knobs to turn for things like gravity, max falling speed, air speed and
+control, etc. It also is really nice because it knows how to move &ldquo;around&rdquo;
+small obstacles - very small like a single stair step.</p><p>The <code>CharacterController</code> uses a 3D capsule (pill shape) as its volume for
+knowing when it&rsquo;s running into things. It works really well for most &ldquo;human&rdquo;
+shaped things. If you need to, you can reduce the height to get something
+closer to a sphere. Effectively, it&rsquo;s a tube with two hemispheres at the top
+and bottom. This has interesting interaction with a rectangular volume
+though.</p><p>If you could draw the character controller over a character, this is what it
+would look like:</p><div style=position:absolute><div style="position:relative;left:1.5em;top:1em;width:8em;height:13em;border:.3em solid green;border-radius:11em"></div></div><img style=image-rendering:pixelated;width:13em src=http://localhost:1313/blog/assets/kq-purple-warrior-chex-standing-01.png><p>Cosmetic pieces will totally fall out of the bounding area, and that&rsquo;s okay.
+This kind of approximation is totally fine for the kind of game KQ is, and a
+majority of others as well. Keep in mind, this specifically for <span class=underline>movement</span>
+and bumping into inert objects such as terrain. The <code>CharacterController</code>
+itself is <span class=underline>not a collider</span>. We&rsquo;ll cover that more in another section.</p></div><footer class=post-footer><ul class=post-tags></ul><nav class=paginav><a class=prev href=http://localhost:1313/killer-queen/><span class=title>« Prev</span>
+<span>Killer Queen</span>
+</a><a class=next href=http://localhost:1313/ultimate-cicd-setup/><span class=title>Next »</span>
+<span>The Ultimate CI/CD Setup</span></a></nav></footer></article></main><footer class=footer><span>&copy; 2026 <a href=http://localhost:1313/>Logan Barnett's blog</a></span> ·
+<span>Powered by
+<a href=https://gohugo.io/ rel="noopener noreferrer" target=_blank>Hugo</a> &
+<a href=https://github.com/adityatelange/hugo-PaperMod/ rel=noopener target=_blank>PaperMod</a></span></footer><a href=#top id=top-link class="top-link hidden" aria-label="go to top" title="Go to Top (Alt + G)" accesskey=g><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevrons-up"><polyline points="17 11 12 6 7 11"/><polyline points="17 18 12 13 7 18"/></svg>
+</a><script>let menu=document.getElementById("menu");if(menu){const e=localStorage.getItem("menu-scroll-position");e&&(menu.scrollLeft=parseInt(e,10)),menu.onscroll=function(){localStorage.setItem("menu-scroll-position",menu.scrollLeft)}}document.querySelectorAll('a[href^="#"]').forEach(e=>{e.addEventListener("click",function(e){e.preventDefault();var t=this.getAttribute("href").substr(1);window.matchMedia("(prefers-reduced-motion: reduce)").matches?document.querySelector(`[id='${decodeURIComponent(t)}']`).scrollIntoView():document.querySelector(`[id='${decodeURIComponent(t)}']`).scrollIntoView({behavior:"smooth"}),t==="top"?history.replaceState(null,null," "):history.pushState(null,null,`#${t}`)})})</script><script>var toplink=document.getElementById("top-link");window.onscroll=function(){const e=window.innerHeight;document.body.scrollTop>e||document.documentElement.scrollTop>e?toplink.classList.remove("hidden"):toplink.classList.add("hidden")}</script><script>document.getElementById("theme-toggle").addEventListener("click",()=>{const e=document.querySelector("html");e.dataset.theme==="dark"?(e.dataset.theme="light",localStorage.setItem("pref-theme","light")):(e.dataset.theme="dark",localStorage.setItem("pref-theme","dark"))})</script><script>document.querySelectorAll("pre > code").forEach(e=>{const n=e.parentNode.parentNode,t=document.createElement("button");t.classList.add("copy-code"),t.innerHTML="copy";function s(){t.innerHTML="copied!",setTimeout(()=>{t.innerHTML="copy"},2e3)}t.addEventListener("click",t=>{if("clipboard"in navigator){navigator.clipboard.writeText(e.textContent),s();return}const n=document.createRange();n.selectNodeContents(e);const o=window.getSelection();o.removeAllRanges(),o.addRange(n);try{document.execCommand("copy"),s()}catch{}o.removeRange(n)}),n.classList.contains("highlight")?n.appendChild(t):n.parentNode.firstChild==n||(e.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName=="TABLE"?e.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(t):e.parentNode.appendChild(t))})</script></body></html>
