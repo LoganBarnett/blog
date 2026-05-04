@@ -53,7 +53,7 @@ person exclaiming that they hate Windows, but only later.  Know that this is not
 a venting document.
 
 I have paid my bills with the .Net technology stack, and you can judge for
-yourself the depth or how current that experience is by perusing my [resume](/resume.html).
+yourself the depth or how current that experience is by perusing my [resume](./resume.html).
 
 
 ### Articulation has Value {#articulation-has-value}

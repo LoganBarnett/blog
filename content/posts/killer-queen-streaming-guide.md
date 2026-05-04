@@ -87,27 +87,7 @@ monitor takes another slot, and the projector takes the final.
 This is how our specific setup looks at PDX. Our stream box is the computer
 running [OBS](http://openbroadcaster.com).
 
-```plantuml
-skinparam monochrome reverse
-
-[cab]
-() splitter
-[stream-box]
-() "blue webcam" as bcam
-() "gold webcam" as gcam
-() "extra monitor" as auxout
-() "blue monitor" as bmonitor
-() "gold monitor" as gmonitor
-
-[cab] --> splitter
-bcam --> [stream-box]
-splitter --> [stream-box]
-splitter --> auxout
-splitter --> gmonitor
-splitter --> bmonitor
-gcam --> [stream-box]
-
-```
+{{< figure src="/ox-hugo/video-flow.svg" >}}
 
 
 ## audio flow {#audio-flow}
@@ -118,30 +98,7 @@ and the [sidetone](https://en.wikipedia.org/wiki/Sidetone) of the mics themselve
 sense that the system is picking up their voice, and also gives them a sense of
 how loud they are being picked up.
 
-```plantuml
-skinparam monochrome reverse
-
-interface "left mic" as lmic
-interface "right mic" as rmic
-interface "left headset" as lhead
-interface "right headset" as rhead
-interface "computer" as cpu
-
-[thunderbolt-mixer]
-[4-to-1-mixer]
-[amp]
-
-lmic --> [thunderbolt-mixer]
-rmic --> [thunderbolt-mixer]
-
-[thunderbolt-mixer] -> [4-to-1-mixer] : audio
-[thunderbolt-mixer] --> cpu : thunderbolt
-cpu --> [4-to-1-mixer] : headphone to input
-[4-to-1-mixer] -> [amp] : output to input
-[amp] --> lhead
-[amp] --> rhead
-
-```
+{{< figure src="/ox-hugo/audio-loop.svg" >}}
 
 This setup also provides lots of knobs to turn in terms of making sure the
 announcers can turn up their own voices and also turn up the input of what they
@@ -184,25 +141,25 @@ HDMI is provided as an input source via a computer's Thunderbolt port (I need to
 check, but I'm pretty sure it's not mini display port). This runs from the video
 splitter to the laptop.
 
-{{< figure src="/assets/hdmi-to-thunderbolt-input-01.jpg" >}}
+{{< figure src="./assets/hdmi-to-thunderbolt-input-01.jpg" >}}
 
 When the device is working, you'll see a white light near the Thunderbolt
 connection.
 
-{{< figure src="assets/hdmi-to-thunderbolt-input-activated-01.jpg" >}}
+{{< figure src="/ox-hugo/hdmi-to-thunderbolt-input-activated-01.jpg" >}}
 
 
 #### audio {#audio}
 
 Here's the amp as labeled in the diagram above:
 
-{{< figure src="/assets/audio-4-channel-amp-01.jpg" >}}
+{{< figure src="./assets/audio-4-channel-amp-01.jpg" >}}
 
 We could use an image that's in focus...
 
 The 4 channel mixer:
 
-{{< figure src="/assets/audio-4-channel-mixer-01.jpg" >}}
+{{< figure src="./assets/audio-4-channel-mixer-01.jpg" >}}
 
 These devices appear to be very similar, but they are very different. Basically
 the mixer combines a series of inputs into a single output, and the amp splits a
@@ -210,16 +167,16 @@ single input into a series of outputs.
 
 The mic mixer:
 
-{{< figure src="/assets/audio-mic-mixer-01.jpg" >}}
+{{< figure src="./assets/audio-mic-mixer-01.jpg" >}}
 
 The mics connect directly to this.
 
 
 #### all together now {#all-together-now}
 
-{{< figure src="/assets/pdx-working-setup-01.jpg" >}}
+{{< figure src="./assets/pdx-working-setup-01.jpg" >}}
 
-{{< figure src="/assets/pdx-working-setup-02.jpg" >}}
+{{< figure src="./assets/pdx-working-setup-02.jpg" >}}
 
 
 #### anti trip trick {#anti-trip-trick}
@@ -227,20 +184,20 @@ The mics connect directly to this.
 Ground Kontrol has seats that have these glowing strips on their corners and
 sides.
 
-{{< figure src="/assets/anti-cable-snag-trick-01.jpg" >}}
+{{< figure src="./assets/anti-cable-snag-trick-01.jpg" >}}
 
 These strips slide up a little bit. There's a small channel between the strip
 and the side of the seats. You can stuff some of the cables you need to run
 (such as the cables for the webcams) into this channel. Here we've stuffed the
 cables in there as best we can with the strip still up.
 
-{{< figure src="/assets/anti-cable-snag-trick-03.jpg" >}}
+{{< figure src="./assets/anti-cable-snag-trick-03.jpg" >}}
 
 Once the cables are in place, we can slide the strip back down, and it will hold
 the cables in place well enough to prevent feet from kicking the cables out or
 other snares from occurring. Here's the closed version with cables inserted:
 
-{{< figure src="/assets/anti-cable-snag-trick-04.jpg" >}}
+{{< figure src="./assets/anti-cable-snag-trick-04.jpg" >}}
 
 
 ### software {#software}
@@ -254,7 +211,7 @@ The URL we use is in the format `kqpdx<MMDDYY>`, where `MM` is the number of the
 month, `DD` the day of the month, and `YY` is the last two digits of the year.
 If today's date is <span class="timestamp-wrapper"><span class="timestamp">&lt;2017-11-30 Thu&gt;</span></span>, the URL will be `kqpdx113017`.
 
-{{< figure src="/assets/challonge-name-01.png" >}}
+{{< figure src="./assets/challonge-name-01.png" >}}
 
 Here's a list of things to clicky or type:
 
@@ -267,7 +224,7 @@ Here's a list of things to clicky or type:
 
 Example:
 
-{{< figure src="/assets/challonge-setup-01.png" >}}
+{{< figure src="./assets/challonge-setup-01.png" >}}
 
 
 #### kq-tournament {#kq-tournament}

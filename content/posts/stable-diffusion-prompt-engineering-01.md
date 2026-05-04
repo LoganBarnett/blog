@@ -98,7 +98,7 @@ thing from drawing books, wherein one draws some circles that could vaguely
 define the outline of the owl.  Then the artist is instructed to draw more and
 more details until satisfaction is reached.
 
-{{< figure src="/assets/draw-the-owl01.jpeg" >}}
+{{< figure src="./assets/draw-the-owl01.jpeg" >}}
 
 Though there is a lot of in-between steps.  This process is much like that.
 Again though, this is my layman understanding and I hope to revise this as I
@@ -203,7 +203,7 @@ for index, image in enumerate(response_data.get('images')):
         print(f'[[file:./{path}]]')
 ```
 
-{{< figure src="/test-0.png" >}}
+{{< figure src="/ox-hugo/test-0.png" >}}
 
 
 ##### <span class="section-num">2.2.1.3</span> Making API Calls - A Reusable Block {#making-api-calls-a-reusable-block}
@@ -339,7 +339,7 @@ As described in [2.3](#sample-prompts), our base is as follows:
  )
 ```
 
-{{< figure src="/dreamscape-0.png" >}}
+{{< figure src="/ox-hugo/dreamscape-0.png" >}}
 
 ```emacs-lisp
 (org-sbe text-to-image
@@ -348,7 +348,7 @@ As described in [2.3](#sample-prompts), our base is as follows:
  )
 ```
 
-{{< figure src="/man-0.png" >}}
+{{< figure src="/ox-hugo/man-0.png" >}}
 
 ```emacs-lisp
 (org-sbe text-to-image
@@ -357,7 +357,7 @@ As described in [2.3](#sample-prompts), our base is as follows:
  )
 ```
 
-{{< figure src="/woman-0.png" >}}
+{{< figure src="/ox-hugo/woman-0.png" >}}
 
 ```emacs-lisp
 (org-sbe text-to-image
@@ -366,7 +366,7 @@ As described in [2.3](#sample-prompts), our base is as follows:
  )
 ```
 
-{{< figure src="/city or village or landscape-0.png" >}}
+{{< figure src="/ox-hugo/city or village or landscape-0.png" >}}
 
 
 #### <span class="section-num">2.4.2</span> Seed {#seed}
@@ -433,7 +433,7 @@ the case of the woman, I effectively have a separate image for each run.
 )
 ```
 
-{{< figure src="/dreamscape-low-samples-0.png" >}}
+{{< figure src="/ox-hugo/dreamscape-low-samples-0.png" >}}
 
 ```emacs-lisp
 (org-sbe text-to-image
@@ -443,7 +443,7 @@ the case of the woman, I effectively have a separate image for each run.
 )
 ```
 
-{{< figure src="/man-low-samples-0.png" >}}
+{{< figure src="/ox-hugo/man-low-samples-0.png" >}}
 
 ```emacs-lisp
 (org-sbe text-to-image
@@ -453,7 +453,7 @@ the case of the woman, I effectively have a separate image for each run.
 )
 ```
 
-{{< figure src="/woman-low-samples-0.png" >}}
+{{< figure src="/ox-hugo/woman-low-samples-0.png" >}}
 
 ```emacs-lisp
 (org-sbe text-to-image
@@ -463,7 +463,7 @@ the case of the woman, I effectively have a separate image for each run.
 )
 ```
 
-{{< figure src="/city or village or landscape-low-samples-0.png" >}}
+{{< figure src="/ox-hugo/city or village or landscape-low-samples-0.png" >}}
 
 
 ##### <span class="section-num">2.4.4.2</span> high samples {#high-samples}
@@ -476,7 +476,7 @@ the case of the woman, I effectively have a separate image for each run.
 )
 ```
 
-{{< figure src="/dreamscape-high-samples-0.png" >}}
+{{< figure src="/ox-hugo/dreamscape-high-samples-0.png" >}}
 
 ```emacs-lisp
 (org-sbe text-to-image
@@ -486,7 +486,7 @@ the case of the woman, I effectively have a separate image for each run.
 )
 ```
 
-{{< figure src="/man-high-samples-0.png" >}}
+{{< figure src="/ox-hugo/man-high-samples-0.png" >}}
 
 ```emacs-lisp
 (org-sbe text-to-image
@@ -496,7 +496,7 @@ the case of the woman, I effectively have a separate image for each run.
 )
 ```
 
-{{< figure src="/woman-high-samples-0.png" >}}
+{{< figure src="/ox-hugo/woman-high-samples-0.png" >}}
 
 ```emacs-lisp
 (org-sbe text-to-image
@@ -506,7 +506,7 @@ the case of the woman, I effectively have a separate image for each run.
 )
 ```
 
-{{< figure src="/city or village or landscape-high-samples-0.png" >}}
+{{< figure src="/ox-hugo/city or village or landscape-high-samples-0.png" >}}
 
 
 ##### <span class="section-num">2.4.4.3</span> very high samples {#very-high-samples}
@@ -519,7 +519,7 @@ the case of the woman, I effectively have a separate image for each run.
 )
 ```
 
-{{< figure src="/dreamscape-very-high-samples-0.png" >}}
+{{< figure src="/ox-hugo/dreamscape-very-high-samples-0.png" >}}
 
 ```emacs-lisp
 (org-sbe text-to-image
@@ -529,7 +529,7 @@ the case of the woman, I effectively have a separate image for each run.
 )
 ```
 
-{{< figure src="/man-very-high-samples-0.png" >}}
+{{< figure src="/ox-hugo/man-very-high-samples-0.png" >}}
 
 ```emacs-lisp
 (org-sbe text-to-image
@@ -539,7 +539,7 @@ the case of the woman, I effectively have a separate image for each run.
 )
 ```
 
-{{< figure src="/woman-very-high-samples-0.png" >}}
+{{< figure src="/ox-hugo/woman-very-high-samples-0.png" >}}
 
 ```emacs-lisp
 (org-sbe text-to-image
@@ -549,7 +549,7 @@ the case of the woman, I effectively have a separate image for each run.
 )
 ```
 
-{{< figure src="/city or village or landscape-very-high-samples-0.png" >}}
+{{< figure src="/ox-hugo/city or village or landscape-very-high-samples-0.png" >}}
 
 Takeaway: The landscape image didn't improve much, but there were notable
 improvements on the other images.  More samples just means better.  I'd have to
@@ -623,7 +623,7 @@ blue hair
 )
 ```
 
-{{< figure src="/dreamscape-word-salad-blue-hair-0.png" >}}
+{{< figure src="/ox-hugo/dreamscape-word-salad-blue-hair-0.png" >}}
 
 ```emacs-lisp
 (org-sbe text-to-image
@@ -632,7 +632,7 @@ blue hair
 )
 ```
 
-{{< figure src="/man-word-salad-blue-hair-0.png" >}}
+{{< figure src="/ox-hugo/man-word-salad-blue-hair-0.png" >}}
 
 ```emacs-lisp
 (org-sbe text-to-image
@@ -642,7 +642,7 @@ blue hair
 )
 ```
 
-{{< figure src="/woman-word-salad-blue-hair-0.png" >}}
+{{< figure src="/ox-hugo/woman-word-salad-blue-hair-0.png" >}}
 
 ```emacs-lisp
 (org-sbe text-to-image
@@ -651,7 +651,7 @@ blue hair
 )
 ```
 
-{{< figure src="/city or village or landscape-word-salad-blue-hair-0.png" >}}
+{{< figure src="/ox-hugo/city or village or landscape-word-salad-blue-hair-0.png" >}}
 
 ```emacs-lisp
 (org-sbe text-to-image
@@ -661,7 +661,7 @@ blue hair
 )
 ```
 
-{{< figure src="/woman-word-salad-blue-hair-0.png" >}}
+{{< figure src="/ox-hugo/woman-word-salad-blue-hair-0.png" >}}
 
 It's interesting in the case of the dreamscape and landscape prompts that it
 ignored those and just used a woman, but that is for a later break-down.
@@ -682,7 +682,7 @@ on a man, or any colored hair on a man.  Let's try it with an additional prompt:
 )
 ```
 
-{{< figure src="/dreamscape-word-salad-blue-hair-extra-0.png" >}}
+{{< figure src="/ox-hugo/dreamscape-word-salad-blue-hair-extra-0.png" >}}
 
 ```emacs-lisp
 (org-sbe text-to-image
@@ -691,7 +691,7 @@ on a man, or any colored hair on a man.  Let's try it with an additional prompt:
 )
 ```
 
-{{< figure src="/man-word-salad-blue-hair-extra-0.png" >}}
+{{< figure src="/ox-hugo/man-word-salad-blue-hair-extra-0.png" >}}
 
 ```emacs-lisp
 (org-sbe text-to-image
@@ -700,7 +700,7 @@ on a man, or any colored hair on a man.  Let's try it with an additional prompt:
 )
 ```
 
-{{< figure src="/woman-word-salad-blue-hair-extra-0.png" >}}
+{{< figure src="/ox-hugo/woman-word-salad-blue-hair-extra-0.png" >}}
 
 ```emacs-lisp
 (org-sbe text-to-image
@@ -709,7 +709,7 @@ on a man, or any colored hair on a man.  Let's try it with an additional prompt:
 )
 ```
 
-{{< figure src="/city or village or landscape-word-salad-blue-hair-extra-0.png" >}}
+{{< figure src="/ox-hugo/city or village or landscape-word-salad-blue-hair-extra-0.png" >}}
 
 Okay that's not enough to produce the "swap" issue I've seen.  Let's make this
 more complicated and add another color.
@@ -726,7 +726,7 @@ more complicated and add another color.
 )
 ```
 
-{{< figure src="/dreamscapeword-salad-blue-hair-red-tie-green-house-hill-0.png" >}}
+{{< figure src="/ox-hugo/dreamscapeword-salad-blue-hair-red-tie-green-house-hill-0.png" >}}
 
 ```emacs-lisp
 (org-sbe text-to-image
@@ -735,7 +735,7 @@ more complicated and add another color.
 )
 ```
 
-{{< figure src="/manword-salad-blue-hair-red-tie-green-house-hill-0.png" >}}
+{{< figure src="/ox-hugo/manword-salad-blue-hair-red-tie-green-house-hill-0.png" >}}
 
 ```emacs-lisp
 (org-sbe text-to-image
@@ -744,7 +744,7 @@ more complicated and add another color.
 )
 ```
 
-{{< figure src="/womanword-salad-blue-hair-red-tie-green-house-hill-0.png" >}}
+{{< figure src="/ox-hugo/womanword-salad-blue-hair-red-tie-green-house-hill-0.png" >}}
 
 ```emacs-lisp
 (org-sbe text-to-image
@@ -753,7 +753,7 @@ more complicated and add another color.
 )
 ```
 
-{{< figure src="/city or village or landscapeword-salad-blue-hair-red-tie-green-house-hill-0.png" >}}
+{{< figure src="/ox-hugo/city or village or landscapeword-salad-blue-hair-red-tie-green-house-hill-0.png" >}}
 
 Okay now we're seeing some color mixing.  How do we ensure we get what we
 wanted?  I've been told this is due to [2.4.10.4](#swapped-tokens).
@@ -797,7 +797,7 @@ There is multiple utility here:
 )
 ```
 
-{{< figure src="/dreamscape-blending-steps-forest-0.png" >}}
+{{< figure src="/ox-hugo/dreamscape-blending-steps-forest-0.png" >}}
 
 ```emacs-lisp
 (org-sbe text-to-image
@@ -806,7 +806,7 @@ There is multiple utility here:
   )
 ```
 
-{{< figure src="/man-blending-steps-forest-0.png" >}}
+{{< figure src="/ox-hugo/man-blending-steps-forest-0.png" >}}
 
 ```emacs-lisp
 (org-sbe text-to-image
@@ -815,7 +815,7 @@ There is multiple utility here:
   )
 ```
 
-{{< figure src="/woman-blending-steps-forest-0.png" >}}
+{{< figure src="/ox-hugo/woman-blending-steps-forest-0.png" >}}
 
 ```emacs-lisp
 (org-sbe text-to-image
@@ -824,7 +824,7 @@ There is multiple utility here:
   )
 ```
 
-{{< figure src="/city or village or landscape-blending-steps-forest-0.png" >}}
+{{< figure src="/ox-hugo/city or village or landscape-blending-steps-forest-0.png" >}}
 
 Now let's do something that makes perfect sense: Make a forest of candy canes.
 
@@ -840,7 +840,7 @@ Now let's do something that makes perfect sense: Make a forest of candy canes.
 )
 ```
 
-{{< figure src="/dreamscape-blending-steps-forest-of-candy-canes-0.png" >}}
+{{< figure src="/ox-hugo/dreamscape-blending-steps-forest-of-candy-canes-0.png" >}}
 
 ```emacs-lisp
 (org-sbe text-to-image
@@ -849,7 +849,7 @@ Now let's do something that makes perfect sense: Make a forest of candy canes.
 )
 ```
 
-{{< figure src="/man-blending-steps-forest-of-candy-canes-0.png" >}}
+{{< figure src="/ox-hugo/man-blending-steps-forest-of-candy-canes-0.png" >}}
 
 ```emacs-lisp
 (org-sbe text-to-image
@@ -858,7 +858,7 @@ Now let's do something that makes perfect sense: Make a forest of candy canes.
 )
 ```
 
-{{< figure src="/woman-blending-steps-forest-of-candy-canes-0.png" >}}
+{{< figure src="/ox-hugo/woman-blending-steps-forest-of-candy-canes-0.png" >}}
 
 ```emacs-lisp
 (org-sbe text-to-image
@@ -867,7 +867,7 @@ Now let's do something that makes perfect sense: Make a forest of candy canes.
 )
 ```
 
-{{< figure src="/city or village or landscape-blending-steps-forest-of-candy-canes-0.png" >}}
+{{< figure src="/ox-hugo/city or village or landscape-blending-steps-forest-of-candy-canes-0.png" >}}
 
 
 ##### <span class="section-num">2.4.10.5</span> Alternating Tokens {#alternating-tokens}
@@ -888,7 +888,7 @@ alternating instead of stepped.
 )
 ```
 
-{{< figure src="/dreamscape-alternating-steps-forest-of-candy-canes-0.png" >}}
+{{< figure src="/ox-hugo/dreamscape-alternating-steps-forest-of-candy-canes-0.png" >}}
 
 ```emacs-lisp
 (org-sbe text-to-image
@@ -897,7 +897,7 @@ alternating instead of stepped.
 )
 ```
 
-{{< figure src="/man-alternating-steps-forest-of-candy-canes-0.png" >}}
+{{< figure src="/ox-hugo/man-alternating-steps-forest-of-candy-canes-0.png" >}}
 
 ```emacs-lisp
 (org-sbe text-to-image
@@ -906,7 +906,7 @@ alternating instead of stepped.
 )
 ```
 
-{{< figure src="/woman-alternating-steps-forest-of-candy-canes-0.png" >}}
+{{< figure src="/ox-hugo/woman-alternating-steps-forest-of-candy-canes-0.png" >}}
 
 ```emacs-lisp
 (org-sbe text-to-image
@@ -915,7 +915,7 @@ alternating instead of stepped.
 )
 ```
 
-{{< figure src="/city or village or landscape-alternating-steps-forest-of-candy-canes-0.png" >}}
+{{< figure src="/ox-hugo/city or village or landscape-alternating-steps-forest-of-candy-canes-0.png" >}}
 
 
 ##### <span class="section-num">2.4.10.6</span> Tokens - Ceasing and Starting at Specific Steps {#tokens-ceasing-and-starting-at-specific-steps}

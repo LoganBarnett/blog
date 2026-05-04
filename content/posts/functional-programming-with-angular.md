@@ -172,7 +172,8 @@ easier. You don't have to worry about structuring your tests such that
 these Angular objects to perform a test. Just pass in functions that perform
 an outcome. Sure, you can use your favorite mocking library, but the amount
 of ritual involved in a mock takes on its most slim form. If Javascript unit
-testing is still fuzzy for you, check out my post on [BROKEN LINK: 2017-05-17-unit-testing].
+testing is still fuzzy for you, check out my post on [How to Make Unit Testing
+not so Much of a Pain]({{< relref "unit-testing" >}}).
 
 
 ## Conclusion {#conclusion}

@@ -3,7 +3,7 @@ title = "RPG GM Tropes"
 author = ["Logan Barnett"]
 date = 2020-02-24T00:00:00-08:00
 aliases = ["/rpg-gm-tropes.html"]
-draft = false
+draft = true
 +++
 
 ## RPG GM Tropes {#rpg-gm-tropes}
@@ -66,7 +66,7 @@ those days.
 I don't think having a significant other as one of your players is
 automatically a dysfunction, but it's worth considering that it <span class="underline">could be
 dysfunctional</span>. Remember that your biases are largely invisible to you, and
-one of the lovely thing about [BROKEN LINK: dice] is that they remove a great amount of the
+one of the lovely thing about dice is that they remove a great amount of the
 biases from you. However you have to stick with the dice rolls.
 
 

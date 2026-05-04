@@ -317,7 +317,7 @@ dark red. His orc tusks bow slightly in an outward angle.
 He carries a weapon in his left hand, and his shield is on his right. He has a
 sack of javelins hanging from his back.
 
-<img src="/captain-toofsnaggle-01.png">
+<img src="./captain-toofsnaggle-01.png">
 
 
 #### direction {#dnd-5e--characters--captain-toofsnaggle--fluff--direction}

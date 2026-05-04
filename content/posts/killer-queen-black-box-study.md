@@ -78,7 +78,7 @@ an opportunity to work with Unity's physics system (and work around it), use its
 character controller system, networking, shaders, GUI (editor and in-game), and
 its logic/behavior system. I also have an educational background in computer
 engineering, so I have a good conceptual understanding of operating systems,
-memory models, resource sharing, etc. My [resume](/resume.html) is here for full transparency.
+memory models, resource sharing, etc. My [resume](./resume.html) is here for full transparency.
 
 
 ## reasoning {#reasoning}
@@ -572,20 +572,7 @@ than not it will be garbage collection that's the cause of stutters.
 
     Let's see how it works with some arbitrary character setup:
 
-    ```plantuml
-
-    [shirt]
-    [pants]
-    [rat bastard sword]
-
-    [program] --> [character1]
-    package character1 {
-      [legs] --> [pants]
-      [torso] --> [shirt]
-      [hand] --> [rat bastard sword]
-    }
-
-    ```
+    {{< figure src="/ox-hugo/kq-bb-easy-memory-character-full.svg" >}}
 
     Here we have a character with leg, torso, and hand attributes. Each of
     these attributes holds a "reference" to some piece of data in the system.
@@ -594,19 +581,7 @@ than not it will be garbage collection that's the cause of stutters.
     links that point to the data we need. If we have this character, we can
     get its torso item if we like. For funsies, let's remove the hand item:
 
-    ```plantuml
-    [shirt]
-    [pants]
-    [rat bastard sword]
-
-    [program] --> [character1]
-    package character1 {
-      [legs] --> [pants]
-      [torso] --> [shirt]
-      [hand]
-    }
-
-    ```
+    {{< figure src="/ox-hugo/kq-bb-easy-memory-character-handless.svg" >}}
 
     When the garbage collector sees that there's no reference to the rat
     bastard sword, it knows that it's safe to remove the rat bastard sword
@@ -614,24 +589,7 @@ than not it will be garbage collection that's the cause of stutters.
     very simple for the garbage collector to do. Let's make it slightly more
     complicated.
 
-    ```plantuml
-    [shirt]
-    [pants]
-
-    [program] --> [treasure chest]
-    [treasure chest] --> [rat bastard sword]
-    package "rat bastard sword" {
-      [container] --> [treasure chest]
-    }
-
-    [program] -> [character1]
-    package character1 {
-      [legs] --> [pants]
-      [torso] --> [shirt]
-      [hand]
-    }
-
-    ```
+    {{< figure src="/ox-hugo/kq-bb-easy-memory-character-double-ref-01.svg" >}}
 
     No surprises yet. Here we've added a treasure chest that contains our rat
     bastard sword. We just moved the sword around. For the sake of argument,
@@ -640,23 +598,7 @@ than not it will be garbage collection that's the cause of stutters.
     treasure chest. We simply do that by unlinking it, or removing its
     reference to keep the vernacular.
 
-    ```plantuml
-    [shirt]
-    [pants]
-
-    [treasure chest] --> [rat bastard sword]
-    package "rat bastard sword" {
-      [container] --> [treasure chest]
-    }
-
-    [program] -> [character1]
-    package character1 {
-      [legs] --> [pants]
-      [torso] --> [shirt]
-      [hand]
-    }
-
-    ```
+    {{< figure src="/ox-hugo/kq-bb-easy-memory-character-double-ref-02.svg" >}}
 
     Wait a second - our simple rule of removing things that are no longer
     referenced won't work here! These objects both reference each other, so they
@@ -666,16 +608,7 @@ than not it will be garbage collection that's the cause of stutters.
     Let's remove our example for a moment and show something actually
     complicated:
 
-    ```plantuml
-    [program]
-    [A] -> [B]
-    [B] -> [C]
-    [C] -> [D]
-    [D] -> [E]
-    [E] -> [...]
-    [...] -> [Z]
-    [Z] -> [A]
-    ```
+    {{< figure src="/ox-hugo/kq-bb-easy-memory-character-double-ref-03.svg" >}}
 
     The garbage collector has to solve this puzzle among billions of bytes of
     memory. It's a nightmare, and it takes time to do. In the mean time, the

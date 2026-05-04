@@ -4,7 +4,7 @@ author = ["Logan Barnett"]
 date = 2022-05-21T00:00:00-07:00
 aliases = ["/data-modeling.html"]
 categories = ["software-engineering"]
-draft = false
+draft = true
 +++
 
 ## Introduction {#introduction}
@@ -473,8 +473,180 @@ even model rebases, a topic that is daunting for many novices, using this model.
 In fact, if you do a rebase, you can still get to the prior state of the rebase
 by following refs around.
 
-See [BROKEN LINK: Example: Kroosade] for stepping through the process of applying this
+See [Example: Kroosade](#example-kroosade) for stepping through the process of applying this
 thinking.
+
+
+### Example: Kroosade {#example-kroosade}
+
+I want to design my own Warhammer 40,000 crusade management system. From what
+I've gathered, there's [Administratum](https://administratum.goonhammer.com/) and [Crusade Manager](https://crusade-manager.net/) already, but I wanted
+to take my own stab at it. Fortunately it also means we can go through a
+modeling exercise with it.
+
+
+#### Kroosade: The Original Model {#kroosade-the-original-model}
+
+The model for Warhammer 40k crusades management is roughly this:
+
+Model
+: A model is an individual entity on the table top, often represented
+    as an actual plastic model (or some other material).
+
+Unit
+: A unit is a collection of one or more models. Units can have
+    selections within them, based on special rules for each kind of unit.
+
+Order of Battle
+: This is a collection of <span class="underline">all</span> of your units.
+
+Army Roster
+: Is a collection of units used to play an individual match.
+
+It's important to note that the Order of Battle is a complete tally of all of
+the units. Units in the Order of Battle will appear in the Army Roster in a
+duplicated fashion.
+
+```javascript
+type Model = {}
+type Unit = {
+  models: Array<Model>,
+}
+type OrderOfBattle = {
+  units: Array<Unit>,
+}
+type ArmyRoster = {
+  units: Array<Unit>,
+}
+```
+
+This is an overly simplistic model of course. To represent a little extra
+complexity, let's include a "Power Rating", which is the game's way of measuring
+cost of selection.
+
+```javascript
+type Model = {
+  powerRating: number,
+}
+type Unit = {
+  models: Array<Model>,
+  powerRating: number,
+}
+type OrderOfBattle = {
+  units: Array<Unit>,
+  powerRating: number,
+}
+type ArmyRoster = {
+  units: Array<Unit>,
+  powerRating: number,
+}
+```
+
+We could have the `ArmyRoster` and `OrderOfBattle` have a derived `powerRating`,
+since generally it is. It doesn't matter much but I did want to illustrate that
+we should be able to look at any of these entities and determine the overall
+power rating. In fact, the army roster has a power rating limit, as does the
+order of battle.
+
+
+#### Kroosade: Composable Model {#kroosade-composable-model}
+
+From [Kroosade: The Original Model](#kroosade-the-original-model), we can see that power rating is present or at
+least computable.
+
+```javascript
+type Entity = {
+  children: Array<Entity>,
+  choices: Array<Choice>,
+  name: string,
+}
+type Choice = {
+  costs: Array<Cost>,
+  name: string,
+}
+type Cost = {
+  amount: number,
+  type: string,
+}
+```
+
+Let's test what we can represent here with it.
+
+```javascript
+
+const orderOfBattle: Entity = {
+  children: [
+    {
+      name: 'Dire Avengers',
+      children: [
+        {
+          name: 'Dire Avenger Exarch',
+          children: [],
+          choices: [
+            {
+              name: 'Exarch Power: Stand Firm',
+              costs: [
+                {
+                  amount: 1,
+                  type: 'power-rating',
+                },
+                {
+                  amount: 15,
+                  type: 'points',
+                },
+                {
+                  amount: 0,
+                  type: 'command-points',
+                },
+              ],
+            },
+            {
+              name: 'Weapon: Two Shuriken Catapults',
+              cost: [],
+            },
+          ],
+        },
+      ],
+      choices: [
+        {
+          name: '5 Dire Avengers',
+          costs: [
+            {
+              amount: 1,
+              type: 'power-rating',
+            },
+            {
+              amount: 70,
+              type: 'points',
+            },
+            {
+              amount: 0,
+              type: 'command-points',
+            },
+          ]
+        },
+      ],
+    }
+  ],
+  choices: [],
+}
+```
+
+Zounds! This is really verbose. But it lets us express virtually anything. As I
+was writing this out, I realized I didn't completely structure everything as I'd
+wanted it. But that's okay - I simply nested more entities and got what I wanted
+out of it.
+
+This is great because if the rules change a lot (and they do over the course of
+years), I don't necessarily have to re-write my program.
+
+But what about the things we saw in [Kroosade: The Original Model](#kroosade-the-original-model)? We no longer
+have an army roster nor an order of battle. That's okay. We can represent that
+in our UI however we want. We just need to make sure our data model <span class="underline">allows</span> for
+what we have here.
+
+A model like this can take a very short amount of time to come up with, but can
+cover many different uses.
 
 
 ## Perils in Data Modeling {#perils-in-data-modeling}

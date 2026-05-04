@@ -82,17 +82,17 @@ you might get paid well, but not enough for this.
 Here's some examples of people obviously flailing that I've observed over the
 years, self included:
 
-{{< figure src="/assets/ie-works-commits-01.png" >}}
+{{< figure src="/ox-hugo/ie-works-commits-01.png" >}}
 
 Internet Explorer. Such fun!
 
-{{< figure src="/assets/just-work-commit-message.png" >}}
+{{< figure src="/ox-hugo/just-work-commit-message.png" >}}
 
 Just work, indeed.
 
 Or witness my own suffering:
 
-{{< figure src="/assets/logan-commits-to-fix-ci-01.png" >}}
+{{< figure src="/ox-hugo/logan-commits-to-fix-ci-01.png" >}}
 
 When you get into this kind of loop, it is healthy to question whether it really
 is necessary. Change, commit, push, watch results is a very slow way to go about
@@ -408,7 +408,7 @@ Oftentimes, I find these oppressive. I see a lot of projects adopting
 Semantic Versioning. Conventional Commits takes a bit to read through, and it is
 very rigid about what goes into the commit and how to do it.
 
-{{< figure src="/assets/semver-workaround-broken-twitter-01.png" >}}
+{{< figure src="/ox-hugo/semver-workaround-broken-twitter-01.png" >}}
 
 What I dislike about Conventional Commits primarily is that it gets wrapped up
 in taxonomy of tickets. Is this a bug? Is it a feature? What should I use if my
@@ -420,7 +420,7 @@ favorite QA member about this. They'll laugh at you.  They laughed at me :(
 Virtually any change is a change in behavior, and changes in behavior break
 **something**.
 
-{{< figure src="/assets/xkcd-every-change-breaks-01.png" >}}
+{{< figure src="/ox-hugo/xkcd-every-change-breaks-01.png" >}}
 
 My favorite patch version break was with Node v10 (I'll find the exact
 version later). This patch version has 80 commits behind it, and made an

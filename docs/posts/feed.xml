@@ -502,20 +502,6 @@ power. &amp;ldquo;Boss is an institution of mistrust&amp;rdquo;. It makes them f
 have it.&lt;/p&gt;</description>
     </item>
     <item>
-      <title>How to Avoid Edge Cases and Crushing Tech Debt</title>
-      <link>https://blog.logustus.com/data-modeling/</link>
-      <pubDate>Sat, 21 May 2022 00:00:00 -0700</pubDate>
-      <guid>https://blog.logustus.com/data-modeling/</guid>
-      <description>&lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;
-&lt;p&gt;When writing any kind of real world applications, &amp;ldquo;edge cases&amp;rdquo; arise - wrinkles
-placed into your beautiful applications which start off as simple &lt;code&gt;if&lt;/code&gt;
-statements and later lead to great sources of confusion and kind of a dumping
-ground for all of the organization&amp;rsquo;s wacky needs. This later takes on the form
-of crushing technical debt and you&amp;rsquo;re wondering how your pristine application
-got here, and how you might avoid it on your next one. Fortunately it is
-avoidable through a simple technique called data modeling.&lt;/p&gt;</description>
-    </item>
-    <item>
       <title>Function Composition</title>
       <link>https://blog.logustus.com/function-composition/</link>
       <pubDate>Wed, 11 May 2022 00:00:00 -0700</pubDate>
@@ -781,20 +767,6 @@ this.&lt;/p&gt;
 &lt;p&gt;It&amp;rsquo;s worth noting that any mechanism that removes the need for a DM also
 necessarily means that, as an actual DM, you could reduce the work you need
 to do.&lt;/p&gt;</description>
-    </item>
-    <item>
-      <title>RPG GM Tropes</title>
-      <link>https://blog.logustus.com/rpg-gm-tropes/</link>
-      <pubDate>Mon, 24 Feb 2020 00:00:00 -0800</pubDate>
-      <guid>https://blog.logustus.com/rpg-gm-tropes/</guid>
-      <description>&lt;h2 id=&#34;rpg-gm-tropes&#34;&gt;RPG GM Tropes&lt;/h2&gt;
-&lt;h3 id=&#34;some-background&#34;&gt;some background&lt;/h3&gt;
-&lt;p&gt;I DM&amp;rsquo;ed 2nd edition Dungeon and Dragons in my early teens. I&amp;rsquo;d say it was an
-awkward phase of my life, but things haven&amp;rsquo;t really gotten less awkward, just
-differently. My DM career has improved with my life experiences. I&amp;rsquo;ve been
-running a campaign series since 2018. I&amp;rsquo;ve lost players, gained players. I&amp;rsquo;ve
-run bad sessions, and had to lock horns with some players that are very
-opinionated.&lt;/p&gt;</description>
     </item>
     <item>
       <title>Dirshum</title>

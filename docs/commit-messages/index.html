@@ -48,7 +48,7 @@ except yours needs to run locally. Other times you&rsquo;re using something like
 GitHub Actions, and there&rsquo;s recourse here. GitHub Enterprise exists for people
 with high values of <code>$MONEY</code> and if you&rsquo;re working as a simple software engineer
 you might get paid well, but not enough for this.</p><p>Here&rsquo;s some examples of people obviously flailing that I&rsquo;ve observed over the
-years, self included:</p><figure><img loading=lazy src=https://blog.logustus.com/assets/ie-works-commits-01.png></figure><p>Internet Explorer. Such fun!</p><figure><img loading=lazy src=https://blog.logustus.com/assets/just-work-commit-message.png></figure><p>Just work, indeed.</p><p>Or witness my own suffering:</p><figure><img loading=lazy src=https://blog.logustus.com/assets/logan-commits-to-fix-ci-01.png></figure><p>When you get into this kind of loop, it is healthy to question whether it really
+years, self included:</p><figure><img loading=lazy src=https://blog.logustus.com/ox-hugo/ie-works-commits-01.png></figure><p>Internet Explorer. Such fun!</p><figure><img loading=lazy src=https://blog.logustus.com/ox-hugo/just-work-commit-message.png></figure><p>Just work, indeed.</p><p>Or witness my own suffering:</p><figure><img loading=lazy src=https://blog.logustus.com/ox-hugo/logan-commits-to-fix-ci-01.png></figure><p>When you get into this kind of loop, it is healthy to question whether it really
 is necessary. Change, commit, push, watch results is a very slow way to go about
 your work. Sometimes it&rsquo;s the most reasonable thing to do, but it&rsquo;s healthy to
 stop and ask if it really is. This also pollutes the commit history. Is it
@@ -202,13 +202,13 @@ your changes, and anything you can do to play by their rules will make it easier
 to have your changes accepted.</p><p>Oftentimes, I find these oppressive. I see a lot of projects adopting
 <a href=https://www.conventionalcommits.org/>Conventional Commits</a> or something similar. I love me some CI, but I hate me some
 Semantic Versioning. Conventional Commits takes a bit to read through, and it is
-very rigid about what goes into the commit and how to do it.</p><figure><img loading=lazy src=https://blog.logustus.com/assets/semver-workaround-broken-twitter-01.png></figure><p>What I dislike about Conventional Commits primarily is that it gets wrapped up
+very rigid about what goes into the commit and how to do it.</p><figure><img loading=lazy src=https://blog.logustus.com/ox-hugo/semver-workaround-broken-twitter-01.png></figure><p>What I dislike about Conventional Commits primarily is that it gets wrapped up
 in taxonomy of tickets. Is this a bug? Is it a feature? What should I use if my
 feature cleverly fixes a bug? Will this change break something?</p><p>Your intention will never have any impact over behavior. Claim &ldquo;this shouldn&rsquo;t
 break anything&rdquo;, and you almost invite disaster. Seriously - go ask your
 favorite QA member about this. They&rsquo;ll laugh at you. They laughed at me :(
 Virtually any change is a change in behavior, and changes in behavior break
-<strong>something</strong>.</p><figure><img loading=lazy src=https://blog.logustus.com/assets/xkcd-every-change-breaks-01.png></figure><p>My favorite patch version break was with Node v10 (I&rsquo;ll find the exact
+<strong>something</strong>.</p><figure><img loading=lazy src=https://blog.logustus.com/ox-hugo/xkcd-every-change-breaks-01.png></figure><p>My favorite patch version break was with Node v10 (I&rsquo;ll find the exact
 version later). This patch version has 80 commits behind it, and made an
 &ldquo;innocent&rdquo; change which subtly broke the networking stack. My only recourse was
 to lock the Node version to an exact version until we could clear investigation

@@ -105,7 +105,7 @@ Now that the server is back up and running, navigate to <http://localhost:3000>
 in your browser of choice. If everything worked well, you should see
 something like this:
 
-{{< figure src="/cat-hatred-html-01.png" >}}
+{{< figure src="/ox-hugo/cat-hatred-html-01.png" >}}
 
 
 ### curl again {#curl-again}

@@ -418,14 +418,7 @@ tags that have `src` attributes, it will also send requests for those. The
 Google web servers will dutifully respond with the requested CSS and
 JavaScript files in kind.
 
-```plantuml
-User -> Browser: Go to http://google.com
-Browser -> "Google Server": Send request to\nGoogle servers
-"Google Server" --> Browser: Send response\nwith HTML page
-Browser -> "Google Server": Send request for\nCSS/JavaScript files
-"Google Server" --> Browser: Send responses\nfor files requested
-Browser --> User: Show pretty webpage\nto user
-```
+{{< figure src="/ox-hugo/request-response-html-example-01.svg" >}}
 
 This is a <span class="underline">sequence</span> diagram that shows the communication process of doing
 something like visiting <http://google.com>.

@@ -192,21 +192,7 @@ production
     production deployments per day. Any time QA approves a software
     change in `staging` we should do a deployment to `production`.
 
-<!--listend-->
-
-```plantuml
-
-package "Auto deploy" {
-  [local] -> [dev]
-  [dev] -> [int]
-}
-
-package "Gated deployment" {
-  [int] -> [stg]
-  [stg] -> [prod]
-}
-
-```
+{{< figure src="/ox-hugo/cicd-flow.svg" >}}
 
 
 #### <span class="section-num">2.2.3</span> release notes {#release-notes}

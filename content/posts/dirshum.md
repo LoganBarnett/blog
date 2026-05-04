@@ -127,7 +127,7 @@ yourself!
 
 ### map {#map}
 
-{{< figure src="/dirshum-01.png" >}}
+{{< figure src="./dirshum-01.png" >}}
 
 
 ### Golani Grumsvelt's Guide to Dirshum {#golani-grumsvelt-s-guide-to-dirshum}
