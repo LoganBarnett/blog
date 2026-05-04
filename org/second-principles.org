@@ -1,0 +1,224 @@
+#+title:     TBD
+#+author:    Logan Barnett
+#+email:     logustus@gmail.com
+#+date:      <2026-02-08 Sun>
+#+language:  en
+#+file_tags:
+#+tags:
+#+hugo_draft: t
+
+* Introduction
+
+After having been in the industry for a while, and trying out a lot of things
+(many of which didn't work well), I've found myself with a collection of habits.
+These would probably be invaluable for a newcomer to software engineering, but
+I'm in short supply of those.  With the advent of machine learning (LLM) coding
+agents, I find myself having to articulate these learnings quite often.  The LLM
+is a fuzzy algorithm of sorts, that handles ambiguity quite well (like humans
+tend to), but that also means it tends to make the same mistakes humans do.  The
+learnings I have translate over quite well.  The LLM is not a ~sed~ over code,
+as much as we might want it to be (and it can often perform this role well), but
+it's imperfect and fuzzy.  Since it has a relatively small context window, I
+find myself repeating a lot of these learnings quite a bit.  It's time to
+codify.
+
+* Why Bother?
+
+Software is an industry upon every program you use or library you include is a
+sort of thesis written by other individuals, and the cohesiveness of that thesis
+is paramount to how well it sticks.  It's not enough to create a formula - it
+needs to capture an elegant truth that furthers our understanding.  It might
+might not feel like you are looking upon an elegant truth when you are
+configuring ~nginx~ for the umpteenth time, but the layers, structures, and
+organization of thought is writ large upon it.  Without these things, your
+config would be meaningless pandemonium.
+
+The goal here is to capture some patterns that apply to software engineering in
+a general sense.  These are hard to capture in a blog post about your favorite
+Python library, or some new web framework.  One of the hardest things that new
+engineers have is grasping the sheer the scale of software engineering on a
+typical day.  Having some structure to things might slow you down in the
+moment, but it pays dividends quickly.  Most software projects are unable to
+heed this, and will eventually become crushed by the weight of their own
+technical debt.
+
+What does that look like?  It's when adding a new feature carries such
+significant risk that it's just as likely to make things worse as it is to make
+things better.  Making a change to the system introduces unforeseen bugs.  Your
+release management people will start trying to slow you down and making longer
+and longer cycles with heavier test periods.
+
+And the saddest part about this whole thing is that it's almost always the fault
+of the software engineer, even if unintentionally.
+
+* Don't You Mean Preferences?
+
+I want to be really clear about this: I don't mean preferences.  A preference is
+like a favorite color.  It likely bears little practical implications, and is
+more an expression of likes and dislikes.  Trying to articulate a preference
+will ultimately distill to "I like this" and "I don't like that".
+
+These learnings have strong justifications.  You may not agree with my
+assessment, but these are more than just my equivalent of lucky numbers for
+code.
+
+* Learnings
+
+One of the interesting things about these learnings is that they have a tendency
+to build upon each other.
+
+** Data Structures and Algorithms (Interview Challenges)
+
+It's more important than you might think.
+
+You needn't be perfect.
+
+It lets you get a job working as Java engineer when your school only taught you
+Python.
+
+** Text Width
+
+Show research of width of text for readability.
+
+Hate taking your laptop somewhere to work without your megascreen?  This is why.
+
+Splits!  You're missing out!
+
+** Types and Type Safety
+
+Probe vaporized in Martian atmosphere - weak type error.
+
+Helps keep LLMs honest.
+
+Helps LLMs understand.
+
+Does the same for humans too.
+
+Hate writing unit tests?  You should.  It's because you're writing type
+enforcement, bespoke for each expression.
+
+** Naming
+
+The two hardest problems in computer science are:
+
+1. Cache invalidation.
+2. Naming things.
+3. Off-by-one errors.
+
+One of the things I see trip up newer engineers (and LLMs seem to like this too)
+is choosing a ~verb-noun~ naming convention for functions.  So generally, you'll
+see ~add_user~.  I find this is problematic, because there are many valid ~verb~
+entries that all kind of mean the same thing.  ~add~, ~create~, ~insert~,
+~upsert~, ~initialize~, ~new~ are all more or less equally valid, with only a
+few having some semantic difference.  However there is only ever a ~user~.  Any
+other name would refer to an entirely different entity in the system, and so
+a thesaurus won't offer ready deceptions to you.  This also means you get
+semantic grouping via [[Lexicographical Sorting]].
+
+If I handle such sorting with ~verb-noun~, I get functions like this:
+
+#+begin_src text :results none :exports code
+add_user
+add_book
+add_publisher
+ban_user
+delete_book
+lock_user
+resend_user_password
+unpublish_book
+upsert_book
+remove_user
+#+end_src
+
+It's kind of a mess.  Lexicographical sorting gets us no where, and so we
+potentially fall victim to clustering things together with [[Semantics via
+Adjacency]].
+
+If we name with ~noun~ first, we wind up with this:
+
+#+begin_src text :results none :exports code
+book_add
+book_delete
+book_unpublish
+book_upsert
+publisher_add
+user_add
+user_ban
+user_lock
+user_password_resend
+user_remove
+#+end_src
+
+And if I had you add a new function, you'd know _exactly_ where to put it.  This
+removes thought from the process.
+
+I've heard folks say this doesn't follow English patterns, and if you're doing
+object oriented programming it's all backwards.
+
+Regarding English - We might be using English words, but programming doesn't
+have English semantics, nor any spoken or written human language's semantics.
+Human language is, by design, imprecise, fluid, and evolving.  You can't write
+programs that way.
+
+Regarding Object Oriented Programming, you wouldn't balk at ~dog.walk()~, so why
+is ~dog_walk()~ any different?  It's just a character apart!
+
+** Lexicographical Sorting
+
+** Semantics via Adjacency
+
+Don't use whitespace to semantically relate two sections of code.  Lines can
+only be adjacent to two things, and just putting line breaks to split up parts
+of the code doesn't actually communicate anything, other than you put line
+breaks in your code.
+
+Some of us are also using text editors that know how to deal with sections of
+code at a time.  Things like ~= i p~ or ~> i p~ can do a lot of work but you're
+fighting it if there's a bunch of line breaks present.  This is less the case
+for languages that use proper delimiters, but whitespace sensitive languages
+provide no alternatives, and thus also can be a source of silent bugs since
+indentation effects semantics.
+
+** Integration Tests
+
+** Living Mock System
+
+** Bug/Feature Taxonomy, and Semantic Versioning
+
+
+
+** Language Runtimes, Garbage Collection
+
+Only use these under duress.
+
+Having a bug impact your software that was introduced by your language runtime
+can be one of the most frustrating things that can happen to it outside of your
+control.  Sure, you can pin to an older version, right?  ...Right?  Well it
+depends.  If you're on the _system_ Python 3, then maybe not.  Also, once you
+pin runtime versions, you lock yourself out from other packages (this is
+especially the case with Node.js, which is still climbing in major version
+numbers, and the EcmaScript standard is rapidly evolving to this day.
+
+Fighting a garbage collector is very similar in that realm of more or less
+having it out of your control, and yet the impact is extreme.
+
+You can spend time fighting the GC by making sure you pool just about any object
+of significance.  I thought the point of this was to delegate memory management
+to the machine.
+
+What if your GC isn't tunable like Java's?
+
+** Relational Databases vs. Document Stores
+
+Your should always start with a relational database, and switch to document
+stores when the justification is present.  Restated: Relational databases should
+be the default choice.  You get an incredible amount of correctness with ACID
+compliance, and chances are if your service explodes into massive use where you
+would care about micro services and document stores, then you can explore a
+refactor.
+
+** Immutability
+
+** Functional Programming
+
+** Domain Events

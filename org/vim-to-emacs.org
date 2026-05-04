@@ -1,0 +1,380 @@
+#+title:     Vim to Emacs
+#+author:    Logan Barnett
+#+email:     logustus@gmail.com
+#+date:      <2024-03-18 Mon>
+#+language:  en
+#+file_tags:
+#+tags:      vim emacs
+#+auto_id:   t
+#+toc:       headlines 3
+#+hugo_draft: t
+
+* Introduction
+:PROPERTIES:
+:CUSTOM_ID: introduction
+:END:
+
+I've been showing multiple people some cool things about Emacs from a vim user's
+perspective.  I find myself repeating quite a bit of it, so I figure I'd
+refactor some of my discussions into a blog post where this could be easily
+shared and referenced.
+
+* My Journey from Vim to Emacs :noexport:
+:PROPERTIES:
+:CUSTOM_ID: my-journey-from-vim-to-emacs
+:END:
+
+This needs to get moved to another post.  I am once again surprised by how long
+winded some of this gets.  I also anonymized the names.
+
+Somewhere around 2016 I set out to learn universal key bindings.  At that point
+in my life, I had used many editors and IDEs.  I found a lot of value in both of
+them, but every time I started learning the key bindings, some shifting
+circumstance in the tech world or my employment would put me on the path to
+something else.  One thing that sprung my mind about a potential standard set of
+key bindings was that was present on virtually everything I had come across:
+Vim.
+
+Now, understand, I had come across Vim users before.  I didn't understand
+it.  They didn't sell it well (in part because it's hard to sell in a way the
+uninitiated can understand), and my experience from using it from a terminal to
+make simple edits to Apache configurations gave it a very negative coloring.  I
+didn't understand its capabilities or use cases.  So it seemed like when people
+would refer to it, they would use it as an editor that seemed to be the _least
+capable_ thing they could get to write code, but somehow they got comfortable
+with it and kept it around.
+
+But I'd decided that almost every editor had some plugin to enable vim-like
+behavior.  So I embarked on trying to learn it.
+
+I played vim-adventures, which helped me understand some of the vocabulary in
+vim and helped me get used to hjkl, but it didn't click to me.  I tried learning
+it on vim itself first.  This was really painful because vimscript seems obtuse
+and seems to scale with complex environments like bash does (hint: it doesn't).
+Another thing that was a problem for me is that vim had at least three prominent
+packaging systems, and I didn't know how to make them coexist, let alone pull in
+packages that were for one system and not the other.
+
+I figured I would try it with the IntelliJ based editors.  There's IntelliJ
+proper, and then the language-branded versions of it.  I've used a variety of
+them.  They can do a lot, and there's a vim plugin!  I quickly ran into problems
+where IntelliJ's vim plugin couldn't handle some of the things I really liked
+doing in Vim, and it insisted on placing tabs everywhere.  Tabs and splits don't
+mix well, and I'm a splits person.
+
+I had a couple of coworkers who used Emacs, as well as a friend, all of which
+influenced my choices here.  Stewart was a peer from another team.  Stewart
+introduced to me the idea of spacemacs, which is a distribution of Emacs of
+sorts that allows one to get stood up in Emacs quickly, and allows for using
+something called =evil-mode=, which is a cheeky name for the vim plugin for
+Emacs.  It stands for Emacs VI... I don't know what the L is.  I think it's just
+added.  The users of Emacs and Vim have been at odds with each other for a long
+time, and it's common to see one's nemesis as evil.  Get it?
+
+Jerry was higher up, in a kind of management role (or maybe it was an actual
+management role), but he did tech too.  He showed me org-mode, and how he could
+write a document that had code in it, which would build a PDF report as its end
+output.  The report itself also showed the code that was used to achieve the
+results.  If he wanted to make edits to the PDF, he could simply re-export it
+again and potentially new data could be fed in for more current results.  My
+interest was piqued.
+
+Devon showed me a "using vim bindings in Emacs", wherein the speaker was
+espousing the benefits of vim bindings to Emacs users.  The thing that got me
+that I'd never heard before is that vim bindings are composable.  I highly favor
+composition and see that as a huge boon to creating more complex things.
+
+* Emacs from Vim - the pitch
+:PROPERTIES:
+:CUSTOM_ID: emacs-from-vim---the-pitch
+:END:
+
+You're probably past this point already if you're dipping your toes into Emacs.
+But let's cover it anyways.
+
+Emacs is the best Vim implementation I've found.  Using a plugin called
+=evil-mode=, and a suite of plugins via =evil-collection=, Spacemacs, or Doom
+Emacs, one can get up and going very quickly with Emacs with barely learning any
+of the Emacs key bindings.  To this day, I don't know many actual Emacs
+bindings, and I've been using Emacs as my primary editor for about 8 years at
+time of writing.
+
+You want to use vim bindings _literally everywhere_?  So do I, and that was a
+big influence on my choice.  I consume my email via =mu= / =mu4e=, and let me
+tell you, it's vim bindings everywhere to make my edits.  It's the exact same
+operation to write an email as it is to write this blog post in a plain text
+environment.  I have my Jira tickets from work synced to org-mode documents
+(think Markdown, but so far more advanced that it deserves its own post).  Since
+they are text files with some fancy syncing operations, I'm using Vim bindings
+to edit descriptions, create comments, etc.  I write my blog posts in Emacs.  I
+take a vast horde of notes that would make the most powerful user of Evernote
+quake in awe, and it's all in plain text, done in Emacs.  And I'm not even that
+sophisticated with my notes!  I have a file explorer which uses vim bindings.  I
+have an agenda that uses vim bindings.  I edit calendar events from plain text
+files, which, you guess it, uses vim bindings.  There are more things that have
+vim bindings that I haven't even covered yet.
+
+To give you an idea about what I mean by vim bindings, because I've found people
+vary greatly on their knowledge levels:  Short of =ex= command stuff, I actually
+really pride myself on my vim bindings I've learned over the years.  So I want
+to stress that this isn't just =hjkl=.  I'm doing =:%g= with =normal=.  I'm
+indenting entire functions at a time.  I'm deleting everything inside of
+brackets.  I'm copying entire files with =ggyG=.  I'm reflowing my code comments
+to 80 columns with =gq=.  I'm adding surrounding curly braces and parenthesis
+around identifiers in my code.  I'm deleting arguments in a function's argument
+list.  I get joy out of finding the perfect expression and then applying it
+again via =.=.  I could be better with aliases and marks.  I change sentences at
+a time when writing posts like these.  I spend all of my time _writing_ in
+insert mode, and my time _editing_ in normal mode.
+
+And I'm telling you this is the best place for me to get as close as possible to
+having everything in vim.  You have heard the joke that Emacs is an editor that
+people couldn't figure out how to quit and get back to the operating system, so
+they turned it into an operating system of its own.  Well think about that for a
+second: If it is an operating system, and that operating system is entirely
+governed by vim bindings, then you're pretty much using vim bindings all of the
+time, yes?
+
+And what's crazy is that while the vim bindings are great, the real
+transformation is waiting inside the mainstays of Emacs itself.
+
+* Emacs Lisp - Why this editor is 40+ years old and still going
+:PROPERTIES:
+:CUSTOM_ID: emacs-lisp---why-this-editor-is-40-years-old-and-still-going
+:END:
+
+I'm going to go on record here:  Every language, even if it's totally different
+or has some crazy paradigm shift, should always start with Lisp as its base
+syntax, and then _justify_ deviations as necessary due to language features.
+You don't like parenthesis?  Eh, they really do go away.  The experience I've
+had from learning Lisp is that 90% of the syntax can be learned in about 10
+minutes, and I find myself wishing languages did less to celebrate their syntax
+and instead embraced Lisp as their foundation.  =car= and =cdr= are entities for
+the standard library - things that can vary freely.  But everything being an S
+expression right from the get-go is crazy good.
+
+Chances are you've picked up multiple languages if you're on this journey.
+Learning Emacs Lisp will help you in ways you never thought.  It gives Emacs
+much of its power, because the entire editor is controlled via this language.
+You want to insert text automatically?  Lisp.  You want to format your code on
+save?  Lisp.  You want to _set a variable to a static value_?  Lisp.
+
+I didn't read books on Lisp or write hello-world in Lisp.  I just dove into
+Emacs.  Here's how you set a variable statically:
+
+#+begin_src emacs-lisp :results none :exports code
+(setq-default fill-column 80)
+#+end_src
+
+This sets "fill" to 80 columns, which means that text automatically flows to 80
+columns when that feature is turned on.  You want to set another value?
+
+#+begin_src emacs-lisp :results none :exports code
+(setq-default org-default-notes-file "~/notes/notes.org")
+#+end_src
+
+Okay something more complex.  Let's do a list.
+
+#+begin_src emacs-lisp :results none :exports code
+(setq-default mu4e-personal-addresses '("foo@bar.com" "bar@foo.com"))
+#+end_src
+
+Pretty simple, yeah?  Use =setq-default= (a function), pass it a variable
+name (=fill-column=), and then a value (=80=).  To call a function in Lisp, you
+surround the function and any arguments with parenthesis.  Here's how you add
+some numbers:
+
+#+begin_src emacs-lisp :results value :exports both
+(+ 1 1)
+#+end_src
+
+#+RESULTS:
+: 2
+
+Yeah, Lisp isn't big on built in symbols.  So here we can name a function =+=
+and it's literally the mathematical plus function.
+
+Lisp stands for LISt Processing.  Everything in Lisp is a... list.  A function
+is a list using =defun=, an argument list, and a body.
+
+#+name: add-three-numbers
+#+begin_src emacs-lisp :results none :exports code
+(defun add-three-numbers (a b c)
+  (+ (+ a b) c)
+  )
+#+end_src
+
+A function application (functional programming term, imperative folks will think
+"invocation") is a list whose first element is a function and the remaining
+elements are arguments.
+
+#+begin_src emacs-lisp :results value :exports code :noweb yes
+<<add-three-numbers>>
+
+(add-three-numbers 1 2 3)
+#+end_src
+
+#+RESULTS:
+: 6
+
+An =if= is a macro, but basically those are just function calls anyways.  You
+have a condition, a positive value, and a negative value.
+
+#+begin_src emacs-lisp :results value :exports code
+(if (< 1 3) "foo" "bar")
+#+end_src
+
+#+RESULTS:
+: foo
+
+So, well, now you know a great deal about Lisp.  The adding syntax might look a
+little goofy to you, but myself and many others have come to the conclusion that
+this is simple, and you will find that languages that celebrate their syntax
+(looking at you, Ruby, and now Rust) tend to paint themselves into a corner.
+With Ruby, it is hard for them to go much further with functional programming
+bits that other languages are rapidly adopting even if they are imperative at
+their core.  This is because they opted to treat arbitrary identifiers as call
+sites.  Lisp doesn't really do stuff like that, and there's great power there.
+
+Having rainbow parenthesis is a virtual must in my opinion.  I believe you can
+also benefit greatly learning how to =slurp= and =barf= - the language
+constructs are so simple that simply moving things in and out of parenthesis is
+a powerful editing technique.  I haven't learned how to do this with vim
+bindings yet - email me if you do please.
+
+Since Emacs is using a real language to do real things (and not a JSON file or a
+script designed just for an editor), you can do real things with it.  Every part
+of the editor is part of the editor's API - not just the places the authors
+thought you should hook into it.  You can replace or augment functions with
+=advice= too, so there's very little you can't control within your grasp.
+
+This is what gives us email, =magit=, agendas, and more.
+
+My ultimate advice with Lisp generally will be that you don't have to learn it
+deeply to start doing things with it (which is what Nix feels like), but also
+you shouldn't bemoan having to work with it.  I do wish it were statically
+typed, so don't think this has my highest praise.  This is my experience with
+learning to configure Emacs.
+
+* Basic Configuration Tips
+:PROPERTIES:
+:CUSTOM_ID: basic-configuration-tips
+:END:
+
+** =setq= et. al.
+:PROPERTIES:
+:CUSTOM_ID: basic-configuration-tips--setq-et-al
+:END:
+You'll see lots of people refer to and use =setq=, =setq-local=, and
+=setq-default=.  Until you embark on writing your own major mode or
+sophisticated plugin, just stick with =setq-default=.  It takes arguments in
+pairs, so sometimes you'll see long chains from the same call such as:
+
+#+begin_src emacs-lisp :results none :exports code
+(set-default
+   foo "bar"
+   baz "qux"
+   )
+#+end_src
+
+** modes, major and minor
+:PROPERTIES:
+:CUSTOM_ID: basic-configuration-tips--modes-major-and-minor
+:END:
+
+A major mode in Emacs is essentially a file type.  You want to edit a JSON file?
+=json-mode=.  I'm writing this post in =org-mode= right now, because it's a
+=.org= file.  They aren't _called_ file types because that wouldn't be accurate.
+In Emacs, we work in buffers that can be tied to files, but that isn't a given.
+When I'm browsing my email in Emacs, I'm not looking at a file - it's the
+buffer.  And that buffer is using a major mode that represents my email I'm
+looking at.  You can easily switch major modes by calling the major mode
+function.  So =json-mode= would be =(json-mode)=.  Generally, saving a file with
+an extension will activate the associated mode automatically.  This association
+also activates when you open a file with a particular pattern.  And then
+finally, Emacs also looks at the shebang and can activate a mode based on that.
+You can find this association defined in =auto-mode-alist=, but generally you
+don't need to modify it.
+
+A minor mode is a mode that augments a major mode in some way.  I have lots of
+minor modes running alongside this buffer as I write this post.  I have minor
+modes that cause text to hard wrap when it exceeds 80 columns
+(=auto-fill-mode=).  I have a spell checker running (=ispell-mode=).  I also
+have =git-gutter-mode=, which prefixes my lines with a nice ~+~ character if
+I've added lines there.  Many of these minor modes are shared across virtually
+all other major modes.  Like major modes, you can toggle their activation by
+simply calling the mode function (so =auto-fill-mode= would be
+=(auto-fill-mode)=).  A handy one to keep under your belt is =visual-line-mode=,
+which causes soft line wrapping so you can read Markdown documents by people who
+enjoy grasping their mouse and wondering why they have back pains near their
+right shoulder blade and spine.
+
+** Emacs Keybinding notation
+:PROPERTIES:
+:CUSTOM_ID: basic-configuration-tips--emacs-keybinding-notation
+:END:
+
+Emacs has a fairly standardized key binding notation.
+
+Some words are associated with specific types of special keys.  The big ones
+that come up a lot are =ESC= for escape, =TAB= for tab, =RET= for return/enter,
+and =SPC= for the space bar.
+
+Modifier or chord keys are a capital letter with a dash immediate after them,
+and what should be pressed while holding that chord.  =C= is control, =M= is
+meta (typically your Command/Windows key), =S= is super (very rare to see, you
+have to bind a special key to it on modern keyboards, I think).  Presently on
+my macOS laptop, option is meta, and Command is super, so maybe I'm wrong on
+that.  I don't recall if I have it customized.  Shift is not covered - instead
+you just use the capital version of the letter, or symbol if you're pressing
+numbers.
+
+An example from above would be =C-c= which is that you hold control, and while
+holding control you press and release =c=.  These can be strung together.  So
+=C-M-x= is that you hold control and meta at the same time, and then press =x=.
+=C-T= means you're holding control, shift, and =t=.
+
+Then there's sequenced key bindings.  We use these a lot in vim.  To indicate a
+sequence of bindings, you use spaces to separate the keys.  In Emacs land, to
+express deleting a paragraph, you would write it as =d a p=.  This means you
+press =d=, then =a=, then =p=.  You can combine this sequencing with the chords,
+such as with =C-c C-c=.  This means you hold control, and press C, and then do
+it again.  You can hold control via the entire invocation, or you can let go so
+long as you press =c= while control is being held.
+
+** Different kinds of help
+:PROPERTIES:
+:CUSTOM_ID: basic-configuration-tips--different-kinds-of-help
+:END:
+
+=C-h= is the help prefix.
+
+*** =which-key=
+:PROPERTIES:
+:CUSTOM_ID: basic-configuration-tips--different-kinds-of-help--which-key
+:END:
+
+To view a variable, use =C-h v=, and then start typing the variable name.  But
+we're going to witness the power of =which-key=.  Press =C-h= and _wait_.  A
+bottom section will pop up and show you the key bindings that are available with
+this prefix.  Along with those key bindings will be the name of the functions
+(this is helpful for calling them via your code or looking up detailed help).
+You'll see that =v= is bound to =describe-variable=.
+
+*** =describe=
+:PROPERTIES:
+:CUSTOM_ID: basic-configuration-tips--different-kinds-of-help--describe
+:END:
+
+=describe-variable= is for describing variables.  You can see what the value is
+currently, and what the value was initially defined as.
+
+=describe-function=
+
+=describe-mode=
+
+=describe-face= describes a font face (includes color, ...).
+
+=describe-key=
+
+=describe-=

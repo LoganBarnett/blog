@@ -1,0 +1,212 @@
+#+title:     Time Budgeting
+#+author:    Logan Barnett
+#+email:     logustus@gmail.com
+#+date:      <2024-05-27 Mon>
+#+language:  en
+#+file_tags:
+#+tags:
+#+hugo_draft: t
+
+* Time Budgeting
+
+I've really liked the allure of =org-agenda= and tried very hard to keep it.  It
+was a difficult task to keep constantly shuffling things around (in part,
+because I was micro-managing the agenda).  Once my life partner entered into my
+life, I suddenly had to share a calendar with someone and she used... mouse
+things.  Most people do in the real world.  It makes working with text based
+tools like org-mode a challenge, especially when automatic import/export tooling
+doesn't seem to exist for what I use on the day to day (like Google's Calendar).
+
+I've struggled with many-a-todo system.  Usually what happens is it gets crushed
+under its own weight.  I furiously try to catalog everything I want to do (and
+it's a lot), and what winds up happening is I have way too many things to do,
+and the list becomes a litany of shame - my shame for not having done enough.
+It's not really a fair assessment - I do a lot of things!  But it's always going
+to be easier to write down tasks to do than it is to actually do them, unless of
+course, I write down tasks at such a small level of detail that I spend all of
+my time writing down tasks!
+
+It's taken me a long time to get here.  I've been cut adrift from my todo system
+for quite some time now.  My life has been anarchy, for the most part.  Most of
+the things I _want_ to do are done as stolen moments.  I have to juggle a lot in
+my head - it's a messy, chaotic place in there.  Interrupts feel pervasive.  I
+feel like I'm behind by some kind of invisible measure.
+
+The answer to this that I want to explore is time budgeting.  When I go to a
+physical brick and mortar store, or even browse around on something like Esty,
+my mind goes alight with all kinds of possibilities.  I could run tubing
+everywhere and setup an automated watering system for plants in the house.  I
+could run ducting through a bunch of printers to help with temperature control
+and help keep VOCs out of the house.  I could buy lots of 3D printable models of
+terrain for Warhammer 40,000 and litter my house with them.
+
+But, I only have so much money on hand.  While money does keep coming in from
+employment and I expect that to continue for virtually my entire existence, it
+is essentially finite.  At any given moment, I only have so much of it.  My time
+during a day, week, or even month is similar in that regard.  So much like I
+need a monetary budget to throttle my spending, so to must I have a
+temporal budget.
+
+
+** Setting a budget
+
+*** Budgetary analogs
+
+While I'm no fiscal expert of any kind, I've managed to not overdraft on a
+regular basis, but it took some learning.  Let's inspect some tricks I've
+learned and how they can translate into temporal budgeting.
+
+**** Budget for worst case
+
+My budgeting has worked best when I assume all of the variable expenses will hit
+me at the their worst _every month_.  The peak electric bill in summer and the
+natural gas bill peak in winter, for example.  While these never coincide
+together, it does mean I've got some actual fat included in every month.
+
+The analog to this can be time spent on variable activities that occur during
+the day.  One example of this could be that on many days I have to do a quick
+run to the grocery store.  Maybe I just factor that in as a daily activity and
+then it won't be a surprise thing.
+
+**** Discretionary spending
+
+I set aside some money for spending my money on silly things that contribute to
+my happiness in small ways.  Overpriced teas, plastic toy soldiers, and
+ephemeral digital goods come to mind.  It doesn't matter what it is - it's not
+anything I strictly need from a survival or prosperity perspective, but it makes
+money not feel oppressively low, I suppose.  A small amount is set aside for
+this.
+
+Even if I can't realistically spend every night in pursuit of the same thing,
+like painting miniatures for example, I can set aside a baseline amount that
+will disappear into _something_.  Like discretionary spending, it isn't a
+problem if it doesn't get spent during the budget's period - it's simply
+absorbed back into the overall amount that the budget is attempting to account
+for.  In setting aside this amount, I cannot be surprised by it.
+
+**** Saving for later
+
+This is one that _doesn't_ translate as far as I can see.  While I can work on
+projects that might yield me value later, it's not quite the same thing as
+saving up and then spending it all on something I could never afford in a given
+budgetary period.
+
+**** Padding
+
+Just like there's always hidden fees, sales tax (for those of us not living in a
+sales tax free state), shipping, or just realizing you didn't get enough -
+padding is how one works around this.  The stricter one attempts to make
+something, the more likely that things run over.
+
+This means padding with additional travel time.  I live in the "city of
+bridges", which not only means bridges that get raised by large (and comically,
+not large) boats, but also there are the miles-long trains that go right through
+some areas of the metropolis on surface streets.  Delays can be up to 20 minutes
+long.  Perhaps because it's a standing excuse in the city, people tend to always
+run about 15-20 minutes late to any given activity.  "Portland Standard Time" is
+what I call it.
+
+Increase travel time by 50%.
+
+Assume activities will run over.  This can vary wildly, and finding out what
+that amount is to an accurate degree is unlikely easily generalized.  Though
+we could look how the event ends.  Does it have a hard limit?  Is it an activity
+where there is a variable wind-down (such as people hanging out, talking at the
+end)?  What happens if the activity runs over?  Hard limits can probably do with
+little spillover.  But keep in mind that even with hard limits, _some_ padding
+must still be included.  For example:  there might be a hard end but bathroom
+use isn't really something that can be paused for one activity after another.
+Interruptions come forth.
+
+Use 20% to 50% padding for any given activity.
+
+**** Spend wisely
+
+If a fool and their money are soon parted, then what is the temporal equivalent?
+Either way, viewing time as a currency brings this to mind.  Many things exist
+which would sap my time or even have me suckered into easily giving it away to
+others.  Use a sharp razor with which to cut away unnecessary drains.
+
+Applications make me jump through unnecessary hoops, and... ads.  Lots of ads.
+The Internet require some strong filtering.  Small information gathering tasks
+can easily balloon into research projects because humanity just can't be honest
+or relatively unbiased.
+
+Be ruthless and selfish as to what time is spent on.
+
+What value does this task bring me?  Do I have to do it?  Should I do it to save
+time or money later?
+
+It's not saying I can never be charitable with my time, but it's easy to get
+pulled into something and suddenly a lot of time is lost, I'm grumpy about it,
+and it was completely avoidable if I'd been more discerning before I committed
+to the activity.
+
+This is especially true when talking about passion projects or things where me
+breaking my commitment doesn't really cost anything to anyone.  This might be
+where cookie licking comes from.  I don't care if I am labeled for it though.
+I'll take the label gladly but also keep my precious time.
+
+*** Existing Time Exchanges
+
+I've often heard people look their hourly wage and use that to make value
+propositions.  This makes zero sense to me.  I can't really work _more_ to make
+more money.  At least, not without worsening my quality of life significantly.
+If anything, I want to work _less_.
+
+** categories
+
+*** Must: Things I am compelled to do
+
+This is things like eating, using the bathroom, sleeping, paying bills, and
+addressing to the many needs of my family (especially children).  These are
+essentially inflexible tasks.  The more I can outsource, the more flexibility I
+have with my budget.  That doesn't mean I should always outsource these
+activities, but it is good to know about it.
+
+*** Should: Things I should do now to avoid worse things later
+
+Taking care of some plumbing that's causing water damage to my house is
+something I should prioritize getting addressed before it incurs major damage
+and thus expense of both additional time and money.  Putting these tasks off
+costs me more than not doing them at all.
+
+Beware cataloging too much into this category.  It can be easy to sneak in a
+"should" category task that is really something else in disguise.  This is akin
+to adding a bunch of unnecessary things to a necessary purchase, like buying a
+car.  Almost everything added on is a total waste of money designed to get you
+to blow more on a purchase.  Don't hang a bunch of fake shoulds onto a task that
+really is best served with minimal investment.
+
+*** Need: Things I need to do before I can do something else
+
+
+
+*** Want: Things I wish to do
+
+*** Guilt: Do it right or don't do it at all
+
+I believe, as a parent, I have probably uttered these words or something similar
+enough that it was taken this way.  It's a false statement.  I believe many of
+us get it.  Counter with not letting perfect be the enemy of good.  I've
+recently been asked if I wanted to discard a perfectly good and sized piece of
+wood for a shelf just because the grain was going differently than the rest of
+the other, already assembled pieces.  In addition to discarding the piece,
+another would have to be cut, further costing more time (not just more wood).
+
+When doing painting projects with miniatures, I have learned from another
+painter that you just have to look upon something and say "this is a lesson
+learned" and move on.  Once done with the entire painting endeavor (such as for
+the entire army of toy soldiers being painted), I could go back and make the
+corrections.  Though since going back and fixing them is work in itself, it
+might just be better to buy new miniatures and paint those up fresh.  It
+depends.  But don't let perfectionism kill it.  An artist only sees the work
+they put into the piece, not the final result.  This also means all of their
+perceived mistakes.  Don't fall for that trap.  Have someone take a look and
+make a judgment (preferably someone who tends to skew things positively in your
+favor - yes really - do this).  Commit yourself to their answer.
+
+** Time efficiency
+
+* COMMENT
+#  LocalWords:  shoulds
