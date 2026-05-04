@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Projects on Logan Barnett&#39;s blog</title>
+    <link>https://blog.logustus.com/categories/projects/</link>
+    <description>Recent content in Projects on Logan Barnett&#39;s blog</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 04 May 2026 00:00:00 -0700</lastBuildDate>
+    <atom:link href="https://blog.logustus.com/categories/projects/feed.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Sonify Health</title>
+      <link>https://blog.logustus.com/sonify-health/</link>
+      <pubDate>Mon, 04 May 2026 00:00:00 -0700</pubDate>
+      <guid>https://blog.logustus.com/sonify-health/</guid>
+      <description>&lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;
+&lt;p&gt;I built a tool I call &lt;a href=&#34;https://github.com/LoganBarnett/sonify-health&#34;&gt;sonify-health&lt;/a&gt;, which I use to assist with monitoring my
+home network.  It can be used for monitoring all kinds of things passively.  I
+thought it would be helpful to have a deeper write-up that covers why I built
+this and what purpose it serves.&lt;/p&gt;
+&lt;p&gt;Let&amp;rsquo;s talk about babysitting servers.  I do this for a living right now, at
+scale.  VMs by their thousands are my responsibility to hold up.  A lot of the
+tech is pretty crufty, but mostly works and I&amp;rsquo;m the glue-on-retainer that
+repairs it when the system stops working.  At home I have a handful of physical
+machines I keep up, and there are several dozen services I&amp;rsquo;m holding up with it.
+I&amp;rsquo;m approaching a low-tier, enterprise-grade IT setup.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

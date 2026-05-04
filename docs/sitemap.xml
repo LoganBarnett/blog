@@ -2,19 +2,31 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://blog.logustus.com/categories/</loc>
+    <lastmod>2026-05-04T00:00:00-07:00</lastmod>
+  </url><url>
+    <loc>https://blog.logustus.com/</loc>
+    <lastmod>2026-05-04T00:00:00-07:00</lastmod>
+  </url><url>
+    <loc>https://blog.logustus.com/categories/monitoring/</loc>
+    <lastmod>2026-05-04T00:00:00-07:00</lastmod>
+  </url><url>
+    <loc>https://blog.logustus.com/categories/open-source/</loc>
+    <lastmod>2026-05-04T00:00:00-07:00</lastmod>
+  </url><url>
+    <loc>https://blog.logustus.com/posts/</loc>
+    <lastmod>2026-05-04T00:00:00-07:00</lastmod>
+  </url><url>
+    <loc>https://blog.logustus.com/categories/projects/</loc>
+    <lastmod>2026-05-04T00:00:00-07:00</lastmod>
+  </url><url>
+    <loc>https://blog.logustus.com/sonify-health/</loc>
+    <lastmod>2026-05-04T00:00:00-07:00</lastmod>
+  </url><url>
     <loc>https://blog.logustus.com/jerry-the-joblin/</loc>
     <lastmod>2025-03-30T00:00:00-07:00</lastmod>
   </url><url>
-    <loc>https://blog.logustus.com/</loc>
-    <lastmod>2025-03-30T00:00:00-07:00</lastmod>
-  </url><url>
-    <loc>https://blog.logustus.com/posts/</loc>
-    <lastmod>2025-03-30T00:00:00-07:00</lastmod>
-  </url><url>
     <loc>https://blog.logustus.com/age-of-golemancy/</loc>
-    <lastmod>2025-01-15T00:00:00-08:00</lastmod>
-  </url><url>
-    <loc>https://blog.logustus.com/categories/</loc>
     <lastmod>2025-01-15T00:00:00-08:00</lastmod>
   </url><url>
     <loc>https://blog.logustus.com/categories/dnd/</loc>
