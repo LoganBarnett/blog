@@ -10,6 +10,7 @@
 #+hugo_section: posts
 #+hugo_aliases: /data-modeling.html
 #+hugo_categories: software-engineering
+#+hugo_draft: t
 
 * Introduction
 
@@ -471,7 +472,7 @@ by following refs around.
 See [[Example: Kroosade]] for stepping through the process of applying this
 thinking.
 
-** Example: Kroosade :noexport:
+** Example: Kroosade
 
 I want to design my own Warhammer 40,000 crusade management system. From what
 I've gathered, there's [[https://administratum.goonhammer.com/][Administratum]] and [[https://crusade-manager.net/][Crusade Manager]] already, but I wanted

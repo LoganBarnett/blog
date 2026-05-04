@@ -8,6 +8,7 @@
 #+hugo_base_dir: ..
 #+hugo_section: posts
 #+hugo_aliases: /rpg-gm-tropes.html
+#+hugo_draft: t
 
 * local dictionary                                                 :noexport:
 
@@ -19,9 +20,6 @@
    running a campaign series since 2018. I've lost players, gained players. I've
    run bad sessions, and had to lock horns with some players that are very
    opinionated.
-
-   I've also been a player for just about as long for another group, and I get
-   to learn from my DM's mistakes (as I see them), and the strong points.
 
    I don't think I have every answer, but I find articulating my
    mind space in a way that others understand is a very useful exercise. And
@@ -61,7 +59,7 @@
     I don't think having a significant other as one of your players is
     automatically a dysfunction, but it's worth considering that it _could be
     dysfunctional_. Remember that your biases are largely invisible to you, and
-    one of the lovely thing about [[dice]] is that they remove a great amount of the
+    one of the lovely thing about dice is that they remove a great amount of the
     biases from you. However you have to stick with the dice rolls.
 
 *** using your screen to lie
