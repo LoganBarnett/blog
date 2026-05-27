@@ -15,3 +15,11 @@
 
 # LaTeX intermediates from generating the resume PDF.
 *.tex
+
+# pdflatex auxiliary files left next to org/resume.org by the
+# `just resume-pdf` recipe.  The recipe cleans these up itself, but
+# ignore them so an interrupted run doesn't leave noise in `git status`.
+org/*.aux
+org/*.log
+org/*.out
+org/*.toc

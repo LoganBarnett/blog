@@ -6,8 +6,45 @@
     <description>Recent content on Logan Barnett&#39;s blog</description>
     <generator>Hugo</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 04 May 2026 00:00:00 -0700</lastBuildDate>
+    <lastBuildDate>Wed, 27 May 2026 00:00:00 -0700</lastBuildDate>
     <atom:link href="https://blog.logustus.com/feed.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Logan Barnett&#39;s Résumé</title>
+      <link>https://blog.logustus.com/resume/</link>
+      <pubDate>Wed, 27 May 2026 00:00:00 -0700</pubDate>
+      <guid>https://blog.logustus.com/resume/</guid>
+      <description>&lt;hr&gt;
+&lt;h2 id=&#34;categories-software-engineering&#34;&gt;layout: default
+title: Résumé
+date: 2020-01-13
+categories: software-engineering&lt;/h2&gt;
+&lt;link rel=&#34;stylesheet&#34; type=&#34;text/css&#34; href=&#34;resume.css&#34; /&gt;
+&lt;h2 id=&#34;contact&#34;&gt;Contact&lt;/h2&gt;
+&lt;dl&gt;
+&lt;dt&gt;Email&lt;/dt&gt;
+&lt;dd&gt;&lt;a href=&#34;mailto:logustus@gmail.com&#34;&gt;logustus@gmail.com&lt;/a&gt;&lt;/dd&gt;
+&lt;dt&gt;Mobile&lt;/dt&gt;
+&lt;dd&gt;602.264.3584&lt;/dd&gt;
+&lt;dt&gt;Blog&lt;/dt&gt;
+&lt;dd&gt;&lt;a href=&#34;https://blog.logustus.com&#34;&gt;https://blog.logustus.com&lt;/a&gt;&lt;/dd&gt;
+&lt;dt&gt;Github&lt;/dt&gt;
+&lt;dd&gt;&lt;a href=&#34;https://github.com/loganbarnett&#34;&gt;https://github.com/loganbarnett&lt;/a&gt;&lt;/dd&gt;
+&lt;dt&gt;LinkedIn&lt;/dt&gt;
+&lt;dd&gt;&lt;a href=&#34;https://www.linkedin.com/in/logan-barnett-2556114/&#34;&gt;https://www.linkedin.com/in/logan-barnett-2556114/&lt;/a&gt;&lt;/dd&gt;
+&lt;dt&gt;Location&lt;/dt&gt;
+&lt;dd&gt;Beaverton, Oregon, USA (remote)&lt;/dd&gt;
+&lt;/dl&gt;
+&lt;h2 id=&#34;summary&#34;&gt;Summary&lt;/h2&gt;
+&lt;p&gt;22 years as a professional software engineer, spanning video
+games, embedded systems, web applications, and the tooling that engineering and
+operations teams depend on. My current focus is systems programming in Rust,
+building reproducible tooling with NixOS and nixpkgs, and applying LLMs as
+deliberate engineering tools — including a practical understanding of where they
+fail and how to design workflows that account for that. I care about sustainable
+software: strong type systems, thorough testing, and documentation that makes
+code legible to the next engineer. I enjoy mentoring and gravitate toward the
+hard problems.&lt;/p&gt;</description>
+    </item>
     <item>
       <title>Sonify Health</title>
       <link>https://blog.logustus.com/sonify-health/</link>
@@ -547,34 +584,6 @@ very high level, here&amp;rsquo;s there&amp;rsquo;s one really big point I want 
 Rewrites won&amp;rsquo;t unburden a project from technical debt.&lt;/p&gt;</description>
     </item>
     <item>
-      <title>Logan Barnett&#39;s Résumé</title>
-      <link>https://blog.logustus.com/resume/</link>
-      <pubDate>Mon, 06 Sep 2021 00:00:00 -0700</pubDate>
-      <guid>https://blog.logustus.com/resume/</guid>
-      <description>&lt;hr&gt;
-&lt;h2 id=&#34;categories-software-engineering&#34;&gt;layout: default
-title: Résumé
-date: 2020-01-13
-categories: software-engineering&lt;/h2&gt;
-&lt;link rel=&#34;stylesheet&#34; type=&#34;text/css&#34; href=&#34;resume.css&#34; /&gt;
-&lt;h2 id=&#34;contact&#34;&gt;Contact&lt;/h2&gt;
-&lt;ul&gt;
-&lt;li&gt;Email: &lt;a href=&#34;mailto://logustus@gmail.com&#34;&gt;logustus@gmail.com&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;Mobile: 602.264.3584&lt;/li&gt;
-&lt;li&gt;Blog: &lt;a href=&#34;https://loganbarnett.github.io/blog/&#34;&gt;https://loganbarnett.github.io/blog/&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;Github: &lt;a href=&#34;https://github.com/loganbarnett&#34;&gt;https://github.com/loganbarnett&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;This document was generated from:
-&lt;a href=&#34;https://github.com/LoganBarnett/blog/blob/gh-pages/resume.org&#34;&gt;https://github.com/LoganBarnett/blog/blob/gh-pages/resume.org&lt;/a&gt;&lt;/p&gt;
-&lt;h2 id=&#34;summary&#34;&gt;Summary&lt;/h2&gt;
-&lt;p&gt;I&amp;rsquo;ve been a professional software engineer for 22 years.
-I&amp;rsquo;ve worked on video games, embedded devices, web applications, desktop
-applications, and managed server infrastructure. I prefer a sustainable approach
-to software development and maintenance alike. I enjoy providing guidance and
-tackling difficult problems. I feel good and functional documentation is the
-road to well maintained and understood software.&lt;/p&gt;</description>
-    </item>
-    <item>
       <title>XML Namespaces</title>
       <link>https://blog.logustus.com/xml-namespaces/</link>
       <pubDate>Mon, 23 Aug 2021 00:00:00 -0700</pubDate>
@@ -658,62 +667,6 @@ quite right, or maybe I learned a lesson from some painful experience but it was
 the wrong one.  I don&amp;rsquo;t have all the answers - really this is just me processing
 some of my own difficulties, and publishing the thought process in a somewhat
 structured form.&lt;/p&gt;</description>
-    </item>
-    <item>
-      <title>Captain Toofsnaggle</title>
-      <link>https://blog.logustus.com/captain-toofsnaggle/</link>
-      <pubDate>Mon, 28 Dec 2020 00:00:00 -0800</pubDate>
-      <guid>https://blog.logustus.com/captain-toofsnaggle/</guid>
-      <description>&lt;div class=&#34;ox-hugo-toc toc local&#34;&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;#dnd-5e--characters--captain-toofsnaggle&#34;&gt;Captain Toofsnaggle&lt;/a&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;#dnd-5e--characters--captain-toofsnaggle--quick&#34;&gt;quick&lt;/a&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;#dnd-5e--characters--captain-toofsnaggle--quick--combat&#34;&gt;combat&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#spells-and-abilities&#34;&gt;spells and abilities&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#dnd-5e--characters--mister-creant--quick--skills-and-saves&#34;&gt;skills and saves&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#dnd-5e--characters--captain-toofsnaggle--choices&#34;&gt;choices&lt;/a&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;#dnd-5e--characters--captain-toofsnaggle--choices--starting-ability-scores&#34;&gt;starting ability scores&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#dnd-5e--characters--captain-toofsnaggle--choices--race&#34;&gt;race&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#dnd-5e--characters--captain-toofsnaggle--choices--starting-choices&#34;&gt;starting choices&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#dnd-5e--characters--captain-toofsnaggle--choices--levels&#34;&gt;levels&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#dnd-5e--characters--captain-toofsnaggle--choices--starting-magic-items&#34;&gt;starting magic items&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#dnd-5e--characters--captain-toofsnaggle--background&#34;&gt;background&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#dnd-5e--characters--captain-toofsnaggle--ability-scores&#34;&gt;ability scores&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#dnd-5e--characters--captain-toofsnaggle--fluff&#34;&gt;fluff&lt;/a&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;#dnd-5e--characters--captain-toofsnaggle--fluff--appearance&#34;&gt;appearance&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#dnd-5e--characters--captain-toofsnaggle--fluff--direction&#34;&gt;direction&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#dnd-5e--characters--captain-toofsnaggle--fluff--mannerisms&#34;&gt;mannerisms&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#dnd-5e--characters--captain-toofsnaggle--fluff--rival&#34;&gt;rival&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#dnd-5e--characters--captain-toofsnaggle--fluff--road-to-adventuring&#34;&gt;road to adventuring&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#after-the-shipwreck&#34;&gt;after the shipwreck&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#quest-log&#34;&gt;quest log&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#dnd-5e--characters--captain-toofsnaggle--inventory&#34;&gt;inventory&lt;/a&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;#dnd-5e--characters--captain-toofsnaggle--inventory--acquisition-log&#34;&gt;acquisition log&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#dnd-5e--characters--captain-toofsnaggle--inventory--current-equipment&#34;&gt;current equipment&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#dnd-5e--characters--captain-toofsnaggle--inventory--current-money&#34;&gt;current money&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#riddle&#34;&gt;riddle&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-&lt;!--endtoc--&gt;
-&lt;h2 id=&#34;dnd-5e--characters--captain-toofsnaggle&#34;&gt;Captain Toofsnaggle&lt;/h2&gt;
-&lt;p&gt;Captain Toofsnaggle is a half-orc seaman that is full of bluster. He has a
-reputation of mayhem following his every move, yet nobody seems to be able to
-confirm his claims of his legendary ship or crew.&lt;/p&gt;</description>
     </item>
     <item>
       <title>Promise and map with JavaScript</title>
