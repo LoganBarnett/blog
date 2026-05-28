@@ -7,6 +7,16 @@
 #+tags:
 #+options:     H:6 num:nil tags:nil creator:nil date:nil tasks:nil author:nil
 #+macro:       years-experience (eval (- (nth 5 (decode-time)) 2004))
+# LaTeX typesetting overrides for the PDF export path.  Default article-
+# class margins are far too generous for a resume; geometry tightens
+# them to 0.75in.  parskip/parindent give the body a denser feel
+# without crowding it.  We keep org's toc:t (so HTML/Hugo get a TOC)
+# but neuter \tableofcontents in LaTeX -- a resume PDF reads better
+# without one.
+#+latex_header: \usepackage[margin=0.75in]{geometry}
+#+latex_header: \setlength{\parskip}{0.3em}
+#+latex_header: \setlength{\parindent}{0pt}
+#+latex_header: \renewcommand{\tableofcontents}{}
 #+hugo_base_dir: ..
 #+hugo_section: posts
 #+hugo_aliases: /resume.html

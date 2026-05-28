@@ -189,101 +189,60 @@ Full details available in the long-form CV.
 
 ## Proficiencies {#proficiencies}
 
+Javascript
+: React, Redux, Three, Angular, Node, ES6, Webpack, Flow, npm,
+    yarn
 
-### Languages {#languages}
+Rust
+: Actix, futures, abstract data types, monad chains, and avoiding
+    `unwrap` ;)
 
+Nix
+: NixOS, nixpkgs, home-manager, nix-darwin, flakes, declarative system
+    configuration, upstream nixpkgs contributions
 
-#### Javascript {#javascript}
+Ruby
+: Ruby on Rails, Sinatra, JRuby, Cucumber, RSpec
 
-React, Redux, Three, Angular, Node, ES6, Webpack, Flow, npm, yarn.
+Java
+: Swing, JAX-RS, JRuby, JUnit, SNMP4J
 
+.net
+: C#, Boo, Unity/Mono, MVC, WCF, NUnit, OData, Powershell
 
-#### Rust {#rust}
+Infrastructure and Ops
+: Puppet (Hiera, r10k), Docker, Nomad, NATS, Jenkins
 
-Actix, futures, abstract data types, monad chains, and avoiding `unwrap` ;)
+Databases
+: PostgreSQL, MongoDB, MySQL, SQL Server, Oracle + PL/SQL
 
+LLMs
+: Agentic workflows, MCP (Model Context Protocol), prompt engineering,
+    tool use, Claude
 
-#### Nix {#nix}
-
-NixOS, nixpkgs, home-manager, nix-darwin, flakes, declarative system
-configuration, upstream nixpkgs contributions.
-
-
-#### Ruby {#ruby}
-
-Ruby on Rails, Sinatra, JRuby, Cucumber, RSpec.
-
-
-#### Java {#java}
-
-Swing, JAX-RS, JRuby, JUnit, SNMP4J.
-
-
-#### .net {#dot-net}
-
-C#, Boo, Unity/Mono, MVC, WCF, NUnit, OData, Powershell.
-
-
-### Infrastructure and Ops {#infrastructure-and-ops}
-
-Puppet (Hiera, r10k; enough to extend and maintain manifests), Docker, Nomad,
-NATS, Jenkins.
-
-
-### Databases {#databases}
-
-PostgreSQL, MongoDB, MySQL, SQL Server, Oracle + PL/SQL.
-
-
-### LLMs {#llms}
-
-Agentic workflows, MCP (Model Context Protocol), prompt engineering, tool use,
-Claude, automating mundane and non-trivial engineering tasks.
-
-
-### Misc {#misc}
-
-JIRA, Pivotal Tracker, Trello, git, Perforce, svn, hg, Plastic SCM, vim, emacs,
-literate programming, functional programming.
+Misc
+: git, Perforce, svn, hg, Plastic SCM, vim, emacs, literate
+    programming, functional programming, JIRA, Pivotal Tracker, Trello
 
 
 ## Selected Side Projects {#selected-side-projects}
 
-1.  [dns-smart-block](https://github.com/LoganBarnett/dns-smart-block) — A Rust workspace of four co-orchestrating programs that
-    bring LLM-powered classification to DNS-level content blocking. A log
-    processor watches DNS queries and enqueues domains via NATS; a queue
-    processor dispatches them to a classifier; the classifier uses a
-    locally-hosted LLM (Ollama) as a fuzzy matching algorithm — returning a
-    classification, confidence score, and reasoning; a blocklist server exposes
-    the results in a format compatible with Pi-hole, AdGuard Home, Blocky, and
-    others. Event-sourced PostgreSQL storage, Prometheus metrics, health checks,
-    and an admin web view. Deployed via NixOS flake.
-2.  [garage-queue](https://github.com/LoganBarnett/garage-queue) — A capability-aware work queue written in Rust. Producers
-    submit payloads; the queue routes each item to a worker that advertises the
-    right hardware and software capabilities to handle it — the queue itself has
-    no knowledge of any particular workload, since routing logic lives entirely
-    in configuration. Serves as the central dispatcher for a heterogeneous fleet
-    of inference machines, routing Ollama requests to hosts with sufficient VRAM
-    and the right models loaded.
-3.  [sonify-health](https://github.com/LoganBarnett/sonify-health) — Turns infrastructure health into ambient sound. Each
-    machine self-reports via percussive heartbeat boops and a continuous stress
-    drone — a Star Trek bridge feel that encodes real meaning into peripheral
-    awareness without requiring visual attention. Written in Rust.
-4.  [nix-config](https://github.com/LoganBarnett/nix-config) — Nix configuration for an entire self-managed home network.
-    Every host is defined as code and deployed with a custom copy-closure tool —
-    the foundation that everything else (DNS, identity, declarative API
-    management) builds on.
-5.  [sytter](https://github.com/LoganBarnett/sytter) — Event-driven host automation: IFTTT for your machine. Written in
-    Rust. Reads TOML-defined pipelines of triggers (system/kernel events),
-    conditions (stateful guards), and executors (actions). Designed to run on
-    macOS, Linux, and Windows.
+1.  [dns-smart-block](https://github.com/LoganBarnett/dns-smart-block) — Network-level DNS content blocking informed by LLM
+    classification. Rust workspace deployed via NixOS flake.
+2.  [garage-queue](https://github.com/LoganBarnett/garage-queue) — Capability-aware work queue in Rust. Workers advertise
+    capabilities; producers submit payloads; routing logic lives entirely in
+    configuration — the queue itself stays workload-agnostic.
+3.  [sonify-health](https://github.com/LoganBarnett/sonify-health) — Turns infrastructure health into ambient sound, so
+    operators can stay aware without watching a dashboard. Written in Rust.
+4.  [nix-config](https://github.com/LoganBarnett/nix-config) — Declarative Nix configuration for an entire self-managed
+    home network; every host defined as code, deployed with a custom
+    copy-closure tool.
+5.  [sytter](https://github.com/LoganBarnett/sytter) — Event-driven host automation in Rust. TOML-defined triggers,
+    conditions, and actions; cross-platform.
 6.  [Lambda Cast](https://soundcloud.com/lambda-cast) — Co-hosted ~20 episodes on functional programming concepts
-    (2016–2019). Episodes still available.
+    (2016–2019).
 
 
 ## Education {#education}
 
-
-### DeVry University {#devry-university}
-
-Graduated 2004 with BS in Computer Engineering Technology.
+DeVry University — BS in Computer Engineering Technology, 2004.
