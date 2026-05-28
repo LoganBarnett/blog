@@ -13,13 +13,7 @@
       <link>https://blog.logustus.com/resume/</link>
       <pubDate>Wed, 27 May 2026 00:00:00 -0700</pubDate>
       <guid>https://blog.logustus.com/resume/</guid>
-      <description>&lt;hr&gt;
-&lt;h2 id=&#34;categories-software-engineering&#34;&gt;layout: default
-title: Résumé
-date: 2020-01-13
-categories: software-engineering&lt;/h2&gt;
-&lt;link rel=&#34;stylesheet&#34; type=&#34;text/css&#34; href=&#34;resume.css&#34; /&gt;
-&lt;h2 id=&#34;contact&#34;&gt;Contact&lt;/h2&gt;
+      <description>&lt;h2 id=&#34;contact&#34;&gt;Contact&lt;/h2&gt;
 &lt;dl&gt;
 &lt;dt&gt;Email&lt;/dt&gt;
 &lt;dd&gt;&lt;a href=&#34;mailto:logustus@gmail.com&#34;&gt;logustus@gmail.com&lt;/a&gt;&lt;/dd&gt;

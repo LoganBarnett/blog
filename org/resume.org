@@ -26,21 +26,6 @@
 # #+include directives below so blog builds always reflect the latest
 # resume. Edits to the resume itself belong in the employment repo.
 
-# Front matter for Hugo.
-#+begin_export html
----
-layout: default
-title: Résumé
-date: 2020-01-13
-categories: software-engineering
----
-#+end_export
-
-# Our CSS specific to the resume.
-#+begin_export html
-<link rel="stylesheet" type="text/css" href="resume.css" />
-#+end_export
-
 #+include: "../../employment/resume.org::*Contact"
 #+include: "../../employment/resume.org::*Summary"
 #+include: "../../employment/resume.org::*Job Experience"

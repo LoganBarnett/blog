@@ -5,16 +5,6 @@ aliases = ["/resume.html"]
 draft = false
 +++
 
----
-layout: default
-title: Résumé
-date: 2020-01-13
-categories: software-engineering
----
-
-<link rel="stylesheet" type="text/css" href="resume.css" />
-
-
 ## Contact {#contact}
 
 Email
