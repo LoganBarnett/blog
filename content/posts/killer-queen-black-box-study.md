@@ -78,7 +78,7 @@ an opportunity to work with Unity's physics system (and work around it), use its
 character controller system, networking, shaders, GUI (editor and in-game), and
 its logic/behavior system. I also have an educational background in computer
 engineering, so I have a good conceptual understanding of operating systems,
-memory models, resource sharing, etc. My [resume](./resume.html) is here for full transparency.
+memory models, resource sharing, etc. My [resume](/resume.html) is here for full transparency.
 
 
 ## reasoning {#reasoning}
@@ -228,7 +228,7 @@ games are no exception.
 
 Here's an example of the timing scaling to your machine's speed:
 
-<iframe src="https://www.winningsolitaire.com"></iframe>
+{{< figure src="/ox-hugo/solitaire-victory-animation-01.gif" caption="<span class=\"figure-number\">Figure 1: </span>The Solitaire victory animation.  The cards move a fixed distance per frame rather than per unit of time, so the whole cascade runs faster on faster hardware." >}}
 
 
 #### side by side {#side-by-side}
@@ -380,7 +380,7 @@ function loadQueen() {
     startVariable(img)
     startIdealVariable(img)
   }, false)
-  img.src = '/blog/assets/kq-purple-queen-float-forward-01.png'
+  img.src = '/assets/kq-purple-queen-float-forward-01.png'
 }
 
 function tickSpeedGraph() {
@@ -700,7 +700,7 @@ would look like:
 </div>
 <img
   style="image-rendering: pixelated; width: 13em"
-  src="/blog/assets/kq-purple-warrior-chex-standing-01.png"
+  src="/assets/kq-purple-warrior-chex-standing-01.png"
 />
 
 Cosmetic pieces will totally fall out of the bounding area, and that's okay.

@@ -17,10 +17,23 @@
 
 (require 'ox-hugo)
 
+;; `ob-plantuml' is what supplies `org-babel-default-header-args:plantuml',
+;; which carries the `(:exports . "results")' that turns a plantuml block
+;; into its rendered diagram.  Batch mode loads no user init, so without
+;; this `require' the language is unknown, the default falls back to
+;; `:exports code', and every diagram silently degrades into a fenced
+;; code block quoting its own source.  See the plantuml entry in
+;; `flake.nix' for the matching devshell dependency.
+(require 'ob-plantuml)
+
 ;; Batch mode would otherwise prompt or hang on these.
 (setq enable-local-variables :safe)
 (setq org-confirm-babel-evaluate nil)
 (setq org-export-with-broken-links 'mark)
+;; `ob-plantuml' defaults to driving a plantuml.jar, and
+;; `org-plantuml-jar-path' is unset without user init.  The devshell puts
+;; a `plantuml' wrapper on PATH instead, so drive that directly.
+(setq org-plantuml-exec-mode 'plantuml)
 
 (defvar build-md-org-dir "org"
   "Directory containing the org source files.")

@@ -64,7 +64,7 @@ several apps and will likely continued to do so. I have apps that are at 100%
 coverage. However some things are hard to test. Sometimes it's just tedious to
 test.
 
-![roid miner editor](/blog/assets/roid-miner-object-instance-editor.png)
+![roid miner editor](/assets/roid-miner-object-instance-editor.png)
 
 Does this need unit tests for putting in the name? What about toggling the
 select box? Maybe! The select box does more than just change data, it updates

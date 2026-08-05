@@ -176,7 +176,10 @@ games are no exception.
 
 Here's an example of the timing scaling to your machine's speed:
 
-#+html: <iframe src="https://www.winningsolitaire.com"></iframe>
+#+caption: The Solitaire victory animation.  The cards move a fixed distance per
+#+caption: frame rather than per unit of time, so the whole cascade runs faster
+#+caption: on faster hardware.
+[[file:./assets/solitaire-victory-animation-01.gif]]
 
 *** side by side
 
@@ -330,7 +333,7 @@ Here's an example of the timing scaling to your machine's speed:
       startVariable(img)
       startIdealVariable(img)
     }, false)
-    img.src = '/blog/assets/kq-purple-queen-float-forward-01.png'
+    img.src = '/assets/kq-purple-queen-float-forward-01.png'
   }
 
   function tickSpeedGraph() {
@@ -713,7 +716,7 @@ package character1 {
 </div>
 <img
   style="image-rendering: pixelated; width: 13em"
-  src="/blog/assets/kq-purple-warrior-chex-standing-01.png"
+  src="/assets/kq-purple-warrior-chex-standing-01.png"
 />
 #+end_export
 
@@ -739,7 +742,7 @@ package character1 {
     <div>
       <img
         style="position: relative; top: 10em; left: 10em;image-rendering: pixelated; width: 40em"
-        src="/blog/assets/kq-grassy-platform-01.png"
+        src="/assets/kq-grassy-platform-01.png"
       />
     </div>
     #+end_export

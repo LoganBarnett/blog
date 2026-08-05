@@ -38,7 +38,7 @@ noise setup wasn't going to cut it.
 
 This is what the level looked like using just perlin noise. Not very asteroid-y.
 
-![perlin noise level](/blog/assets/roid-miner-perlin-level.png)
+![perlin noise level](/assets/roid-miner-perlin-level.png)
 
 # The New
 
@@ -53,21 +53,21 @@ voxel types which the rest of the editor will use when doing cube generation.
 The voxel editor itself is part of my larger object system. It's defined here as
 an object definition:
 
-![voxel definition](/blog/assets/roid-miner-voxel-object-def.png)
+![voxel definition](/assets/roid-miner-voxel-object-def.png)
 
 Object definitions have a "display" field that allows them to add special
 editors that aren't bound to a single field type, or perhaps just information to
 generally display. In this case I have the cube-preview, which is a read only
 display of the voxel images.
 
-![voxel preview](/blog/assets/roid-miner-cube-preview.png)
+![voxel preview](/assets/roid-miner-cube-preview.png)
 
 To see the display in action and also make some instances of the voxels, the
 object instance editor is used. The instance editor allows me to create
 instances of any object definition using the fields defined in the object
 definition.
 
-![voxel instance](/blog/assets/roid-miner-voxel-instance.png)
+![voxel instance](/assets/roid-miner-voxel-instance.png)
 
 # Asteroid Generation
 
@@ -95,27 +95,27 @@ Here's an example workflow of creating an asteroid generator:
 
 ## Step 1. Create a generator
 
-![create a generator](/blog/assets/roid-miner-generation-step0.png)
+![create a generator](/assets/roid-miner-generation-step0.png)
 
 ## Step 2. Add a sequencer
 
-![generation with just a sequencer](/blog/assets/roid-miner-generation-step1.png)
+![generation with just a sequencer](/assets/roid-miner-generation-step1.png)
 
 ## Step 3. Apply perlin noise
 
 Note that the asteroid preview rotates over time.
 
-![add noise](/blog/assets/roid-miner-generation-step2.png)
+![add noise](/assets/roid-miner-generation-step2.png)
 
 ## Step 4. Connect points from gaps introduced by perlin noise
 
 This is required for the fill to work properly.
 
-![connect points for filling](/blog/assets/roid-miner-generation-step3.png)
+![connect points for filling](/assets/roid-miner-generation-step3.png)
 
 ## Step 5. Apply a fill to the center of the asteroid
 
-![fill](/blog/assets/roid-miner-generation-step4.png)
+![fill](/assets/roid-miner-generation-step4.png)
 
 # Closing
 
